@@ -76,4 +76,41 @@ class DashboardController extends Controller
 
         return view('pages.real-time-sensor', compact('machines'));
     }
-}
+
+    public function getMachineAlerts($id)
+    {
+        try {
+            $machine = Machine::findOrFail($id);
+
+            // Get recent anomaly analyses as alerts
+            $alerts = AnalysisResult::where('machine_id', $id)
+                ->where('condition_status', '!=', 'NORMAL')
+                ->where('created_at', '>=', now()->subHours(24))
+                ->latest()
+                ->limit(10)
+                ->get()
+                ->map(function($analysis) {
+                    $severity = 'WARNING';
+                    if ($analysis->rms >= 1.0 || $analysis->peak_amp >= 2.0) {
+                        $severity = 'CRITICAL';
+                    }
+
+                    return [
+                        'id' => $analysis->id,
+                        'severity' => $severity,
+                        'message' => "Anomaly detected: RMS={$analysis->rms}, Peak={$analysis->peak_amp}G",
+                        'created_at' => $analysis->created_at
+                    ];
+                });
+
+            return response()->json([
+                'success' => true,
+                'alerts' => $alerts
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage()
+            ], 500);
+        }
+    }}

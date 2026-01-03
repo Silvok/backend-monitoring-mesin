@@ -25,6 +25,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/api/top-machines-by-risk', [DashboardApiController::class, 'getTopMachinesByRisk']);
     Route::get('/api/machine/{id}/sensor-data', [DashboardApiController::class, 'getMachineSensorData']);
     Route::get('/api/machine/{id}/historical-data', [DashboardApiController::class, 'getHistoricalData']);
+    Route::get('/api/machine/{id}/alerts', [DashboardController::class, 'getMachineAlerts']);
 
     // Alert API routes
     Route::get('/api/alerts', [AlertController::class, 'getActiveAlerts']);
