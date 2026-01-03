@@ -26,7 +26,7 @@
                 <div x-data="{ dropdownOpen: false }" class="relative">
                     <button @click="dropdownOpen = !dropdownOpen"
                             class="flex items-center space-x-3 hover:bg-white/10 px-3 py-2 rounded-full text-white font-semibold transition duration-200">
-                        <div class="w-10 h-10 bg-gradient-to-br from-yellow-400 to-yellow-500 rounded-full flex items-center justify-center font-bold text-sm shadow-lg">
+                        <div class="w-8 h-8 bg-gradient-to-br from-yellow-400 to-yellow-500 rounded-full flex items-center justify-center font-bold text-xs shadow-lg">
                             {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
                         </div>
                         <div class="hidden lg:flex items-center space-x-2">

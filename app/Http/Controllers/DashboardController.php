@@ -48,7 +48,13 @@ class DashboardController extends Controller
                 ];
             });
 
-        return view('dashboard', compact(
+        // Prepare chart data
+        $rmsChartData = [
+            'labels' => $rmsData->pluck('time')->toArray(),
+            'values' => $rmsData->pluck('value')->toArray()
+        ];
+
+        return view('pages.dashboard', compact(
             'totalMachines',
             'totalSamples',
             'totalAnalysis',
@@ -57,7 +63,7 @@ class DashboardController extends Controller
             'latestSensorData',
             'anomalyCount',
             'normalCount',
-            'rmsData'
+            'rmsChartData'
         ));
     }
 }
