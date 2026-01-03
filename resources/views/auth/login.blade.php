@@ -6,14 +6,14 @@
 
     <!-- Welcome Header -->
     <div class="mb-8 text-center">
-        <h1 class="text-3xl font-bold text-emerald-900 mb-2">Halo, Selamat Datang Kembali!</h1>
+        <h1 class="text-3xl font-bold text-emerald-900 mb-2">Halo, Selamat Datang</h1>
         <p class="text-gray-600">Masuk ke dashboard monitoring mesin Anda</p>
     </div>
 
     <!-- Session Status -->
     <x-auth-session-status class="mb-4" :status="session('status')" />
 
-    <form method="POST" action="{{ route('login') }}">
+    <form method="POST" action="{{ route('login') }}" autocomplete="on">
         @csrf
 
         <!-- Email Address -->
@@ -30,7 +30,7 @@
                 class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-emerald-600 focus:ring focus:ring-emerald-200 focus:outline-none transition duration-200"
                 required
                 autofocus
-                autocomplete="username"
+                autocomplete="email"
             />
             <x-input-error :messages="$errors->get('email')" class="mt-2" />
         </div>
@@ -82,11 +82,54 @@
         <!-- Sign Up Link -->
         <div class="mt-6 text-center">
             <p class="text-gray-600">
-                Belum punya akun?
-                <a href="{{ route('register') }}" class="text-emerald-700 hover:text-emerald-900 font-semibold transition">
-                    Daftar Sekarang
+                Lupa kata sandi?
+                <a href="mailto:admin@example.com" class="text-emerald-700 hover:text-emerald-900 font-semibold transition">
+                    Hubungi Admin
                 </a>
             </p>
         </div>
     </form>
+
+    <!-- Script untuk Remember Me -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const emailInput = document.getElementById('email');
+            const passwordInput = document.getElementById('password');
+            const rememberCheckbox = document.getElementById('remember_me');
+
+            // Load saved credentials otomatis
+            const savedEmail = localStorage.getItem('login_email');
+            const savedPassword = localStorage.getItem('login_password');
+
+            if (savedEmail) {
+                emailInput.value = savedEmail;
+            }
+            if (savedPassword) {
+                passwordInput.value = savedPassword;
+                rememberCheckbox.checked = true;
+            }
+
+            // Handle form submission
+            const form = document.querySelector('form');
+            form.addEventListener('submit', function(e) {
+                // Jika checkbox "Ingat saya" dicentang, simpan credentials
+                if (rememberCheckbox.checked) {
+                    localStorage.setItem('login_email', emailInput.value);
+                    localStorage.setItem('login_password', passwordInput.value);
+                } else {
+                    // Jika tidak dicentang, hapus credentials yang tersimpan
+                    localStorage.removeItem('login_email');
+                    localStorage.removeItem('login_password');
+                }
+            });
+
+            // Ketika user uncheck "Ingat saya", clear credentials
+            rememberCheckbox.addEventListener('change', function() {
+                if (!this.checked) {
+                    localStorage.removeItem('login_email');
+                    localStorage.removeItem('login_password');
+                }
+            });
+        });
+    </script>
 </x-guest-layout>
