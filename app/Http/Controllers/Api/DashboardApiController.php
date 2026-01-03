@@ -124,4 +124,119 @@ class DashboardApiController extends Controller
             ], 500);
         }
     }
+
+    /**
+     * Get sensor data for a specific machine
+     */
+    public function getMachineSensorData($id)
+    {
+        try {
+            $machine = Machine::with('latestAnalysis')->findOrFail($id);
+
+            // Get latest 20 sensor readings
+            $sensorData = RawSample::where('machine_id', $id)
+                ->latest()
+                ->limit(20)
+                ->get()
+                ->map(function($sample) {
+                    return [
+                        'id' => $sample->id,
+                        'timestamp' => $sample->created_at->format('Y-m-d H:i:s'),
+                        'time_ago' => $sample->created_at->diffForHumans(),
+                        'acceleration_x' => round($sample->ax_g ?? 0, 4),
+                        'acceleration_y' => round($sample->ay_g ?? 0, 4),
+                        'acceleration_z' => round($sample->az_g ?? 0, 4),
+                    ];
+                });
+
+            // Get latest analysis
+            $latestAnalysis = $machine->latestAnalysis;
+
+            return response()->json([
+                'success' => true,
+                'machine' => [
+                    'id' => $machine->id,
+                    'name' => $machine->name,
+                    'location' => $machine->location,
+                    'type' => $machine->type,
+                    'status' => $latestAnalysis ? $latestAnalysis->condition_status : 'UNKNOWN',
+                    'rms' => $latestAnalysis ? round($latestAnalysis->rms, 4) : 0,
+                    'peak_amp' => $latestAnalysis ? round($latestAnalysis->peak_amp, 4) : 0,
+                    'dominant_freq' => $latestAnalysis ? round($latestAnalysis->dominant_freq_hz, 2) : 0,
+                    'last_check' => $latestAnalysis ? $latestAnalysis->created_at->diffForHumans() : 'Never',
+                ],
+                'sensor_data' => $sensorData,
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    /**
+     * Get historical sensor data for a specific machine, date, and time range
+     */
+    public function getHistoricalData($id, Request $request)
+    {
+        try {
+            $date = $request->input('date', now()->format('Y-m-d'));
+            $hours = $request->input('hours', 24); // Default to 24 hours
+
+            // Parse the date and calculate trailing time window
+            $selectedDayStart = \Carbon\Carbon::parse($date)->startOfDay();
+            $selectedDayEnd = \Carbon\Carbon::parse($date)->endOfDay();
+
+            // End of window: end of selected day, but not beyond now if same day
+            $endDate = $selectedDayEnd;
+            if ($selectedDayEnd->isToday()) {
+                $endDate = now();
+            }
+
+            // Start of window: trailing $hours before end, but not before start of day
+            $startDate = $endDate->copy()->subHours($hours);
+            if ($startDate->lessThan($selectedDayStart)) {
+                $startDate = $selectedDayStart;
+            }
+
+            // Get sensor data within the date range
+            $sensorData = RawSample::where('machine_id', $id)
+                ->whereBetween('created_at', [$startDate, $endDate])
+                ->orderBy('created_at', 'asc')
+                ->get()
+                ->map(function($sample) {
+                    return [
+                        'id' => $sample->id,
+                        'timestamp' => $sample->created_at->toIso8601String(),
+                        'acceleration_x' => round($sample->ax_g ?? 0, 4),
+                        'acceleration_y' => round($sample->ay_g ?? 0, 4),
+                        'acceleration_z' => round($sample->az_g ?? 0, 4),
+                    ];
+                });
+
+            // If we have too many data points, sample them (e.g., max 500 points)
+            if ($sensorData->count() > 500) {
+                $step = ceil($sensorData->count() / 500);
+                $sensorData = $sensorData->filter(function($item, $key) use ($step) {
+                    return $key % $step === 0;
+                })->values();
+            }
+
+            return response()->json([
+                'success' => true,
+                'sensor_data' => $sensorData,
+                'date_range' => [
+                    'start' => $startDate->format('Y-m-d H:i:s'),
+                    'end' => $endDate->format('Y-m-d H:i:s'),
+                ],
+                'total_points' => $sensorData->count(),
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage(),
+            ], 500);
+        }
+    }
 }

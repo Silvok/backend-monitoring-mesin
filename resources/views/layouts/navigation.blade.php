@@ -95,16 +95,7 @@
     <!-- Mobile Navigation Menu -->
     <div :class="{'block': open, 'hidden': !open}" class="hidden sm:hidden bg-emerald-800 border-t-2 border-emerald-900">
         <div class="px-4 pt-2 pb-3 space-y-1">
-            <a href="{{ route('dashboard') }}"
-               class="block px-4 py-3 rounded-lg text-white font-semibold transition duration-200 flex items-center space-x-2
-               @if(request()->routeIs('dashboard')) bg-white/20
-               @else hover:bg-white/10
-               @endif">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-3m0 0l7-4 7 4M5 9v10a1 1 0 001 1h12a1 1 0 001-1V9M9 21h6" />
-                </svg>
-                <span>Dashboard</span>
-            </a>
+            <!-- Mobile menu items can be added here if needed -->
         </div>
 
         <!-- Mobile User Menu -->

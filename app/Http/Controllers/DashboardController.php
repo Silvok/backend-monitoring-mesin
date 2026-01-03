@@ -66,4 +66,14 @@ class DashboardController extends Controller
             'rmsChartData'
         ));
     }
+
+    public function realTimeSensor()
+    {
+        // Get all machines for dropdown
+        $machines = Machine::with('latestAnalysis')
+            ->orderBy('name')
+            ->get();
+
+        return view('pages.real-time-sensor', compact('machines'));
+    }
 }
