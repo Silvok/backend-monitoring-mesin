@@ -1,37 +1,21 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api;
 
+use App\Http\Controllers\Controller;
 use App\Models\Machine;
 use App\Models\RawSample;
 use App\Models\AnalysisResult;
 use Illuminate\Http\Request;
 
-class DashboardController extends Controller
+class DashboardApiController extends Controller
 {
-    public function index()
+    public function getDashboardData()
     {
         // Get statistics
         $totalMachines = Machine::count();
         $totalSamples = RawSample::count();
         $totalAnalysis = AnalysisResult::count();
-
-        // Get machine with latest analysis
-        $machine = Machine::with(['latestAnalysis', 'rawSamples' => function($query) {
-            $query->latest()->limit(10);
-        }])->first();
-
-        // Get recent analysis results
-        $recentAnalysis = AnalysisResult::with('machine')
-            ->latest()
-            ->limit(5)
-            ->get();
-
-        // Get latest sensor readings
-        $latestSensorData = RawSample::with('machine')
-            ->latest()
-            ->limit(10)
-            ->get();
 
         // Calculate anomaly count
         $anomalyCount = AnalysisResult::where('condition_status', 'ANOMALY')->count();
@@ -48,16 +32,15 @@ class DashboardController extends Controller
                 ];
             });
 
-        return view('dashboard', compact(
-            'totalMachines',
-            'totalSamples',
-            'totalAnalysis',
-            'machine',
-            'recentAnalysis',
-            'latestSensorData',
-            'anomalyCount',
-            'normalCount',
-            'rmsData'
-        ));
+        return response()->json([
+            'success' => true,
+            'totalMachines' => $totalMachines,
+            'totalSamples' => $totalSamples,
+            'totalAnalysis' => $totalAnalysis,
+            'anomalyCount' => $anomalyCount,
+            'normalCount' => $normalCount,
+            'rmsData' => $rmsData,
+            'timestamp' => now()->format('Y-m-d H:i:s')
+        ]);
     }
 }

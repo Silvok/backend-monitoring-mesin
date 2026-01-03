@@ -40,5 +40,8 @@
                 </div>
             </div>
         </div>
+
+        <!-- Scripts Stack -->
+        @stack('scripts')
     </body>
 </html>
