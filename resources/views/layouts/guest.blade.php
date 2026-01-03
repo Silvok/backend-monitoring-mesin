@@ -25,21 +25,6 @@
             <!-- Left Side - Form -->
             <div class="w-full lg:w-1/2 flex items-center justify-center p-8 bg-white">
                 <div class="w-full max-w-md">
-                    <!-- Logo -->
-                    <div class="mb-8">
-                        <div class="flex items-center space-x-3 mb-2">
-                            <div class="w-10 h-10 bg-gradient-to-br from-emerald-700 to-emerald-900 rounded-lg flex items-center justify-center">
-                                <svg class="w-6 h-6 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z"></path>
-                                </svg>
-                            </div>
-                            <div>
-                                <h2 class="text-2xl font-bold text-emerald-900">MonitorMesin</h2>
-                                <p class="text-sm text-gray-500">Predictive Monitoring System</p>
-                            </div>
-                        </div>
-                    </div>
-
                     <!-- Content Slot -->
                     {{ $slot }}
                 </div>

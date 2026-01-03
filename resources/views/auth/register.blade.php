@@ -1,6 +1,11 @@
 <x-guest-layout>
+    <!-- Logo Centered -->
+    <div class="flex justify-center mb-8">
+        <x-monitor-logo size="lg" />
+    </div>
+
     <!-- Welcome Header -->
-    <div class="mb-8">
+    <div class="mb-8 text-center">
         <h1 class="text-3xl font-bold text-emerald-900 mb-2">Daftar Akun Baru</h1>
         <p class="text-gray-600">Bergabung dengan sistem monitoring mesin</p>
     </div>
