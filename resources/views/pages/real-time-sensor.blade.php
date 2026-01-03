@@ -93,66 +93,62 @@
                 </div>
             </div>
 
-            <!-- Quick Stats Cards -->
+            <!-- Quick Stats Cards - Simplified & Modern -->
             <div id="quickStatsSection" class="mb-6 hidden">
-                <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-                    <!-- Total Readings Today -->
-                    <div class="bg-white rounded-xl shadow-md p-4 border-l-4 border-blue-500">
-                        <div class="flex items-center justify-between">
-                            <div>
-                                <p class="text-xs font-semibold text-gray-600 mb-1">READINGS TODAY</p>
-                                <p id="statReadings" class="text-2xl font-bold text-gray-900">0</p>
-                            </div>
-                            <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-sm font-semibold text-gray-700">Today's Summary</h3>
+                        <div class="flex items-center space-x-1 text-xs text-gray-500">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                            <span>Live monitoring</span>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+                        <!-- Total Readings -->
+                        <div class="text-center">
+                            <div class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-blue-50 mb-3">
                                 <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
                                 </svg>
                             </div>
+                            <p id="statReadings" class="text-3xl font-bold text-gray-900 mb-1">0</p>
+                            <p class="text-xs text-gray-500 font-medium">Readings</p>
                         </div>
-                    </div>
 
-                    <!-- Uptime Percentage -->
-                    <div class="bg-white rounded-xl shadow-md p-4 border-l-4 border-green-500">
-                        <div class="flex items-center justify-between">
-                            <div>
-                                <p class="text-xs font-semibold text-gray-600 mb-1">UPTIME TODAY</p>
-                                <p id="statUptime" class="text-2xl font-bold text-gray-900">--%</p>
-                            </div>
-                            <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
-                                <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        <!-- Uptime -->
+                        <div class="text-center">
+                            <div class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-emerald-50 mb-3">
+                                <svg class="w-6 h-6 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                                 </svg>
                             </div>
+                            <p id="statUptime" class="text-3xl font-bold text-emerald-600 mb-1">--%</p>
+                            <p class="text-xs text-gray-500 font-medium">Uptime</p>
                         </div>
-                    </div>
 
-                    <!-- Last Anomaly -->
-                    <div class="bg-white rounded-xl shadow-md p-4 border-l-4 border-red-500">
-                        <div class="flex items-center justify-between">
-                            <div>
-                                <p class="text-xs font-semibold text-gray-600 mb-1">LAST ANOMALY</p>
-                                <p id="statLastAnomaly" class="text-sm font-bold text-gray-900">Never</p>
-                            </div>
-                            <div class="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center">
-                                <svg class="w-6 h-6 text-red-600" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
-                                </svg>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Time in Normal State -->
-                    <div class="bg-white rounded-xl shadow-md p-4 border-l-4 border-emerald-500">
-                        <div class="flex items-center justify-between">
-                            <div>
-                                <p class="text-xs font-semibold text-gray-600 mb-1">NORMAL STATE</p>
-                                <p id="statNormalTime" class="text-2xl font-bold text-gray-900">--%</p>
-                            </div>
-                            <div class="w-12 h-12 bg-emerald-100 rounded-lg flex items-center justify-center">
-                                <svg class="w-6 h-6 text-emerald-600" fill="currentColor" viewBox="0 0 20 20">
+                        <!-- Normal State -->
+                        <div class="text-center">
+                            <div class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-purple-50 mb-3">
+                                <svg class="w-6 h-6 text-purple-600" fill="currentColor" viewBox="0 0 20 20">
                                     <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
                                 </svg>
                             </div>
+                            <p id="statNormalTime" class="text-3xl font-bold text-purple-600 mb-1">--%</p>
+                            <p class="text-xs text-gray-500 font-medium">Normal</p>
+                        </div>
+
+                        <!-- Last Anomaly -->
+                        <div class="text-center">
+                            <div class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-orange-50 mb-3">
+                                <svg class="w-6 h-6 text-orange-600" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+                                </svg>
+                            </div>
+                            <p id="statLastAnomaly" class="text-sm font-semibold text-gray-900 mb-1 truncate px-2">Never</p>
+                            <p class="text-xs text-gray-500 font-medium">Last Alert</p>
                         </div>
                     </div>
                 </div>
@@ -307,100 +303,7 @@
                 </div>
             </div>
 
-            <!-- Panel Statistik & Alert Panel (2 columns) -->
-            <div id="statsAlertsSection" class="mb-6 hidden">
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                    <!-- Panel Statistik -->
-                    <div class="bg-white rounded-xl shadow-md overflow-hidden">
-                        <div class="px-6 py-4 border-b border-gray-200 bg-gradient-to-r from-indigo-50 to-purple-50">
-                            <h3 class="text-lg font-bold text-gray-900">📊 Statistical Analysis</h3>
-                        </div>
-                        <div class="p-6">
-                            <!-- Axis X Stats -->
-                            <div class="mb-4 pb-4 border-b border-gray-200">
-                                <p class="text-xs font-bold text-blue-600 mb-2">AXIS X</p>
-                                <div class="grid grid-cols-3 gap-3">
-                                    <div>
-                                        <p class="text-xs text-gray-500">Min</p>
-                                        <p id="statAxMin" class="text-sm font-bold text-gray-900">0.0000 G</p>
-                                    </div>
-                                    <div>
-                                        <p class="text-xs text-gray-500">Max</p>
-                                        <p id="statAxMax" class="text-sm font-bold text-gray-900">0.0000 G</p>
-                                    </div>
-                                    <div>
-                                        <p class="text-xs text-gray-500">Avg</p>
-                                        <p id="statAxAvg" class="text-sm font-bold text-gray-900">0.0000 G</p>
-                                    </div>
-                                </div>
-                                <div class="mt-2">
-                                    <p class="text-xs text-gray-500">Peak</p>
-                                    <p id="statAxPeak" class="text-xs font-semibold text-red-600">No peaks detected</p>
-                                </div>
-                            </div>
 
-                            <!-- Axis Y Stats -->
-                            <div class="mb-4 pb-4 border-b border-gray-200">
-                                <p class="text-xs font-bold text-green-600 mb-2">AXIS Y</p>
-                                <div class="grid grid-cols-3 gap-3">
-                                    <div>
-                                        <p class="text-xs text-gray-500">Min</p>
-                                        <p id="statAyMin" class="text-sm font-bold text-gray-900">0.0000 G</p>
-                                    </div>
-                                    <div>
-                                        <p class="text-xs text-gray-500">Max</p>
-                                        <p id="statAyMax" class="text-sm font-bold text-gray-900">0.0000 G</p>
-                                    </div>
-                                    <div>
-                                        <p class="text-xs text-gray-500">Avg</p>
-                                        <p id="statAyAvg" class="text-sm font-bold text-gray-900">0.0000 G</p>
-                                    </div>
-                                </div>
-                                <div class="mt-2">
-                                    <p class="text-xs text-gray-500">Peak</p>
-                                    <p id="statAyPeak" class="text-xs font-semibold text-red-600">No peaks detected</p>
-                                </div>
-                            </div>
-
-                            <!-- Axis Z Stats -->
-                            <div>
-                                <p class="text-xs font-bold text-purple-600 mb-2">AXIS Z</p>
-                                <div class="grid grid-cols-3 gap-3">
-                                    <div>
-                                        <p class="text-xs text-gray-500">Min</p>
-                                        <p id="statAzMin" class="text-sm font-bold text-gray-900">0.0000 G</p>
-                                    </div>
-                                    <div>
-                                        <p class="text-xs text-gray-500">Max</p>
-                                        <p id="statAzMax" class="text-sm font-bold text-gray-900">0.0000 G</p>
-                                    </div>
-                                    <div>
-                                        <p class="text-xs text-gray-500">Avg</p>
-                                        <p id="statAzAvg" class="text-sm font-bold text-gray-900">0.0000 G</p>
-                                    </div>
-                                </div>
-                                <div class="mt-2">
-                                    <p class="text-xs text-gray-500">Peak</p>
-                                    <p id="statAzPeak" class="text-xs font-semibold text-red-600">No peaks detected</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Alert Panel -->
-                    <div class="bg-white rounded-xl shadow-md overflow-hidden">
-                        <div class="px-6 py-4 border-b border-gray-200 bg-gradient-to-r from-red-50 to-orange-50 flex items-center justify-between">
-                            <h3 class="text-lg font-bold text-gray-900">🚨 Active Alerts</h3>
-                            <span id="alertCount" class="px-3 py-1 bg-red-100 text-red-700 text-xs font-bold rounded-full">0</span>
-                        </div>
-                        <div class="p-6">
-                            <div id="alertList" class="space-y-3 max-h-80 overflow-y-auto">
-                                <p class="text-sm text-gray-500 text-center py-8">No active alerts</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
 
             <!-- Real-time Multi-axis Chart -->
             <div id="chartSection" class="mb-6 hidden">
@@ -755,13 +658,11 @@
                 document.getElementById('machineStatusCard').classList.remove('hidden');
                 document.getElementById('quickStatsSection').classList.remove('hidden');
                 document.getElementById('sensorValuesSection').classList.remove('hidden');
-                document.getElementById('statsAlertsSection').classList.remove('hidden');
                 document.getElementById('chartSection').classList.remove('hidden');
                 document.getElementById('liveFeedSection').classList.remove('hidden');
 
                 // Load data
                 loadMachineData(selectedMachineId);
-                fetchAlerts(selectedMachineId);
                 startAutoUpdate();
                 connectWebSocket(selectedMachineId);
                 initializeChart();
@@ -773,7 +674,6 @@
                 document.getElementById('machineStatusCard').classList.add('hidden');
                 document.getElementById('quickStatsSection').classList.add('hidden');
                 document.getElementById('sensorValuesSection').classList.add('hidden');
-                document.getElementById('statsAlertsSection').classList.add('hidden');
                 document.getElementById('chartSection').classList.add('hidden');
                 document.getElementById('liveFeedSection').classList.add('hidden');
             }
@@ -915,7 +815,6 @@
             updateInterval = setInterval(() => {
                 if (selectedMachineId) {
                     loadMachineData(selectedMachineId);
-                    fetchAlerts(selectedMachineId);
                 }
             }, 5000); // Update every 5 seconds
         }
@@ -1416,40 +1315,6 @@
 
             // Update total readings
             statistics.totalReadings++;
-
-            // Update DOM
-            updateStatisticsDisplay();
-        }
-
-        function updateStatisticsDisplay() {
-            const axes = [
-                { key: 'ax', label: 'X-Axis', color: 'blue' },
-                { key: 'ay', label: 'Y-Axis', color: 'green' },
-                { key: 'az', label: 'Z-Axis', color: 'purple' }
-            ];
-
-            axes.forEach(({ key, label }) => {
-                const stat = statistics[key];
-
-                // Min/Max/Avg
-                const min = stat.min === Infinity ? 0 : stat.min.toFixed(4);
-                const max = stat.max === -Infinity ? 0 : stat.max.toFixed(4);
-                const avg = stat.count > 0 ? (stat.sum / stat.count).toFixed(4) : '0.0000';
-
-                document.getElementById(`stat${key.charAt(0).toUpperCase() + key.slice(1)}Min`).textContent = `${min} G`;
-                document.getElementById(`stat${key.charAt(0).toUpperCase() + key.slice(1)}Max`).textContent = `${max} G`;
-                document.getElementById(`stat${key.charAt(0).toUpperCase() + key.slice(1)}Avg`).textContent = `${avg} G`;
-
-                // Peak
-                const peakElem = document.getElementById(`stat${key.charAt(0).toUpperCase() + key.slice(1)}Peak`);
-                if (stat.peak) {
-                    peakElem.textContent = `Peak: ${stat.peak.value.toFixed(4)}G at ${stat.peak.timestamp} (${stat.peak.severity})`;
-                    peakElem.className = stat.peak.severity === 'CRITICAL' ? 'text-sm text-red-600 font-semibold' : 'text-sm text-yellow-600 font-semibold';
-                } else {
-                    peakElem.textContent = 'No peaks detected';
-                    peakElem.className = 'text-sm text-gray-500';
-                }
-            });
         }
 
         function resetStatistics() {
@@ -1460,7 +1325,6 @@
             statistics.normalCount = 0;
             statistics.anomalyCount = 0;
             statistics.lastAnomaly = null;
-            updateStatisticsDisplay();
             updateQuickStats();
         }
 
@@ -1490,65 +1354,6 @@
                 ? ((statistics.normalCount / statistics.totalReadings) * 100).toFixed(1)
                 : '100.0';
             document.getElementById('statNormalTime').textContent = `${normalTime}%`;
-        }
-
-        // === Alert Functions ===
-        async function fetchAlerts(machineId) {
-            try {
-                const response = await fetch(`/api/machine/${machineId}/alerts`);
-                const data = await response.json();
-
-                if (data.success && data.alerts) {
-                    displayAlerts(data.alerts);
-                }
-            } catch (error) {
-                console.error('Error fetching alerts:', error);
-            }
-        }
-
-        function displayAlerts(alerts) {
-            const alertList = document.getElementById('alertList');
-            const alertCount = document.getElementById('alertCount');
-
-            alertCount.textContent = alerts.length;
-
-            if (alerts.length === 0) {
-                alertList.innerHTML = `
-                    <div class="text-center text-gray-500 py-8">
-                        <svg class="w-16 h-16 mx-auto mb-3 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                        </svg>
-                        <p class="text-lg font-medium">No active alerts</p>
-                        <p class="text-sm">System operating normally</p>
-                    </div>
-                `;
-                return;
-            }
-
-            alertList.innerHTML = alerts.map(alert => {
-                const severityColors = {
-                    'CRITICAL': 'bg-red-50 border-red-300 text-red-800',
-                    'WARNING': 'bg-yellow-50 border-yellow-300 text-yellow-800',
-                    'INFO': 'bg-blue-50 border-blue-300 text-blue-800'
-                };
-                const color = severityColors[alert.severity] || severityColors['INFO'];
-
-                return `
-                    <div class="p-4 rounded-lg border-2 ${color}">
-                        <div class="flex items-start justify-between">
-                            <div class="flex-1">
-                                <div class="flex items-center gap-2 mb-1">
-                                    <span class="px-2 py-1 text-xs font-bold rounded ${alert.severity === 'CRITICAL' ? 'bg-red-200' : alert.severity === 'WARNING' ? 'bg-yellow-200' : 'bg-blue-200'}">
-                                        ${alert.severity}
-                                    </span>
-                                    <span class="text-xs text-gray-600">${new Date(alert.created_at).toLocaleString('id-ID')}</span>
-                                </div>
-                                <p class="text-sm font-medium">${alert.message}</p>
-                            </div>
-                        </div>
-                    </div>
-                `;
-            }).join('');
         }
 
         // === Export Functions ===
