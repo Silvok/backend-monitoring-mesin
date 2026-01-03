@@ -2,7 +2,7 @@
     <!-- Primary Navigation Menu -->
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between items-center h-20">
-            <div class="flex items-center space-x-8">
+            <div class="flex items-center space-x-8 -ml-16 md:-ml-20">
                 <!-- Logo & Brand -->
                 <div class="flex items-center space-x-3">
                     <a href="{{ route('dashboard') }}" class="flex items-center space-x-2 hover:opacity-90 transition">
