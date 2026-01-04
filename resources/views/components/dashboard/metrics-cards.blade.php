@@ -29,7 +29,7 @@
     </div>
 
     <!-- Total Analysis -->
-    <div class="rounded-xl shadow-lg p-6 text-gray-900" style="background: linear-gradient(to bottom right, #FCCD2A, #F4B942);">
+    <div class="rounded-xl shadow-lg p-6 text-white" style="background: linear-gradient(to bottom right, #FCCD2A, #F4B942);">
         <div class="flex items-center justify-between mb-4">
             <div class="rounded-lg p-3" style="background-color: rgba(255,255,255,0.4);">
                 <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -38,8 +38,8 @@
             </div>
             <span class="text-3xl font-bold">{{ number_format($totalAnalysis) }}</span>
         </div>
-        <h3 class="text-lg font-semibold">Analisis</h3>
-        <p class="text-sm mt-1" style="color: rgba(0,0,0,0.6);">Total hasil analisis</p>
+        <h3 class="text-lg font-semibold text-white">Analisis</h3>
+        <p class="text-sm mt-1" style="color: rgba(255,255,255,0.85);">Total hasil analisis</p>
     </div>
 
     <!-- Status Anomali -->
