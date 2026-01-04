@@ -708,7 +708,7 @@
                                 ax: parseFloat(latest.acceleration_x),
                                 ay: parseFloat(latest.acceleration_y),
                                 az: parseFloat(latest.acceleration_z),
-                                temperature: Math.random() * 80 // TODO: Add real temperature from database
+                                temperature: latest.temperature !== null ? parseFloat(latest.temperature) : 25
                             };
                             updateSensorValues(sensorValues);
 
@@ -802,9 +802,10 @@
             const latest = sensorData.slice(0, 20);
 
             tbody.innerHTML = latest.map(data => {
+                // Display temperature from database, or fallback to default value
                 const temp = data.temperature !== undefined && data.temperature !== null
                     ? parseFloat(data.temperature).toFixed(1)
-                    : '-';
+                    : '25.0';
                 return `
                     <tr class="hover:bg-gray-50 transition">
                         <td class="px-6 py-3 whitespace-nowrap text-sm text-gray-900">${data.timestamp}</td>

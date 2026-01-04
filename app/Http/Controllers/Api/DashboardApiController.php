@@ -194,6 +194,7 @@ class DashboardApiController extends Controller
                         'acceleration_x' => round($sample->ax_g ?? 0, 4),
                         'acceleration_y' => round($sample->ay_g ?? 0, 4),
                         'acceleration_z' => round($sample->az_g ?? 0, 4),
+                        'temperature' => $sample->temperature_c ? round($sample->temperature_c, 1) : null,
                     ];
                 });
 
