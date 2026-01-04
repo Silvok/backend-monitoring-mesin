@@ -22,9 +22,15 @@
             </thead>
             <tbody class="bg-white divide-y divide-gray-200">
                 @forelse($latestSensorData->take(5) as $data)
+                @php
+                    // Find corresponding temperature reading for this sensor data
+                    $tempReading = $latestTemperatureData->where('machine_id', $data->machine_id)
+                        ->sortByDesc('recorded_at')
+                        ->first();
+                @endphp
                 <tr class="hover:bg-gray-50 transition">
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        {{ $data->created_at->format('d/m/Y H:i:s') }}
+                        {{ $data->created_at->format('d/m/Y H:i') }}
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-emerald-900">
                         {{ $data->machine->name ?? 'N/A' }}
@@ -38,8 +44,13 @@
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                         {{ number_format($data->az_g, 4) }}
                     </td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        {{ number_format($data->temperature_c, 2) }}
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold
+                        @if($tempReading && $tempReading->temperature_c > 50) text-red-600
+                        @elseif($tempReading && $tempReading->temperature_c > 40) text-orange-600
+                        @elseif($tempReading) text-green-600
+                        @else text-gray-500
+                        @endif">
+                        {{ $tempReading ? number_format($tempReading->temperature_c, 2) . '°C' : 'N/A' }}
                     </td>
                 </tr>
                 @empty

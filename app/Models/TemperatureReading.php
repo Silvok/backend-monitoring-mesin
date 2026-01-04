@@ -5,28 +5,25 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class RawSample extends Model
+class TemperatureReading extends Model
 {
     protected $fillable = [
-        'batch_id',
         'machine_id',
-        't_ms',
-        'ax_g',
-        'ay_g',
-        'az_g',
+        'recorded_at',
         'temperature_c',
+        'vibration',
+        'pressure',
     ];
 
     protected $casts = [
-        't_ms' => 'integer',
-        'ax_g' => 'float',
-        'ay_g' => 'float',
-        'az_g' => 'float',
+        'recorded_at' => 'datetime',
         'temperature_c' => 'float',
+        'vibration' => 'float',
+        'pressure' => 'float',
     ];
 
     /**
-     * Get the machine that owns this sample
+     * Get the machine that owns this temperature reading
      */
     public function machine(): BelongsTo
     {

@@ -16,7 +16,7 @@
             </div>
             <div class="flex items-center space-x-3">
                 <div class="text-sm text-gray-600 bg-gray-50 px-3 py-1.5 rounded-lg border border-gray-200">
-                    <span class="font-semibold" id="currentTime">{{ now()->format('d M Y, H:i:s') }}</span>
+                    <span class="font-semibold" id="currentTime">{{ \Carbon\Carbon::now()->translatedFormat('l, d M Y, H:i') }}</span>
                 </div>
                 <button onclick="refreshDashboard()" class="px-4 py-1.5 text-white text-sm font-medium rounded-lg transition flex items-center space-x-2 shadow-sm" style="background-color: #118B50;" onmouseover="this.style.backgroundColor='#185519'" onmouseout="this.style.backgroundColor='#118B50'">
                     <svg id="refreshIcon" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -515,20 +515,30 @@
             }
         }
 
-        // Update clock every second
+        // Update clock every minute - NO SECONDS
         function startClock() {
-            setInterval(() => {
+            const days = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
+            const months = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
+            
+            function updateClock() {
                 const now = new Date();
-                const options = {
-                    day: '2-digit',
-                    month: 'short',
-                    year: 'numeric',
-                    hour: '2-digit',
-                    minute: '2-digit',
-                    second: '2-digit'
-                };
-                document.getElementById('currentTime').textContent = now.toLocaleDateString('id-ID', options);
-            }, 1000);
+                const dayName = days[now.getDay()];
+                const day = String(now.getDate()).padStart(2, '0');
+                const month = months[now.getMonth()];
+                const year = now.getFullYear();
+                const hours = String(now.getHours()).padStart(2, '0');
+                const minutes = String(now.getMinutes()).padStart(2, '0');
+                
+                const timeString = `${dayName}, ${day} ${month} ${year}, ${hours}:${minutes}`;
+                const timeEl = document.getElementById('currentTime');
+                if (timeEl) {
+                    timeEl.textContent = timeString;
+                    console.log('Clock updated:', timeString);
+                }
+            }
+            
+            updateClock(); // Update immediately
+            setInterval(updateClock, 60000); // Update every 60 seconds (1 minute)
         }
 
         // ============================================

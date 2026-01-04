@@ -18,7 +18,7 @@ class DashboardApiController extends Controller
         $totalAnalysis = AnalysisResult::count();
 
         // Calculate anomaly count
-        $anomalyCount = AnalysisResult::where('condition_status', 'ANOMALY')->count();
+        $anomalyCount = AnalysisResult::whereIn('condition_status', ['ANOMALY', 'WARNING', 'FAULT', 'CRITICAL'])->count();
         $normalCount = AnalysisResult::where('condition_status', 'NORMAL')->count();
 
         // Get RMS data for last 24 hours for chart
@@ -40,7 +40,7 @@ class DashboardApiController extends Controller
             'anomalyCount' => $anomalyCount,
             'normalCount' => $normalCount,
             'rmsData' => $rmsData,
-            'timestamp' => now()->format('Y-m-d H:i:s')
+            'timestamp' => now()->format('l, d-m-Y H:i')
         ]);
     }
 
@@ -63,7 +63,7 @@ class DashboardApiController extends Controller
                         'peak_amp' => $latest ? $latest->peak_amp : 0,
                         'dominant_freq' => $latest ? $latest->dominant_freq_hz : 0,
                         'last_check' => $latest ? $latest->created_at->diffForHumans() : 'Never',
-                        'last_check_time' => $latest ? $latest->created_at->format('Y-m-d H:i:s') : null,
+                        'last_check_time' => $latest ? $latest->created_at->format('l, d-m-Y H:i') : null,
                     ];
                 });
 
@@ -107,7 +107,7 @@ class DashboardApiController extends Controller
                         'rms' => $analysis->rms,
                         'severity' => $severity,
                         'status' => $analysis->condition_status,
-                        'timestamp' => $analysis->created_at->format('Y-m-d H:i:s'),
+                        'timestamp' => $analysis->created_at->format('l, d-m-Y H:i'),
                         'time_ago' => $analysis->created_at->diffForHumans(),
                     ];
                 });
@@ -141,7 +141,7 @@ class DashboardApiController extends Controller
                 ->map(function($sample) {
                     return [
                         'id' => $sample->id,
-                        'timestamp' => $sample->created_at->format('Y-m-d H:i:s'),
+                        'timestamp' => $sample->created_at->format('l, d-m-Y H:i'),
                         'time_ago' => $sample->created_at->diffForHumans(),
                         'acceleration_x' => round($sample->ax_g ?? 0, 4),
                         'acceleration_y' => round($sample->ay_g ?? 0, 4),
@@ -227,8 +227,8 @@ class DashboardApiController extends Controller
                 'success' => true,
                 'sensor_data' => $sensorData,
                 'date_range' => [
-                    'start' => $startDate->format('Y-m-d H:i:s'),
-                    'end' => $endDate->format('Y-m-d H:i:s'),
+                    'start' => $startDate->format('l, d-m-Y H:i'),
+                    'end' => $endDate->format('l, d-m-Y H:i'),
                 ],
                 'total_points' => $sensorData->count(),
             ]);
@@ -277,7 +277,7 @@ class DashboardApiController extends Controller
                 ->get()
                 ->map(function($analysis) {
                     return [
-                        'timestamp' => $analysis->created_at->format('Y-m-d H:i:s'),
+                        'timestamp' => $analysis->created_at->format('l, d-m-Y H:i'),
                         'rms_value' => round($analysis->rms ?? 0, 4),
                         'peak_amplitude' => round($analysis->peak_amp ?? 0, 4),
                         'dominant_frequency' => round($analysis->dominant_freq ?? 0, 1),

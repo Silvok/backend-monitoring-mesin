@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Machine;
 use App\Models\RawSample;
 use App\Models\AnalysisResult;
+use App\Models\TemperatureReading;
 use Illuminate\Http\Request;
 
 class DashboardController extends Controller
@@ -33,8 +34,14 @@ class DashboardController extends Controller
             ->limit(10)
             ->get();
 
+        // Get latest temperature readings
+        $latestTemperatureData = TemperatureReading::with('machine')
+            ->latest('recorded_at')
+            ->limit(10)
+            ->get();
+
         // Calculate anomaly count
-        $anomalyCount = AnalysisResult::where('condition_status', 'ANOMALY')->count();
+        $anomalyCount = AnalysisResult::whereIn('condition_status', ['ANOMALY', 'WARNING', 'FAULT', 'CRITICAL'])->count();
         $normalCount = AnalysisResult::where('condition_status', 'NORMAL')->count();
 
         // Get RMS data for last 24 hours for chart
@@ -61,6 +68,7 @@ class DashboardController extends Controller
             'machine',
             'recentAnalysis',
             'latestSensorData',
+            'latestTemperatureData',
             'anomalyCount',
             'normalCount',
             'rmsChartData'
