@@ -79,7 +79,11 @@
 
         // Also load data immediately as fallback
         if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', loadMachineStatus);
+            document.addEventListener('DOMContentLoaded', () => {
+                loadMachineStatus();
+                loadAlerts();
+                loadTopMachinesByRisk();
+            });
         } else {
             // DOM is already loaded
             loadMachineStatus();
@@ -354,18 +358,32 @@
         // Top Machines Functions
         function loadTopMachinesByRisk() {
             return fetch('/api/top-machines-by-risk')
-                .then(response => response.json())
+                .then(async response => {
+                    if (!response.ok) {
+                        const text = await response.text();
+                        throw new Error(`HTTP ${response.status}: ${text}`);
+                    }
+                    return response.json();
+                })
                 .then(data => {
                     console.log('Top machines data:', data);
-                    renderTopMachines(data.top_machines || data);
+                    const machines = Array.isArray(data)
+                        ? data
+                        : (data.machines || data.top_machines || data.data || []);
+                    renderTopMachines(machines);
                 })
-                .catch(error => console.error('Error loading top machines:', error));
+                .catch(error => {
+                    console.error('Error loading top machines:', error);
+                    renderTopMachinesError('Gagal memuat ranking mesin. Coba refresh atau cek koneksi.');
+                });
         }
 
         function renderTopMachines(machines) {
             const list = document.getElementById('topMachinesList');
 
-            if (!machines.length) {
+            const rows = Array.isArray(machines) ? machines : [];
+
+            if (!rows.length) {
                 list.innerHTML = `
                     <div class="text-center text-gray-500 py-8">
                         <svg class="w-12 h-12 mx-auto mb-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -377,30 +395,47 @@
                 return;
             }
 
-            list.innerHTML = machines.map((machine, index) => `
+            list.innerHTML = rows.map((machine, index) => {
+                const machineName = machine.machine_name || machine.name || 'Nama tidak tersedia';
+                const rmsValue = Number(machine.rms || 0);
+                const severityClass = rmsValue > 10
+                    ? 'bg-red-100 text-red-800'
+                    : rmsValue > 5
+                        ? 'bg-orange-100 text-orange-800'
+                        : 'bg-yellow-100 text-yellow-800';
+                const severityLabel = rmsValue > 10 ? 'CRITICAL' : rmsValue > 5 ? 'HIGH' : 'MEDIUM';
+
+                return `
                 <div class="bg-gray-50 rounded-lg p-4 border-l-4 border-red-500">
                     <div class="flex items-center justify-between">
                         <div class="flex-1">
                             <div class="flex items-center space-x-2">
                                 <span class="text-2xl font-bold text-red-600">#${index + 1}</span>
                                 <div>
-                                    <p class="font-semibold text-gray-900">${machine.name}</p>
-                                    <p class="text-sm text-gray-600">RMS: ${machine.rms.toFixed(4)}</p>
+                                    <p class="font-semibold text-gray-900">${machineName}</p>
+                                    <p class="text-sm text-gray-600">RMS: ${rmsValue.toFixed(4)}</p>
                                 </div>
                             </div>
                         </div>
-                        <span class="px-3 py-1 rounded-full text-sm font-bold ${
-                            machine.rms > 10
-                                ? 'bg-red-100 text-red-800'
-                                : machine.rms > 5
-                                    ? 'bg-orange-100 text-orange-800'
-                                    : 'bg-yellow-100 text-yellow-800'
-                        }">
-                            ${machine.rms > 10 ? 'CRITICAL' : machine.rms > 5 ? 'HIGH' : 'MEDIUM'}
+                        <span class="px-3 py-1 rounded-full text-sm font-bold ${severityClass}">
+                            ${severityLabel}
                         </span>
                     </div>
                 </div>
-            `).join('');
+                `;
+            }).join('');
+        }
+
+        function renderTopMachinesError(message) {
+            const list = document.getElementById('topMachinesList');
+            list.innerHTML = `
+                <div class="text-center text-gray-500 py-8">
+                    <svg class="w-12 h-12 mx-auto mb-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4v2m0-10a4 4 0 110 8 4 4 0 010-8z" />
+                    </svg>
+                    <p>${message}</p>
+                </div>
+            `;
         }
 
         // Alert Sound Control

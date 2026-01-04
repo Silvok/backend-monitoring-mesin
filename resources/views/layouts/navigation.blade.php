@@ -13,7 +13,7 @@
             </div>
 
             <!-- Right Side Menu -->
-            <div class="hidden sm:flex items-center space-x-6 absolute right-0 pr-4 sm:pr-6 lg:pr-8">
+            <div class="hidden sm:flex items-center space-x-4 absolute right-0 pr-8">
                 <!-- Notification Bell (Future) -->
                 <button class="relative text-white hover:bg-white/10 p-2 rounded-lg transition duration-200">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -25,7 +25,7 @@
                 <!-- User Dropdown -->
                 <div x-data="{ dropdownOpen: false }" class="relative">
                     <button @click="dropdownOpen = !dropdownOpen"
-                            class="flex items-center space-x-3 hover:bg-white/10 px-3 py-2 rounded-full text-white font-semibold transition duration-200">
+                            class="flex items-center space-x-2 hover:bg-white/10 px-3 py-2 rounded-full text-white font-semibold transition duration-200">
                         <div class="w-8 h-8 bg-gradient-to-br from-yellow-400 to-yellow-500 rounded-full flex items-center justify-center font-bold text-xs shadow-lg">
                             {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
                         </div>

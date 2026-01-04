@@ -85,36 +85,53 @@ class DashboardApiController extends Controller
     public function getTopMachinesByRisk()
     {
         try {
-            $topMachines = AnalysisResult::with('machine')
+            $query = AnalysisResult::with('machine')
                 ->where('created_at', '>=', now()->subDay())
                 ->orderBy('rms', 'desc')
                 ->limit(5)
-                ->get()
-                ->map(function($analysis) {
-                    $severity = 'low';
-                    if ($analysis->rms >= 2.0) {
-                        $severity = 'critical';
-                    } elseif ($analysis->rms >= 1.5) {
-                        $severity = 'high';
-                    } elseif ($analysis->rms >= 1.0) {
-                        $severity = 'medium';
-                    }
+                ->get();
 
-                    return [
-                        'machine_id' => $analysis->machine_id,
-                        'machine_name' => $analysis->machine->name,
-                        'location' => $analysis->machine->location,
-                        'rms' => $analysis->rms,
-                        'severity' => $severity,
-                        'status' => $analysis->condition_status,
-                        'timestamp' => $analysis->created_at->format('l, d-m-Y H:i'),
-                        'time_ago' => $analysis->created_at->diffForHumans(),
-                    ];
-                });
+            // Fallback: if no data in last 24h, take latest 5 overall
+            if ($query->isEmpty()) {
+                $query = AnalysisResult::with('machine')
+                    ->orderBy('created_at', 'desc')
+                    ->orderBy('rms', 'desc')
+                    ->limit(5)
+                    ->get();
+            }
+
+            $topMachines = $query->map(function($analysis) {
+                $severity = 'low';
+                if ($analysis->rms >= 2.0) {
+                    $severity = 'critical';
+                } elseif ($analysis->rms >= 1.5) {
+                    $severity = 'high';
+                } elseif ($analysis->rms >= 1.0) {
+                    $severity = 'medium';
+                }
+
+                return [
+                    'machine_id' => $analysis->machine_id,
+                    'machine_name' => optional($analysis->machine)->name,
+                    'location' => optional($analysis->machine)->location,
+                    'rms' => $analysis->rms,
+                    'severity' => $severity,
+                    'status' => $analysis->condition_status,
+                    'timestamp' => $analysis->created_at->format('l, d-m-Y H:i'),
+                    'time_ago' => $analysis->created_at->diffForHumans(),
+                ];
+            });
+
+            \Log::info('top-machines-by-risk', [
+                'initial_query' => $query->count(),
+                'result_count' => $topMachines->count(),
+                'ids' => $topMachines->pluck('machine_id'),
+            ]);
 
             return response()->json([
                 'success' => true,
                 'machines' => $topMachines,
+                'top_machines' => $topMachines, // backward compatibility for older frontend
                 'total' => $topMachines->count(),
             ]);
         } catch (\Exception $e) {

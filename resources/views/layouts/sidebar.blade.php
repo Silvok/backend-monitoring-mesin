@@ -9,10 +9,13 @@
             <a href="{{ route('dashboard') }}"
                class="flex items-center space-x-3 px-4 py-2.5 rounded-lg text-gray-700 font-medium transition duration-200
                @if(request()->routeIs('dashboard'))
-                   bg-emerald-50 text-emerald-700
+                   text-gray-900
                @else
                    hover:bg-gray-50 text-gray-600
-               @endif">
+               @endif"
+               @if(request()->routeIs('dashboard'))
+                   style="background: linear-gradient(to right, rgba(49, 105, 78, 0.35), rgba(39, 86, 64, 0.35)); color: #163527;"
+               @endif>
                 <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-3m0 0l7-4 7 4M5 9v10a1 1 0 001 1h12a1 1 0 001-1V9M9 21h6" />
                 </svg>
@@ -28,10 +31,13 @@
             <a href="{{ route('real-time-sensor') }}"
                class="flex items-center space-x-3 px-4 py-2.5 rounded-lg font-medium transition duration-200
                @if(request()->routeIs('real-time-sensor'))
-                   bg-emerald-50 text-emerald-700
+                   text-gray-900
                @else
                    text-gray-600 hover:bg-gray-50 hover:text-gray-900
-               @endif">
+               @endif"
+               @if(request()->routeIs('real-time-sensor'))
+                   style="background: linear-gradient(to right, rgba(49, 105, 78, 0.35), rgba(39, 86, 64, 0.35)); color: #163527;"
+               @endif>
                 <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z" />
                 </svg>
@@ -40,7 +46,15 @@
 
             <!-- Grafik -->
             <a href="{{ route('data-grafik') }}"
-               class="flex items-center space-x-3 px-4 py-2.5 rounded-lg text-gray-600 font-medium hover:bg-gray-50 hover:text-gray-900 transition duration-200 {{ request()->routeIs('data-grafik') ? 'bg-blue-50 text-blue-600' : '' }}">
+               class="flex items-center space-x-3 px-4 py-2.5 rounded-lg font-medium transition duration-200
+               @if(request()->routeIs('data-grafik'))
+                   text-gray-900
+               @else
+                   text-gray-600 hover:bg-gray-50 hover:text-gray-900
+               @endif"
+               @if(request()->routeIs('data-grafik'))
+                   style="background: linear-gradient(to right, rgba(49, 105, 78, 0.35), rgba(39, 86, 64, 0.35)); color: #163527;"
+               @endif>
                 <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
                 </svg>
@@ -51,10 +65,13 @@
             <a href="{{ route('analisis') }}"
                class="flex items-center space-x-3 px-4 py-2.5 rounded-lg font-medium transition duration-200
                @if(request()->routeIs('analisis'))
-                   bg-purple-50 text-purple-700
+                   text-gray-900
                @else
                    text-gray-600 hover:bg-gray-50 hover:text-gray-900
-               @endif">
+               @endif"
+               @if(request()->routeIs('analisis'))
+                   style="background: linear-gradient(to right, rgba(49, 105, 78, 0.35), rgba(39, 86, 64, 0.35)); color: #163527;"
+               @endif>
                 <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
                 </svg>
