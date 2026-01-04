@@ -2,12 +2,14 @@
     <!-- Primary Navigation Menu -->
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between items-center h-20">
-            <div class="flex items-center space-x-8 -ml-16 md:-ml-20">
+            <div class="flex items-center space-x-4 sm:space-x-8 -ml-8 sm:-ml-16 md:-ml-20">
                 <!-- Logo & Brand -->
-                <div class="flex items-center space-x-3">
+                <div class="flex items-center space-x-2 sm:space-x-3">
                     <a href="{{ route('dashboard') }}" class="flex items-center space-x-2 hover:opacity-90 transition">
-                        <x-monitor-logo size="sm" />
-                        <span class="text-white font-extrabold text-2xl hidden sm:inline bg-gradient-to-r from-white to-emerald-100 bg-clip-text text-transparent">PreMaint</span>
+                        <div class="w-16 h-16 sm:w-24 sm:h-24 flex-shrink-0">
+                            <img src="{{ asset('images/unnamed.png') }}" alt="PreMaint Logo" class="w-full h-full object-contain">
+                        </div>
+                        <span class="text-white font-extrabold text-xl sm:text-3xl bg-gradient-to-r from-white to-emerald-100 bg-clip-text text-transparent">PreMaint</span>
                     </a>
                 </div>
             </div>
