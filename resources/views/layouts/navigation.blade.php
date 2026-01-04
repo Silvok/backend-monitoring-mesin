@@ -9,7 +9,7 @@
                         <div class="w-16 h-16 sm:w-24 sm:h-24 flex-shrink-0">
                             <img src="{{ asset('images/unnamed.png') }}" alt="PreMaint Logo" class="w-full h-full object-contain">
                         </div>
-                        <span class="text-white font-extrabold text-xl sm:text-3xl bg-gradient-to-r from-white to-emerald-100 bg-clip-text text-transparent">PreMaint</span>
+                        <span class="text-white font-black text-3xl sm:text-5xl bg-gradient-to-r from-white to-emerald-100 bg-clip-text text-transparent" style="font-weight: 900;">PreMaint</span>
                     </a>
                 </div>
             </div>
@@ -32,8 +32,9 @@
                             {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
                         </div>
                         <div class="hidden lg:flex items-center space-x-2">
-                            <div class="text-right">
-                                <p class="text-sm font-medium">{{ Auth::user()->name }}</p>
+                            <div class="text-left">
+                                <p class="text-sm font-bold text-white">{{ Auth::user()->name }}</p>
+                                <p class="text-xs text-emerald-200">{{ Auth::user()->email }}</p>
                             </div>
                             <svg :class="{ 'rotate-180': dropdownOpen }" class="w-4 h-4 transition duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
