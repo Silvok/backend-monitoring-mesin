@@ -311,20 +311,12 @@
                     <div class="px-6 py-4 border-b border-gray-200 bg-gradient-to-r from-blue-50 to-purple-50">
                         <div class="flex items-center justify-between flex-wrap gap-4">
                             <div>
-                                <h3 class="text-lg font-bold text-gray-900">📈 Real-Time Multi-Axis Chart</h3>
+                                <h3 class="text-lg font-bold text-gray-900">Real-Time Multi-Axis Chart</h3>
                                 <p class="text-xs text-gray-600 mt-1">Live acceleration monitoring across all axes</p>
                             </div>
                             <div class="flex items-center space-x-3 flex-wrap gap-2">
-                                <!-- Export Data Button -->
-                                <button id="exportDataBtn" class="px-4 py-2 text-xs font-semibold rounded-full bg-gradient-to-r from-teal-500 to-cyan-500 text-white shadow-md hover:shadow-lg transition transform hover:scale-105 flex items-center space-x-2">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
-                                    </svg>
-                                    <span>Export CSV</span>
-                                </button>
-
                                 <!-- Threshold Config Button -->
-                                <button id="thresholdConfigBtn" class="px-4 py-2 text-xs font-semibold rounded-full bg-gradient-to-r from-orange-500 to-amber-500 text-white shadow-md hover:shadow-lg transition transform hover:scale-105 flex items-center space-x-2">
+                                <button id="thresholdConfigBtn" class="px-4 py-2 text-xs font-semibold rounded-full bg-gradient-to-r from-orange-600 to-amber-500 text-gray-900 shadow-md hover:shadow-lg transition transform hover:scale-105 flex items-center space-2">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path>
                                     </svg>
@@ -362,9 +354,16 @@
 
                                 <!-- Time Window Selector (for live mode) -->
                                 <div id="liveTimeWindow">
-                                    <select id="timeWindowSelector" class="px-4 py-2 rounded-full border border-slate-200 bg-white shadow-sm text-sm font-semibold text-slate-700 focus:ring-2 focus:ring-sky-400 focus:border-sky-300">
+                                    <select id="timeWindowSelector" class="pl-4 pr-10 py-2 rounded-full border border-slate-200 bg-white shadow-sm text-sm font-semibold text-slate-700 focus:ring-2 focus:ring-sky-400 focus:border-sky-300 appearance-none bg-no-repeat bg-right" style="background-image: url('data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 fill=%22none%22 viewBox=%220 0 24 24%22 stroke=%22%23334155%22%3E%3Cpath stroke-linecap=%22round%22 stroke-linejoin=%22round%22 stroke-width=%222%22 d=%22M19 9l-7 7-7-7%22/%3E%3C/svg%3E'); background-size: 1.25rem; background-position: right 0.75rem center;">
                                         <option value="60">Last 1 Minute</option>
                                         <option value="300" selected>Last 5 Minutes</option>
+                                        <option value="900">Last 15 Minutes</option>
+                                        <option value="1800">Last 30 Minutes</option>
+                                        <option value="3600">Last 1 Hour</option>
+                                        <option value="10800">Last 3 Hours</option>
+                                        <option value="21600">Last 6 Hours</option>
+                                        <option value="43200">Last 12 Hours</option>
+                                        <option value="86400">Last 24 Hours</option>
                                     </select>
                                 </div>
 
@@ -497,6 +496,9 @@
         </div>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@4.0.1/dist/chartjs-plugin-annotation.min.js"></script>
+
     <script>
         let selectedMachineId = null;
         let updateInterval = null;
@@ -506,6 +508,7 @@
         let timeWindow = 300; // seconds (5 minutes default)
         let chartMode = 'live'; // 'live' or 'historical'
         let latestSampleTimestamp = null; // to auto-pick date for historical
+        let latestSummary = null; // hydrated from backend for Today's Summary
 
         // Chart data storage
         const chartData = {
@@ -554,6 +557,11 @@
         // Initialize when DOM is ready
         document.addEventListener('DOMContentLoaded', function() {
             console.log('DOM loaded, initializing...');
+
+            // Register annotation plugin for Chart.js
+            if (window.Chart && window['chartjs-plugin-annotation']) {
+                Chart.register(window['chartjs-plugin-annotation']);
+            }
 
             // Start clock
             updateClock();
@@ -684,6 +692,8 @@
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
+                        applySummary(data.summary);
+
                         updateMachineStatus(data.machine);
                         document.getElementById('machineStatusCard').classList.remove('hidden');
                         document.getElementById('sensorValuesSection').classList.remove('hidden');
@@ -712,7 +722,7 @@
                             updateStatistics(sensorValues);
 
                             // Track anomaly status
-                            if (machine.status === 'NORMAL') {
+                            if (data.machine && data.machine.status === 'NORMAL') {
                                 statistics.normalCount++;
                             } else {
                                 statistics.anomalyCount++;
@@ -720,7 +730,9 @@
                             }
 
                             // Update quick stats display
-                            updateQuickStats();
+                            if (!data.summary) {
+                                updateQuickStats();
+                            }
                         }
                     }
                 })
@@ -1145,7 +1157,7 @@
                             },
                             ticks: {
                                 callback: function(value) {
-                                    return value.toFixed(2) + ' G';
+                                        return Number(value).toFixed(4) + ' G';
                                 }
                             }
                         }
@@ -1189,7 +1201,26 @@
             multiAxisChart.data.datasets[0].data = chartData.ax;
             multiAxisChart.data.datasets[1].data = chartData.ay;
             multiAxisChart.data.datasets[2].data = chartData.az;
-            multiAxisChart.update('none'); // No animation for real-time
+            updateYAxisScale();
+        }
+
+        // Dynamically adjust Y-axis to keep small variations visible
+        function updateYAxisScale() {
+            if (!multiAxisChart) return;
+
+            const values = [...chartData.ax, ...chartData.ay, ...chartData.az].filter(v => typeof v === 'number' && !isNaN(v));
+            if (values.length === 0) return;
+
+            const minVal = Math.min(...values);
+            const maxVal = Math.max(...values);
+            const span = Math.max(maxVal - minVal, 0.001);
+            const padding = span * 0.2;
+
+            const axis = multiAxisChart.options.scales.y;
+            axis.min = minVal - padding;
+            axis.max = maxVal + padding;
+
+            multiAxisChart.update('none');
         }
 
         function startChartUpdate() {
@@ -1254,13 +1285,13 @@
                             multiAxisChart.data.datasets[0].data = chartData.ax;
                             multiAxisChart.data.datasets[1].data = chartData.ay;
                             multiAxisChart.data.datasets[2].data = chartData.az;
-                            multiAxisChart.update();
+                            updateYAxisScale();
                         }
                     } else {
                         console.warn('No historical data available for selected date and range', data.date_range);
                         if (multiAxisChart) {
                             clearChartData();
-                            multiAxisChart.update();
+                            updateYAxisScale();
                         }
                     }
                 })
@@ -1318,6 +1349,7 @@
         }
 
         function resetStatistics() {
+            latestSummary = null;
             statistics.ax = { min: Infinity, max: -Infinity, sum: 0, count: 0, peak: null, values: [] };
             statistics.ay = { min: Infinity, max: -Infinity, sum: 0, count: 0, peak: null, values: [] };
             statistics.az = { min: Infinity, max: -Infinity, sum: 0, count: 0, peak: null, values: [] };
@@ -1329,17 +1361,48 @@
         }
 
         // === Quick Stats Functions ===
+        function applySummary(summary) {
+            latestSummary = summary || null;
+
+            if (latestSummary) {
+                statistics.totalReadings = latestSummary.total_readings ?? 0;
+                statistics.normalCount = latestSummary.normal_count ?? 0;
+                statistics.anomalyCount = latestSummary.anomaly_count ?? 0;
+                statistics.lastAnomaly = latestSummary.last_anomaly ? new Date(latestSummary.last_anomaly) : null;
+            }
+
+            updateQuickStats();
+        }
+
         function updateQuickStats() {
-            // Total readings today
+            if (latestSummary) {
+                const totalReadings = latestSummary.total_readings ?? 0;
+                const uptime = Number(latestSummary.uptime_percent ?? 0).toFixed(1);
+                const normalPercent = Number(latestSummary.normal_percent ?? 0).toFixed(1);
+
+                document.getElementById('statReadings').textContent = totalReadings;
+                document.getElementById('statUptime').textContent = `${uptime}%`;
+                document.getElementById('statNormalTime').textContent = `${normalPercent}%`;
+
+                const lastAnomalyElem = document.getElementById('statLastAnomaly');
+                if (latestSummary.last_anomaly) {
+                    lastAnomalyElem.textContent = new Date(latestSummary.last_anomaly).toLocaleString('id-ID');
+                    lastAnomalyElem.className = 'text-2xl font-bold text-orange-600';
+                } else {
+                    lastAnomalyElem.textContent = 'No anomalies';
+                    lastAnomalyElem.className = 'text-2xl font-bold text-green-600';
+                }
+                return;
+            }
+
+            // Fallback to client-side counters if summary is unavailable
             document.getElementById('statReadings').textContent = statistics.totalReadings;
 
-            // Uptime percentage (normal / total * 100)
-            const uptime = statistics.totalReadings > 0
+            const uptimeFallback = statistics.totalReadings > 0
                 ? ((statistics.normalCount / statistics.totalReadings) * 100).toFixed(1)
                 : '0.0';
-            document.getElementById('statUptime').textContent = `${uptime}%`;
+            document.getElementById('statUptime').textContent = `${uptimeFallback}%`;
 
-            // Last anomaly
             const lastAnomalyElem = document.getElementById('statLastAnomaly');
             if (statistics.lastAnomaly) {
                 lastAnomalyElem.textContent = new Date(statistics.lastAnomaly).toLocaleString('id-ID');
@@ -1349,61 +1412,10 @@
                 lastAnomalyElem.className = 'text-2xl font-bold text-green-600';
             }
 
-            // Normal time percentage
-            const normalTime = statistics.totalReadings > 0
+            const normalTimeFallback = statistics.totalReadings > 0
                 ? ((statistics.normalCount / statistics.totalReadings) * 100).toFixed(1)
                 : '100.0';
-            document.getElementById('statNormalTime').textContent = `${normalTime}%`;
-        }
-
-        // === Export Functions ===
-        document.getElementById('exportDataBtn').addEventListener('click', function() {
-            exportToCSV();
-        });
-
-        function exportToCSV() {
-            if (!selectedMachineId) {
-                alert('Please select a machine first');
-                return;
-            }
-
-            const machine = Array.from(document.getElementById('machineSelect').options)
-                .find(opt => opt.value == selectedMachineId);
-            const machineName = machine ? machine.textContent.trim() : 'Unknown';
-
-            // CSV Headers
-            let csv = 'Timestamp,Acceleration X (G),Acceleration Y (G),Acceleration Z (G),Temperature (°C)\n';
-
-            // Use chart data for export
-            if (chartData.labels.length === 0) {
-                alert('No data available to export');
-                return;
-            }
-
-            // Add data rows
-            for (let i = 0; i < chartData.labels.length; i++) {
-                const row = [
-                    chartData.labels[i],
-                    chartData.ax[i] || '0',
-                    chartData.ay[i] || '0',
-                    chartData.az[i] || '0',
-                    '0' // Temperature placeholder
-                ];
-                csv += row.join(',') + '\n';
-            }
-
-            // Create blob and download
-            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-            const link = document.createElement('a');
-            const url = URL.createObjectURL(blob);
-            const dateStr = new Date().toISOString().split('T')[0];
-
-            link.setAttribute('href', url);
-            link.setAttribute('download', `sensor-data-${machineName}-${dateStr}.csv`);
-            link.style.visibility = 'hidden';
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
+            document.getElementById('statNormalTime').textContent = `${normalTimeFallback}%`;
         }
 
         // === Threshold Configuration ===

@@ -150,6 +150,37 @@ class DashboardApiController extends Controller
         try {
             $machine = Machine::with('latestAnalysis')->findOrFail($id);
 
+            // Today's window
+            $todayStart = now()->startOfDay();
+            $todayEnd = now();
+
+            // Aggregate today's readings and analysis summary
+            $totalReadingsToday = RawSample::where('machine_id', $id)
+                ->whereBetween('created_at', [$todayStart, $todayEnd])
+                ->count();
+
+            $anomalyStatuses = ['ANOMALY', 'WARNING', 'FAULT', 'CRITICAL'];
+
+            $todayAnalysisQuery = AnalysisResult::where('machine_id', $id)
+                ->whereBetween('created_at', [$todayStart, $todayEnd]);
+
+            $totalAnalysisToday = (clone $todayAnalysisQuery)->count();
+            $normalCountToday = (clone $todayAnalysisQuery)->where('condition_status', 'NORMAL')->count();
+            $anomalyCountToday = (clone $todayAnalysisQuery)->whereIn('condition_status', $anomalyStatuses)->count();
+
+            $lastAnomaly = AnalysisResult::where('machine_id', $id)
+                ->whereIn('condition_status', $anomalyStatuses)
+                ->orderBy('created_at', 'desc')
+                ->first();
+
+            $uptimePercent = $totalAnalysisToday > 0
+                ? round(($normalCountToday / $totalAnalysisToday) * 100, 1)
+                : 0.0;
+
+            $normalPercent = $totalAnalysisToday > 0
+                ? round(($normalCountToday / $totalAnalysisToday) * 100, 1)
+                : 0.0;
+
             // Get latest 20 sensor readings
             $sensorData = RawSample::where('machine_id', $id)
                 ->latest()
@@ -183,6 +214,15 @@ class DashboardApiController extends Controller
                     'last_check' => $latestAnalysis ? $latestAnalysis->created_at->diffForHumans() : 'Never',
                 ],
                 'sensor_data' => $sensorData,
+                'summary' => [
+                    'total_readings' => $totalReadingsToday,
+                    'total_analysis' => $totalAnalysisToday,
+                    'normal_count' => $normalCountToday,
+                    'anomaly_count' => $anomalyCountToday,
+                    'uptime_percent' => $uptimePercent,
+                    'normal_percent' => $normalPercent,
+                    'last_anomaly' => $lastAnomaly ? $lastAnomaly->created_at->toIso8601String() : null,
+                ],
             ]);
         } catch (\Exception $e) {
             return response()->json([
