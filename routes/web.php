@@ -18,6 +18,10 @@ Route::get('/real-time-sensor', [DashboardController::class, 'realTimeSensor'])
     ->middleware(['auth', 'verified'])
     ->name('real-time-sensor');
 
+Route::get('/data-grafik', [DashboardController::class, 'dataGrafik'])
+    ->middleware(['auth', 'verified'])
+    ->name('data-grafik');
+
 // API Routes for real-time updates
 Route::middleware('auth')->group(function () {
     Route::get('/api/dashboard-data', [DashboardApiController::class, 'getDashboardData']);
@@ -25,6 +29,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/api/top-machines-by-risk', [DashboardApiController::class, 'getTopMachinesByRisk']);
     Route::get('/api/machine/{id}/sensor-data', [DashboardApiController::class, 'getMachineSensorData']);
     Route::get('/api/machine/{id}/historical-data', [DashboardApiController::class, 'getHistoricalData']);
+    Route::get('/api/machine/{id}/historical-trend', [DashboardApiController::class, 'getHistoricalTrend']);
     Route::get('/api/machine/{id}/alerts', [DashboardController::class, 'getMachineAlerts']);
 
     // Alert API routes

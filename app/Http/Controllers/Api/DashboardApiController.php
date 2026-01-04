@@ -239,4 +239,90 @@ class DashboardApiController extends Controller
             ], 500);
         }
     }
+
+    /**
+     * Get historical trend data for Data Grafik page
+     */
+    public function getHistoricalTrend($id, Request $request)
+    {
+        try {
+            $dateFrom = $request->query('date_from');
+            $dateTo = $request->query('date_to');
+
+            if (!$dateFrom || !$dateTo) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Date range required'
+                ], 400);
+            }
+
+            $startDate = \Carbon\Carbon::createFromFormat('Y-m-d', $dateFrom)->startOfDay();
+            $endDate = \Carbon\Carbon::createFromFormat('Y-m-d', $dateTo)->endOfDay();
+
+            // Validate date range
+            if ($startDate > $endDate) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Invalid date range'
+                ], 400);
+            }
+
+            // Get machine info
+            $machine = Machine::findOrFail($id);
+
+            // Get analysis results (for RMS trend)
+            $analysisData = AnalysisResult::where('machine_id', $id)
+                ->whereBetween('created_at', [$startDate, $endDate])
+                ->orderBy('created_at', 'asc')
+                ->get()
+                ->map(function($analysis) {
+                    return [
+                        'timestamp' => $analysis->created_at->format('Y-m-d H:i:s'),
+                        'rms_value' => round($analysis->rms ?? 0, 4),
+                        'peak_amplitude' => round($analysis->peak_amp ?? 0, 4),
+                        'dominant_frequency' => round($analysis->dominant_freq ?? 0, 1),
+                        'is_anomaly' => $analysis->condition_status === 'ANOMALY' ? 1 : 0,
+                        'status' => $analysis->condition_status
+                    ];
+                });
+
+            if ($analysisData->isEmpty()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'No data available for the selected date range',
+                    'data' => [],
+                    'machine_name' => $machine->name
+                ]);
+            }
+
+            // Calculate statistics
+            $rmsValues = $analysisData->pluck('rms_value')->filter();
+            $stats = [
+                'min_rms' => $rmsValues->min(),
+                'max_rms' => $rmsValues->max(),
+                'avg_rms' => $rmsValues->avg(),
+                'total_readings' => $analysisData->count(),
+                'anomaly_count' => $analysisData->where('is_anomaly', 1)->count(),
+                'normal_count' => $analysisData->where('is_anomaly', 0)->count()
+            ];
+
+            return response()->json([
+                'success' => true,
+                'data' => $analysisData,
+                'machine_name' => $machine->name,
+                'machine_id' => $machine->id,
+                'statistics' => $stats,
+                'date_range' => [
+                    'from' => $startDate->format('Y-m-d'),
+                    'to' => $endDate->format('Y-m-d'),
+                    'total_days' => $startDate->diffInDays($endDate) + 1
+                ]
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage()
+            ], 500);
+        }
+    }
 }

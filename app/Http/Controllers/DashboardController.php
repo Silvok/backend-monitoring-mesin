@@ -77,6 +77,14 @@ class DashboardController extends Controller
         return view('pages.real-time-sensor', compact('machines'));
     }
 
+    public function dataGrafik()
+    {
+        // Get all machines for dropdown
+        $machines = Machine::orderBy('name')->get();
+
+        return view('pages.data-grafik', compact('machines'));
+    }
+
     public function getMachineAlerts($id)
     {
         try {
