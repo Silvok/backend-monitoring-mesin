@@ -48,10 +48,15 @@
             </a>
 
             <!-- Analisis -->
-            <a href="#"
-               class="flex items-center space-x-3 px-4 py-2.5 rounded-lg text-gray-600 font-medium hover:bg-gray-50 hover:text-gray-900 transition duration-200">
+            <a href="{{ route('analisis') }}"
+               class="flex items-center space-x-3 px-4 py-2.5 rounded-lg font-medium transition duration-200
+               @if(request()->routeIs('analisis'))
+                   bg-purple-50 text-purple-700
+               @else
+                   text-gray-600 hover:bg-gray-50 hover:text-gray-900
+               @endif">
                 <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
                 </svg>
                 <span class="text-sm">Analisis</span>
             </a>

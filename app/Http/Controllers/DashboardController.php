@@ -85,6 +85,14 @@ class DashboardController extends Controller
         return view('pages.data-grafik', compact('machines'));
     }
 
+    public function analisis()
+    {
+        // Get all machines for dropdown
+        $machines = Machine::orderBy('name')->get();
+
+        return view('pages.analisis', compact('machines'));
+    }
+
     public function getMachineAlerts($id)
     {
         try {

@@ -325,4 +325,142 @@ class DashboardApiController extends Controller
             ], 500);
         }
     }
-}
+
+    /**
+     * Get analysis data for analisis page
+     */
+    public function getAnalysisData(Request $request)
+    {
+        try {
+            $machineFilter = $request->input('machine_id', 'all');
+            $dateFrom = $request->input('date_from');
+            $dateTo = $request->input('date_to');
+
+            if (!$dateFrom || !$dateTo) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Date range required'
+                ], 400);
+            }
+
+            $startDate = \Carbon\Carbon::parse($dateFrom)->startOfDay();
+            $endDate = \Carbon\Carbon::parse($dateTo)->endOfDay();
+
+            // Get machines to analyze
+            $machines = $machineFilter === 'all'
+                ? Machine::all()
+                : Machine::where('id', $machineFilter)->get();
+
+            if ($machines->isEmpty()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'No machines found',
+                    'debug' => [
+                        'machineFilter' => $machineFilter,
+                        'totalMachines' => Machine::count()
+                    ]
+                ], 404);
+            }
+
+            $healthScores = [];
+            $comparativeData = [
+                'machine_names' => [],
+                'avg_rms' => [],
+                'anomaly_rates' => []
+            ];
+            $statisticalSummary = [];
+
+            foreach ($machines as $machine) {
+                // Get analysis results for this machine in date range
+                $analysisResults = AnalysisResult::where('machine_id', $machine->id)
+                    ->whereBetween('created_at', [$startDate, $endDate])
+                    ->get();
+
+                if ($analysisResults->isEmpty()) {
+                    continue;
+                }
+
+                $rmsValues = $analysisResults->pluck('rms')->filter()->map(function($val) {
+                    return (float) $val;
+                })->values();
+
+                $anomalyCount = $analysisResults->filter(function($result) {
+                    return in_array(strtolower($result->condition_status), ['anomaly', 'warning', 'critical']);
+                })->count();
+                $totalCount = $analysisResults->count();
+                $anomalyRate = $totalCount > 0 ? ($anomalyCount / $totalCount) * 100 : 0;
+
+                // Calculate statistics
+                $avgRms = $rmsValues->avg();
+                $minRms = $rmsValues->min();
+                $maxRms = $rmsValues->max();
+
+                // Standard deviation
+                $mean = $avgRms;
+                $variance = $rmsValues->map(function($val) use ($mean) {
+                    return pow($val - $mean, 2);
+                })->avg();
+                $stdDev = sqrt($variance);
+
+                // Calculate health score (0-100)
+                // Lower RMS, lower anomaly rate, lower std dev = higher score
+                $rmsScore = max(0, 100 - ($avgRms * 50)); // Normalize RMS
+                $anomalyScore = max(0, 100 - ($anomalyRate * 2)); // Penalize anomalies
+                $stabilityScore = max(0, 100 - ($stdDev * 100)); // Penalize instability
+
+                $healthScore = round(($rmsScore + $anomalyScore + $stabilityScore) / 3);
+
+                // Health Scores
+                $healthScores[] = [
+                    'machine_id' => $machine->id,
+                    'machine_name' => $machine->name,
+                    'health_score' => $healthScore,
+                    'avg_rms' => round($avgRms, 4),
+                    'anomaly_count' => $anomalyCount,
+                    'anomaly_rate' => round($anomalyRate, 2)
+                ];
+
+                // Comparative Data
+                $comparativeData['machine_names'][] = $machine->name;
+                $comparativeData['avg_rms'][] = round($avgRms, 4);
+                $comparativeData['anomaly_rates'][] = round($anomalyRate, 2);
+
+                // Statistical Summary
+                $statisticalSummary[] = [
+                    'machine_id' => $machine->id,
+                    'machine_name' => $machine->name,
+                    'total_data' => $totalCount,
+                    'rms_min' => round($minRms, 4),
+                    'rms_max' => round($maxRms, 4),
+                    'rms_avg' => round($avgRms, 4),
+                    'std_dev' => round($stdDev, 4),
+                    'anomaly_count' => $anomalyCount,
+                    'anomaly_rate' => round($anomalyRate, 2)
+                ];
+            }
+
+            // Sort health scores by score descending
+            usort($healthScores, function($a, $b) {
+                return $b['health_score'] <=> $a['health_score'];
+            });
+
+            return response()->json([
+                'success' => true,
+                'health_scores' => $healthScores,
+                'comparative_data' => $comparativeData,
+                'statistical_summary' => $statisticalSummary,
+                'date_range' => [
+                    'from' => $dateFrom,
+                    'to' => $dateTo
+                ]
+            ]);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error: ' . $e->getMessage(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine()
+            ], 500);
+        }
+    }

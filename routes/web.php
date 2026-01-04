@@ -22,6 +22,10 @@ Route::get('/data-grafik', [DashboardController::class, 'dataGrafik'])
     ->middleware(['auth', 'verified'])
     ->name('data-grafik');
 
+Route::get('/analisis', [DashboardController::class, 'analisis'])
+    ->middleware(['auth', 'verified'])
+    ->name('analisis');
+
 // API Routes for real-time updates
 Route::middleware('auth')->group(function () {
     Route::get('/api/dashboard-data', [DashboardApiController::class, 'getDashboardData']);
@@ -31,6 +35,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/api/machine/{id}/historical-data', [DashboardApiController::class, 'getHistoricalData']);
     Route::get('/api/machine/{id}/historical-trend', [DashboardApiController::class, 'getHistoricalTrend']);
     Route::get('/api/machine/{id}/alerts', [DashboardController::class, 'getMachineAlerts']);
+    Route::post('/api/analysis', [DashboardApiController::class, 'getAnalysisData']);
 
     // Alert API routes
     Route::get('/api/alerts', [AlertController::class, 'getActiveAlerts']);

@@ -352,6 +352,148 @@
                 </div>
             </div>
 
+            <!-- Fase 3: Advanced Analytics Section -->
+            <div id="advancedAnalyticsSection" class="hidden space-y-6">
+                <!-- Scatter Plot & Correlation -->
+                <div class="bg-gradient-to-br from-white to-blue-50/20 rounded-xl shadow-xl border-2 border-blue-100 p-6">
+                    <div class="flex items-center justify-between mb-6 pb-4 border-b-2 border-blue-100">
+                        <div class="flex items-center space-x-3">
+                            <div class="p-2 bg-gradient-to-br from-blue-500 to-cyan-600 rounded-lg shadow-md">
+                                <svg class="w-6 h-6 text-blue-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                                </svg>
+                            </div>
+                            <div>
+                                <h3 class="text-lg font-bold text-gray-900">Scatter Plot & Analisis Korelasi</h3>
+                                <p class="text-sm text-blue-700">Hubungan antara waktu dan nilai RMS</p>
+                            </div>
+                        </div>
+                        <button id="exportScatterBtn" class="p-2 bg-blue-100 text-blue-700 font-bold rounded-lg hover:bg-blue-200 transition shadow-md border-2 border-blue-300 cursor-pointer" title="Unduh sebagai Gambar" style="appearance: none; -webkit-appearance: none;">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                        <!-- Scatter Plot -->
+                        <div class="lg:col-span-2 bg-gray-50 rounded-lg p-4" style="height: 400px;">
+                            <canvas id="scatterChart"></canvas>
+                        </div>
+                        <!-- Correlation Stats -->
+                        <div class="space-y-4">
+                            <div class="bg-gradient-to-br from-blue-50 to-cyan-50 rounded-lg p-4 border-2 border-blue-200">
+                                <div class="flex items-center space-x-2 mb-2">
+                                    <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
+                                    </svg>
+                                    <span class="text-sm font-bold text-blue-900">Koefisien Korelasi</span>
+                                </div>
+                                <p class="text-2xl font-bold text-blue-700" id="correlationValue">-</p>
+                                <p class="text-xs text-blue-600 mt-1" id="correlationStrength">-</p>
+                            </div>
+                            <div class="bg-gradient-to-br from-purple-50 to-pink-50 rounded-lg p-4 border-2 border-purple-200">
+                                <div class="flex items-center space-x-2 mb-2">
+                                    <svg class="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z"></path>
+                                    </svg>
+                                    <span class="text-sm font-bold text-purple-900">Tren Data</span>
+                                </div>
+                                <p class="text-lg font-bold text-purple-700" id="trendDirection">-</p>
+                                <p class="text-xs text-purple-600 mt-1" id="trendDescription">-</p>
+                            </div>
+                            <div class="bg-gradient-to-br from-green-50 to-emerald-50 rounded-lg p-4 border-2 border-green-200">
+                                <div class="flex items-center space-x-2 mb-2">
+                                    <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                    </svg>
+                                    <span class="text-sm font-bold text-green-900">Total Data Points</span>
+                                </div>
+                                <p class="text-2xl font-bold text-green-700" id="totalDataPoints">-</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Anomaly Timeline -->
+                <div class="bg-gradient-to-br from-white to-red-50/20 rounded-xl shadow-xl border-2 border-red-100 p-6">
+                    <div class="flex items-center justify-between mb-6 pb-4 border-b-2 border-red-100">
+                        <div class="flex items-center space-x-3">
+                            <div class="p-2 bg-gradient-to-br from-red-500 to-orange-600 rounded-lg shadow-md">
+                                <svg class="w-6 h-6 text-red-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                                </svg>
+                            </div>
+                            <div>
+                                <h3 class="text-lg font-bold text-gray-900">Timeline Anomali</h3>
+                                <p class="text-sm text-red-700">Riwayat deteksi anomali pada periode terpilih</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <span class="px-3 py-1 bg-red-100 text-red-700 text-xs font-bold rounded-full border border-red-300" id="anomalyCount">0 Anomali</span>
+                        </div>
+                    </div>
+                    <div id="anomalyTimeline" class="space-y-3 max-h-96 overflow-y-auto">
+                        <!-- Anomaly items will be inserted here -->
+                    </div>
+                    <div id="noAnomalyState" class="text-center py-8">
+                        <svg class="w-16 h-16 text-green-400 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                        <p class="text-gray-600 font-semibold">Tidak ada anomali terdeteksi pada periode ini</p>
+                        <p class="text-sm text-gray-500 mt-1">Semua data dalam kondisi normal</p>
+                    </div>
+                </div>
+
+                <!-- PDF Report Generation -->
+                <div class="bg-gradient-to-br from-white to-purple-50/20 rounded-xl shadow-xl border-2 border-purple-100 p-6">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center space-x-3">
+                            <div class="p-2 bg-gradient-to-br from-purple-500 to-pink-600 rounded-lg shadow-md">
+                                <svg class="w-6 h-6 text-purple-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                </svg>
+                            </div>
+                            <div>
+                                <h3 class="text-lg font-bold text-gray-900">Generate Laporan PDF</h3>
+                                <p class="text-sm text-purple-700">Unduh laporan lengkap analisis data</p>
+                            </div>
+                        </div>
+                        <button id="generatePdfBtn" class="px-6 py-3 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-bold rounded-lg transition shadow-lg cursor-pointer flex items-center space-x-2 border-2 border-purple-700" style="appearance: none; -webkit-appearance: none;">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                            </svg>
+                            <span>Unduh Laporan PDF</span>
+                        </button>
+                    </div>
+                    <div class="mt-4 grid grid-cols-1 md:grid-cols-4 gap-3">
+                        <div class="bg-purple-50 rounded-lg p-3 border border-purple-200 text-center">
+                            <svg class="w-6 h-6 text-purple-600 mx-auto mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                            </svg>
+                            <p class="text-xs font-bold text-purple-900">Grafik Trend</p>
+                        </div>
+                        <div class="bg-purple-50 rounded-lg p-3 border border-purple-200 text-center">
+                            <svg class="w-6 h-6 text-purple-600 mx-auto mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+                            </svg>
+                            <p class="text-xs font-bold text-purple-900">Statistik</p>
+                        </div>
+                        <div class="bg-purple-50 rounded-lg p-3 border border-purple-200 text-center">
+                            <svg class="w-6 h-6 text-purple-600 mx-auto mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                            </svg>
+                            <p class="text-xs font-bold text-purple-900">Data Anomali</p>
+                        </div>
+                        <div class="bg-purple-50 rounded-lg p-3 border border-purple-200 text-center">
+                            <svg class="w-6 h-6 text-purple-600 mx-auto mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
+                            </svg>
+                            <p class="text-xs font-bold text-purple-900">Analisis Korelasi</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <!-- Empty State -->
             <div id="emptyState" class="bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl border-2 border-dashed border-gray-300 p-12 text-center">
                 <div class="flex flex-col items-center">
@@ -424,6 +566,7 @@
                 document.getElementById('comparisonChartSection').classList.add('hidden');
                 document.getElementById('heatmapSection').classList.add('hidden');
                 document.getElementById('statsSection').classList.add('hidden');
+                document.getElementById('advancedAnalyticsSection').classList.add('hidden');
                 document.getElementById('emptyState').classList.remove('hidden');
             } else if (view === 'comparison') {
                 compBtn.className = activeClass;
@@ -435,6 +578,7 @@
                 document.getElementById('comparisonChartSection').classList.add('hidden');
                 document.getElementById('heatmapSection').classList.add('hidden');
                 document.getElementById('statsSection').classList.add('hidden');
+                document.getElementById('advancedAnalyticsSection').classList.add('hidden');
                 document.getElementById('emptyState').classList.remove('hidden');
             } else if (view === 'heatmap') {
                 heatmapBtn.className = activeClass;
@@ -446,6 +590,7 @@
                 document.getElementById('comparisonChartSection').classList.add('hidden');
                 document.getElementById('heatmapSection').classList.add('hidden');
                 document.getElementById('statsSection').classList.add('hidden');
+                document.getElementById('advancedAnalyticsSection').classList.add('hidden');
                 document.getElementById('emptyState').classList.remove('hidden');
             }
         }
@@ -883,12 +1028,19 @@
                         processGraphData(data.data, data.machine_name, dateFrom, dateTo);
                         renderChart();
                         renderStatistics(data);
+
+                        // Load Advanced Analytics
+                        renderScatterPlot(data);
+                        renderAnomalyTimeline(data);
+
                         document.getElementById('trendChartSection').classList.remove('hidden');
                         document.getElementById('statsSection').classList.remove('hidden');
+                        document.getElementById('advancedAnalyticsSection').classList.remove('hidden');
                     } else {
                         document.getElementById('emptyState').classList.remove('hidden');
                         document.getElementById('trendChartSection').classList.add('hidden');
                         document.getElementById('statsSection').classList.add('hidden');
+                        document.getElementById('advancedAnalyticsSection').classList.add('hidden');
                         console.log('Tidak ada data untuk tanggal yang dipilih');
                     }
                 })
@@ -1095,6 +1247,483 @@
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
+        });
+
+        // =====================================================
+        // FASE 3: ADVANCED ANALYTICS
+        // =====================================================
+
+        let scatterChart = null;
+        let advancedAnalyticsData = null;
+
+        // Function to calculate correlation coefficient
+        function calculateCorrelation(x, y) {
+            const n = x.length;
+            if (n !== y.length || n === 0) return 0;
+
+            const sumX = x.reduce((a, b) => a + b, 0);
+            const sumY = y.reduce((a, b) => a + b, 0);
+            const sumXY = x.reduce((sum, xi, i) => sum + xi * y[i], 0);
+            const sumX2 = x.reduce((sum, xi) => sum + xi * xi, 0);
+            const sumY2 = y.reduce((sum, yi) => sum + yi * yi, 0);
+
+            const numerator = n * sumXY - sumX * sumY;
+            const denominator = Math.sqrt((n * sumX2 - sumX * sumX) * (n * sumY2 - sumY * sumY));
+
+            return denominator === 0 ? 0 : numerator / denominator;
+        }
+
+        // Function to interpret correlation
+        function interpretCorrelation(r) {
+            const abs = Math.abs(r);
+            if (abs >= 0.8) return { strength: 'Sangat Kuat', color: 'green' };
+            if (abs >= 0.6) return { strength: 'Kuat', color: 'blue' };
+            if (abs >= 0.4) return { strength: 'Sedang', color: 'yellow' };
+            if (abs >= 0.2) return { strength: 'Lemah', color: 'orange' };
+            return { strength: 'Sangat Lemah', color: 'red' };
+        }
+
+        // Function to render scatter plot
+        function renderScatterPlot(data) {
+            if (!data || !data.data || data.data.length === 0) {
+                document.getElementById('correlationValue').textContent = '-';
+                document.getElementById('correlationStrength').textContent = '-';
+                document.getElementById('trendDirection').textContent = '-';
+                document.getElementById('trendDescription').textContent = '-';
+                document.getElementById('totalDataPoints').textContent = '-';
+                return;
+            }
+
+            advancedAnalyticsData = data;
+
+            // Prepare scatter data - time index vs RMS value
+            const scatterData = data.data.map((item, index) => ({
+                x: index,
+                y: parseFloat(item.rms_value || 0),
+                isAnomaly: item.is_anomaly === 1,
+                timestamp: item.timestamp
+            }));
+
+            // Separate normal and anomaly data
+            const normalData = scatterData.filter(d => !d.isAnomaly);
+            const anomalyData = scatterData.filter(d => d.isAnomaly);
+
+            // Calculate correlation
+            const xValues = scatterData.map(d => d.x);
+            const yValues = scatterData.map(d => d.y);
+            const correlation = calculateCorrelation(xValues, yValues);
+            const interpretation = interpretCorrelation(correlation);
+
+            // Update correlation display
+            document.getElementById('correlationValue').textContent = correlation.toFixed(4);
+            document.getElementById('correlationStrength').textContent = `Korelasi ${interpretation.strength}`;
+
+            // Determine trend
+            const trendDir = correlation > 0.1 ? 'Naik' : (correlation < -0.1 ? 'Turun' : 'Stabil');
+            const trendColor = correlation > 0.1 ? 'text-red-700' : (correlation < -0.1 ? 'text-green-700' : 'text-gray-700');
+            document.getElementById('trendDirection').textContent = trendDir;
+            document.getElementById('trendDirection').className = `text-lg font-bold ${trendColor}`;
+
+            let trendDesc = '';
+            if (correlation > 0.1) {
+                trendDesc = 'Nilai RMS cenderung meningkat seiring waktu';
+            } else if (correlation < -0.1) {
+                trendDesc = 'Nilai RMS cenderung menurun seiring waktu';
+            } else {
+                trendDesc = 'Nilai RMS relatif stabil dari waktu ke waktu';
+            }
+            document.getElementById('trendDescription').textContent = trendDesc;
+            document.getElementById('totalDataPoints').textContent = scatterData.length;
+
+            // Destroy existing chart
+            if (scatterChart) {
+                scatterChart.destroy();
+            }
+
+            // Create scatter plot
+            const ctx = document.getElementById('scatterChart').getContext('2d');
+            scatterChart = new Chart(ctx, {
+                type: 'scatter',
+                data: {
+                    datasets: [
+                        {
+                            label: 'Data Normal',
+                            data: normalData,
+                            backgroundColor: 'rgba(59, 130, 246, 0.6)',
+                            borderColor: 'rgba(59, 130, 246, 1)',
+                            borderWidth: 2,
+                            pointRadius: 5,
+                            pointHoverRadius: 8
+                        },
+                        {
+                            label: 'Anomali',
+                            data: anomalyData,
+                            backgroundColor: 'rgba(239, 68, 68, 0.7)',
+                            borderColor: 'rgba(239, 68, 68, 1)',
+                            borderWidth: 2,
+                            pointRadius: 7,
+                            pointHoverRadius: 10,
+                            pointStyle: 'triangle'
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: true,
+                            position: 'top',
+                            labels: {
+                                padding: 15,
+                                font: { size: 12, weight: 'bold' },
+                                usePointStyle: true
+                            }
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                            padding: 12,
+                            callbacks: {
+                                title: function(context) {
+                                    const point = context[0].raw;
+                                    return point.timestamp || 'N/A';
+                                },
+                                label: function(context) {
+                                    return `RMS Value: ${context.parsed.y.toFixed(4)} G`;
+                                },
+                                afterLabel: function(context) {
+                                    const point = context.raw;
+                                    return point.isAnomaly ? 'Status: ANOMALI ⚠️' : 'Status: Normal ✓';
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            type: 'linear',
+                            title: {
+                                display: true,
+                                text: 'Time Index'
+                            },
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.05)'
+                            }
+                        },
+                        y: {
+                            title: {
+                                display: true,
+                                text: 'RMS Value (G)'
+                            },
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.1)'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Function to render anomaly timeline
+        function renderAnomalyTimeline(data) {
+            const timeline = document.getElementById('anomalyTimeline');
+            const noAnomalyState = document.getElementById('noAnomalyState');
+            const anomalyCount = document.getElementById('anomalyCount');
+
+            if (!data || !data.data || data.data.length === 0) {
+                timeline.innerHTML = '';
+                noAnomalyState.style.display = 'block';
+                anomalyCount.textContent = '0 Anomali';
+                return;
+            }
+
+            const anomalies = data.data.filter(item => item.is_anomaly === 1);
+
+            if (anomalies.length === 0) {
+                timeline.innerHTML = '';
+                noAnomalyState.style.display = 'block';
+                anomalyCount.textContent = '0 Anomali';
+                return;
+            }
+
+            noAnomalyState.style.display = 'none';
+            anomalyCount.textContent = `${anomalies.length} Anomali`;
+
+            timeline.innerHTML = anomalies.map((item, index) => `
+                <div class="bg-white rounded-lg p-4 border-l-4 border-red-500 shadow-md hover:shadow-lg transition">
+                    <div class="flex items-start justify-between">
+                        <div class="flex-1">
+                            <div class="flex items-center space-x-2 mb-2">
+                                <span class="px-2 py-1 bg-red-100 text-red-700 text-xs font-bold rounded">Anomali #${index + 1}</span>
+                                <span class="text-gray-400 text-xs">•</span>
+                                <span class="text-sm text-gray-600 font-semibold">${item.timestamp}</span>
+                            </div>
+                            <div class="grid grid-cols-3 gap-3 mt-3">
+                                <div class="bg-red-50 rounded p-2 border border-red-200">
+                                    <p class="text-xs text-red-600 font-semibold">RMS Value</p>
+                                    <p class="text-sm font-bold text-red-800">${parseFloat(item.rms_value || 0).toFixed(4)} G</p>
+                                </div>
+                                <div class="bg-orange-50 rounded p-2 border border-orange-200">
+                                    <p class="text-xs text-orange-600 font-semibold">Peak Amplitude</p>
+                                    <p class="text-sm font-bold text-orange-800">${parseFloat(item.peak_amplitude || 0).toFixed(4)}</p>
+                                </div>
+                                <div class="bg-yellow-50 rounded p-2 border border-yellow-200">
+                                    <p class="text-xs text-yellow-700 font-semibold">Dominant Freq</p>
+                                    <p class="text-sm font-bold text-yellow-800">${parseFloat(item.dominant_frequency || 0).toFixed(2)} Hz</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="ml-4">
+                            <svg class="w-8 h-8 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Export scatter plot as image
+        document.getElementById('exportScatterBtn').addEventListener('click', function() {
+            if (!scatterChart) {
+                alert('Tidak ada scatter plot untuk di-export');
+                return;
+            }
+
+            const link = document.createElement('a');
+            link.download = 'scatter-plot-rms.png';
+            link.href = scatterChart.toBase64Image();
+            link.click();
+        });
+
+        // Generate PDF Report
+        document.getElementById('generatePdfBtn').addEventListener('click', function() {
+            if (!advancedAnalyticsData || !advancedAnalyticsData.data || advancedAnalyticsData.data.length === 0) {
+                alert('Tidak ada data untuk generate laporan PDF');
+                return;
+            }
+
+            // Using simple HTML to PDF approach (window.print with media query)
+            // For production, consider using jsPDF or server-side PDF generation
+
+            const machineId = document.getElementById('graphMachineSelector').value;
+            const machineName = document.getElementById('graphMachineSelector').options[document.getElementById('graphMachineSelector').selectedIndex].text;
+            const dateFrom = document.getElementById('dateFrom').value;
+            const dateTo = document.getElementById('dateTo').value;
+
+            const data = advancedAnalyticsData.data;
+            const rmsValues = data.map(item => parseFloat(item.rms_value || 0));
+            const anomalies = data.filter(item => item.is_anomaly === 1);
+
+            const min = Math.min(...rmsValues).toFixed(4);
+            const max = Math.max(...rmsValues).toFixed(4);
+            const avg = (rmsValues.reduce((a, b) => a + b, 0) / rmsValues.length).toFixed(4);
+
+            // Calculate correlation
+            const xValues = data.map((_, index) => index);
+            const yValues = rmsValues;
+            const correlation = calculateCorrelation(xValues, yValues);
+
+            // Create PDF content in new window
+            const pdfWindow = window.open('', '_blank');
+            pdfWindow.document.write(`
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <title>Laporan Analisis Data - ${machineName}</title>
+                    <style>
+                        @media print {
+                            body { margin: 0; }
+                            .no-print { display: none; }
+                        }
+                        body {
+                            font-family: Arial, sans-serif;
+                            padding: 40px;
+                            line-height: 1.6;
+                        }
+                        .header {
+                            text-align: center;
+                            border-bottom: 3px solid #16a34a;
+                            padding-bottom: 20px;
+                            margin-bottom: 30px;
+                        }
+                        .header h1 {
+                            color: #16a34a;
+                            margin: 0;
+                        }
+                        .section {
+                            margin-bottom: 30px;
+                            page-break-inside: avoid;
+                        }
+                        .section h2 {
+                            color: #16a34a;
+                            border-bottom: 2px solid #ddd;
+                            padding-bottom: 10px;
+                        }
+                        .info-grid {
+                            display: grid;
+                            grid-template-columns: 1fr 1fr;
+                            gap: 15px;
+                            margin: 20px 0;
+                        }
+                        .info-box {
+                            background: #f3f4f6;
+                            padding: 15px;
+                            border-radius: 8px;
+                            border-left: 4px solid #16a34a;
+                        }
+                        .info-box strong {
+                            color: #16a34a;
+                        }
+                        .stats-table {
+                            width: 100%;
+                            border-collapse: collapse;
+                            margin: 20px 0;
+                        }
+                        .stats-table th, .stats-table td {
+                            padding: 12px;
+                            text-align: left;
+                            border: 1px solid #ddd;
+                        }
+                        .stats-table th {
+                            background: #16a34a;
+                            color: white;
+                        }
+                        .anomaly-list {
+                            list-style: none;
+                            padding: 0;
+                        }
+                        .anomaly-item {
+                            background: #fee;
+                            padding: 10px;
+                            margin: 10px 0;
+                            border-left: 4px solid #ef4444;
+                            border-radius: 4px;
+                        }
+                        .footer {
+                            margin-top: 50px;
+                            text-align: center;
+                            color: #666;
+                            font-size: 12px;
+                            border-top: 2px solid #ddd;
+                            padding-top: 20px;
+                        }
+                        .print-btn {
+                            background: #16a34a;
+                            color: white;
+                            border: none;
+                            padding: 15px 30px;
+                            font-size: 16px;
+                            font-weight: bold;
+                            border-radius: 8px;
+                            cursor: pointer;
+                            margin: 20px 0;
+                        }
+                        .print-btn:hover {
+                            background: #15803d;
+                        }
+                    </style>
+                </head>
+                <body>
+                    <div class="no-print" style="text-align: center;">
+                        <button class="print-btn" onclick="window.print()">🖨️ Cetak / Simpan PDF</button>
+                    </div>
+
+                    <div class="header">
+                        <h1>📊 LAPORAN ANALISIS DATA MESIN</h1>
+                        <p style="margin: 10px 0 0 0; color: #666;">Monitoring RMS Value & Deteksi Anomali</p>
+                    </div>
+
+                    <div class="section">
+                        <h2>📌 Informasi Umum</h2>
+                        <div class="info-grid">
+                            <div class="info-box">
+                                <strong>Nama Mesin:</strong><br>${machineName}
+                            </div>
+                            <div class="info-box">
+                                <strong>ID Mesin:</strong><br>${machineId}
+                            </div>
+                            <div class="info-box">
+                                <strong>Periode Dari:</strong><br>${dateFrom}
+                            </div>
+                            <div class="info-box">
+                                <strong>Periode Hingga:</strong><br>${dateTo}
+                            </div>
+                            <div class="info-box">
+                                <strong>Total Data Points:</strong><br>${data.length}
+                            </div>
+                            <div class="info-box">
+                                <strong>Total Anomali:</strong><br>${anomalies.length}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="section">
+                        <h2>📈 Statistik RMS Value</h2>
+                        <table class="stats-table">
+                            <thead>
+                                <tr>
+                                    <th>Metrik</th>
+                                    <th>Nilai Minimum</th>
+                                    <th>Nilai Maximum</th>
+                                    <th>Nilai Rata-rata</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>RMS Value (G)</strong></td>
+                                    <td>${min}</td>
+                                    <td>${max}</td>
+                                    <td>${avg}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="section">
+                        <h2>🔗 Analisis Korelasi</h2>
+                        <div class="info-grid">
+                            <div class="info-box">
+                                <strong>Koefisien Korelasi:</strong><br>${correlation.toFixed(4)}
+                            </div>
+                            <div class="info-box">
+                                <strong>Interpretasi:</strong><br>${interpretCorrelation(correlation).strength}
+                            </div>
+                            <div class="info-box" style="grid-column: 1 / -1;">
+                                <strong>Tren Data:</strong><br>
+                                ${correlation > 0.1 ? 'Nilai RMS cenderung meningkat seiring waktu (Trend Naik)' :
+                                  (correlation < -0.1 ? 'Nilai RMS cenderung menurun seiring waktu (Trend Turun)' :
+                                   'Nilai RMS relatif stabil dari waktu ke waktu (Trend Stabil)')}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="section">
+                        <h2>⚠️ Riwayat Anomali</h2>
+                        ${anomalies.length === 0 ?
+                            '<p style="text-align: center; color: #16a34a; font-weight: bold;">✅ Tidak ada anomali terdeteksi pada periode ini</p>' :
+                            `<ul class="anomaly-list">
+                                ${anomalies.map((item, index) => `
+                                    <li class="anomaly-item">
+                                        <strong>Anomali #${index + 1}</strong> - ${item.timestamp}<br>
+                                        <small>
+                                            RMS Value: ${parseFloat(item.rms_value || 0).toFixed(4)} G |
+                                            Peak Amplitude: ${parseFloat(item.peak_amplitude || 0).toFixed(4)} |
+                                            Dominant Frequency: ${parseFloat(item.dominant_frequency || 0).toFixed(2)} Hz
+                                        </small>
+                                    </li>
+                                `).join('')}
+                            </ul>`
+                        }
+                    </div>
+
+                    <div class="footer">
+                        <p>Laporan ini di-generate secara otomatis oleh Sistem Monitoring Mesin</p>
+                        <p>Tanggal Generate: ${new Date().toLocaleDateString('id-ID', { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' })}</p>
+                    </div>
+                </body>
+                </html>
+            `);
+            pdfWindow.document.close();
         });
 
         // Initialize
