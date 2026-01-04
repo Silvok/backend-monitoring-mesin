@@ -2,23 +2,23 @@
     <x-slot name="header">
         <div class="flex items-center justify-between">
             <div class="flex items-center space-x-8">
-                <h2 class="font-bold text-xl text-emerald-900">
+                <h2 class="font-bold text-xl" style="color: #185519;">
                     Dashboard Monitoring Mesin
                 </h2>
                 <!-- Live Status Indicator -->
-                <div class="flex items-center space-x-2 px-3 py-1.5 bg-emerald-50 rounded-full border border-emerald-200">
+                <div class="flex items-center space-x-2 px-3 py-1.5 rounded-full border" style="background-color: #f0faf3; border-color: #b3e5c0;">
                     <div class="relative flex h-3 w-3">
-                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                        <span class="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
+                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full opacity-75" style="background-color: #2bc970;"></span>
+                        <span class="relative inline-flex rounded-full h-3 w-3" style="background-color: #118B50;"></span>
                     </div>
-                    <span class="text-xs font-semibold text-emerald-700">Live</span>
+                    <span class="text-xs font-semibold" style="color: #185519;">Live</span>
                 </div>
             </div>
             <div class="flex items-center space-x-3">
                 <div class="text-sm text-gray-600 bg-gray-50 px-3 py-1.5 rounded-lg border border-gray-200">
                     <span class="font-semibold" id="currentTime">{{ now()->format('d M Y, H:i:s') }}</span>
                 </div>
-                <button onclick="refreshDashboard()" class="px-4 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-medium rounded-lg transition flex items-center space-x-2 shadow-sm">
+                <button onclick="refreshDashboard()" class="px-4 py-1.5 text-white text-sm font-medium rounded-lg transition flex items-center space-x-2 shadow-sm" style="background-color: #118B50;" onmouseover="this.style.backgroundColor='#185519'" onmouseout="this.style.backgroundColor='#118B50'">
                     <svg id="refreshIcon" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
                     </svg>
@@ -156,7 +156,7 @@
 
             <!-- Machine Status Grid - MONITORING SEMUA MESIN -->
             <div class="mb-8">
-                <h3 class="text-xl font-bold text-emerald-900 mb-4 flex items-center">
+                <h3 class="text-xl font-bold mb-4 flex items-center" style="color: #185519;">
                     <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z" />
                     </svg>
@@ -174,7 +174,7 @@
 
             <!-- RMS Value Chart - 24 Hours ANALYSIS -->
             <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
-                <h3 class="text-xl font-bold text-emerald-900 mb-6 flex items-center">
+                <h3 class="text-xl font-bold mb-6 flex items-center" style="color: #185519;">
                     <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
                     </svg>
@@ -187,7 +187,7 @@
 
             <!-- Top Machines by Risk - PRIORITAS UTAMA -->
             <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
-                <h3 class="text-xl font-bold text-emerald-900 mb-4 flex items-center">
+                <h3 class="text-xl font-bold mb-4 flex items-center" style="color: #185519;">
                     <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
                     </svg>
@@ -205,7 +205,7 @@
 
             <!-- Latest Sensor Data Table -->
             <div class="bg-white rounded-xl shadow-lg overflow-hidden">
-                <div class="bg-gradient-to-r from-emerald-700 to-emerald-800 px-6 py-4 rounded-t-xl">
+                <div class="px-6 py-4 rounded-t-xl" style="background: linear-gradient(to right, #185519, #118B50);">
                     <h3 class="text-xl font-bold text-white flex items-center">
                         <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M3 14h18m-9-4v8m-7 0h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
@@ -231,7 +231,7 @@
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                                     {{ $data->created_at->format('d/m/Y H:i:s') }}
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-emerald-900">
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold" style="color: #185519;">
                                     {{ $data->machine->name ?? 'N/A' }}
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
@@ -306,17 +306,17 @@
                     datasets: [{
                         label: 'RMS Value',
                         data: rmsData.map(item => item.value),
-                        borderColor: 'rgb(5, 150, 105)',
-                        backgroundColor: 'rgba(5, 150, 105, 0.1)',
+                        borderColor: 'rgb(17, 139, 80)',
+                        backgroundColor: 'rgba(17, 139, 80, 0.1)',
                         borderWidth: 3,
                         fill: true,
                         tension: 0.4,
                         pointRadius: 4,
                         pointHoverRadius: 6,
-                        pointBackgroundColor: 'rgb(5, 150, 105)',
+                        pointBackgroundColor: 'rgb(17, 139, 80)',
                         pointBorderColor: '#fff',
                         pointBorderWidth: 2,
-                        pointHoverBackgroundColor: 'rgb(4, 120, 87)',
+                        pointHoverBackgroundColor: 'rgb(24, 85, 25)',
                         pointHoverBorderColor: '#fff'
                     }]
                 },
@@ -332,7 +332,7 @@
                                     size: 14,
                                     weight: 'bold'
                                 },
-                                color: '#064e3b',
+                                color: '#185519',
                                 padding: 20
                             }
                         },
@@ -374,7 +374,7 @@
                                     size: 13,
                                     weight: 'bold'
                                 },
-                                color: '#064e3b'
+                                color: '#185519'
                             }
                         },
                         x: {
@@ -396,7 +396,7 @@
                                     size: 13,
                                     weight: 'bold'
                                 },
-                                color: '#064e3b'
+                                color: '#185519'
                             }
                         }
                     },
@@ -498,12 +498,15 @@
                     console.log('Live indicator updated to Alert state');
                 } else {
                     // Green normal state
-                    liveIndicator.className = 'flex items-center space-x-2 px-3 py-1.5 bg-emerald-50 rounded-full border border-emerald-200';
+                    liveIndicator.className = 'flex items-center space-x-2 px-3 py-1.5 rounded-full border';
+                    liveIndicator.style.backgroundColor = '#f0faf3';
+                    liveIndicator.style.borderColor = '#b3e5c0';
                     dot.innerHTML = `
-                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                        <span class="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
+                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full opacity-75" style="background-color: #2bc970;"></span>
+                        <span class="relative inline-flex rounded-full h-3 w-3" style="background-color: #118B50;"></span>
                     `;
-                    text.className = 'text-xs font-semibold text-emerald-700';
+                    text.className = 'text-xs font-semibold';
+                    text.style.color = '#185519';
                     text.textContent = 'Live';
                     console.log('Live indicator updated to Live state');
                 }
@@ -554,18 +557,18 @@
             }
 
             grid.innerHTML = machines.map(machine => `
-                <div class="bg-white rounded-lg shadow-md p-4 border-l-4 ${
-                    machine.status === 'ANOMALY' ? 'border-red-500' : 'border-emerald-500'
-                }">
+                <div class="bg-white rounded-lg shadow-md p-4 border-l-4" style="border-left-color: ${
+                    machine.status === 'ANOMALY' ? '#ef4444' : '#118B50'
+                };">
                     <div class="flex items-start justify-between mb-3">
                         <div>
                             <h4 class="font-bold text-gray-900">${machine.name}</h4>
                             <p class="text-xs text-gray-500">${machine.location}</p>
                         </div>
-                        <span class="px-2 py-1 rounded-full text-xs font-bold ${
+                        <span class="px-2 py-1 rounded-full text-xs font-bold" style="${
                             machine.status === 'ANOMALY'
-                                ? 'bg-red-100 text-red-800'
-                                : 'bg-emerald-100 text-emerald-800'
+                                ? 'background-color: #fee2e2; color: #991b1b;'
+                                : 'background-color: #e0f5e8; color: #185519;'
                         }">
                             ${machine.status}
                         </span>
@@ -919,17 +922,18 @@
         // Show notification for real-time updates
         function showNotification(data) {
             const notificationHtml = `
-                <div class="fixed top-4 right-4 bg-white rounded-lg shadow-xl p-4 border-l-4 ${data.status === 'anomaly' ? 'border-red-500' : 'border-emerald-500'} animate-slide-in z-50"
-                     style="min-width: 300px; animation: slideIn 0.3s ease-out;">
+                <div class="fixed top-4 right-4 bg-white rounded-lg shadow-xl p-4 border-l-4" style="min-width: 300px; animation: slideIn 0.3s ease-out; border-left-color: ${
+                    data.status === 'anomaly' ? '#ef4444' : '#118B50'
+                };">
                     <div class="flex items-start">
                         <div class="flex-shrink-0">
                             ${data.status === 'anomaly' ?
                                 '<svg class="w-6 h-6 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>' :
-                                '<svg class="w-6 h-6 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>'
+                                '<svg class="w-6 h-6" style="color: #118B50;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>'
                             }
                         </div>
                         <div class="ml-3 flex-1">
-                            <h3 class="text-sm font-semibold ${data.status === 'anomaly' ? 'text-red-800' : 'text-emerald-800'}">
+                            <h3 class="text-sm font-semibold" style="color: ${data.status === 'anomaly' ? '#991b1b' : '#185519'};">
                                 ${data.status === 'anomaly' ? 'Anomali Terdeteksi!' : 'Status Normal'}
                             </h3>
                             <p class="text-sm text-gray-600 mt-1">
@@ -1001,7 +1005,7 @@
         }
 
         .alert-filter-btn.active {
-            background: #059669;
+            background: #118B50;
             color: white;
         }
 

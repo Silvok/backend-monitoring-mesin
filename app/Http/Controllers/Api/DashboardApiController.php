@@ -463,4 +463,4 @@ class DashboardApiController extends Controller
                 'line' => $e->getLine()
             ], 500);
         }
-    }
+    }}

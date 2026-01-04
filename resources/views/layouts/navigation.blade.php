@@ -1,4 +1,4 @@
-<nav x-data="{ open: false }" class="bg-gradient-to-r from-emerald-700 to-emerald-800 shadow-lg border-b-2 border-emerald-900 fixed top-0 left-0 right-0 z-50">
+<nav x-data="{ open: false }" class="shadow-lg border-b-2 fixed top-0 left-0 right-0 z-50" style="background: linear-gradient(to right, #31694E, #275640); border-bottom-color: #1e4030;">
     <!-- Primary Navigation Menu -->
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between items-center h-20">
@@ -13,7 +13,7 @@
             </div>
 
             <!-- Right Side Menu -->
-            <div class="hidden sm:flex items-center space-x-6">
+            <div class="hidden sm:flex items-center space-x-6 absolute right-0 pr-4 sm:pr-6 lg:pr-8">
                 <!-- Notification Bell (Future) -->
                 <button class="relative text-white hover:bg-white/10 p-2 rounded-lg transition duration-200">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -93,16 +93,16 @@
     </div>
 
     <!-- Mobile Navigation Menu -->
-    <div :class="{'block': open, 'hidden': !open}" class="hidden sm:hidden bg-emerald-800 border-t-2 border-emerald-900">
+    <div :class="{'block': open, 'hidden': !open}" class="hidden sm:hidden border-t-2" style="background-color: #275640; border-top-color: #1e4030;">
         <div class="px-4 pt-2 pb-3 space-y-1">
             <!-- Mobile menu items can be added here if needed -->
         </div>
 
         <!-- Mobile User Menu -->
-        <div class="pt-4 pb-3 border-t border-emerald-700">
+        <div class="pt-4 pb-3 border-t" style="border-top-color: #31694E;">
             <div class="px-4 py-2">
                 <p class="text-sm font-semibold text-white">{{ Auth::user()->name }}</p>
-                <p class="text-xs text-emerald-100">{{ Auth::user()->email }}</p>
+                <p class="text-xs text-gray-200">{{ Auth::user()->email }}</p>
             </div>
             <div class="mt-3 space-y-1">
                 <a href="{{ route('profile.edit') }}" class="block px-4 py-2 rounded text-white hover:bg-white/10 transition flex items-center space-x-2">
