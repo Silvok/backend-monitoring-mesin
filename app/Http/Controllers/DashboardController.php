@@ -89,8 +89,9 @@ class DashboardController extends Controller
     {
         // Get all machines for dropdown
         $machines = Machine::orderBy('name')->get();
-
-        return view('pages.data-grafik', compact('machines'));
+        // Get latest date from analysis_results
+        $latestDate = AnalysisResult::orderBy('created_at', 'desc')->value('created_at');
+        return view('pages.data-grafik', compact('machines', 'latestDate'));
     }
 
     public function analisis()

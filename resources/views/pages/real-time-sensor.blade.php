@@ -3,7 +3,7 @@
         <div class="flex items-center justify-between">
             <div class="flex items-center space-x-8">
                 <h2 class="font-bold text-xl text-emerald-900">
-                    Real-Time Sensor Monitoring
+                    Pemantauan Sensor Real-Time
                 </h2>
                 <!-- Live Status Indicator -->
                 <div class="flex items-center space-x-2 px-3 py-1.5 bg-emerald-50 rounded-full border border-emerald-200">
@@ -11,7 +11,7 @@
                         <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
                         <span class="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
                     </div>
-                    <span class="text-xs font-semibold text-emerald-700">Live</span>
+                    <span class="text-xs font-semibold text-emerald-700">Langsung</span>
                 </div>
             </div>
             <div class="flex items-center space-x-3">
@@ -29,13 +29,13 @@
             <div class="mb-6">
                 <div class="bg-white rounded-xl shadow-md p-6">
                     <label for="machineSelector" class="block text-sm font-bold text-gray-900 mb-3">
-                        🔧 Select Machine to Monitor
+                        🔧 Pilih Mesin untuk Dipantau
                     </label>
                     <select id="machineSelector" class="w-full md:w-1/2 px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-gray-900 font-medium">
-                        <option value="">-- Select a Machine --</option>
+                        <option value="">-- Pilih Mesin --</option>
                         @foreach($machines as $machine)
                             <option value="{{ $machine->id }}"
-                                data-status="{{ $machine->latestAnalysis?->condition_status ?? 'UNKNOWN' }}"
+                                data-status="{{ $machine->latestAnalysis?->condition_status ?? 'TIDAK DIKETAHUI' }}"
                                 data-location="{{ $machine->location }}">
                                 {{ $machine->name }} ({{ $machine->location }})
                             </option>
@@ -54,11 +54,11 @@
                         <div class="flex items-start justify-between mb-6">
                             <div>
                                 <h3 id="machineName" class="text-2xl font-bold text-gray-900 mb-2">-</h3>
-                                <p id="machineLocation" class="text-sm text-gray-600">Location: -</p>
+                                <p id="machineLocation" class="text-sm text-gray-600">Lokasi: -</p>
                             </div>
                             <div class="flex items-center space-x-3">
                                 <span id="statusBadge" class="px-4 py-2 rounded-full text-sm font-bold bg-gray-200 text-gray-700">
-                                    UNKNOWN
+                                    TIDAK DIKETAHUI
                                 </span>
                                 <div id="statusIcon" class="w-12 h-12 rounded-lg bg-gray-200 flex items-center justify-center">
                                     <svg class="w-6 h-6 text-gray-600" fill="currentColor" viewBox="0 0 20 20">
@@ -86,7 +86,7 @@
 
                         <!-- Last Check -->
                         <div class="text-sm text-gray-600">
-                            <span class="font-semibold">Last Check:</span>
+                            <span class="font-semibold">Pemeriksaan Terakhir:</span>
                             <span id="lastCheck">-</span>
                         </div>
                     </div>
@@ -97,12 +97,12 @@
             <div id="quickStatsSection" class="mb-6 hidden">
                 <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
                     <div class="flex items-center justify-between mb-4">
-                        <h3 class="text-sm font-semibold text-gray-700">Today's Summary</h3>
+                        <h3 class="text-sm font-semibold text-gray-700">Ringkasan Hari Ini</h3>
                         <div class="flex items-center space-x-1 text-xs text-gray-500">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                             </svg>
-                            <span>Live monitoring</span>
+                            <span>Pemantauan langsung</span>
                         </div>
                     </div>
 
@@ -115,7 +115,7 @@
                                 </svg>
                             </div>
                             <p id="statReadings" class="text-3xl font-bold text-gray-900 mb-1">0</p>
-                            <p class="text-xs text-gray-500 font-medium">Readings</p>
+                            <p class="text-xs text-gray-500 font-medium">Pembacaan</p>
                         </div>
 
                         <!-- Uptime -->
@@ -126,7 +126,7 @@
                                 </svg>
                             </div>
                             <p id="statUptime" class="text-3xl font-bold text-emerald-600 mb-1">--%</p>
-                            <p class="text-xs text-gray-500 font-medium">Uptime</p>
+                            <p class="text-xs text-gray-500 font-medium">Waktu Aktif</p>
                         </div>
 
                         <!-- Normal State -->
@@ -147,8 +147,8 @@
                                     <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
                                 </svg>
                             </div>
-                            <p id="statLastAnomaly" class="text-sm font-semibold text-gray-900 mb-1 truncate px-2">Never</p>
-                            <p class="text-xs text-gray-500 font-medium">Last Alert</p>
+                            <p id="statLastAnomaly" class="text-sm font-semibold text-gray-900 mb-1 truncate px-2">Tidak Pernah</p>
+                            <p class="text-xs text-gray-500 font-medium">Peringatan Terakhir</p>
                         </div>
                     </div>
                 </div>
@@ -159,13 +159,13 @@
                 <div class="bg-white rounded-xl shadow-md overflow-hidden">
                     <div class="px-6 py-4 border-b border-gray-200 bg-gradient-to-r from-emerald-50 to-blue-50">
                         <div class="flex items-center justify-between">
-                            <h3 class="text-lg font-bold text-gray-900">Real-Time Sensor Values</h3>
+                            <h3 class="text-lg font-bold text-gray-900">Nilai Sensor Real-Time</h3>
                             <div class="flex items-center space-x-2 px-3 py-1 bg-white rounded-full border border-emerald-300 shadow-sm">
                                 <div class="relative flex h-2 w-2">
                                     <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
                                     <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
                                 </div>
-                                <span class="text-xs font-semibold text-emerald-700">Updating</span>
+                                <span class="text-xs font-semibold text-emerald-700">Memperbarui</span>
                             </div>
                         </div>
                     </div>
@@ -173,14 +173,14 @@
                     <div class="p-6">
                         <!-- Acceleration 3-Axis Display -->
                         <div class="mb-6">
-                            <h4 class="text-sm font-bold text-gray-700 mb-4 uppercase tracking-wide">Acceleration (G-Force)</h4>
+                            <h4 class="text-sm font-bold text-gray-700 mb-4 uppercase tracking-wide">Percepatan (G-Force)</h4>
                             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                                 <!-- AX Card -->
                                 <div class="relative">
                                     <div id="axCard" class="bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl p-6 border-2 border-gray-300 transition-all duration-300">
                                         <div class="flex items-start justify-between mb-4">
                                             <div>
-                                                <p class="text-xs font-bold text-gray-600 mb-1">AXIS X</p>
+                                                <p class="text-xs font-bold text-gray-600 mb-1">SUMBU X</p>
                                                 <p id="axValue" class="text-4xl font-bold text-gray-900">0.0000</p>
                                                 <p class="text-xs text-gray-500 mt-1">G</p>
                                             </div>
@@ -204,7 +204,7 @@
                                     <div id="ayCard" class="bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl p-6 border-2 border-gray-300 transition-all duration-300">
                                         <div class="flex items-start justify-between mb-4">
                                             <div>
-                                                <p class="text-xs font-bold text-gray-600 mb-1">AXIS Y</p>
+                                                <p class="text-xs font-bold text-gray-600 mb-1">SUMBU Y</p>
                                                 <p id="ayValue" class="text-4xl font-bold text-gray-900">0.0000</p>
                                                 <p class="text-xs text-gray-500 mt-1">G</p>
                                             </div>
@@ -228,7 +228,7 @@
                                     <div id="azCard" class="bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl p-6 border-2 border-gray-300 transition-all duration-300">
                                         <div class="flex items-start justify-between mb-4">
                                             <div>
-                                                <p class="text-xs font-bold text-gray-600 mb-1">AXIS Z</p>
+                                                <p class="text-xs font-bold text-gray-600 mb-1">SUMBU Z</p>
                                                 <p id="azValue" class="text-4xl font-bold text-gray-900">0.0000</p>
                                                 <p class="text-xs text-gray-500 mt-1">G</p>
                                             </div>
@@ -251,7 +251,7 @@
 
                         <!-- Temperature Display -->
                         <div>
-                            <h4 class="text-sm font-bold text-gray-700 mb-4 uppercase tracking-wide">Temperature</h4>
+                            <h4 class="text-sm font-bold text-gray-700 mb-4 uppercase tracking-wide">Suhu</h4>
                             <div class="bg-gradient-to-br from-orange-50 to-red-50 rounded-xl p-6 border-2 border-orange-200">
                                 <div class="flex items-center justify-between">
                                     <div class="flex items-center space-x-4">
@@ -261,7 +261,7 @@
                                             </svg>
                                         </div>
                                         <div>
-                                            <p class="text-xs font-bold text-gray-600 mb-1">SENSOR TEMPERATURE</p>
+                                            <p class="text-xs font-bold text-gray-600 mb-1">SENSOR SUHU</p>
                                             <p id="tempValue" class="text-5xl font-bold text-gray-900">--</p>
                                             <p class="text-sm text-gray-500 mt-1">°C</p>
                                         </div>
@@ -270,7 +270,7 @@
                                         <p id="tempStatus" class="text-sm font-bold text-gray-600 px-4 py-2 bg-white rounded-lg border-2 border-gray-300">
                                             NORMAL
                                         </p>
-                                        <p class="text-xs text-gray-500 mt-2">Range: 0-80°C</p>
+                                        <p class="text-xs text-gray-500 mt-2">Rentang: 0-80°C</p>
                                     </div>
                                 </div>
                                 <div class="relative pt-4 mt-4 border-t border-orange-200">
@@ -283,19 +283,19 @@
 
                         <!-- Legend -->
                         <div class="mt-6 p-4 bg-gray-50 rounded-lg border border-gray-200">
-                            <p class="text-xs font-bold text-gray-700 mb-2">Status Indicators:</p>
+                            <p class="text-xs font-bold text-gray-700 mb-2">Indikator Status:</p>
                             <div class="flex flex-wrap gap-4">
                                 <div class="flex items-center space-x-2">
                                     <div class="w-3 h-3 rounded-full bg-emerald-500"></div>
-                                    <span class="text-xs text-gray-600">Good (0-0.7G / 0-60°C)</span>
+                                    <span class="text-xs text-gray-600">Baik (0-0.7G / 0-60°C)</span>
                                 </div>
                                 <div class="flex items-center space-x-2">
                                     <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
-                                    <span class="text-xs text-gray-600">Acceptable (0.7-1.8G / 60-80°C)</span>
+                                    <span class="text-xs text-gray-600">Dapat Diterima (0.7-1.8G / 60-80°C)</span>
                                 </div>
                                 <div class="flex items-center space-x-2">
                                     <div class="w-3 h-3 rounded-full bg-red-500"></div>
-                                    <span class="text-xs text-gray-600">Unsatisfactory (>1.8G / >80°C)</span>
+                                    <span class="text-xs text-gray-600">Tidak Memuaskan (>1.8G / >80°C)</span>
                                 </div>
                             </div>
                         </div>
@@ -311,8 +311,8 @@
                     <div class="px-6 py-4 border-b border-gray-200 bg-gradient-to-r from-blue-50 to-purple-50">
                         <div class="flex items-center justify-between flex-wrap gap-4">
                             <div>
-                                <h3 class="text-lg font-bold text-gray-900">Real-Time Multi-Axis Chart</h3>
-                                <p class="text-xs text-gray-600 mt-1">Live acceleration monitoring across all axes</p>
+                                <h3 class="text-lg font-bold text-gray-900">Grafik Multi-Sumbu Real-Time</h3>
+                                <p class="text-xs text-gray-600 mt-1">Pemantauan percepatan secara real-time di semua sumbu</p>
                             </div>
                             <div class="flex items-center space-x-3 flex-wrap gap-2">
                                 <!-- Threshold Config Button -->
@@ -320,16 +320,16 @@
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path>
                                     </svg>
-                                    <span>Thresholds</span>
+                                    <span>Ambang Batas</span>
                                 </button>
 
                                 <!-- Chart Mode Toggle -->
                                 <div class="flex items-center bg-gray-100 rounded-full shadow-sm p-1 gap-1">
                                     <button id="liveModeBtn" class="px-4 py-2 text-xs font-semibold rounded-full bg-emerald-500 text-white shadow-md transition transform hover:scale-105">
-                                        Live
+                                        Langsung
                                     </button>
                                     <button id="historicalModeBtn" class="px-4 py-2 text-xs font-semibold rounded-full bg-white text-gray-900 border border-gray-300 hover:border-purple-400 hover:text-purple-600 transition">
-                                        Historical
+                                        Historis
                                     </button>
                                 </div>
 
@@ -373,7 +373,7 @@
                                         <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-sky-400 opacity-75"></span>
                                         <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
                                     </div>
-                                    <span class="text-xs font-semibold text-sky-700">Live Update</span>
+                                    <span class="text-xs font-semibold text-sky-700">Pembaruan Langsung</span>
                                 </div>
 
                                 <!-- Historical Indicator -->
@@ -381,7 +381,7 @@
                                     <svg class="w-3 h-3 text-purple-600" fill="currentColor" viewBox="0 0 20 20">
                                         <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"></path>
                                     </svg>
-                                    <span class="text-xs font-semibold text-purple-700">Historical Data</span>
+                                    <span class="text-xs font-semibold text-purple-700">Data Historis</span>
                                 </div>
                             </div>
                         </div>
@@ -395,23 +395,23 @@
                             <div class="flex flex-wrap gap-4 justify-center">
                                 <div class="flex items-center space-x-2">
                                     <div class="w-4 h-1 bg-blue-500"></div>
-                                    <span class="text-xs text-gray-600 font-medium">Axis X</span>
+                                    <span class="text-xs text-gray-600 font-medium">Sumbu X</span>
                                 </div>
                                 <div class="flex items-center space-x-2">
                                     <div class="w-4 h-1 bg-green-500"></div>
-                                    <span class="text-xs text-gray-600 font-medium">Axis Y</span>
+                                    <span class="text-xs text-gray-600 font-medium">Sumbu Y</span>
                                 </div>
                                 <div class="flex items-center space-x-2">
                                     <div class="w-4 h-1 bg-purple-500"></div>
-                                    <span class="text-xs text-gray-600 font-medium">Axis Z</span>
+                                    <span class="text-xs text-gray-600 font-medium">Sumbu Z</span>
                                 </div>
                                 <div class="flex items-center space-x-2">
                                     <div class="w-4 h-1 bg-yellow-500 border-t-2 border-dashed border-yellow-600"></div>
-                                    <span class="text-xs text-gray-600 font-medium">Warning Threshold (±0.5G)</span>
+                                    <span class="text-xs text-gray-600 font-medium">Ambang Peringatan (±0.5G)</span>
                                 </div>
                                 <div class="flex items-center space-x-2">
                                     <div class="w-4 h-1 bg-red-500 border-t-2 border-dashed border-red-600"></div>
-                                    <span class="text-xs text-gray-600 font-medium">Critical Threshold (±1.0G)</span>
+                                    <span class="text-xs text-gray-600 font-medium">Ambang Kritis (±1.0G)</span>
                                 </div>
                             </div>
                         </div>
@@ -423,7 +423,7 @@
             <div id="liveFeedSection" class="mb-6 hidden">
                 <div class="bg-white rounded-xl shadow-md overflow-hidden">
                     <div class="px-6 py-4 border-b border-gray-200 bg-gray-50 flex items-center justify-between">
-                        <h3 class="text-lg font-bold text-gray-900">Live Data Feed</h3>
+                        <h3 class="text-lg font-bold text-gray-900">Data Langsung</h3>
                         <p class="text-xs text-gray-500">Menampilkan 10-20 data terbaru secara otomatis</p>
                     </div>
                     <div class="overflow-x-auto">
@@ -431,10 +431,10 @@
                             <table class="min-w-full divide-y divide-gray-200">
                                 <thead class="bg-gray-50">
                                     <tr>
-                                        <th class="px-6 py-3 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Timestamp</th>
-                                        <th class="px-6 py-3 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Accel X</th>
-                                        <th class="px-6 py-3 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Accel Y</th>
-                                        <th class="px-6 py-3 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Accel Z</th>
+                                        <th class="px-6 py-3 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Waktu</th>
+                                        <th class="px-6 py-3 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Akselerasi X</th>
+                                        <th class="px-6 py-3 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Akselerasi Y</th>
+                                        <th class="px-6 py-3 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Akselerasi Z</th>
                                         <th class="px-6 py-3 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Suhu (°C)</th>
                                     </tr>
                                 </thead>
@@ -454,7 +454,7 @@
     <div id="thresholdModal" class="hidden fixed inset-0 bg-gray-900 bg-opacity-50 z-50 flex items-center justify-center">
         <div class="bg-white rounded-xl shadow-2xl max-w-md w-full mx-4">
             <div class="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
-                <h3 class="text-lg font-bold text-gray-900">⚙️ Threshold Configuration</h3>
+                <h3 class="text-lg font-bold text-gray-900">⚙️ Konfigurasi Ambang Batas</h3>
                 <button id="closeModalBtn" class="text-gray-400 hover:text-gray-600 transition">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
@@ -464,7 +464,7 @@
             <div class="p-6 space-y-6">
                 <!-- Warning Threshold -->
                 <div>
-                    <label class="text-sm font-semibold text-gray-700 mb-2 block">Warning Threshold (G)</label>
+                    <label class="text-sm font-semibold text-gray-700 mb-2 block">Ambang Peringatan (G)</label>
                     <input type="range" id="warningThreshold" min="0.1" max="2.0" step="0.1" value="0.5" class="w-full">
                     <div class="flex justify-between text-xs text-gray-600 mt-1">
                         <span>0.1G</span>
@@ -475,7 +475,7 @@
 
                 <!-- Critical Threshold -->
                 <div>
-                    <label class="text-sm font-semibold text-gray-700 mb-2 block">Critical Threshold (G)</label>
+                    <label class="text-sm font-semibold text-gray-700 mb-2 block">Ambang Kritis (G)</label>
                     <input type="range" id="criticalThreshold" min="0.5" max="3.0" step="0.1" value="1.0" class="w-full">
                     <div class="flex justify-between text-xs text-gray-600 mt-1">
                         <span>0.5G</span>
@@ -486,10 +486,10 @@
 
                 <div class="flex space-x-3">
                     <button id="applyThresholdBtn" class="flex-1 px-4 py-2 bg-emerald-500 text-white font-semibold rounded-lg hover:bg-emerald-600 transition">
-                        Apply
+                        Terapkan
                     </button>
                     <button id="cancelThresholdBtn" class="flex-1 px-4 py-2 bg-gray-200 text-gray-700 font-semibold rounded-lg hover:bg-gray-300 transition">
-                        Cancel
+                        Batal
                     </button>
                 </div>
             </div>
