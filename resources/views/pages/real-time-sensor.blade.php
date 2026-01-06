@@ -287,15 +287,15 @@
                             <div class="flex flex-wrap gap-4">
                                 <div class="flex items-center space-x-2">
                                     <div class="w-3 h-3 rounded-full bg-emerald-500"></div>
-                                    <span class="text-xs text-gray-600">Normal (0-0.5G / 0-60°C)</span>
+                                    <span class="text-xs text-gray-600">Good (0-0.7G / 0-60°C)</span>
                                 </div>
                                 <div class="flex items-center space-x-2">
                                     <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
-                                    <span class="text-xs text-gray-600">Warning (0.5-1.0G / 60-80°C)</span>
+                                    <span class="text-xs text-gray-600">Acceptable (0.7-1.8G / 60-80°C)</span>
                                 </div>
                                 <div class="flex items-center space-x-2">
                                     <div class="w-3 h-3 rounded-full bg-red-500"></div>
-                                    <span class="text-xs text-gray-600">Critical (>1.0G / >80°C)</span>
+                                    <span class="text-xs text-gray-600">Unsatisfactory (>1.8G / >80°C)</span>
                                 </div>
                             </div>
                         </div>

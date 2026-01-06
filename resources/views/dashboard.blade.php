@@ -96,8 +96,7 @@
 
             <!-- Metrics Cards -->
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-                <!-- Total Mesin -->
-                <!-- Total Mesin -->
+                <!-- Total Mesin Aktif -->
                 <div class="rounded-xl shadow-lg p-6 text-white" style="background: linear-gradient(to bottom right, #185519, #118B50);">
                     <div class="flex items-center justify-between mb-4">
                         <div class="rounded-lg p-3" style="background-color: rgba(255,255,255,0.2);">
@@ -107,11 +106,14 @@
                         </div>
                         <span class="text-3xl font-bold" id="totalMachines">{{ $totalMachines }}</span>
                     </div>
-                    <h3 class="text-lg font-semibold">Total Mesin</h3>
-                    <p class="text-sm mt-1" style="color: rgba(255,255,255,0.8);">Mesin terpantau</p>
+                    <h3 class="text-lg font-semibold">Total Mesin Aktif</h3>
+                    <p class="text-sm mt-1" style="color: rgba(255,255,255,0.8);">Sistem monitoring real-time</p>
+                    <div class="mt-2 pt-2 border-t border-white/20">
+                        <p class="text-xs" style="color: rgba(255,255,255,0.7);">🔄 Update otomatis setiap 5 detik</p>
+                    </div>
                 </div>
 
-                <!-- Total Samples -->
+                <!-- Total Data Vibrasi -->
                 <div class="rounded-xl shadow-lg p-6 text-white" style="background-color: #187498;">
                     <div class="flex items-center justify-between mb-4">
                         <div class="rounded-lg p-3" style="background-color: rgba(255,255,255,0.2);">
@@ -121,11 +123,14 @@
                         </div>
                         <span class="text-3xl font-bold">{{ number_format($totalSamples) }}</span>
                     </div>
-                    <h3 class="text-lg font-semibold">Data Sensor</h3>
-                    <p class="text-sm mt-1" style="color: rgba(255,255,255,0.8);">Total sample data</p>
+                    <h3 class="text-lg font-semibold">Data Vibrasi</h3>
+                    <p class="text-sm mt-1" style="color: rgba(255,255,255,0.8);">Total pengukuran (AX, AY, AZ)</p>
+                    <div class="mt-2 pt-2 border-t border-white/20">
+                        <p class="text-xs" style="color: rgba(255,255,255,0.7);">📊 Sampling rate tinggi</p>
+                    </div>
                 </div>
 
-                <!-- Total Analysis -->
+                <!-- Total Analisis Prediktif -->
                 <div class="rounded-xl shadow-lg p-6 text-gray-900" style="background: linear-gradient(to bottom right, #FCCD2A, #F4B942);">
                     <div class="flex items-center justify-between mb-4">
                         <div class="rounded-lg p-3" style="background-color: rgba(255,255,255,0.4);">
@@ -135,11 +140,14 @@
                         </div>
                         <span class="text-3xl font-bold">{{ number_format($totalAnalysis) }}</span>
                     </div>
-                    <h3 class="text-lg font-semibold">Analisis</h3>
-                    <p class="text-sm mt-1" style="color: rgba(0,0,0,0.6);">Total hasil analisis</p>
+                    <h3 class="text-lg font-semibold">Analisis Prediktif</h3>
+                    <p class="text-sm mt-1" style="color: rgba(0,0,0,0.6);">RMS, Peak Amp, Freq Domain</p>
+                    <div class="mt-2 pt-2 border-t border-gray-900/20">
+                        <p class="text-xs" style="color: rgba(0,0,0,0.5);">🤖 Machine Learning powered</p>
+                    </div>
                 </div>
 
-                <!-- Status Anomali -->
+                <!-- Status Anomali Vibrasi -->
                 <div class="rounded-xl shadow-lg p-6 text-white" style="background: linear-gradient(to bottom right, #B45253, #8B3E3E);">
                     <div class="rounded-lg p-3" style="background-color: rgba(255,255,255,0.2); width: fit-content;">
                         <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -151,6 +159,10 @@
                         <span class="text-3xl font-bold">{{ $anomalyCount }}</span>
                     </div>
                     <p class="text-sm" style="color: rgba(255,255,255,0.8);">Dari {{ $normalCount }} kondisi normal</p>
+                    <div class="mt-2 pt-2 border-t border-white/20">
+                        <p class="text-xs font-semibold" style="color: rgba(255,255,255,0.9);">Threshold RMS (ISO 10816):</p>
+                        <p class="text-xs mt-1" style="color: rgba(255,255,255,0.7);">✅ Normal: 0-0.7g | ⚠️ Waspada: 0.7-1.8g | 🚨 Bahaya: >1.8g</p>
+                    </div>
                 </div>
             </div>
 
@@ -160,8 +172,9 @@
                     <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z" />
                     </svg>
-                    Status Semua Mesin
+                    Status Real-Time Semua Mesin
                 </h3>
+                <p class="text-sm text-gray-600 mb-4">📈 Parameter: RMS Value, Peak Amplitude, Dominant Frequency | ✅ Status: Normal/Anomaly</p>
                 <div id="machineStatusGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                     <div class="bg-white rounded-lg shadow p-4 text-center">
                         <div class="animate-pulse">
@@ -174,12 +187,41 @@
 
             <!-- RMS Value Chart - 24 Hours ANALYSIS -->
             <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
-                <h3 class="text-xl font-bold mb-6 flex items-center" style="color: #185519;">
-                    <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-                    </svg>
-                    Grafik RMS Value Trend (24 Jam Terakhir)
-                </h3>
+                <div class="flex items-start justify-between mb-6">
+                    <div class="flex-1">
+                        <h3 class="text-xl font-bold flex items-center" style="color: #185519;">
+                            <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                            </svg>
+                            Trend Analisis RMS Value (24 Jam)
+                        </h3>
+                        <p class="text-sm text-gray-600 mt-2">📊 Root Mean Square dari akselerasi vibrasi 3-axis (AX, AY, AZ) | Indikator utama kondisi mesin</p>
+                    </div>
+                    <div class="flex space-x-3">
+                        <div class="bg-blue-50 px-4 py-2 rounded-lg border border-blue-200">
+                            <p class="text-xs text-blue-800 font-semibold">RMS Formula</p>
+                            <p class="text-xs text-blue-600 mt-1">√(AX² + AY² + AZ²)</p>
+                        </div>
+                        <div class="bg-gradient-to-br from-green-50 to-red-50 px-4 py-2 rounded-lg border border-gray-200">
+                            <p class="text-xs text-gray-800 font-semibold mb-1">Threshold ISO 10816 Adapted</p>
+                            <p class="text-xs text-gray-500 mb-2 italic">Accelerometer-based vibration monitoring</p>
+                            <div class="space-y-1">
+                                <div class="flex items-center space-x-2">
+                                    <div class="w-3 h-3 rounded-full bg-green-500"></div>
+                                    <p class="text-xs text-gray-700"><strong>Normal:</strong> 0 - 0.7g</p>
+                                </div>
+                                <div class="flex items-center space-x-2">
+                                    <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
+                                    <p class="text-xs text-gray-700"><strong>Waspada:</strong> 0.7 - 1.8g</p>
+                                </div>
+                                <div class="flex items-center space-x-2">
+                                    <div class="w-3 h-3 rounded-full bg-red-500"></div>
+                                    <p class="text-xs text-gray-700"><strong>Bahaya:</strong> > 1.8g</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 <div class="relative h-80">
                     <canvas id="rmsChart"></canvas>
                 </div>
@@ -187,12 +229,15 @@
 
             <!-- Top Machines by Risk - PRIORITAS UTAMA -->
             <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
-                <h3 class="text-xl font-bold mb-4 flex items-center" style="color: #185519;">
-                    <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
-                    </svg>
-                    Ranking Mesin Berisiko (Perlu Maintenance)
-                </h3>
+                <div class="mb-4">
+                    <h3 class="text-xl font-bold flex items-center" style="color: #185519;">
+                        <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                        </svg>
+                        Prioritas Maintenance Mesin
+                    </h3>
+                    <p class="text-sm text-gray-600 mt-2">🎯 Ranking berdasarkan tingkat keparahan anomali (Critical → High → Medium → Low)</p>
+                </div>
                 <div id="topMachinesList" class="space-y-3">
                     <div class="text-center text-gray-500 py-8">
                         <svg class="w-12 h-12 mx-auto mb-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -210,8 +255,9 @@
                         <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M3 14h18m-9-4v8m-7 0h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
                         </svg>
-                        Data Sensor Terbaru
+                        Data Sensor Vibrasi Terbaru
                     </h3>
+                    <p class="text-white/90 text-sm mt-1">📡 Akselerasi 3-axis (g-force) & Temperatur (°C) - Data mentah dari sensor MPU6050</p>
                 </div>
                 <div class="overflow-x-auto">
                     <table class="min-w-full divide-y divide-gray-200">
@@ -303,22 +349,46 @@
                 type: 'line',
                 data: {
                     labels: rmsData.map(item => item.time),
-                    datasets: [{
-                        label: 'RMS Value',
-                        data: rmsData.map(item => item.value),
-                        borderColor: 'rgb(17, 139, 80)',
-                        backgroundColor: 'rgba(17, 139, 80, 0.1)',
-                        borderWidth: 3,
-                        fill: true,
-                        tension: 0.4,
-                        pointRadius: 4,
-                        pointHoverRadius: 6,
-                        pointBackgroundColor: 'rgb(17, 139, 80)',
-                        pointBorderColor: '#fff',
-                        pointBorderWidth: 2,
-                        pointHoverBackgroundColor: 'rgb(24, 85, 25)',
-                        pointHoverBorderColor: '#fff'
-                    }]
+                    datasets: [
+                        {
+                            label: 'RMS Value',
+                            data: rmsData.map(item => item.value),
+                            borderColor: 'rgb(17, 139, 80)',
+                            backgroundColor: 'rgba(17, 139, 80, 0.1)',
+                            borderWidth: 3,
+                            fill: true,
+                            tension: 0.4,
+                            pointRadius: 4,
+                            pointHoverRadius: 6,
+                            pointBackgroundColor: 'rgb(17, 139, 80)',
+                            pointBorderColor: '#fff',
+                            pointBorderWidth: 2,
+                            pointHoverBackgroundColor: 'rgb(24, 85, 25)',
+                            pointHoverBorderColor: '#fff'
+                        },
+                        // Threshold Line - Normal/Waspada boundary (0.7g) - ISO 10816
+                        {
+                            label: 'Threshold: Normal (0.7g)',
+                            data: Array(rmsData.length).fill(0.7),
+                            borderColor: 'rgba(234, 179, 8, 0.7)',
+                            backgroundColor: 'transparent',
+                            borderWidth: 2,
+                            borderDash: [5, 5],
+                            pointRadius: 0,
+                            fill: false
+                        },
+                        // Threshold Line - Waspada/Bahaya boundary (1.8g) - ISO 10816
+                        {
+                            label: 'Threshold: Bahaya (1.8g)',
+                            data: Array(rmsData.length).fill(1.8),
+                            borderColor: 'rgba(239, 68, 68, 0.7)',
+                            backgroundColor: 'transparent',
+                            borderWidth: 2,
+                            borderDash: [5, 5],
+                            pointRadius: 0,
+                            fill: false
+                        }
+                    ]
                 },
                 options: {
                     responsive: true,
@@ -519,7 +589,7 @@
         function startClock() {
             const days = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
             const months = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
-            
+
             function updateClock() {
                 const now = new Date();
                 const dayName = days[now.getDay()];
@@ -528,7 +598,7 @@
                 const year = now.getFullYear();
                 const hours = String(now.getHours()).padStart(2, '0');
                 const minutes = String(now.getMinutes()).padStart(2, '0');
-                
+
                 const timeString = `${dayName}, ${day} ${month} ${year}, ${hours}:${minutes}`;
                 const timeEl = document.getElementById('currentTime');
                 if (timeEl) {
@@ -536,7 +606,7 @@
                     console.log('Clock updated:', timeString);
                 }
             }
-            
+
             updateClock(); // Update immediately
             setInterval(updateClock, 60000); // Update every 60 seconds (1 minute)
         }

@@ -101,13 +101,18 @@ class DashboardApiController extends Controller
             }
 
             $topMachines = $query->map(function($analysis) {
+                // Severity classification based on ISO 10816 Adapted
+                // Good: 0-0.7g, Acceptable: 0.7-1.8g, Unsatisfactory: >1.8g
                 $severity = 'low';
-                if ($analysis->rms >= 2.0) {
+                if ($analysis->rms >= 1.8) {
+                    // Unsatisfactory - Immediate action required
                     $severity = 'critical';
-                } elseif ($analysis->rms >= 1.5) {
+                } elseif ($analysis->rms >= 0.7) {
+                    // Acceptable - Monitor and schedule maintenance
                     $severity = 'high';
-                } elseif ($analysis->rms >= 1.0) {
-                    $severity = 'medium';
+                } else {
+                    // Good - Normal operational condition
+                    $severity = 'low';
                 }
 
                 return [
@@ -201,6 +206,20 @@ class DashboardApiController extends Controller
             // Get latest analysis
             $latestAnalysis = $machine->latestAnalysis;
 
+            // Tentukan status berdasarkan RMS
+            $rmsValue = $latestAnalysis ? round($latestAnalysis->rms, 4) : 0;
+            if ($latestAnalysis) {
+                if ($rmsValue < 0.7) {
+                    $status = 'NORMAL';
+                } elseif ($rmsValue < 1.8) {
+                    $status = 'WASPADA';
+                } else {
+                    $status = 'ANOMALI';
+                }
+            } else {
+                $status = 'UNKNOWN';
+            }
+
             return response()->json([
                 'success' => true,
                 'machine' => [
@@ -208,8 +227,8 @@ class DashboardApiController extends Controller
                     'name' => $machine->name,
                     'location' => $machine->location,
                     'type' => $machine->type,
-                    'status' => $latestAnalysis ? $latestAnalysis->condition_status : 'UNKNOWN',
-                    'rms' => $latestAnalysis ? round($latestAnalysis->rms, 4) : 0,
+                    'status' => $status,
+                    'rms' => $rmsValue,
                     'peak_amp' => $latestAnalysis ? round($latestAnalysis->peak_amp, 4) : 0,
                     'dominant_freq' => $latestAnalysis ? round($latestAnalysis->dominant_freq_hz, 2) : 0,
                     'last_check' => $latestAnalysis ? $latestAnalysis->created_at->diffForHumans() : 'Never',

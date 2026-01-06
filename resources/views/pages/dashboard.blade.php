@@ -328,7 +328,7 @@
                                 <div class="w-full bg-gray-300 rounded-full h-2.5 overflow-hidden">
                                     <div class="h-full ${progressClass} rounded-full transition-all duration-300" style="width: ${rmsPercent}%"></div>
                                 </div>
-                                <p class="text-xs text-gray-500 mt-1">Normal: 0 - 0.5 | Caution: 0.5 - 1.5 | Alert: > 1.5</p>
+                                <p class="text-xs text-gray-500 mt-1">Normal: 0 - 0.7g | Waspada: 0.7 - 1.8g | Bahaya: > 1.8g</p>
                             </div>
 
                             <!-- Metrics Grid -->
