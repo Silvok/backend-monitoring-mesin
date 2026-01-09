@@ -62,11 +62,11 @@
                     </div>
                 </div>
             </div>
-            <!-- Panel Filter Data Grafik -->
+            <!-- Panel Filter Data Grafik dengan Layout Space-Around -->
             <div class="mb-8">
-                <div class="bg-white rounded-xl shadow-md p-6 flex flex-col md:flex-row md:items-end gap-6">
+                <form class="bg-white rounded-xl shadow-md p-6 flex flex-wrap justify-around items-end gap-6">
                     <!-- Pilihan Mesin -->
-                    <div class="flex-1">
+                    <div class="flex flex-col items-center" style="min-width: 180px;">
                         <label for="machineSelector" class="block text-sm font-bold text-gray-900 mb-2">Mesin</label>
                         <select id="machineSelector" name="machine_id" class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-gray-900 font-medium">
                             <option value="">-- Pilih Mesin --</option>
@@ -75,20 +75,21 @@
                             @endforeach
                         </select>
                     </div>
-                    <!-- Pilihan Tanggal -->
-                    <div class="flex-1">
+                    <!-- Pilihan Tanggal Mulai -->
+                    <div class="flex flex-col items-center" style="min-width: 180px;">
                         <label for="start_date" class="block text-sm font-bold text-gray-900 mb-2">Tanggal Mulai</label>
                         <input type="date" id="start_date" name="start_date" class="border rounded w-full py-2 px-3 text-gray-700" required>
                     </div>
-                    <div class="flex-1">
+                    <!-- Pilihan Tanggal Akhir -->
+                    <div class="flex flex-col items-center" style="min-width: 180px;">
                         <label for="end_date" class="block text-sm font-bold text-gray-900 mb-2">Tanggal Akhir</label>
                         <input type="date" id="end_date" name="end_date" class="border rounded w-full py-2 px-3 text-gray-700" required>
                     </div>
                     <!-- Button Terapkan Filter -->
-                    <div>
-                        <button type="submit" class="bg-emerald-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-emerald-700 transition">Terapkan Filter</button>
+                    <div class="flex flex-col items-center justify-end" style="min-width: 180px; height: 100%;">
+                        <button type="submit" class="bg-emerald-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-emerald-700 transition w-full mt-6">Terapkan Filter</button>
                     </div>
-                </div>
+                </form>
             </div>
             <!-- Main Content -->
             <div class="bg-white rounded-xl shadow-lg p-6">
