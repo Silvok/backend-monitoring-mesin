@@ -62,6 +62,34 @@
                     </div>
                 </div>
             </div>
+            <!-- Panel Filter Data Grafik -->
+            <div class="mb-8">
+                <div class="bg-white rounded-xl shadow-md p-6 flex flex-col md:flex-row md:items-end gap-6">
+                    <!-- Pilihan Mesin -->
+                    <div class="flex-1">
+                        <label for="machineSelector" class="block text-sm font-bold text-gray-900 mb-2">Mesin</label>
+                        <select id="machineSelector" name="machine_id" class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-gray-900 font-medium">
+                            <option value="">-- Pilih Mesin --</option>
+                            @foreach($machines ?? [] as $machine)
+                                <option value="{{ $machine->id }}">{{ $machine->name }} ({{ $machine->location }})</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <!-- Pilihan Tanggal -->
+                    <div class="flex-1">
+                        <label for="start_date" class="block text-sm font-bold text-gray-900 mb-2">Tanggal Mulai</label>
+                        <input type="date" id="start_date" name="start_date" class="border rounded w-full py-2 px-3 text-gray-700" required>
+                    </div>
+                    <div class="flex-1">
+                        <label for="end_date" class="block text-sm font-bold text-gray-900 mb-2">Tanggal Akhir</label>
+                        <input type="date" id="end_date" name="end_date" class="border rounded w-full py-2 px-3 text-gray-700" required>
+                    </div>
+                    <!-- Button Terapkan Filter -->
+                    <div>
+                        <button type="submit" class="bg-emerald-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-emerald-700 transition">Terapkan Filter</button>
+                    </div>
+                </div>
+            </div>
             <!-- Main Content -->
             <div class="bg-white rounded-xl shadow-lg p-6">
                 <h3 class="text-lg font-semibold mb-4" style="color: #185519;">Data Grafik</h3>
