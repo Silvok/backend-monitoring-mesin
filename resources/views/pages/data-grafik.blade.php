@@ -140,20 +140,35 @@
                             const mesinId = document.getElementById('machineSelector').value;
                             const startDate = document.getElementById('start_date').value;
                             const endDate = document.getElementById('end_date').value;
-                            if (!mesinId || !startDate || !endDate) return;
-                            fetch(`/api/grafik-rms?machine_id=${mesinId}&start_date=${startDate}&end_date=${endDate}`)
-                                .then(res => res.json())
+                            console.log('[DEBUG] Submit filter:', { mesinId, startDate, endDate });
+                            if (!mesinId || !startDate || !endDate) {
+                                console.warn('[DEBUG] Filter tidak lengkap');
+                                return;
+                            }
+                            const url = `http://localhost:8000/api/grafik-rms?machine_id=${mesinId}&start_date=${startDate}&end_date=${endDate}`;
+                            console.log('[DEBUG] Fetching:', url);
+                            fetch(url)
+                                .then(res => {
+                                    console.log('[DEBUG] Response status:', res.status);
+                                    return res.json();
+                                })
                                 .then(data => {
+                                    console.log('[DEBUG] API Response:', data);
                                     if (data.success) {
-                                        // data.labels = array waktu, data.values = array RMS
                                         rmsValueChart.data.labels = data.labels;
                                         rmsValueChart.data.datasets[0].data = data.values;
                                         rmsValueChart.update();
                                     } else {
                                         alert('Data tidak ditemukan');
+                                        if (data.debug) {
+                                            console.warn('[DEBUG] API Debug:', data.debug);
+                                        }
                                     }
                                 })
-                                .catch(() => alert('Gagal mengambil data'));
+                                .catch((err) => {
+                                    alert('Gagal mengambil data');
+                                    console.error('[DEBUG] API Error:', err);
+                                });
                         });
                     });
                 </script>

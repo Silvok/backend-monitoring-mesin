@@ -14,7 +14,6 @@ class GrafikController extends Controller
         $startDate = $request->input('start_date');
         $endDate = $request->input('end_date');
 
-        // Validasi input
         if (!$machineId || !$startDate || !$endDate) {
             return response()->json([
                 'success' => false,
@@ -22,17 +21,38 @@ class GrafikController extends Controller
             ], 400);
         }
 
-        $samples = RawSample::where('machine_id', $machineId)
-            ->whereBetween('created_at', [$startDate, $endDate])
+        $start = Carbon::parse($startDate)->startOfDay();
+        $end = Carbon::parse($endDate)->endOfDay();
+
+        $results = AnalysisResult::where('machine_id', $machineId)
+            ->whereBetween('created_at', [$start, $end])
             ->orderBy('created_at')
             ->get();
 
-        $labels = $samples->pluck('created_at')->map(function($date) {
+        $labels = $results->pluck('created_at')->map(function($date) {
             return Carbon::parse($date)->format('d-m-Y H:i');
         })->toArray();
 
-        // Ganti 'ax_g' dengan field RMS Value jika ada field khusus
-        $values = $samples->pluck('ax_g')->toArray();
+        $values = $results->pluck('rms')->toArray();
+
+        if (count($labels) === 0 || count($values) === 0) {
+            \Log::debug('Grafik API: Data tidak ditemukan', [
+                'machine_id' => $machineId,
+                'start' => $start,
+                'end' => $end,
+                'query_count' => $results->count(),
+                'query_sql' => $results->toSql() ?? null,
+            ]);
+            return response()->json([
+                'success' => false,
+                'message' => 'Data tidak ditemukan',
+                'debug' => [
+                    'machine_id' => $machineId,
+                    'start' => $start,
+                    'end' => $end,
+                ]
+            ], 200);
+        }
 
         return response()->json([
             'success' => true,
