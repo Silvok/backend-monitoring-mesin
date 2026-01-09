@@ -3,7 +3,7 @@
         <div class="flex items-center justify-between">
             <div>
                 <h2 class="font-bold text-2xl text-gray-900">Analisis Data Mesin</h2>
-                <p class="text-sm text-green-600 font-medium">Performance Analysis & Insights</p>
+                <p class="text-sm text-green-600 font-medium">Monitoring & Insight Mesin</p>
             </div>
             <div class="text-sm text-gray-700 bg-gradient-to-br from-green-50 to-yellow-50 px-4 py-2.5 rounded-lg border-2 border-green-200 shadow-sm">
                 <span class="font-bold" id="currentDate">{{ now()->format('d M Y') }}</span>
@@ -12,69 +12,112 @@
     </x-slot>
 
     <div class="py-8">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
+        <div class="max-w-5xl mx-auto sm:px-6 lg:px-8 flex flex-col gap-8">
+            <!-- Highlight Anomali/Kritis -->
+            <div class="bg-gradient-to-r from-red-100 via-orange-100 to-yellow-50 border-l-4 border-red-500 p-6 rounded-2xl shadow-xl" style="display: none;">
+                <h3 class="text-lg font-bold text-red-700 mb-2">Mesin Status Anomali/Kritis</h3>
+                <ul class="list-disc ml-6">
+                    <!-- Loop mesin anomali di sini -->
+                    <li class="font-bold text-red-700">Contoh Mesin 1 (Lokasi A) - Status: ANOMALY</li>
+                </ul>
+            </div>
 
-            <!-- Filter Panel -->
-            <div class="bg-gradient-to-br from-white via-green-50/30 to-yellow-50/20 rounded-xl shadow-lg border-2 border-green-100 p-4">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-3 lg:flex lg:flex-nowrap lg:items-end lg:justify-around lg:gap-6">
-                    <div class="w-full lg:w-56">
-                        <label for="analysisAllMachines" class="text-xs font-semibold text-gray-700 mb-1.5 block text-center lg:text-center">
-                            Pilih Mesin
-                        </label>
-                        <select id="analysisAllMachines" class="w-full px-3 py-2 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 text-gray-900 font-medium bg-white shadow-sm transition hover:border-green-300 text-sm">
-                            <option value="all">Semua Mesin</option>
-                            @foreach($machines as $machine)
-                                <option value="{{ $machine->id }}">{{ $machine->name }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                    <div class="w-full lg:w-56">
-                        <label for="timeRange" class="text-xs font-semibold text-gray-700 mb-1.5 block text-center lg:text-center">
-                            Jangka Waktu
-                        </label>
-                        <select id="timeRange" class="w-full px-3 py-2 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 text-gray-900 font-medium bg-white shadow-sm transition hover:border-green-300 text-sm">
-                            <option value="7">7 Hari Terakhir</option>
-                            <option value="30" selected>30 Hari Terakhir</option>
-                            <option value="90">90 Hari Terakhir</option>
-                            <option value="custom">Custom Range</option>
-                        </select>
-                    </div>
-                    <div class="w-full lg:w-56">
-                        <label for="dateFrom" class="text-xs font-semibold text-gray-700 mb-1.5 block text-center lg:text-center">
-                            Dari Tanggal
-                        </label>
-                        <input type="date" id="dateFrom" class="w-full px-3 py-2 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 shadow-sm transition hover:border-green-300 text-sm" value="{{ now()->subDays(30)->format('Y-m-d') }}">
-                    </div>
-                    <div class="w-full lg:w-56">
-                        <label for="dateTo" class="text-xs font-semibold text-gray-700 mb-1.5 block text-center lg:text-center">
-                            Sampai Tanggal
-                        </label>
-                        <input type="date" id="dateTo" class="w-full px-3 py-2 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 shadow-sm transition hover:border-green-300 text-sm" value="{{ now()->format('Y-m-d') }}">
-                    </div>
-                    <div class="w-full lg:w-56">
-                        <label class="text-xs font-semibold text-gray-700 mb-1.5 block text-center lg:text-center">
-                            &nbsp;
-                        </label>
-                        <button id="runAnalysisBtn" style="background-color: #16a34a !important; color: white; padding: 0.5rem 0.75rem; border-radius: 0.5rem; border: 2px solid #16a34a; font-weight: bold; box-shadow: 0 2px 4px rgba(0,0,0,0.1); display: flex; gap: 0.5rem; align-items: center; justify-content: center; transition: all 0.2s; width: 100%; font-size: 0.875rem;" onmouseover="this.style.backgroundColor='#15803d'" onmouseout="this.style.backgroundColor='#16a34a'">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
-                            </svg>
-                            <span>Jalankan</span>
-                        </button>
-                    </div>
+            <!-- Tabel Ringkasan Status Mesin -->
+            <div class="bg-white rounded-2xl shadow-xl border border-green-100 p-6">
+                <h3 class="text-lg font-bold text-green-700 mb-4">Ringkasan Status Mesin</h3>
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200 text-sm">
+                        <thead>
+                            <tr class="bg-green-50">
+                                <th class="px-3 py-2 text-left font-bold text-gray-700">Mesin</th>
+                                <th class="px-3 py-2 text-left font-bold text-gray-700">Lokasi</th>
+                                <th class="px-3 py-2 text-left font-bold text-gray-700">Status</th>
+                                <th class="px-3 py-2 text-left font-bold text-gray-700">RMS</th>
+                                <th class="px-3 py-2 text-left font-bold text-gray-700">Peak</th>
+                                <th class="px-3 py-2 text-left font-bold text-gray-700">Dominant Freq</th>
+                                <th class="px-3 py-2 text-left font-bold text-gray-700">Waktu Analisis</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Loop mesin di sini -->
+                            <tr class="border-b hover:bg-blue-50 transition bg-green-50 text-green-700 font-bold">
+                                <td class="px-3 py-2">Contoh Mesin 1</td>
+                                <td class="px-3 py-2">Lokasi A</td>
+                                <td class="px-3 py-2">NORMAL</td>
+                                <td class="px-3 py-2">0.85</td>
+                                <td class="px-3 py-2">1.20</td>
+                                <td class="px-3 py-2">50.5</td>
+                                <td class="px-3 py-2">2026-01-05 08:00</td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
 
-            <!-- Loading Indicator -->
-            <div id="loadingIndicator" class="hidden bg-white rounded-xl shadow-lg border border-gray-200 p-12">
-                <div class="flex flex-col items-center justify-center space-y-4">
-                    <div class="w-16 h-16 border-4 border-green-200 border-t-green-600 rounded-full animate-spin"></div>
-                    <div class="text-center">
-                        <p class="text-lg font-bold text-gray-900">Menganalisis Data...</p>
-                        <p class="text-sm text-gray-500">Mohon tunggu sebentar</p>
+            <!-- Card Detail Analisis Terbaru -->
+            <div class="bg-white rounded-2xl shadow-xl border border-green-100 p-6">
+                <h3 class="text-lg font-bold text-green-700 mb-4">Detail Analisis Terbaru</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="mb-2">
+                        <div class="text-xs text-gray-500 mb-0.5">Mesin</div>
+                        <div class="font-bold text-base text-gray-800">Contoh Mesin 1</div>
+                    </div>
+                    <div class="mb-2">
+                        <div class="text-xs text-gray-500 mb-0.5">Lokasi</div>
+                        <div class="font-bold text-base text-gray-800">Lokasi A</div>
+                    </div>
+                    <div class="mb-2">
+                        <div class="text-xs text-gray-500 mb-0.5">Status</div>
+                        <div class="font-bold text-base text-green-700">NORMAL</div>
+                    </div>
+                    <div class="mb-2">
+                        <div class="text-xs text-gray-500 mb-0.5">RMS Value</div>
+                        <div class="font-bold text-base text-gray-800">0.85</div>
+                    </div>
+                    <div class="mb-2">
+                        <div class="text-xs text-gray-500 mb-0.5">Peak Amplitude</div>
+                        <div class="font-bold text-base text-gray-800">1.20</div>
+                    </div>
+                    <div class="mb-2">
+                        <div class="text-xs text-gray-500 mb-0.5">Dominant Frequency</div>
+                        <div class="font-bold text-base text-gray-800">50.5</div>
+                    </div>
+                    <div class="mb-2">
+                        <div class="text-xs text-gray-500 mb-0.5">Waktu Analisis</div>
+                        <div class="font-bold text-base text-gray-800">2026-01-05 08:00</div>
                     </div>
                 </div>
             </div>
+        </div>
+    </div>
+</x-app-layout>
+<x-app-layout>
+    <x-slot name="header">
+        <div class="flex items-center justify-between">
+            <div>
+                <h2 class="font-bold text-2xl text-gray-900">Analisis Data Mesin</h2>
+                <p class="text-sm text-green-600 font-medium">Performance Analysis & Insights</p>
+            </div>
+            <div class="text-sm text-gray-700 bg-gradient-to-br from-green-50 to-yellow-50 px-4 py-2.5 rounded-lg border-2 border-green-200 shadow-sm">
+                <span class="font-bold" id="currentDate">{{ now()->format('d M Y') }}</span>
+            </div>
+        </div>
+    </x-slot>
+    <div class="py-8">
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-10">
+            <!-- Highlight Anomali -->
+            @if(isset($anomalyMachines) && count($anomalyMachines) > 0)
+            <div class="bg-gradient-to-r from-red-100 via-orange-100 to-yellow-50 border-l-4 border-red-500 p-6 rounded-2xl shadow-xl mb-8">
+                <h3 class="text-lg font-bold text-red-700 mb-2">Mesin Status Anomali/Kritis</h3>
+                <ul class="list-disc ml-6">
+                    @foreach($anomalyMachines as $machine)
+                        <li class="font-bold text-red-700">{{ $machine->name }} ({{ $machine->location }}) - Status: {{ $machine->latest_analysis->status ?? '-' }}</li>
+                    @endforeach
+                </ul>
+            </div>
+            @endif
+
+
 
             <!-- Health Score Section -->
             <div id="healthScoreSection" class="hidden bg-white rounded-xl shadow-lg border-l-4 border-green-500 overflow-hidden">
