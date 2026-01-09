@@ -93,7 +93,70 @@
             </div>
             <!-- Main Content -->
             <div class="bg-white rounded-xl shadow-lg p-6">
-                <h3 class="text-lg font-semibold mb-4" style="color: #185519;">Data Grafik</h3>
+                <h3 class="text-lg font-semibold mb-4" style="color: #185519;">RMS Value Grafik</h3>
+                <!-- Panel Grafik RMS Value -->
+                <div class="bg-white rounded-xl shadow-md p-6 mb-8">
+                    <h4 class="text-md font-bold mb-3 text-emerald-700">RMS Value Grafik</h4>
+                    <div class="w-full h-72 flex items-center justify-center">
+                        <canvas id="rmsValueChart"></canvas>
+                    </div>
+                </div>
+                <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+                <script>
+                    let rmsValueChart;
+                    document.addEventListener('DOMContentLoaded', function() {
+                        const ctx = document.getElementById('rmsValueChart').getContext('2d');
+                        rmsValueChart = new Chart(ctx, {
+                            type: 'line',
+                            data: {
+                                labels: [],
+                                datasets: [{
+                                    label: 'RMS Value',
+                                    data: [],
+                                    borderColor: '#10b981',
+                                    backgroundColor: 'rgba(16,185,129,0.1)',
+                                    fill: true,
+                                    tension: 0.3,
+                                    pointBackgroundColor: '#10b981',
+                                    pointRadius: 4,
+                                }]
+                            },
+                            options: {
+                                responsive: true,
+                                plugins: {
+                                    legend: { display: true, position: 'top' },
+                                    tooltip: { enabled: true }
+                                },
+                                scales: {
+                                    x: { title: { display: true, text: 'Waktu' } },
+                                    y: { title: { display: true, text: 'RMS Value' }, min: 0 }
+                                }
+                            }
+                        });
+
+                        // Event handler untuk form filter
+                        document.querySelector('form').addEventListener('submit', function(e) {
+                            e.preventDefault();
+                            const mesinId = document.getElementById('machineSelector').value;
+                            const startDate = document.getElementById('start_date').value;
+                            const endDate = document.getElementById('end_date').value;
+                            if (!mesinId || !startDate || !endDate) return;
+                            fetch(`/api/grafik-rms?machine_id=${mesinId}&start_date=${startDate}&end_date=${endDate}`)
+                                .then(res => res.json())
+                                .then(data => {
+                                    if (data.success) {
+                                        // data.labels = array waktu, data.values = array RMS
+                                        rmsValueChart.data.labels = data.labels;
+                                        rmsValueChart.data.datasets[0].data = data.values;
+                                        rmsValueChart.update();
+                                    } else {
+                                        alert('Data tidak ditemukan');
+                                    }
+                                })
+                                .catch(() => alert('Gagal mengambil data'));
+                        });
+                    });
+                </script>
                 <!-- Content for Data Grafik will go here -->
             </div>
         </div>
