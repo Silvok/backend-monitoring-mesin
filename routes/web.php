@@ -50,4 +50,23 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
+// Route monitoring dari predictive-api
+Route::get('/check-data', function () {
+    $batches = DB::table('raw_batches')->count();
+    $samples = DB::table('raw_samples')->count();
+    $analysis = DB::table('analysis_results')->count();
+    $lastBatch = DB::table('raw_batches')->orderBy('id', 'desc')->first();
+    $lastAnalysis = DB::table('analysis_results')->orderBy('id', 'desc')->first();
+    return [
+        'status' => 'success',
+        'data' => [
+            'total_batches' => $batches,
+            'total_samples' => $samples,
+            'total_analysis_results' => $analysis,
+            'last_batch' => $lastBatch,
+            'last_analysis' => $lastAnalysis,
+        ]
+    ];
+});
+
 require __DIR__.'/auth.php';
