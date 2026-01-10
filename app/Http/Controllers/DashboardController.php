@@ -85,13 +85,52 @@ class DashboardController extends Controller
         return view('pages.real-time-sensor', compact('machines'));
     }
 
-    public function dataGrafik()
+    public function dataGrafik(Request $request)
     {
         // Get all machines for dropdown
         $machines = Machine::orderBy('name')->get();
         // Get latest date from analysis_results
         $latestDate = AnalysisResult::orderBy('created_at', 'desc')->value('created_at');
-        return view('pages.data-grafik', compact('machines', 'latestDate'));
+
+        // Ambil filter dari request
+        $machineId = $request->input('machine_id');
+        $startDate = $request->input('start_date');
+        $endDate = $request->input('end_date');
+
+        $query = AnalysisResult::query();
+        if ($machineId) {
+            $query->where('machine_id', $machineId);
+        }
+        if ($startDate && $endDate) {
+            // Filter berdasarkan range tanggal (00:00:00 - 23:59:59)
+            $query->whereBetween('created_at', [
+                $startDate . ' 00:00:00',
+                $endDate . ' 23:59:59'
+            ]);
+        } else {
+            // Default: 24 jam terakhir
+            $query->where('created_at', '>=', now()->subHours(24));
+        }
+
+        $rmsData = $query->orderBy('created_at', 'asc')
+            ->get(['rms', 'created_at'])
+            ->map(function($item) use ($startDate, $endDate) {
+                // Jika filter tanggal, tampilkan label tanggal+jam, jika tidak hanya jam
+                $label = ($startDate && $endDate)
+                    ? $item->created_at->format('d-m H:i')
+                    : $item->created_at->format('H:i');
+                return [
+                    'time' => $label,
+                    'value' => round($item->rms, 4)
+                ];
+            });
+
+        $rmsChartData = [
+            'labels' => $rmsData->pluck('time')->toArray(),
+            'values' => $rmsData->pluck('value')->toArray()
+        ];
+
+        return view('pages.data-grafik', compact('machines', 'latestDate', 'rmsChartData'));
     }
 
     public function analisis()

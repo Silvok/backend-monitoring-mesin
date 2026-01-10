@@ -30,6 +30,33 @@
 
     <div class="py-8">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+            <!-- Filter Form: Tanggal & Mesin -->
+            <form method="GET" action="" class="mb-8 bg-white rounded-xl shadow p-6 flex flex-wrap items-end gap-4">
+                <div>
+                    <label for="machine_id" class="block text-sm font-semibold text-emerald-900 mb-1">Mesin</label>
+                    <select name="machine_id" id="machine_id" class="border-gray-300 rounded-lg focus:ring-emerald-500 focus:border-emerald-500">
+                        <option value="">Semua Mesin</option>
+                        @foreach($machines as $machine)
+                            <option value="{{ $machine->id }}" {{ request('machine_id') == $machine->id ? 'selected' : '' }}>{{ $machine->name }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div>
+                    <label for="start_date" class="block text-sm font-semibold text-emerald-900 mb-1">Tanggal Mulai</label>
+                    <input type="date" name="start_date" id="start_date" class="border-gray-300 rounded-lg focus:ring-emerald-500 focus:border-emerald-500" value="{{ request('start_date') ? \Carbon\Carbon::parse(request('start_date'))->format('Y-m-d') : ($latestDate ? \Carbon\Carbon::parse($latestDate)->subDays(1)->format('Y-m-d') : '') }}">
+                </div>
+                <div>
+                    <label for="end_date" class="block text-sm font-semibold text-emerald-900 mb-1">Tanggal Akhir</label>
+                    <input type="date" name="end_date" id="end_date" class="border-gray-300 rounded-lg focus:ring-emerald-500 focus:border-emerald-500" value="{{ request('end_date') ? \Carbon\Carbon::parse(request('end_date'))->format('Y-m-d') : ($latestDate ? \Carbon\Carbon::parse($latestDate)->format('Y-m-d') : '') }}">
+                </div>
+                <div>
+                    <button type="submit" class="px-6 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-lg shadow">Terapkan Filter</button>
+                </div>
+            </form>
+                                    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+                        <!-- Grafik RMS Value Trend (24 Jam Terakhir) Card (Sama seperti dashboard) -->
+                        @component('components.dashboard.rms-chart', compact('rmsChartData'))
+                        @endcomponent
             <!-- Alert Panel -->
             <div id="alertPanel" class="bg-white rounded-xl shadow-lg mb-8 overflow-hidden border-l-4 border-red-500" style="display: none;">
                 <div class="bg-gradient-to-r from-red-600 to-red-700 px-6 py-4">
@@ -62,118 +89,8 @@
                     </div>
                 </div>
             </div>
-            <!-- Panel Filter Data Grafik dengan Layout Space-Around -->
-            <div class="mb-8">
-                <form class="bg-white rounded-xl shadow-md p-6 flex flex-wrap justify-around items-end gap-6">
-                    <!-- Pilihan Mesin -->
-                    <div class="flex flex-col items-center" style="min-width: 180px;">
-                        <label for="machineSelector" class="block text-sm font-bold text-gray-900 mb-2">Mesin</label>
-                        <select id="machineSelector" name="machine_id" class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-gray-900 font-medium">
-                            <option value="">-- Pilih Mesin --</option>
-                            @foreach($machines ?? [] as $machine)
-                                <option value="{{ $machine->id }}">{{ $machine->name }} ({{ $machine->location }})</option>
-                            @endforeach
-                        </select>
-                    </div>
-                    <!-- Pilihan Tanggal Mulai -->
-                    <div class="flex flex-col items-center" style="min-width: 180px;">
-                        <label for="start_date" class="block text-sm font-bold text-gray-900 mb-2">Tanggal Mulai</label>
-                        <input type="date" id="start_date" name="start_date" class="border rounded w-full py-2 px-3 text-gray-700" required>
-                    </div>
-                    <!-- Pilihan Tanggal Akhir -->
-                    <div class="flex flex-col items-center" style="min-width: 180px;">
-                        <label for="end_date" class="block text-sm font-bold text-gray-900 mb-2">Tanggal Akhir</label>
-                        <input type="date" id="end_date" name="end_date" class="border rounded w-full py-2 px-3 text-gray-700" required>
-                    </div>
-                    <!-- Button Terapkan Filter -->
-                    <div class="flex flex-col items-center justify-end" style="min-width: 180px; height: 100%;">
-                        <button type="submit" class="bg-emerald-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-emerald-700 transition w-full mt-6">Terapkan Filter</button>
-                    </div>
-                </form>
-            </div>
-            <!-- Main Content -->
-            <div class="bg-white rounded-xl shadow-lg p-6">
-                <h3 class="text-lg font-semibold mb-4" style="color: #185519;">RMS Value Grafik</h3>
-                <!-- Panel Grafik RMS Value -->
-                <div class="bg-white rounded-xl shadow-md p-6 mb-8">
-                    <h4 class="text-md font-bold mb-3 text-emerald-700">RMS Value Grafik</h4>
-                    <div class="w-full h-72 flex items-center justify-center">
-                        <canvas id="rmsValueChart"></canvas>
-                    </div>
-                </div>
-                <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
-                <script>
-                    let rmsValueChart;
-                    document.addEventListener('DOMContentLoaded', function() {
-                        const ctx = document.getElementById('rmsValueChart').getContext('2d');
-                        rmsValueChart = new Chart(ctx, {
-                            type: 'line',
-                            data: {
-                                labels: [],
-                                datasets: [{
-                                    label: 'RMS Value',
-                                    data: [],
-                                    borderColor: '#10b981',
-                                    backgroundColor: 'rgba(16,185,129,0.1)',
-                                    fill: true,
-                                    tension: 0.3,
-                                    pointBackgroundColor: '#10b981',
-                                    pointRadius: 4,
-                                }]
-                            },
-                            options: {
-                                responsive: true,
-                                plugins: {
-                                    legend: { display: true, position: 'top' },
-                                    tooltip: { enabled: true }
-                                },
-                                scales: {
-                                    x: { title: { display: true, text: 'Waktu' } },
-                                    y: { title: { display: true, text: 'RMS Value' }, min: 0 }
-                                }
-                            }
-                        });
 
-                        // Event handler untuk form filter
-                        document.querySelector('form').addEventListener('submit', function(e) {
-                            e.preventDefault();
-                            const mesinId = document.getElementById('machineSelector').value;
-                            const startDate = document.getElementById('start_date').value;
-                            const endDate = document.getElementById('end_date').value;
-                            console.log('[DEBUG] Submit filter:', { mesinId, startDate, endDate });
-                            if (!mesinId || !startDate || !endDate) {
-                                console.warn('[DEBUG] Filter tidak lengkap');
-                                return;
-                            }
-                            const url = `http://localhost:8000/api/grafik-rms?machine_id=${mesinId}&start_date=${startDate}&end_date=${endDate}`;
-                            console.log('[DEBUG] Fetching:', url);
-                            fetch(url)
-                                .then(res => {
-                                    console.log('[DEBUG] Response status:', res.status);
-                                    return res.json();
-                                })
-                                .then(data => {
-                                    console.log('[DEBUG] API Response:', data);
-                                    if (data.success) {
-                                        rmsValueChart.data.labels = data.labels;
-                                        rmsValueChart.data.datasets[0].data = data.values;
-                                        rmsValueChart.update();
-                                    } else {
-                                        alert('Data tidak ditemukan');
-                                        if (data.debug) {
-                                            console.warn('[DEBUG] API Debug:', data.debug);
-                                        }
-                                    }
-                                })
-                                .catch((err) => {
-                                    alert('Gagal mengambil data');
-                                    console.error('[DEBUG] API Error:', err);
-                                });
-                        });
-                    });
-                </script>
-                <!-- Content for Data Grafik will go here -->
-            </div>
+            <!-- Main Content -->
         </div>
     </div>
 </x-app-layout>
