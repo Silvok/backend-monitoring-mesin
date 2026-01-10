@@ -55,8 +55,8 @@
                         max="{{ $latestDate ? \Carbon\Carbon::parse($latestDate)->format('Y-m-d') : '' }}"
                         value="{{ request('end_date') ? \Carbon\Carbon::parse(request('end_date'))->format('Y-m-d') : ($latestDate ? \Carbon\Carbon::parse($latestDate)->format('Y-m-d') : '') }}">
                 </div>
-                <div>
-                    <button type="submit" class="px-6 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-lg shadow">Terapkan Filter</button>
+                <div class="flex items-end h-full">
+                    <button type="submit" class="px-6 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-lg shadow mt-6">Terapkan Filter</button>
                 </div>
             </form>
                                     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
