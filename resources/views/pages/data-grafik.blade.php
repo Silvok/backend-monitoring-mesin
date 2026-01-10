@@ -29,10 +29,10 @@
     </x-slot>
 
     <div class="py-8">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+        <div class="max-w-7xl mx-auto px-2 sm:px-4 lg:px-8">
             <!-- Filter Form: Tanggal & Mesin -->
-            <form method="GET" action="" class="mb-8 bg-white rounded-xl shadow p-6 flex flex-wrap items-end gap-4">
-                                <div>
+            <form method="GET" action="" class="mb-8 bg-white rounded-xl shadow p-4 sm:p-6 flex flex-wrap items-end gap-3 sm:gap-4">
+                <div class="w-full sm:w-auto flex-1 min-w-[160px]">
                                     <label for="condition_status" class="block text-sm font-semibold text-emerald-900 mb-1">Status/Condition</label>
                                     <select name="condition_status" id="condition_status" class="border-gray-300 rounded-lg focus:ring-emerald-500 focus:border-emerald-500">
                                         <option value="">Semua Status</option>
@@ -43,7 +43,7 @@
                                         <option value="CRITICAL" {{ request('condition_status') == 'CRITICAL' ? 'selected' : '' }}>CRITICAL</option>
                                     </select>
                                 </div>
-                <div>
+                <div class="w-full sm:w-auto flex-1 min-w-[160px]">
                     <label for="machine_id" class="block text-sm font-semibold text-emerald-900 mb-1">Mesin</label>
                     <select name="machine_id" id="machine_id" class="border-gray-300 rounded-lg focus:ring-emerald-500 focus:border-emerald-500">
                         <option value="">Semua Mesin</option>
@@ -52,21 +52,21 @@
                         @endforeach
                     </select>
                 </div>
-                <div>
+                <div class="w-full sm:w-auto flex-1 min-w-[160px]">
                     <label for="start_date" class="block text-sm font-semibold text-emerald-900 mb-1">Tanggal Mulai</label>
                     <input type="date" name="start_date" id="start_date" class="border-gray-300 rounded-lg focus:ring-emerald-500 focus:border-emerald-500"
                         min="{{ $earliestDate ? \Carbon\Carbon::parse($earliestDate)->format('Y-m-d') : '' }}"
                         max="{{ $latestDate ? \Carbon\Carbon::parse($latestDate)->format('Y-m-d') : '' }}"
                         value="{{ request('start_date') ? \Carbon\Carbon::parse(request('start_date'))->format('Y-m-d') : ($earliestDate ? \Carbon\Carbon::parse($earliestDate)->format('Y-m-d') : '') }}">
                 </div>
-                <div>
+                <div class="w-full sm:w-auto flex-1 min-w-[160px]">
                     <label for="end_date" class="block text-sm font-semibold text-emerald-900 mb-1">Tanggal Akhir</label>
                     <input type="date" name="end_date" id="end_date" class="border-gray-300 rounded-lg focus:ring-emerald-500 focus:border-emerald-500"
                         min="{{ $earliestDate ? \Carbon\Carbon::parse($earliestDate)->format('Y-m-d') : '' }}"
                         max="{{ $latestDate ? \Carbon\Carbon::parse($latestDate)->format('Y-m-d') : '' }}"
                         value="{{ request('end_date') ? \Carbon\Carbon::parse(request('end_date'))->format('Y-m-d') : ($latestDate ? \Carbon\Carbon::parse($latestDate)->format('Y-m-d') : '') }}">
                 </div>
-                <div>
+                <div class="w-full sm:w-auto flex-1 min-w-[160px]">
                     <label for="aggregation_interval" class="block text-sm font-semibold text-emerald-900 mb-1">Interval Agregasi</label>
                     <select name="aggregation_interval" id="aggregation_interval" class="border-gray-300 rounded-lg focus:ring-emerald-500 focus:border-emerald-500">
                         <option value="1" {{ request('aggregation_interval', '3') == '1' ? 'selected' : '' }}>1 Menit</option>
@@ -76,27 +76,28 @@
                         <option value="15" {{ request('aggregation_interval', '3') == '15' ? 'selected' : '' }}>15 Menit</option>
                     </select>
                 </div>
-                <div class="flex items-end h-full">
+                <div class="flex items-end h-full w-full sm:w-auto">
                     <button type="submit" class="px-6 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-lg shadow mt-6">Terapkan Filter</button>
                 </div>
             </form>
                                     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
                         <!-- Grafik RMS Value Trend (24 Jam Terakhir) Card (Sama seperti dashboard) -->
-                        <div class="flex items-center gap-4 mb-4">
+                        <div class="flex flex-wrap items-center gap-2 sm:gap-4 mb-4">
                             <label for="chartType" class="font-semibold text-emerald-900">Tipe Grafik:</label>
-                            <div class="relative w-48">
-                                <select id="chartType" class="appearance-none border border-gray-300 rounded focus:ring-emerald-500 focus:border-emerald-500 pl-3 pr-6 py-1 text-sm font-semibold text-emerald-900 bg-white shadow w-full" style="max-width:100px;">
+                            <div class="relative w-32 sm:w-48">
+                                <select id="chartType" class="appearance-none border border-gray-300 rounded focus:ring-emerald-500 focus:border-emerald-500 pl-3 pr-6 py-1 text-sm font-semibold text-emerald-900 bg-white shadow w-full">
                                     <option value="line">LINE</option>
                                     <option value="bar">BAR</option>
                                 </select>
                                 <span class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-4">
-                                    <svg class="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    </svg>
+                                    <svg class="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"></svg>
                                 </span>
                             </div>
                         </div>
-                        @component('components.dashboard.rms-chart', compact('rmsChartData'))
-                        @endcomponent
+                        <div class="overflow-x-auto rounded-xl">
+                            @component('components.dashboard.rms-chart', compact('rmsChartData'))
+                            @endcomponent
+                        </div>
                         @if(empty($rmsChartData['labels']))
                             <div class="bg-red-50 text-red-700 rounded-lg px-4 py-3 mt-4 text-center font-semibold">
                                 Tidak ada data anomaly ditemukan untuk filter ini.
