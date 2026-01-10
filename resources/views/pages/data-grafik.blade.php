@@ -43,11 +43,17 @@
                 </div>
                 <div>
                     <label for="start_date" class="block text-sm font-semibold text-emerald-900 mb-1">Tanggal Mulai</label>
-                    <input type="date" name="start_date" id="start_date" class="border-gray-300 rounded-lg focus:ring-emerald-500 focus:border-emerald-500" value="{{ request('start_date') ? \Carbon\Carbon::parse(request('start_date'))->format('Y-m-d') : ($latestDate ? \Carbon\Carbon::parse($latestDate)->subDays(1)->format('Y-m-d') : '') }}">
+                    <input type="date" name="start_date" id="start_date" class="border-gray-300 rounded-lg focus:ring-emerald-500 focus:border-emerald-500"
+                        min="{{ $earliestDate ? \Carbon\Carbon::parse($earliestDate)->format('Y-m-d') : '' }}"
+                        max="{{ $latestDate ? \Carbon\Carbon::parse($latestDate)->format('Y-m-d') : '' }}"
+                        value="{{ request('start_date') ? \Carbon\Carbon::parse(request('start_date'))->format('Y-m-d') : ($earliestDate ? \Carbon\Carbon::parse($earliestDate)->format('Y-m-d') : '') }}">
                 </div>
                 <div>
                     <label for="end_date" class="block text-sm font-semibold text-emerald-900 mb-1">Tanggal Akhir</label>
-                    <input type="date" name="end_date" id="end_date" class="border-gray-300 rounded-lg focus:ring-emerald-500 focus:border-emerald-500" value="{{ request('end_date') ? \Carbon\Carbon::parse(request('end_date'))->format('Y-m-d') : ($latestDate ? \Carbon\Carbon::parse($latestDate)->format('Y-m-d') : '') }}">
+                    <input type="date" name="end_date" id="end_date" class="border-gray-300 rounded-lg focus:ring-emerald-500 focus:border-emerald-500"
+                        min="{{ $earliestDate ? \Carbon\Carbon::parse($earliestDate)->format('Y-m-d') : '' }}"
+                        max="{{ $latestDate ? \Carbon\Carbon::parse($latestDate)->format('Y-m-d') : '' }}"
+                        value="{{ request('end_date') ? \Carbon\Carbon::parse(request('end_date'))->format('Y-m-d') : ($latestDate ? \Carbon\Carbon::parse($latestDate)->format('Y-m-d') : '') }}">
                 </div>
                 <div>
                     <button type="submit" class="px-6 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-lg shadow">Terapkan Filter</button>

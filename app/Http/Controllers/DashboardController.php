@@ -89,8 +89,9 @@ class DashboardController extends Controller
     {
         // Get all machines for dropdown
         $machines = Machine::orderBy('name')->get();
-        // Get latest date from analysis_results
+        // Get earliest and latest date from analysis_results
         $latestDate = AnalysisResult::orderBy('created_at', 'desc')->value('created_at');
+        $earliestDate = AnalysisResult::orderBy('created_at', 'asc')->value('created_at');
 
         // Ambil filter dari request
         $machineId = $request->input('machine_id');
@@ -130,7 +131,7 @@ class DashboardController extends Controller
             'values' => $rmsData->pluck('value')->toArray()
         ];
 
-        return view('pages.data-grafik', compact('machines', 'latestDate', 'rmsChartData'));
+        return view('pages.data-grafik', compact('machines', 'latestDate', 'earliestDate', 'rmsChartData'));
     }
 
     public function analisis()
