@@ -18,8 +18,8 @@
                 <div class="text-sm text-gray-600 bg-gray-50 px-3 py-1.5 rounded-lg border border-gray-200">
                     <span class="font-semibold" id="currentTime">{{ \Carbon\Carbon::now()->locale('id')->translatedFormat('l, d M Y, H:i') }}</span>
                 </div>
-                <button onclick="refreshDashboard()" class="px-4 py-1.5 text-white text-sm font-medium rounded-lg transition flex items-center space-x-2 shadow-sm" style="background-color: #118B50;" onmouseover="this.style.backgroundColor='#185519'" onmouseout="this.style.backgroundColor='#118B50'">
-                    <svg id="refreshIcon" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <button onclick="refreshDashboard()" aria-label="Refresh Data Grafik" class="px-4 py-1.5 text-white text-sm font-medium rounded-lg transition flex items-center space-x-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:ring-offset-2" style="background-color: #118B50;" onmouseover="this.style.backgroundColor='#185519'" onmouseout="this.style.backgroundColor='#118B50'">
+                    <svg id="refreshIcon" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
                     </svg>
                     <span>Refresh</span>
@@ -45,7 +45,7 @@
                                 </div>
                 <div class="w-full sm:w-auto flex-1 min-w-[160px]">
                     <label for="machine_id" class="block text-sm font-semibold text-emerald-900 mb-1">Mesin</label>
-                    <select name="machine_id" id="machine_id" class="border-gray-300 rounded-lg focus:ring-emerald-500 focus:border-emerald-500">
+                    <select name="machine_id" id="machine_id" class="border-gray-300 rounded-lg focus:ring-emerald-500 focus:border-emerald-500 focus:outline-none" aria-label="Pilih Mesin">
                         <option value="">Semua Mesin</option>
                         @foreach($machines as $machine)
                             <option value="{{ $machine->id }}" {{ request('machine_id') == $machine->id ? 'selected' : '' }}>{{ $machine->name }}</option>
@@ -54,21 +54,21 @@
                 </div>
                 <div class="w-full sm:w-auto flex-1 min-w-[160px]">
                     <label for="start_date" class="block text-sm font-semibold text-emerald-900 mb-1">Tanggal Mulai</label>
-                    <input type="date" name="start_date" id="start_date" class="border-gray-300 rounded-lg focus:ring-emerald-500 focus:border-emerald-500"
+                    <input type="date" name="start_date" id="start_date" class="border-gray-300 rounded-lg focus:ring-emerald-500 focus:border-emerald-500 focus:outline-none" aria-label="Tanggal Mulai"
                         min="{{ $earliestDate ? \Carbon\Carbon::parse($earliestDate)->format('Y-m-d') : '' }}"
                         max="{{ $latestDate ? \Carbon\Carbon::parse($latestDate)->format('Y-m-d') : '' }}"
                         value="{{ request('start_date') ? \Carbon\Carbon::parse(request('start_date'))->format('Y-m-d') : ($earliestDate ? \Carbon\Carbon::parse($earliestDate)->format('Y-m-d') : '') }}">
                 </div>
                 <div class="w-full sm:w-auto flex-1 min-w-[160px]">
                     <label for="end_date" class="block text-sm font-semibold text-emerald-900 mb-1">Tanggal Akhir</label>
-                    <input type="date" name="end_date" id="end_date" class="border-gray-300 rounded-lg focus:ring-emerald-500 focus:border-emerald-500"
+                    <input type="date" name="end_date" id="end_date" class="border-gray-300 rounded-lg focus:ring-emerald-500 focus:border-emerald-500 focus:outline-none" aria-label="Tanggal Akhir"
                         min="{{ $earliestDate ? \Carbon\Carbon::parse($earliestDate)->format('Y-m-d') : '' }}"
                         max="{{ $latestDate ? \Carbon\Carbon::parse($latestDate)->format('Y-m-d') : '' }}"
                         value="{{ request('end_date') ? \Carbon\Carbon::parse(request('end_date'))->format('Y-m-d') : ($latestDate ? \Carbon\Carbon::parse($latestDate)->format('Y-m-d') : '') }}">
                 </div>
                 <div class="w-full sm:w-auto flex-1 min-w-[160px]">
                     <label for="aggregation_interval" class="block text-sm font-semibold text-emerald-900 mb-1">Interval Agregasi</label>
-                    <select name="aggregation_interval" id="aggregation_interval" class="border-gray-300 rounded-lg focus:ring-emerald-500 focus:border-emerald-500">
+                    <select name="aggregation_interval" id="aggregation_interval" class="border-gray-300 rounded-lg focus:ring-emerald-500 focus:border-emerald-500 focus:outline-none" aria-label="Interval Agregasi">
                         <option value="1" {{ request('aggregation_interval', '3') == '1' ? 'selected' : '' }}>1 Menit</option>
                         <option value="3" {{ request('aggregation_interval', '3') == '3' ? 'selected' : '' }}>3 Menit</option>
                         <option value="5" {{ request('aggregation_interval', '3') == '5' ? 'selected' : '' }}>5 Menit</option>
@@ -77,7 +77,7 @@
                     </select>
                 </div>
                 <div class="flex items-end h-full w-full sm:w-auto">
-                    <button type="submit" class="px-6 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-lg shadow mt-6">Terapkan Filter</button>
+                    <button type="submit" class="px-6 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-lg shadow mt-6 focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:ring-offset-2" aria-label="Terapkan Filter">Terapkan Filter</button>
                 </div>
             </form>
                                     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
@@ -85,7 +85,7 @@
                         <div class="flex flex-wrap items-center gap-2 sm:gap-4 mb-4">
                             <label for="chartType" class="font-semibold text-emerald-900">Tipe Grafik:</label>
                             <div class="relative w-32 sm:w-48">
-                                <select id="chartType" class="appearance-none border border-gray-300 rounded focus:ring-emerald-500 focus:border-emerald-500 pl-3 pr-6 py-1 text-sm font-semibold text-emerald-900 bg-white shadow w-full">
+                                <select id="chartType" class="appearance-none border border-gray-300 rounded focus:ring-emerald-500 focus:border-emerald-500 pl-3 pr-6 py-1 text-sm font-semibold text-emerald-900 bg-white shadow w-full focus:outline-none" aria-label="Tipe Grafik">
                                     <option value="line">LINE</option>
                                     <option value="bar">BAR</option>
                                 </select>
