@@ -9,6 +9,16 @@
     <div class="relative h-80">
         <canvas id="rmsChart" data-chart="{{ json_encode($rmsChartData ?? []) }}"></canvas>
     </div>
+    <div class="flex mt-4 justify-end">
+        <div class="relative">
+            <button id="downloadBtn" type="button" class="px-4 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-lg shadow text-sm">Download</button>
+            <div id="downloadMenu" class="absolute right-0 mt-2 w-32 bg-white border border-gray-200 rounded-lg shadow-lg z-10 hidden">
+                <button type="button" class="block w-full text-left px-4 py-2 text-sm text-emerald-900 hover:bg-emerald-50" data-format="png">PNG</button>
+                <button type="button" class="block w-full text-left px-4 py-2 text-sm text-emerald-900 hover:bg-emerald-50" data-format="jpg">JPG</button>
+            </div>
+        </div>
+    </div>
+    </div>
 </div>
 
 <script>
@@ -80,10 +90,43 @@
         }
 
         renderChart(chartType);
+
         if (chartTypeSelect) {
             chartTypeSelect.addEventListener('change', function(e) {
                 chartType = e.target.value;
                 renderChart(chartType);
+            });
+        }
+
+        // Download button with popup menu
+        const downloadBtn = document.getElementById('downloadBtn');
+        const downloadMenu = document.getElementById('downloadMenu');
+        function downloadChart(mime, ext) {
+            const link = document.createElement('a');
+            link.href = chartInstance.toBase64Image(mime);
+            link.download = 'grafik-rms-value.' + ext;
+            link.click();
+        }
+        if (downloadBtn && downloadMenu) {
+            downloadBtn.addEventListener('click', function(e) {
+                downloadMenu.classList.toggle('hidden');
+            });
+            downloadMenu.querySelectorAll('button[data-format]').forEach(function(btn) {
+                btn.addEventListener('click', function(e) {
+                    const format = btn.getAttribute('data-format');
+                    if (format === 'png') {
+                        downloadChart('image/png', 'png');
+                    } else if (format === 'jpg') {
+                        downloadChart('image/jpeg', 'jpg');
+                    }
+                    downloadMenu.classList.add('hidden');
+                });
+            });
+            // Hide menu if click outside
+            document.addEventListener('click', function(e) {
+                if (!downloadBtn.contains(e.target) && !downloadMenu.contains(e.target)) {
+                    downloadMenu.classList.add('hidden');
+                }
             });
         }
     });
