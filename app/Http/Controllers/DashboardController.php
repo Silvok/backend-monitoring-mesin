@@ -120,9 +120,14 @@ class DashboardController extends Controller
         $rawResults = $query->orderBy('created_at', 'asc')->with('machine')->get();
 
 
-        // Agregasi per 3 menit: label = d-m H:i (i dibulatkan ke kelipatan 3)
-        $grouped = $rawResults->groupBy(function($item) {
-            $minute = floor($item->created_at->minute / 3) * 3;
+        // Agregasi sesuai interval yang dipilih user (default 3 menit)
+        $interval = (int) $request->input('aggregation_interval', 3);
+        $allowedIntervals = [1, 3, 5, 10, 15];
+        if (!in_array($interval, $allowedIntervals)) {
+            $interval = 3;
+        }
+        $grouped = $rawResults->groupBy(function($item) use ($interval) {
+            $minute = floor($item->created_at->minute / $interval) * $interval;
             return $item->created_at->format('d-m H:') . str_pad($minute, 2, '0', STR_PAD_LEFT);
         });
         $rmsData = $grouped->map(function($items, $label) {

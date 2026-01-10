@@ -66,6 +66,16 @@
                         max="{{ $latestDate ? \Carbon\Carbon::parse($latestDate)->format('Y-m-d') : '' }}"
                         value="{{ request('end_date') ? \Carbon\Carbon::parse(request('end_date'))->format('Y-m-d') : ($latestDate ? \Carbon\Carbon::parse($latestDate)->format('Y-m-d') : '') }}">
                 </div>
+                <div>
+                    <label for="aggregation_interval" class="block text-sm font-semibold text-emerald-900 mb-1">Interval Agregasi</label>
+                    <select name="aggregation_interval" id="aggregation_interval" class="border-gray-300 rounded-lg focus:ring-emerald-500 focus:border-emerald-500">
+                        <option value="1" {{ request('aggregation_interval', '3') == '1' ? 'selected' : '' }}>1 Menit</option>
+                        <option value="3" {{ request('aggregation_interval', '3') == '3' ? 'selected' : '' }}>3 Menit</option>
+                        <option value="5" {{ request('aggregation_interval', '3') == '5' ? 'selected' : '' }}>5 Menit</option>
+                        <option value="10" {{ request('aggregation_interval', '3') == '10' ? 'selected' : '' }}>10 Menit</option>
+                        <option value="15" {{ request('aggregation_interval', '3') == '15' ? 'selected' : '' }}>15 Menit</option>
+                    </select>
+                </div>
                 <div class="flex items-end h-full">
                     <button type="submit" class="px-6 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-lg shadow mt-6">Terapkan Filter</button>
                 </div>
