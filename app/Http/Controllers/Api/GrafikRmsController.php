@@ -1,15 +1,15 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api;
 
+use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\RawSample;
+use App\Models\AnalysisResult;
 use Carbon\Carbon;
 
-
-class GrafikController extends Controller
+class GrafikRmsController extends Controller
 {
-    public function getRmsData(Request $request)
+    public function index(Request $request)
     {
         $machineId = $request->input('machine_id');
         $startDate = $request->input('start_date');
@@ -35,25 +35,6 @@ class GrafikController extends Controller
         })->toArray();
 
         $values = $results->pluck('rms')->toArray();
-
-        if (count($labels) === 0 || count($values) === 0) {
-            \Log::debug('Grafik API: Data tidak ditemukan', [
-                'machine_id' => $machineId,
-                'start' => $start,
-                'end' => $end,
-                'query_count' => $results->count(),
-                'query_sql' => $results->toSql() ?? null,
-            ]);
-            return response()->json([
-                'success' => false,
-                'message' => 'Data tidak ditemukan',
-                'debug' => [
-                    'machine_id' => $machineId,
-                    'start' => $start,
-                    'end' => $end,
-                ]
-            ], 200);
-        }
 
         return response()->json([
             'success' => true,

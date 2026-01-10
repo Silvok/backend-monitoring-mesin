@@ -116,10 +116,13 @@ class DashboardController extends Controller
                 ->get()
                 ->map(function($analysis) {
                     $severity = 'WARNING';
-                    if ($analysis->rms >= 1.0 || $analysis->peak_amp >= 2.0) {
+                    if ($analysis->rms >= 1.8) {
                         $severity = 'CRITICAL';
+                    } elseif ($analysis->rms >= 0.7) {
+                        $severity = 'WARNING';
+                    } else {
+                        $severity = 'NORMAL';
                     }
-
                     return [
                         'id' => $analysis->id,
                         'severity' => $severity,

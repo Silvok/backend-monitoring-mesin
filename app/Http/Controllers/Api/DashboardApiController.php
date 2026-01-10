@@ -209,9 +209,9 @@ class DashboardApiController extends Controller
             // Tentukan status berdasarkan RMS
             $rmsValue = $latestAnalysis ? round($latestAnalysis->rms, 4) : 0;
             if ($latestAnalysis) {
-                if ($rmsValue < 0.7) {
+                if ($rmsValue < 0.05) {
                     $status = 'NORMAL';
-                } elseif ($rmsValue < 1.8) {
+                } elseif ($rmsValue < 0.15) {
                     $status = 'WASPADA';
                 } else {
                     $status = 'ANOMALI';
