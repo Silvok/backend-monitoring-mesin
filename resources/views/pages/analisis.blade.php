@@ -5,8 +5,8 @@
                 <h2 class="font-bold text-2xl text-gray-900">Analisis Data Mesin</h2>
                 <p class="text-sm text-green-600 font-medium">Monitoring & Insight Mesin</p>
             </div>
-            <div class="text-sm text-gray-700 bg-gradient-to-br from-green-50 to-yellow-50 px-4 py-2.5 rounded-lg border-2 border-green-200 shadow-sm">
-                <span class="font-bold" id="currentDate">{{ now()->format('d M Y') }}</span>
+            <div class="text-sm text-gray-700 bg-gray-50 px-3 py-1.5 rounded-lg border border-gray-200">
+                <span class="font-semibold" id="currentTime">{{ \Carbon\Carbon::now()->locale('id')->translatedFormat('l, d M Y, H:i') }}</span>
             </div>
         </div>
     </x-slot>
@@ -22,87 +22,13 @@
                 </ul>
             </div>
 
-            <!-- Tabel Ringkasan Status Mesin -->
-            <div class="bg-white rounded-2xl shadow-xl border border-green-100 p-6">
-                <h3 class="text-lg font-bold text-green-700 mb-4">Ringkasan Status Mesin</h3>
-                <div class="overflow-x-auto">
-                    <table class="min-w-full divide-y divide-gray-200 text-sm">
-                        <thead>
-                            <tr class="bg-green-50">
-                                <th class="px-3 py-2 text-left font-bold text-gray-700">Mesin</th>
-                                <th class="px-3 py-2 text-left font-bold text-gray-700">Lokasi</th>
-                                <th class="px-3 py-2 text-left font-bold text-gray-700">Status</th>
-                                <th class="px-3 py-2 text-left font-bold text-gray-700">RMS</th>
-                                <th class="px-3 py-2 text-left font-bold text-gray-700">Peak</th>
-                                <th class="px-3 py-2 text-left font-bold text-gray-700">Dominant Freq</th>
-                                <th class="px-3 py-2 text-left font-bold text-gray-700">Waktu Analisis</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <!-- Loop mesin di sini -->
-                            <tr class="border-b hover:bg-blue-50 transition bg-green-50 text-green-700 font-bold">
-                                <td class="px-3 py-2">Contoh Mesin 1</td>
-                                <td class="px-3 py-2">Lokasi A</td>
-                                <td class="px-3 py-2">NORMAL</td>
-                                <td class="px-3 py-2">0.85</td>
-                                <td class="px-3 py-2">1.20</td>
-                                <td class="px-3 py-2">50.5</td>
-                                <td class="px-3 py-2">2026-01-05 08:00</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
+
 
             <!-- Card Detail Analisis Terbaru -->
-            <div class="bg-white rounded-2xl shadow-xl border border-green-100 p-6">
-                <h3 class="text-lg font-bold text-green-700 mb-4">Detail Analisis Terbaru</h3>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div class="mb-2">
-                        <div class="text-xs text-gray-500 mb-0.5">Mesin</div>
-                        <div class="font-bold text-base text-gray-800">Contoh Mesin 1</div>
-                    </div>
-                    <div class="mb-2">
-                        <div class="text-xs text-gray-500 mb-0.5">Lokasi</div>
-                        <div class="font-bold text-base text-gray-800">Lokasi A</div>
-                    </div>
-                    <div class="mb-2">
-                        <div class="text-xs text-gray-500 mb-0.5">Status</div>
-                        <div class="font-bold text-base text-green-700">NORMAL</div>
-                    </div>
-                    <div class="mb-2">
-                        <div class="text-xs text-gray-500 mb-0.5">RMS Value</div>
-                        <div class="font-bold text-base text-gray-800">0.85</div>
-                    </div>
-                    <div class="mb-2">
-                        <div class="text-xs text-gray-500 mb-0.5">Peak Amplitude</div>
-                        <div class="font-bold text-base text-gray-800">1.20</div>
-                    </div>
-                    <div class="mb-2">
-                        <div class="text-xs text-gray-500 mb-0.5">Dominant Frequency</div>
-                        <div class="font-bold text-base text-gray-800">50.5</div>
-                    </div>
-                    <div class="mb-2">
-                        <div class="text-xs text-gray-500 mb-0.5">Waktu Analisis</div>
-                        <div class="font-bold text-base text-gray-800">2026-01-05 08:00</div>
-                    </div>
-                </div>
-            </div>
+
         </div>
     </div>
-</x-app-layout>
-<x-app-layout>
-    <x-slot name="header">
-        <div class="flex items-center justify-between">
-            <div>
-                <h2 class="font-bold text-2xl text-gray-900">Analisis Data Mesin</h2>
-                <p class="text-sm text-green-600 font-medium">Performance Analysis & Insights</p>
-            </div>
-            <div class="text-sm text-gray-700 bg-gradient-to-br from-green-50 to-yellow-50 px-4 py-2.5 rounded-lg border-2 border-green-200 shadow-sm">
-                <span class="font-bold" id="currentDate">{{ now()->format('d M Y') }}</span>
-            </div>
-        </div>
-    </x-slot>
+
     <div class="py-8">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-10">
             <!-- Highlight Anomali -->
