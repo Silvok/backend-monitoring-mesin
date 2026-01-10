@@ -97,10 +97,14 @@ class DashboardController extends Controller
         $machineId = $request->input('machine_id');
         $startDate = $request->input('start_date');
         $endDate = $request->input('end_date');
+        $conditionStatus = $request->input('condition_status');
 
         $query = AnalysisResult::query();
         if ($machineId) {
             $query->where('machine_id', $machineId);
+        }
+        if ($conditionStatus) {
+            $query->whereRaw('UPPER(condition_status) = ?', [strtoupper($conditionStatus)]);
         }
         if ($startDate && $endDate) {
             // Filter berdasarkan range tanggal (00:00:00 - 23:59:59)
@@ -113,25 +117,24 @@ class DashboardController extends Controller
             $query->where('created_at', '>=', now()->subHours(24));
         }
 
-        $rmsData = $query->orderBy('created_at', 'asc')
-            ->get(['rms', 'created_at'])
-            ->map(function($item) use ($startDate, $endDate) {
-                // Jika filter tanggal, tampilkan label tanggal+jam, jika tidak hanya jam
-                $label = ($startDate && $endDate)
-                    ? $item->created_at->format('d-m H:i')
-                    : $item->created_at->format('H:i');
-                return [
-                    'time' => $label,
-                    'value' => round($item->rms, 4)
-                ];
-            });
+        $rawResults = $query->orderBy('created_at', 'asc')->with('machine')->get();
+
+        $rmsData = $rawResults->map(function($item) use ($startDate, $endDate) {
+            $label = ($startDate && $endDate)
+                ? $item->created_at->format('d-m H:i')
+                : $item->created_at->format('H:i');
+            return [
+                'time' => $label,
+                'value' => round($item->rms, 4)
+            ];
+        });
 
         $rmsChartData = [
             'labels' => $rmsData->pluck('time')->toArray(),
             'values' => $rmsData->pluck('value')->toArray()
         ];
 
-        return view('pages.data-grafik', compact('machines', 'latestDate', 'earliestDate', 'rmsChartData'));
+        return view('pages.data-grafik', compact('machines', 'latestDate', 'earliestDate', 'rmsChartData', 'rawResults'));
     }
 
     public function analisis()

@@ -44,6 +44,24 @@
                     legend: {
                         display: true,
                         position: 'top',
+                    },
+                    tooltip: {
+                        callbacks: {
+                            title: function(context) {
+                                // Tampilkan label (tanggal/jam)
+                                return 'Waktu: ' + context[0].label;
+                            },
+                            label: function(context) {
+                                // Tampilkan nilai RMS
+                                let rms = context.parsed.y;
+                                let label = 'RMS: ' + rms + ' mm/s';
+                                // Jika chartData.machines tersedia, tampilkan nama mesin
+                                if (chartData.machines && chartData.machines[context.dataIndex]) {
+                                    label += ' | Mesin: ' + chartData.machines[context.dataIndex];
+                                }
+                                return label;
+                            }
+                        }
                     }
                 },
                 scales: {

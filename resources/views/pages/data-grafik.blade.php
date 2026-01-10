@@ -32,6 +32,17 @@
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <!-- Filter Form: Tanggal & Mesin -->
             <form method="GET" action="" class="mb-8 bg-white rounded-xl shadow p-6 flex flex-wrap items-end gap-4">
+                                <div>
+                                    <label for="condition_status" class="block text-sm font-semibold text-emerald-900 mb-1">Status/Condition</label>
+                                    <select name="condition_status" id="condition_status" class="border-gray-300 rounded-lg focus:ring-emerald-500 focus:border-emerald-500">
+                                        <option value="">Semua Status</option>
+                                        <option value="NORMAL" {{ request('condition_status') == 'NORMAL' ? 'selected' : '' }}>NORMAL</option>
+                                        <option value="ANOMALY" {{ request('condition_status') == 'ANOMALY' ? 'selected' : '' }}>ANOMALY</option>
+                                        <option value="WARNING" {{ request('condition_status') == 'WARNING' ? 'selected' : '' }}>WARNING</option>
+                                        <option value="FAULT" {{ request('condition_status') == 'FAULT' ? 'selected' : '' }}>FAULT</option>
+                                        <option value="CRITICAL" {{ request('condition_status') == 'CRITICAL' ? 'selected' : '' }}>CRITICAL</option>
+                                    </select>
+                                </div>
                 <div>
                     <label for="machine_id" class="block text-sm font-semibold text-emerald-900 mb-1">Mesin</label>
                     <select name="machine_id" id="machine_id" class="border-gray-300 rounded-lg focus:ring-emerald-500 focus:border-emerald-500">
@@ -63,6 +74,11 @@
                         <!-- Grafik RMS Value Trend (24 Jam Terakhir) Card (Sama seperti dashboard) -->
                         @component('components.dashboard.rms-chart', compact('rmsChartData'))
                         @endcomponent
+                        @if(empty($rmsChartData['labels']))
+                            <div class="bg-red-50 text-red-700 rounded-lg px-4 py-3 mt-4 text-center font-semibold">
+                                Tidak ada data anomaly ditemukan untuk filter ini.
+                            </div>
+                        @endif
             <!-- Alert Panel -->
             <div id="alertPanel" class="bg-white rounded-xl shadow-lg mb-8 overflow-hidden border-l-4 border-red-500" style="display: none;">
                 <div class="bg-gradient-to-r from-red-600 to-red-700 px-6 py-4">
