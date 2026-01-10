@@ -103,7 +103,7 @@ class DashboardController extends Controller
         if ($machineId) {
             $query->where('machine_id', $machineId);
         }
-        if ($conditionStatus) {
+        if ($conditionStatus !== null && $conditionStatus !== '') {
             $query->whereRaw('UPPER(condition_status) = ?', [strtoupper($conditionStatus)]);
         }
         if ($startDate && $endDate) {
