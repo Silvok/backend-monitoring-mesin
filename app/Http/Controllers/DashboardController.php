@@ -131,15 +131,23 @@ class DashboardController extends Controller
             return $item->created_at->format('d-m H:') . str_pad($minute, 2, '0', STR_PAD_LEFT);
         });
         $rmsData = $grouped->map(function($items, $label) {
+            // Ambil data pertama di grup untuk info tambahan
+            $first = $items->first();
             return [
                 'time' => $label,
-                'value' => round($items->avg('rms'), 4)
+                'value' => round($items->avg('rms'), 4),
+                'full_time' => $first ? $first->created_at->format('Y-m-d H:i:s') : null,
+                'machine' => $first && $first->machine ? $first->machine->name : null,
+                'status' => $first ? $first->condition_status : null
             ];
         })->values();
 
         $rmsChartData = [
             'labels' => $rmsData->pluck('time')->toArray(),
-            'values' => $rmsData->pluck('value')->toArray()
+            'values' => $rmsData->pluck('value')->toArray(),
+            'full_times' => $rmsData->pluck('full_time')->toArray(),
+            'machines' => $rmsData->pluck('machine')->toArray(),
+            'statuses' => $rmsData->pluck('status')->toArray(),
         ];
 
         return view('pages.data-grafik', compact('machines', 'latestDate', 'earliestDate', 'rmsChartData', 'rawResults'));

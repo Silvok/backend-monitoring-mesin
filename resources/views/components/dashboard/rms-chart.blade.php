@@ -31,6 +31,22 @@
 
         function renderChart(type) {
             if (chartInstance) chartInstance.destroy();
+            // Highlight anomaly/critical/fault points
+            const statusArr = chartData.statuses || [];
+            const highlightStatuses = ['ANOMALY', 'FAULT', 'CRITICAL', 'WARNING'];
+            // Untuk bar: array warna background, untuk line: array warna point
+            const barColors = (chartData.values || []).map((_, i) => {
+                if (highlightStatuses.includes((statusArr[i] || '').toUpperCase())) {
+                    return 'rgba(239,68,68,0.7)'; // merah
+                }
+                return 'rgba(5,150,105,0.3)'; // hijau
+            });
+            const pointColors = (chartData.values || []).map((_, i) => {
+                if (highlightStatuses.includes((statusArr[i] || '').toUpperCase())) {
+                    return '#ef4444'; // merah
+                }
+                return '#059669'; // hijau
+            });
             chartInstance = new Chart(ctx, {
                 type: type,
                 data: {
@@ -40,11 +56,11 @@
                             label: 'RMS Value',
                             data: chartData.values || [],
                             borderColor: '#059669',
-                            backgroundColor: type === 'bar' ? 'rgba(5, 150, 105, 0.3)' : 'rgba(5, 150, 105, 0.1)',
+                            backgroundColor: type === 'bar' ? barColors : 'rgba(5, 150, 105, 0.1)',
                             borderWidth: 2,
                             fill: type === 'line',
                             tension: type === 'line' ? 0.4 : undefined,
-                            pointBackgroundColor: '#059669',
+                            pointBackgroundColor: type === 'line' ? pointColors : undefined,
                             pointBorderColor: '#fff',
                             pointBorderWidth: 2,
                             pointRadius: 4,
@@ -63,13 +79,19 @@
                         tooltip: {
                             callbacks: {
                                 title: function(context) {
-                                    return 'Waktu: ' + context[0].label;
+                                    const idx = context[0].dataIndex;
+                                    let waktu = chartData.full_times && chartData.full_times[idx] ? chartData.full_times[idx] : context[0].label;
+                                    return 'Waktu: ' + waktu;
                                 },
                                 label: function(context) {
+                                    const idx = context.dataIndex;
                                     let rms = context.parsed.y;
                                     let label = 'RMS: ' + rms + ' mm/s';
-                                    if (chartData.machines && chartData.machines[context.dataIndex]) {
-                                        label += ' | Mesin: ' + chartData.machines[context.dataIndex];
+                                    if (chartData.machines && chartData.machines[idx]) {
+                                        label += ' | Mesin: ' + chartData.machines[idx];
+                                    }
+                                    if (chartData.statuses && chartData.statuses[idx]) {
+                                        label += ' | Status: ' + chartData.statuses[idx];
                                     }
                                     return label;
                                 }
