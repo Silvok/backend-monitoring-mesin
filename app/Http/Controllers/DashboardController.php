@@ -119,15 +119,18 @@ class DashboardController extends Controller
 
         $rawResults = $query->orderBy('created_at', 'asc')->with('machine')->get();
 
-        $rmsData = $rawResults->map(function($item) use ($startDate, $endDate) {
-            $label = ($startDate && $endDate)
-                ? $item->created_at->format('d-m H:i')
-                : $item->created_at->format('H:i');
+
+        // Agregasi per 3 menit: label = d-m H:i (i dibulatkan ke kelipatan 3)
+        $grouped = $rawResults->groupBy(function($item) {
+            $minute = floor($item->created_at->minute / 3) * 3;
+            return $item->created_at->format('d-m H:') . str_pad($minute, 2, '0', STR_PAD_LEFT);
+        });
+        $rmsData = $grouped->map(function($items, $label) {
             return [
                 'time' => $label,
-                'value' => round($item->rms, 4)
+                'value' => round($items->avg('rms'), 4)
             ];
-        });
+        })->values();
 
         $rmsChartData = [
             'labels' => $rmsData->pluck('time')->toArray(),

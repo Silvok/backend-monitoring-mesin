@@ -72,6 +72,19 @@
             </form>
                                     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
                         <!-- Grafik RMS Value Trend (24 Jam Terakhir) Card (Sama seperti dashboard) -->
+                        <div class="flex items-center gap-4 mb-4">
+                            <label for="chartType" class="font-semibold text-emerald-900">Tipe Grafik:</label>
+                            <div class="relative w-48">
+                                <select id="chartType" class="appearance-none border border-gray-300 rounded focus:ring-emerald-500 focus:border-emerald-500 pl-3 pr-6 py-1 text-sm font-semibold text-emerald-900 bg-white shadow w-full" style="max-width:100px;">
+                                    <option value="line">LINE</option>
+                                    <option value="bar">BAR</option>
+                                </select>
+                                <span class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-4">
+                                    <svg class="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    </svg>
+                                </span>
+                            </div>
+                        </div>
                         @component('components.dashboard.rms-chart', compact('rmsChartData'))
                         @endcomponent
                         @if(empty($rmsChartData['labels']))
