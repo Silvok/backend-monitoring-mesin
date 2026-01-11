@@ -22,7 +22,7 @@ Route::get('/data-grafik', [DashboardController::class, 'dataGrafik'])
     ->middleware(['auth', 'verified'])
     ->name('data-grafik');
 
-Route::get('/analisis', [DashboardController::class, 'analisis'])
+Route::get('/analisis', [\App\Http\Controllers\AnalisisController::class, 'index'])
     ->middleware(['auth', 'verified'])
     ->name('analisis');
 

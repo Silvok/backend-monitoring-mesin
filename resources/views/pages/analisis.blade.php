@@ -13,12 +13,78 @@
 
     <!-- DEBUG REMOVED: Variables confirmed present -->
     <!-- Summary Status Mesin -->
-    <div class="mb-8">
-        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
+
+
+
+    <!-- Summary Status Mesin - Card Custom User -->
+
+    <div class="bg-card text-card-foreground flex flex-col gap-6 rounded-xl border p-3 mb-4 mt-2 ml-4 md:ml-8">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <!-- Total Mesin -->
+            <div class="p-4 border rounded-lg transition-colors text-emerald-600 bg-emerald-50 border-emerald-200">
+                <div class="flex items-center justify-between mb-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-zap w-5 h-5" aria-hidden="true"><path d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z"></path></svg>
+                    <span class="text-lg">→</span>
+                </div>
+                <div class="space-y-1">
+                    <div class="text-2xl font-medium">{{ $totalMachines ?? '-' }}</div>
+                    <div class="text-sm">Total Mesin</div>
+                </div>
+            </div>
+            <!-- Normal -->
+            <div class="p-4 border rounded-lg transition-colors text-yellow-600 bg-yellow-50 border-yellow-200">
+                <div class="flex items-center justify-between mb-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-heart w-5 h-5" aria-hidden="true"><path d="M2 9.5a5.5 5.5 0 0 1 9.591-3.676.56.56 0 0 0 .818 0A5.49 5.49 0 0 1 22 9.5c0 2.29-1.5 4-3 5.5l-5.492 5.313a2 2 0 0 1-3 .019L5 15c-1.5-1.5-3-3.2-3-5.5"></path></svg>
+                    <span class="text-lg">↗</span>
+                </div>
+                <div class="space-y-1">
+                    <div class="text-2xl font-medium">{{ $statusCounts['NORMAL'] ?? 0 }}</div>
+                    <div class="text-sm">Normal</div>
+                </div>
+            </div>
             <!-- Anomaly -->
+            <div class="p-4 border rounded-lg transition-colors text-rose-600 bg-rose-50 border-rose-200">
+                <div class="flex items-center justify-between mb-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-activity w-5 h-5" aria-hidden="true"><path d="M22 12h-2.48a2 2 0 0 0-1.93 1.46l-2.35 8.36a.25.25 0 0 1-.48 0L9.24 2.18a.25.25 0 0 0-.48 0l-2.35 8.36A2 2 0 0 1 4.49 12H2"></path></svg>
+                    <span class="text-lg">↘</span>
+                </div>
+                <div class="space-y-1">
+                    <div class="text-2xl font-medium">{{ $statusCounts['ANOMALY'] ?? 0 }}</div>
+                    <div class="text-sm">Anomaly</div>
+                </div>
+            </div>
+            <!-- Warning -->
+            <div class="p-4 border rounded-lg transition-colors text-orange-600 bg-orange-50 border-orange-200">
+                <div class="flex items-center justify-between mb-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-trending-up w-5 h-5" aria-hidden="true"><path d="M16 7h6v6"></path><path d="m22 7-8.5 8.5-5-5L2 17"></path></svg>
+                    <span class="text-lg">↗</span>
+                </div>
+                <div class="space-y-1">
+                    <div class="text-2xl font-medium">{{ $statusCounts['WARNING'] ?? 0 }}</div>
+                    <div class="text-sm">Warning</div>
+                </div>
+            </div>
         </div>
     </div>
 
+    <!-- Button Modern Minimalis -->
+    <div class="flex gap-2 mb-6">
+        <!-- Button Hijau Dominan -->
+        <button class="bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-5 rounded-xl shadow transition flex items-center gap-2 border-2 border-green-700">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>
+            Tambah Data
+        </button>
+        <!-- Button Kuning Dominan -->
+        <button class="bg-yellow-400 hover:bg-yellow-500 text-gray-900 font-semibold py-2 px-5 rounded-xl shadow transition flex items-center gap-2 border-2 border-yellow-500">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v16h16V4H4zm4 4h8v8H8V8z" /></svg>
+            Export
+        </button>
+        <!-- Button Putih Dominan -->
+        <button class="bg-white hover:bg-gray-100 text-gray-900 font-semibold py-2 px-5 rounded-xl shadow transition flex items-center gap-2 border-2 border-gray-300">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+            Detail
+        </button>
+    </div>
     <div class="py-8">
         <div class="max-w-5xl mx-auto sm:px-6 lg:px-8 flex flex-col gap-8">
             <!-- Highlight Anomali/Kritis -->
@@ -30,7 +96,7 @@
                 </ul>
             </div>
 
-
+            <!-- Card Info Custom (contoh Heart Rate) -->
 
             <!-- Card Detail Analisis Terbaru -->
 
@@ -39,68 +105,9 @@
 
     <div class="py-8">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-10">
-            <!-- Highlight Anomali -->
-            @if(isset($anomalyMachines) && count($anomalyMachines) > 0)
-            <div class="bg-gradient-to-r from-red-100 via-orange-100 to-yellow-50 border-l-4 border-red-500 p-6 rounded-2xl shadow-xl mb-8">
-                <h3 class="text-lg font-bold text-red-700 mb-2">Mesin Status Anomali/Kritis</h3>
-                <ul class="list-disc ml-6">
-                    @foreach($anomalyMachines as $machine)
-                        <li class="font-bold text-red-700">{{ $machine->name }} ({{ $machine->location }}) - Status: {{ $machine->latest_analysis->status ?? '-' }}</li>
-                    @endforeach
-                </ul>
-            </div>
-            @endif
-
-
-
-            <!-- Health Score Section -->
-            <div id="healthScoreSection" class="hidden bg-white rounded-xl shadow-lg border-l-4 border-green-500 overflow-hidden">
-                <div class="bg-gradient-to-r from-green-600 to-green-700 px-6 py-4">
-                    <h3 class="text-xl font-bold text-white flex items-center space-x-2">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                        </svg>
-                        <span>Health Score Analysis</span>
-                    </h3>
-                </div>
-                <div id="healthScoreContent" class="p-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    <!-- Dynamic content akan di-inject di sini -->
-                </div>
-            </div>
-
-            <!-- Comparative Analysis Section -->
-            <div id="comparativeAnalysisSection" class="hidden bg-white rounded-xl shadow-lg border-l-4 border-yellow-500 overflow-hidden">
-                <div class="bg-gradient-to-r from-yellow-500 to-yellow-600 px-6 py-4">
-                    <div class="flex items-center justify-between">
-                        <h3 class="text-xl font-bold text-gray-900 flex items-center space-x-2">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
-                            </svg>
-                            <span>Comparative Analysis</span>
-                        </h3>
-                        <button id="exportCompChartBtn" class="px-4 py-2 bg-white hover:bg-gray-100 text-gray-800 font-semibold rounded-lg transition border-2 border-gray-300 flex items-center space-x-2">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
-                            </svg>
-                            <span>Export</span>
-                        </button>
-                    </div>
-                </div>
-                <div class="p-6">
-                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                        <div class="bg-gray-50 rounded-lg p-5 border border-gray-200">
-                            <h4 class="text-base font-bold text-gray-800 mb-4">Average RMS Value</h4>
-                            <div style="height: 300px;">
-                                <canvas id="avgRmsChart"></canvas>
-                            </div>
-                        </div>
-                        <div class="bg-gray-50 rounded-lg p-5 border border-gray-200">
-                            <h4 class="text-base font-bold text-gray-800 mb-4">Anomaly Rate Distribution</h4>
-                            <div style="height: 300px;">
-                                <canvas id="anomalyRateChart"></canvas>
-                            </div>
-                        </div>
-                    </div>
+            <div class="mb-8">
+                <div class="flex flex-row flex-wrap gap-4 items-stretch">
+                    <!-- Normal (utama, solid) -->
                 </div>
             </div>
 
