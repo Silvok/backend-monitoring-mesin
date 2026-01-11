@@ -1,208 +1,80 @@
 <x-app-layout>
     <x-slot name="header">
         <div class="flex items-center justify-between">
-            <div>
-                <h2 class="font-bold text-2xl text-gray-900">Analisis Data Mesin</h2>
-                <p class="text-sm text-green-600 font-medium">Monitoring & Insight Mesin</p>
+            <div class="flex items-center space-x-8">
+                <h2 class="font-bold text-xl text-emerald-900">
+                    Analisis Data Mesin
+                </h2>
+                <!-- Live Status Indicator -->
+                <div class="flex items-center space-x-2 px-3 py-1.5 bg-emerald-50 rounded-full border border-emerald-200">
+                    <div class="relative flex h-3 w-3">
+                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                        <span class="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
+                    </div>
+                    <span class="text-xs font-semibold text-emerald-700">Live</span>
+                </div>
             </div>
-            <div class="text-sm text-gray-700 bg-gray-50 px-3 py-1.5 rounded-lg border border-gray-200">
-                <span class="font-semibold" id="currentTime">{{ \Carbon\Carbon::now()->locale('id')->translatedFormat('l, d M Y, H:i') }}</span>
+            <div class="flex items-center space-x-3">
+                <div class="text-sm text-gray-600 bg-gray-50 px-3 py-1.5 rounded-lg border border-gray-200">
+                    <span class="font-semibold" id="currentTime">{{ now()->locale('id')->translatedFormat('l, d M Y, H:i') }}</span>
+                </div>
+                <button onclick="refreshDashboard()" class="px-4 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-medium rounded-lg transition flex items-center space-x-2 shadow-sm">
+                    <svg id="refreshIcon" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                    </svg>
+                    <span>Refresh</span>
+                </button>
             </div>
         </div>
     </x-slot>
 
-    <!-- DEBUG REMOVED: Variables confirmed present -->
-    <!-- Summary Status Mesin -->
-
-
-
-    <!-- Summary Status Mesin - Card Custom User -->
-
-    <div class="bg-card text-card-foreground flex flex-col gap-6 rounded-xl border p-3 mb-4 mt-2 ml-4 md:ml-8">
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            <!-- Total Mesin -->
-            <div class="p-4 border rounded-lg transition-colors text-emerald-600 bg-emerald-50 border-emerald-200">
-                <div class="flex items-center justify-between mb-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-zap w-5 h-5" aria-hidden="true"><path d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z"></path></svg>
-                    <span class="text-lg">→</span>
-                </div>
-                <div class="space-y-1">
-                    <div class="text-2xl font-medium">{{ $totalMachines ?? '-' }}</div>
-                    <div class="text-sm">Total Mesin</div>
-                </div>
+    <!-- Card Summary Analisis -->
+    <div class="flex justify-center gap-6 mt-6 mx-auto">
+        <div class="bg-white rounded-xl shadow-lg border-l-4 px-8 py-3 flex flex-col justify-between w-80 min-h-40" style="border-left-color: #347433;">
+            <div>
+                <h4 class="text-lg font-bold text-gray-900 mb-2">Total Mesin</h4>
+                <p class="text-3xl font-extrabold text-gray-700">{{ $totalMachines ?? '-' }}</p>
             </div>
-            <!-- Normal -->
-            <div class="p-4 border rounded-lg transition-colors text-yellow-600 bg-yellow-50 border-yellow-200">
-                <div class="flex items-center justify-between mb-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-heart w-5 h-5" aria-hidden="true"><path d="M2 9.5a5.5 5.5 0 0 1 9.591-3.676.56.56 0 0 0 .818 0A5.49 5.49 0 0 1 22 9.5c0 2.29-1.5 4-3 5.5l-5.492 5.313a2 2 0 0 1-3 .019L5 15c-1.5-1.5-3-3.2-3-5.5"></path></svg>
-                    <span class="text-lg">↗</span>
-                </div>
-                <div class="space-y-1">
-                    <div class="text-2xl font-medium">{{ $statusCounts['NORMAL'] ?? 0 }}</div>
-                    <div class="text-sm">Normal</div>
-                </div>
+            <p class="text-xs text-gray-500 mt-2">Total mesin aktif/terdaftar</p>
+        </div>
+        <div class="bg-white rounded-xl shadow-lg border-l-4 px-8 py-3 flex flex-col justify-between w-80 min-h-40" style="border-left-color: #FFC107;">
+            <div>
+                <h4 class="text-lg font-bold text-gray-900 mb-2">Normal</h4>
+                <p class="text-3xl font-extrabold text-green-600">{{ $statusCounts['Normal'] ?? 0 }}</p>
             </div>
-            <!-- Anomaly -->
-            <div class="p-4 border rounded-lg transition-colors text-rose-600 bg-rose-50 border-rose-200">
-                <div class="flex items-center justify-between mb-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-activity w-5 h-5" aria-hidden="true"><path d="M22 12h-2.48a2 2 0 0 0-1.93 1.46l-2.35 8.36a.25.25 0 0 1-.48 0L9.24 2.18a.25.25 0 0 0-.48 0l-2.35 8.36A2 2 0 0 1 4.49 12H2"></path></svg>
-                    <span class="text-lg">↘</span>
-                </div>
-                <div class="space-y-1">
-                    <div class="text-2xl font-medium">{{ $statusCounts['ANOMALY'] ?? 0 }}</div>
-                    <div class="text-sm">Anomaly</div>
-                </div>
+            <p class="text-xs text-gray-500 mt-2">Mesin status normal</p>
+        </div>
+        <div class="bg-white rounded-xl shadow-lg border-l-4 px-8 py-3 flex flex-col justify-between w-80 min-h-40" style="border-left-color: #FF6F3C;">
+            <div>
+                <h4 class="text-lg font-bold text-gray-900 mb-2">Anomali</h4>
+                <p class="text-3xl font-extrabold text-blue-600">{{ $statusCounts['Anomali'] ?? 0 }}</p>
             </div>
-            <!-- Warning -->
-            <div class="p-4 border rounded-lg transition-colors text-orange-600 bg-orange-50 border-orange-200">
-                <div class="flex items-center justify-between mb-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-trending-up w-5 h-5" aria-hidden="true"><path d="M16 7h6v6"></path><path d="m22 7-8.5 8.5-5-5L2 17"></path></svg>
-                    <span class="text-lg">↗</span>
-                </div>
-                <div class="space-y-1">
-                    <div class="text-2xl font-medium">{{ $statusCounts['WARNING'] ?? 0 }}</div>
-                    <div class="text-sm">Warning</div>
-                </div>
+            <p class="text-xs text-gray-500 mt-2">Mesin status anomali</p>
+        </div>
+        <div class="bg-white rounded-xl shadow-lg border-l-4 px-8 py-3 flex flex-col justify-between w-80 min-h-40" style="border-left-color: #B22222;">
+            <div>
+                <h4 class="text-lg font-bold text-gray-900 mb-2">Peringatan</h4>
+                <p class="text-3xl font-extrabold text-yellow-600">{{ $statusCounts['Peringatan'] ?? 0 }}</p>
             </div>
+            <p class="text-xs text-gray-500 mt-2">Mesin status peringatan</p>
+        </div>
+        <div class="bg-white rounded-xl shadow-lg border-l-4 px-8 py-3 flex flex-col justify-between w-80 min-h-40" style="border-left-color: #B1AB86;">
+            <div>
+                <h4 class="text-lg font-bold text-gray-900 mb-2">Gangguan</h4>
+                <p class="text-3xl font-extrabold text-orange-600">{{ $statusCounts['Gangguan'] ?? 0 }}</p>
+            </div>
+            <p class="text-xs text-gray-500 mt-2">Mesin status gangguan</p>
+        </div>
+        <div class="bg-white rounded-xl shadow-lg border-l-4 px-8 py-3 flex flex-col justify-between w-80 min-h-40" style="border-left-color: #819067;">
+            <div>
+                <h4 class="text-lg font-bold text-gray-900 mb-2">Kritis</h4>
+                <p class="text-3xl font-extrabold text-red-600">{{ $statusCounts['Kritis'] ?? 0 }}</p>
+            </div>
+            <p class="text-xs text-gray-500 mt-2">Mesin status kritis</p>
         </div>
     </div>
 
-    <!-- Button Modern Minimalis -->
-    <div class="flex gap-2 mb-6">
-        <!-- Button Hijau Dominan -->
-        <button class="bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-5 rounded-xl shadow transition flex items-center gap-2 border-2 border-green-700">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>
-            Tambah Data
-        </button>
-        <!-- Button Kuning Dominan -->
-        <button class="bg-yellow-400 hover:bg-yellow-500 text-gray-900 font-semibold py-2 px-5 rounded-xl shadow transition flex items-center gap-2 border-2 border-yellow-500">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v16h16V4H4zm4 4h8v8H8V8z" /></svg>
-            Export
-        </button>
-        <!-- Button Putih Dominan -->
-        <button class="bg-white hover:bg-gray-100 text-gray-900 font-semibold py-2 px-5 rounded-xl shadow transition flex items-center gap-2 border-2 border-gray-300">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-            Detail
-        </button>
-    </div>
-    <div class="py-8">
-        <div class="max-w-5xl mx-auto sm:px-6 lg:px-8 flex flex-col gap-8">
-            <!-- Highlight Anomali/Kritis -->
-            <div class="bg-gradient-to-r from-red-100 via-orange-100 to-yellow-50 border-l-4 border-red-500 p-6 rounded-2xl shadow-xl" style="display: none;">
-                <h3 class="text-lg font-bold text-red-700 mb-2">Mesin Status Anomali/Kritis</h3>
-                <ul class="list-disc ml-6">
-                    <!-- Loop mesin anomali di sini -->
-                    <li class="font-bold text-red-700">Contoh Mesin 1 (Lokasi A) - Status: ANOMALY</li>
-                </ul>
-            </div>
-
-            <!-- Card Info Custom (contoh Heart Rate) -->
-
-            <!-- Card Detail Analisis Terbaru -->
-
-        </div>
-    </div>
-
-    <div class="py-8">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-10">
-            <div class="mb-8">
-                <div class="flex flex-row flex-wrap gap-4 items-stretch">
-                    <!-- Normal (utama, solid) -->
-                </div>
-            </div>
-
-            <!-- Statistical Summary Section -->
-            <div id="statisticalSummarySection" class="hidden bg-white rounded-xl shadow-lg border-l-4 border-green-600 overflow-hidden">
-                <div class="bg-gradient-to-r from-green-600 to-green-700 px-6 py-4">
-                    <h3 class="text-xl font-bold text-white flex items-center space-x-2">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
-                        </svg>
-                        <span>Statistical Summary</span>
                     </h3>
-                </div>
-                <div class="p-6">
-                    <div class="overflow-x-auto">
-                        <table class="min-w-full divide-y divide-gray-200">
-                            <thead class="bg-gray-50">
-                                <tr>
-                                    <th class="px-6 py-3 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Mesin</th>
-                                    <th class="px-6 py-3 text-center text-xs font-bold text-gray-700 uppercase tracking-wider">Total Data</th>
-                                    <th class="px-6 py-3 text-center text-xs font-bold text-gray-700 uppercase tracking-wider">RMS Min</th>
-                                    <th class="px-6 py-3 text-center text-xs font-bold text-gray-700 uppercase tracking-wider">RMS Max</th>
-                                    <th class="px-6 py-3 text-center text-xs font-bold text-gray-700 uppercase tracking-wider">RMS Avg</th>
-                                    <th class="px-6 py-3 text-center text-xs font-bold text-gray-700 uppercase tracking-wider">Std Dev</th>
-                                    <th class="px-6 py-3 text-center text-xs font-bold text-gray-700 uppercase tracking-wider">Anomali</th>
-                                    <th class="px-6 py-3 text-center text-xs font-bold text-gray-700 uppercase tracking-wider">Rate</th>
-                                </tr>
-                            <div>
-                                <label for="dateTo" class="text-xs font-semibold text-gray-700 mb-1.5 block">
-                                    Sampai Tanggal
-                                </label>
-                                <input type="date" id="dateTo" class="w-full px-3 py-2 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 shadow-sm transition hover:border-green-300 text-sm" value="{{ now()->format('Y-m-d') }}">
-
-                            </div>
-                            <div class="flex items-end">
-                                <button id="runAnalysisBtn" style="background-color: #16a34a !important; color: white !important; padding: 0.5rem 1rem; border-radius: 0.5rem; border: none; font-weight: bold; box-shadow: 0 2px 4px rgba(0,0,0,0.1); display: flex; gap: 0.4rem; align-items: center; transition: all 0.2s; width: 100%;">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
-                                    </svg>
-                                    <span class="text-sm font-semibold">Jalankan</span>
-                                </button>
-                            </div>
-                </div>
-                <div class="p-6">
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <button id="exportPdfBtn" class="p-4 bg-red-50 hover:bg-red-100 border-2 border-red-200 rounded-lg transition flex flex-col items-center space-y-2 group">
-                            <svg class="w-10 h-10 text-red-600 group-hover:scale-110 transition" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
-                            </svg>
-                            <span class="font-bold text-gray-900">Export PDF</span>
-                            <span class="text-xs text-gray-500">Laporan lengkap</span>
-                        </button>
-                        <button id="exportExcelBtn" class="p-4 bg-green-50 hover:bg-green-100 border-2 border-green-200 rounded-lg transition flex flex-col items-center space-y-2 group">
-                            <svg class="w-10 h-10 text-green-600 group-hover:scale-110 transition" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                            </svg>
-                            <span class="font-bold text-gray-900">Export Excel</span>
-                            <span class="text-xs text-gray-500">Format .csv</span>
-                        </button>
-                        <button id="exportCsvBtn" class="p-4 bg-blue-50 hover:bg-blue-100 border-2 border-blue-200 rounded-lg transition flex flex-col items-center space-y-2 group">
-                            <svg class="w-10 h-10 text-blue-600 group-hover:scale-110 transition" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3M3 17V7a2 2 0 012-2h6l2 2h6a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2z"></path>
-                            </svg>
-                            <span class="font-bold text-gray-900">Export CSV</span>
-                            <span class="text-xs text-gray-500">Data mentah</span>
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Anomaly Pattern Analysis Section -->
-            <div id="anomalyPatternSection" class="hidden bg-white rounded-xl shadow-lg border-l-4 border-red-500 overflow-hidden">
-                <div class="bg-gradient-to-r from-red-600 to-red-700 px-6 py-4">
-                    <h3 class="text-xl font-bold text-white flex items-center space-x-2">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4v.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                        </svg>
-                        <span>Anomaly Pattern Analysis</span>
-                    </h3>
-                </div>
-                <div class="p-6">
-                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                        <div class="bg-gray-50 rounded-lg p-5 border border-gray-200">
-                            <h4 class="text-base font-bold text-gray-800 mb-4">Anomaly Timeline</h4>
-                            <div style="height: 300px;">
-                                <canvas id="anomalyTimelineChart"></canvas>
-                            </div>
-                        </div>
-                        <div class="bg-gray-50 rounded-lg p-5 border border-gray-200">
-                            <h4 class="text-base font-bold text-gray-800 mb-4">Anomaly Type Distribution</h4>
-                            <div style="height: 300px;">
-                                <canvas id="anomalyTypeChart"></canvas>
-                            </div>
-                        </div>
-                    </div>
                 </div>
             </div>
 
@@ -254,18 +126,6 @@
             </div>
 
             <!-- Empty State -->
-            <div id="emptyState" class="bg-white rounded-xl shadow-lg border border-gray-200 p-12">
-                <div class="text-center">
-                    <svg class="w-20 h-20 mx-auto text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
-                    </svg>
-                    <h3 class="text-2xl font-bold text-gray-900 mb-2">Belum Ada Analisis</h3>
-                    <p class="text-gray-600 mb-6">Pilih mesin dan periode waktu, lalu klik "Jalankan Analisis" untuk melihat hasil</p>
-                    <button onclick="document.getElementById('runAnalysisBtn').click()" style="background-color: #16a34a !important; color: white !important; padding: 0.625rem 1.5rem; border-radius: 0.5rem; border: none; font-weight: bold; box-shadow: 0 4px 6px rgba(0,0,0,0.1); transition: all 0.2s;">
-                        Mulai Analisis
-                    </button>
-                </div>
-            </div>
 
         </div>
     </div>
