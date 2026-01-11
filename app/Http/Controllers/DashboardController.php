@@ -158,7 +158,40 @@ class DashboardController extends Controller
         // Get all machines for dropdown
         $machines = Machine::orderBy('name')->get();
 
-        return view('pages.analisis', compact('machines'));
+        // Hitung jumlah mesin per status terakhir
+        $countNormal = 0;
+        $countAnomaly = 0;
+        $countWarning = 0;
+        $countFault = 0;
+        $countCritical = 0;
+        $lastAnalysisTime = null;
+
+        foreach ($machines as $machine) {
+            $latest = $machine->latestAnalysis;
+            if ($latest) {
+                $status = strtoupper($latest->condition_status ?? '');
+                if ($status === 'NORMAL') $countNormal++;
+                elseif ($status === 'ANOMALY') $countAnomaly++;
+                elseif ($status === 'WARNING') $countWarning++;
+                elseif ($status === 'FAULT') $countFault++;
+                elseif ($status === 'CRITICAL') $countCritical++;
+
+                if (!$lastAnalysisTime || $latest->created_at > $lastAnalysisTime) {
+                    $lastAnalysisTime = $latest->created_at;
+                }
+            }
+        }
+        $lastAnalysisTime = $lastAnalysisTime ? $lastAnalysisTime->locale('id')->translatedFormat('l, d M Y, H:i') : '-';
+
+        return view('pages.analisis', compact(
+            'machines',
+            'countNormal',
+            'countAnomaly',
+            'countWarning',
+            'countFault',
+            'countCritical',
+            'lastAnalysisTime'
+        ));
     }
 
     public function getMachineAlerts($id)

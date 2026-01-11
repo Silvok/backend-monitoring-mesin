@@ -11,6 +11,14 @@
         </div>
     </x-slot>
 
+    <!-- DEBUG REMOVED: Variables confirmed present -->
+    <!-- Summary Status Mesin -->
+    <div class="mb-8">
+        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
+            <!-- Anomaly -->
+        </div>
+    </div>
+
     <div class="py-8">
         <div class="max-w-5xl mx-auto sm:px-6 lg:px-8 flex flex-col gap-8">
             <!-- Highlight Anomali/Kritis -->
