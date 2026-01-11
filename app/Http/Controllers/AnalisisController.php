@@ -37,7 +37,7 @@ class AnalisisController extends Controller
         } else {
             $query->where('created_at', '>=', now()->subHours(24));
         }
-        $rawResults = $query->orderBy('created_at', 'asc')->with('machine')->get();
+        $rawResults = $query->orderBy('created_at', 'asc')->with('machine')->paginate(request('per_page', 10));
 
         // Agregasi sesuai interval yang dipilih user (default 3 menit)
         $interval = (int) request('aggregation_interval', 3);

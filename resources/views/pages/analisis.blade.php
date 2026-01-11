@@ -72,12 +72,167 @@
                     {{ $lastUpdate ? $lastUpdate->translatedFormat('d M Y, H:i') : '-' }}
                 </span>
             </div>
+            </div>
         </div>
     </div>
 
+    <!-- Filter & Search Section -->
+    <div class="px-6 md:px-16 lg:px-32 xl:px-48 mb-6">
+        <form method="GET" action="" class="bg-white rounded-xl shadow p-4 flex flex-row items-center gap-4">
+            <div class="flex flex-col min-w-[160px]">
+                <label for="condition_status" class="block text-sm font-semibold text-emerald-900 mb-1">Status/Condition</label>
+                <select name="condition_status" id="condition_status" class="w-full rounded-lg border-gray-300 focus:border-emerald-500 focus:ring-emerald-500">
+                    <option value="">Semua Status</option>
+                    <option value="normal" {{ request('condition_status') == 'normal' ? 'selected' : '' }}>Normal</option>
+                    <option value="warning" {{ request('condition_status') == 'warning' ? 'selected' : '' }}>Warning</option>
+                    <option value="alert" {{ request('condition_status') == 'alert' ? 'selected' : '' }}>Alert/Kerusakan</option>
+                </select>
+            </div>
+            <div class="flex flex-col min-w-[160px]">
+                <label for="machine_id" class="block text-sm font-semibold text-emerald-900 mb-1">Mesin</label>
+                <select name="machine_id" id="machine_id" class="w-full rounded-lg border-gray-300 focus:border-emerald-500 focus:ring-emerald-500">
+                    <option value="">Semua Mesin</option>
+                    @foreach($machines as $machine)
+                        <option value="{{ $machine->id }}" {{ request('machine_id') == $machine->id ? 'selected' : '' }}>{{ $machine->name }}</option>
+                    @endforeach
+                </select>
+            </div>
+            <div class="flex flex-col min-w-[160px]">
+                <label for="start_date" class="block text-sm font-semibold text-emerald-900 mb-1">Tanggal Mulai</label>
+                <input type="date" name="start_date" id="start_date" value="{{ request('start_date', $earliestDate ? $earliestDate->format('Y-m-d') : '') }}" class="w-full rounded-lg border-gray-300 focus:border-emerald-500 focus:ring-emerald-500">
+            </div>
+            <div class="flex flex-col min-w-[160px]">
+                <label for="end_date" class="block text-sm font-semibold text-emerald-900 mb-1">Tanggal Akhir</label>
+                <input type="date" name="end_date" id="end_date" value="{{ request('end_date', $latestDate ? $latestDate->format('Y-m-d') : '') }}" class="w-full rounded-lg border-gray-300 focus:border-emerald-500 focus:ring-emerald-500">
+            </div>
+            <div class="flex flex-col min-w-[160px]">
+                <label for="aggregation_interval" class="block text-sm font-semibold text-emerald-900 mb-1">Interval Agregasi</label>
+                <select name="aggregation_interval" id="aggregation_interval" class="w-full rounded-lg border-gray-300 focus:border-emerald-500 focus:ring-emerald-500">
+                    @foreach([1,3,5,10,15] as $interval)
+                        <option value="{{ $interval }}" {{ request('aggregation_interval', 3) == $interval ? 'selected' : '' }}>{{ $interval }} Menit</option>
+                    @endforeach
+                </select>
+            </div>
+            <div class="flex flex-col justify-end min-w-[160px] mt-6">
+                <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-medium text-sm py-2 rounded-lg shadow transition">Terapkan Filter</button>
+            </div>
+        </form>
+    </div>
 
-    <!-- DATA GRAFIK SECTION (COPIED) -->
-    <div class="py-8">
+
+    <!-- Tabel Data Analisis -->
+    <div class="px-6 md:px-16 lg:px-32 xl:px-48 mb-8">
+        <div class="bg-white rounded-xl shadow p-4 overflow-x-auto">
+            <h3 class="text-lg font-bold text-emerald-900 mb-4">Tabel Data Analisis</h3>
+            <!-- Dropdown jumlah data per halaman -->
+            <form method="GET" action="" class="flex items-center gap-2 mb-4">
+                <label for="per_page" class="text-sm text-gray-700">Tampilkan</label>
+                <select name="per_page" id="per_page" onchange="this.form.submit()" class="rounded border-gray-300 text-sm focus:border-emerald-500 focus:ring-emerald-500">
+                    @foreach([10, 25, 50, 100] as $opt)
+                        <option value="{{ $opt }}" {{ request('per_page', 10) == $opt ? 'selected' : '' }}>{{ $opt }}</option>
+                    @endforeach
+                </select>
+                <span class="text-sm text-gray-700">per halaman</span>
+                <!-- Keep other filter params -->
+                <input type="hidden" name="condition_status" value="{{ request('condition_status') }}">
+                <input type="hidden" name="machine_id" value="{{ request('machine_id') }}">
+                <input type="hidden" name="start_date" value="{{ request('start_date') }}">
+                <input type="hidden" name="end_date" value="{{ request('end_date') }}">
+                <input type="hidden" name="aggregation_interval" value="{{ request('aggregation_interval', 3) }}">
+            </form>
+            <table class="min-w-full divide-y divide-gray-200 border border-gray-200">
+                <thead class="bg-gray-50 border-b border-gray-200">
+                    <tr>
+                        <th class="px-4 py-2 text-left text-xs font-semibold text-gray-700">No</th>
+                        <th class="px-4 py-2 text-left text-xs font-semibold text-gray-700">Waktu</th>
+                        <th class="px-4 py-2 text-left text-xs font-semibold text-gray-700">Mesin</th>
+                        <th class="px-4 py-2 text-left text-xs font-semibold text-gray-700">Status</th>
+                        <th class="px-4 py-2 text-left text-xs font-semibold text-gray-700">RMS</th>
+                        <th class="px-4 py-2 text-left text-xs font-semibold text-gray-700">Interval</th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">
+                    @forelse($rawResults as $result)
+                        @php
+                            $no = ($rawResults->currentPage() - 1) * $rawResults->perPage() + $loop->iteration;
+                        @endphp
+                        <tr>
+                            <td class="px-4 py-2 text-sm text-gray-900">{{ $no }}</td>
+                            <td class="px-4 py-2 text-sm text-gray-900">{{ $result->created_at->format('d/m/Y H:i') }}</td>
+                            <td class="px-4 py-2 text-sm text-gray-900">{{ $result->machine->name ?? '-' }}</td>
+                            <td class="px-4 py-2 text-sm">
+                                @php
+                                    $statusColor = match(strtolower($result->condition_status)) {
+                                        'normal' => 'bg-green-100 text-green-800',
+                                        'warning', 'peringatan' => 'bg-yellow-100 text-yellow-800',
+                                        'alert', 'anomali', 'critical', 'fault', 'gangguan', 'kritis' => 'bg-red-100 text-red-800',
+                                        default => 'bg-gray-100 text-gray-800'
+                                    };
+                                @endphp
+                                <span class="px-2 py-1 rounded text-xs font-semibold {{ $statusColor }}">{{ ucfirst($result->condition_status) }}</span>
+                            </td>
+                            <td class="px-4 py-2 text-sm text-gray-900">{{ number_format($result->rms, 4) }}</td>
+                            <td class="px-4 py-2 text-sm text-gray-900">{{ request('aggregation_interval', 3) }} Menit</td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="5" class="px-4 py-6 text-center text-gray-500">Tidak ada data analisis ditemukan.</td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
+            <!-- Pagination -->
+            <div class="flex justify-end items-center mt-4">
+                @if(method_exists($rawResults, 'links'))
+                    <style>
+                        .custom-pagination nav {
+                            background: transparent;
+                        }
+                        .custom-pagination nav .flex {
+                            background: #fff;
+                            border-radius: 0.75rem;
+                            box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+                        }
+                        .custom-pagination nav .flex a,
+                        .custom-pagination nav .flex span,
+                        .custom-pagination nav .flex .inline-flex {
+                            background: #fff !important;
+                            color: #1e293b !important;
+                            border: 1px solid #d1d5db !important;
+                        }
+                        .custom-pagination nav .flex span[aria-current="page"] {
+                            background: #059669 !important;
+                            color: #fff !important;
+                            font-weight: bold;
+                            border: 1px solid #059669 !important;
+                        }
+                        .custom-pagination nav .flex .bg-gray-200,
+                        .custom-pagination nav .flex .bg-gray-700,
+                        .custom-pagination nav .flex .bg-gray-800,
+                        .custom-pagination nav .flex .bg-gray-100,
+                        .custom-pagination nav .flex .bg-gray-300,
+                        .custom-pagination nav .flex .bg-gray-400,
+                        .custom-pagination nav .flex .bg-gray-500 {
+                            background: #fff !important;
+                            color: #1e293b !important;
+                        }
+                    </style>
+                    <div class="custom-pagination">
+                        <style>
+                            .custom-pagination nav .flex + div,
+                            .custom-pagination nav .flex + p,
+                            .custom-pagination nav p,
+                            .custom-pagination nav .text-sm.text-gray-700 {
+                                background: #fff !important;
+                                color: #1e293b !important;
+                            }
+                        </style>
+                        {!! preg_replace('/<p[^>]*>.*?results<\/p>/i', '', $rawResults->appends(request()->except('page'))->links('vendor.pagination.custom')) !!}
+                    </div>
+                @endif
+            </div>
+        </div>
+    </div>
 
             <!-- Degradation Analysis Section -->
             <div id="degradationSection" class="hidden bg-white rounded-xl shadow-lg border-l-4 border-orange-500 overflow-hidden">
