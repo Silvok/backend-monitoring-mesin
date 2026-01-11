@@ -28,55 +28,56 @@
         </div>
     </x-slot>
 
-    <!-- Card Summary Analisis -->
-    <div class="flex justify-center gap-6 mt-6 mx-auto">
-        <div class="bg-white rounded-xl shadow-lg border-l-4 px-8 py-3 flex flex-col justify-between w-80 min-h-40" style="border-left-color: #347433;">
-            <div>
-                <h4 class="text-lg font-bold text-gray-900 mb-2">Total Mesin</h4>
-                <p class="text-3xl font-extrabold text-gray-700">{{ $totalMachines ?? '-' }}</p>
+    <!-- Modern Summary Card Section -->
+    <div class="py-4">
+        <div class="px-6 md:px-16 lg:px-32 xl:px-48">
+            <div class="flex flex-row gap-4 w-full">
+            <div class="bg-white rounded-lg shadow border-l-4 border-emerald-500 p-3 flex flex-col items-start flex-1 min-w-[180px]">
+                <div class="flex items-center mb-1">
+                    <svg class="w-5 h-5 text-emerald-500 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17V7a2 2 0 012-2h2a2 2 0 012 2v10" />
+                    </svg>
+                    <span class="text-base font-semibold text-emerald-700">Total Mesin</span>
+                </div>
+                <span class="text-xl font-bold text-gray-900">{{ $totalMachines }}</span>
             </div>
-            <p class="text-xs text-gray-500 mt-2">Total mesin aktif/terdaftar</p>
-        </div>
-        <div class="bg-white rounded-xl shadow-lg border-l-4 px-8 py-3 flex flex-col justify-between w-80 min-h-40" style="border-left-color: #FFC107;">
-            <div>
-                <h4 class="text-lg font-bold text-gray-900 mb-2">Normal</h4>
-                <p class="text-3xl font-extrabold text-green-600">{{ $statusCounts['Normal'] ?? 0 }}</p>
+            <div class="bg-white rounded-lg shadow border-l-4 border-blue-500 p-3 flex flex-col items-start flex-1 min-w-[180px]">
+                <div class="flex items-center mb-1">
+                    <svg class="w-5 h-5 text-blue-500 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 20l9-5-9-5-9 5 9 5z" />
+                    </svg>
+                    <span class="text-base font-semibold text-blue-700">Rata-rata Health Score</span>
+                </div>
+                <span class="text-xl font-bold text-gray-900">
+                    {{ $rawResults->count() ? number_format($rawResults->avg('health_score'), 2) : '-' }}/100
+                </span>
             </div>
-            <p class="text-xs text-gray-500 mt-2">Mesin status normal</p>
-        </div>
-        <div class="bg-white rounded-xl shadow-lg border-l-4 px-8 py-3 flex flex-col justify-between w-80 min-h-40" style="border-left-color: #FF6F3C;">
-            <div>
-                <h4 class="text-lg font-bold text-gray-900 mb-2">Anomali</h4>
-                <p class="text-3xl font-extrabold text-blue-600">{{ $statusCounts['Anomali'] ?? 0 }}</p>
+            <div class="bg-white rounded-lg shadow border-l-4 border-red-500 p-3 flex flex-col items-start flex-1 min-w-[180px]">
+                <div class="flex items-center mb-1">
+                    <svg class="w-5 h-5 text-red-500 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 5.636l-1.414 1.414A8 8 0 013.05 17.95l1.414-1.414A6 6 0 0016.95 7.05z" />
+                    </svg>
+                    <span class="text-base font-semibold text-red-700">Total Kasus Kerusakan</span>
+                </div>
+                <span class="text-xl font-bold text-gray-900">{{ ($categories['Alert'] ?? 0) + ($categories['Warning'] ?? 0) }}</span>
             </div>
-            <p class="text-xs text-gray-500 mt-2">Mesin status anomali</p>
-        </div>
-        <div class="bg-white rounded-xl shadow-lg border-l-4 px-8 py-3 flex flex-col justify-between w-80 min-h-40" style="border-left-color: #B22222;">
-            <div>
-                <h4 class="text-lg font-bold text-gray-900 mb-2">Peringatan</h4>
-                <p class="text-3xl font-extrabold text-yellow-600">{{ $statusCounts['Peringatan'] ?? 0 }}</p>
+            <div class="bg-white rounded-lg shadow border-l-4 border-yellow-500 p-3 flex flex-col items-start flex-1 min-w-[180px]">
+                <div class="flex items-center mb-1">
+                    <svg class="w-5 h-5 text-yellow-500 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 17l4-4 4 4m0 0V7m0 10V7" />
+                    </svg>
+                    <span class="text-base font-semibold text-yellow-700">Tanggal Analisis Terakhir</span>
+                </div>
+                <span class="text-xl font-bold text-gray-900">
+                    {{ $lastUpdate ? $lastUpdate->translatedFormat('d M Y, H:i') : '-' }}
+                </span>
             </div>
-            <p class="text-xs text-gray-500 mt-2">Mesin status peringatan</p>
-        </div>
-        <div class="bg-white rounded-xl shadow-lg border-l-4 px-8 py-3 flex flex-col justify-between w-80 min-h-40" style="border-left-color: #B1AB86;">
-            <div>
-                <h4 class="text-lg font-bold text-gray-900 mb-2">Gangguan</h4>
-                <p class="text-3xl font-extrabold text-orange-600">{{ $statusCounts['Gangguan'] ?? 0 }}</p>
-            </div>
-            <p class="text-xs text-gray-500 mt-2">Mesin status gangguan</p>
-        </div>
-        <div class="bg-white rounded-xl shadow-lg border-l-4 px-8 py-3 flex flex-col justify-between w-80 min-h-40" style="border-left-color: #819067;">
-            <div>
-                <h4 class="text-lg font-bold text-gray-900 mb-2">Kritis</h4>
-                <p class="text-3xl font-extrabold text-red-600">{{ $statusCounts['Kritis'] ?? 0 }}</p>
-            </div>
-            <p class="text-xs text-gray-500 mt-2">Mesin status kritis</p>
         </div>
     </div>
 
-                    </h3>
-                </div>
-            </div>
+
+    <!-- DATA GRAFIK SECTION (COPIED) -->
+    <div class="py-8">
 
             <!-- Degradation Analysis Section -->
             <div id="degradationSection" class="hidden bg-white rounded-xl shadow-lg border-l-4 border-orange-500 overflow-hidden">
