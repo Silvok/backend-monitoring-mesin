@@ -149,7 +149,7 @@
                         <th class="px-4 py-2 text-left text-xs font-semibold text-gray-700">Status</th>
                         <th class="px-4 py-2 text-left text-xs font-semibold text-gray-700">RMS</th>
                         <th class="px-4 py-2 text-left text-xs font-semibold text-gray-700">Interval</th>
-                        <th class="px-4 py-2 text-center text-xs font-semibold text-gray-700">Detail</th>
+
                     </tr>
                 </thead>
                 <tbody class="bg-white divide-y divide-gray-200">
@@ -186,13 +186,7 @@
                             </td>
                             <td class="px-4 py-2 text-sm text-gray-900">{{ number_format($result->rms, 4) }}</td>
                             <td class="px-4 py-2 text-sm text-gray-900">{{ request('aggregation_interval', 3) }} Menit</td>
-                            <td class="px-4 py-2 text-center">
-                                <button type="button" onclick="showDetailModal(@json($detailData))" class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-emerald-100 hover:bg-emerald-200 text-emerald-700" title="Lihat Detail">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M12 20c4.418 0 8-3.582 8-8s-3.582-8-8-8-8 3.582-8 8 3.582 8 8 8z" />
-                                    </svg>
-                                </button>
-                            </td>
+
                         </tr>
 
                     @empty
@@ -265,15 +259,21 @@
                         <span>Degradation Analysis</span>
                     </h3>
                 </div>
-                <div class="p-6">
-                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                        <div class="bg-gray-50 rounded-lg p-5 border border-gray-200">
-                            <h4 class="text-base font-bold text-gray-800 mb-4">RMS Trend Over Time</h4>
-                            <div style="height: 300px;">
-                                <canvas id="rmsTrendChart"></canvas>
-                            </div>
-                        </div>
-                        <div class="bg-gray-50 rounded-lg p-5 border border-gray-200">
+                <div class="mb-4">
+                    <label for="modalNoteInput" class="block text-sm font-semibold text-gray-700 mb-1">Catatan</label>
+                    <textarea id="modalNoteInput" class="w-full rounded border-gray-300 focus:border-emerald-500 focus:ring-emerald-500 text-sm" rows="3"></textarea>
+                </div>
+                <div class="flex flex-wrap justify-between items-center gap-2 mb-2">
+                    <div class="flex gap-2">
+                        <button onclick="exportDetailPDF()" class="bg-red-500 hover:bg-red-600 text-white font-semibold px-3 py-1.5 rounded-lg text-xs">Export PDF</button>
+                        <button onclick="exportDetailExcel()" class="bg-green-500 hover:bg-green-600 text-white font-semibold px-3 py-1.5 rounded-lg text-xs">Export Excel</button>
+                    </div>
+                    <div class="flex gap-2">
+                        <button onclick="saveNoteModal()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold px-4 py-2 rounded-lg shadow">Simpan Catatan</button>
+                        <button onclick="closeDetailModal()" class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold px-4 py-2 rounded-lg">Tutup</button>
+                    </div>
+                </div>
+                <div id="modalSaveStatus" class="mt-2 text-sm"></div>
                             <h4 class="text-base font-bold text-gray-800 mb-4">Degradation Rate</h4>
                             <div id="degradationRateContent" class="space-y-4">
                                 <!-- Dynamic content akan di-inject di sini -->
@@ -338,6 +338,49 @@
             document.getElementById('modalSaveStatus').textContent = 'Catatan berhasil disimpan (simulasi, backend perlu implementasi).';
             // Jika ingin update di frontend saja:
             if(currentDetailData) currentDetailData.note = note;
+        }
+
+        function exportDetailPDF() {
+            if (!currentDetailData) return;
+            const data = currentDetailData;
+            const win = window.open('', '_blank');
+            win.document.write(`
+                <html><head><title>Export Analisis Mesin</title>
+                <style>
+                    body { font-family: Arial, sans-serif; padding: 30px; }
+                    h2 { color: #16a34a; border-bottom: 2px solid #16a34a; padding-bottom: 8px; }
+                    table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+                    th, td { border: 1px solid #ddd; padding: 10px; text-align: left; }
+                    th { background: #16a34a; color: white; }
+                </style></head><body>
+                <h2>Detail Analisis Mesin</h2>
+                <table>
+                    <tr><th>No</th><td>${data.no}</td></tr>
+                    <tr><th>Waktu</th><td>${data.waktu}</td></tr>
+                    <tr><th>Mesin</th><td>${data.mesin}</td></tr>
+                    <tr><th>Status</th><td>${data.status}</td></tr>
+                    <tr><th>RMS</th><td>${data.rms}</td></tr>
+                    <tr><th>Interval</th><td>${data.interval}</td></tr>
+                    <tr><th>Health Score</th><td>${data.health_score}</td></tr>
+                    <tr><th>Catatan</th><td>${data.note}</td></tr>
+                </table>
+                <p style="margin-top: 30px; color: #888; font-size: 12px;">Export by Monitoring Mesin</p>
+                </body></html>
+            `);
+            win.document.close();
+            setTimeout(() => win.print(), 500);
+        }
+
+        function exportDetailExcel() {
+            if (!currentDetailData) return;
+            const data = currentDetailData;
+            let csv = 'No,Waktu,Mesin,Status,RMS,Interval,Health Score,Catatan\n';
+            csv += `"${data.no}","${data.waktu}","${data.mesin}","${data.status}","${data.rms}","${data.interval}","${data.health_score}","${data.note}"\n`;
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = `analisis-detail-${data.no}.csv`;
+            link.click();
         }
         let avgRmsChart = null;
         let anomalyRateChart = null;
