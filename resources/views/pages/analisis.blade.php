@@ -156,7 +156,19 @@
                         @php
                             $no = ($rawResults->currentPage() - 1) * $rawResults->perPage() + $loop->iteration;
                         @endphp
-                        <tr>
+                        @php
+                            $detailData = [
+                                'no' => $no,
+                                'waktu' => $result->created_at->format('d/m/Y H:i'),
+                                'mesin' => $result->machine->name ?? '-',
+                                'status' => ucfirst($result->condition_status),
+                                'rms' => number_format($result->rms, 4),
+                                'interval' => (request('aggregation_interval', 3) . ' Menit'),
+                                'health_score' => $result->health_score ?? '-',
+                                'note' => $result->note ?? '-',
+                            ];
+                        @endphp
+                        <tr class="cursor-pointer hover:bg-emerald-50 transition" onclick="showDetailModal(@json($detailData))">
                             <td class="px-4 py-2 text-sm text-gray-900">{{ $no }}</td>
                             <td class="px-4 py-2 text-sm text-gray-900">{{ $result->created_at->format('d/m/Y H:i') }}</td>
                             <td class="px-4 py-2 text-sm text-gray-900">{{ $result->machine->name ?? '-' }}</td>
@@ -174,6 +186,23 @@
                             <td class="px-4 py-2 text-sm text-gray-900">{{ number_format($result->rms, 4) }}</td>
                             <td class="px-4 py-2 text-sm text-gray-900">{{ request('aggregation_interval', 3) }} Menit</td>
                         </tr>
+                        <!-- Modal Detail Analisis -->
+                        <div id="detailModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40 hidden">
+                            <div class="bg-white rounded-xl shadow-lg w-full max-w-md p-6 relative animate-fadeIn">
+                                <button onclick="closeDetailModal()" class="absolute top-3 right-3 text-gray-400 hover:text-emerald-600 text-xl font-bold">&times;</button>
+                                <h3 class="text-lg font-bold text-emerald-900 mb-4">Detail Analisis</h3>
+                                <div class="space-y-2">
+                                    <div class="flex justify-between"><span class="font-semibold text-gray-700">No</span><span id="modalNo"></span></div>
+                                    <div class="flex justify-between"><span class="font-semibold text-gray-700">Waktu</span><span id="modalWaktu"></span></div>
+                                    <div class="flex justify-between"><span class="font-semibold text-gray-700">Mesin</span><span id="modalMesin"></span></div>
+                                    <div class="flex justify-between"><span class="font-semibold text-gray-700">Status</span><span id="modalStatus"></span></div>
+                                    <div class="flex justify-between"><span class="font-semibold text-gray-700">RMS</span><span id="modalRms"></span></div>
+                                    <div class="flex justify-between"><span class="font-semibold text-gray-700">Interval</span><span id="modalInterval"></span></div>
+                                    <div class="flex justify-between"><span class="font-semibold text-gray-700">Health Score</span><span id="modalHealthScore"></span></div>
+                                    <div class="flex justify-between"><span class="font-semibold text-gray-700">Catatan</span><span id="modalNote"></span></div>
+                                </div>
+                            </div>
+                        </div>
                     @empty
                         <tr>
                             <td colspan="5" class="px-4 py-6 text-center text-gray-500">Tidak ada data analisis ditemukan.</td>
@@ -288,6 +317,21 @@
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
     <script>
+        // Modal Detail Analisis
+        function showDetailModal(data) {
+            document.getElementById('modalNo').textContent = data.no;
+            document.getElementById('modalWaktu').textContent = data.waktu;
+            document.getElementById('modalMesin').textContent = data.mesin;
+            document.getElementById('modalStatus').textContent = data.status;
+            document.getElementById('modalRms').textContent = data.rms;
+            document.getElementById('modalInterval').textContent = data.interval;
+            document.getElementById('modalHealthScore').textContent = data.health_score;
+            document.getElementById('modalNote').textContent = data.note;
+            document.getElementById('detailModal').classList.remove('hidden');
+        }
+        function closeDetailModal() {
+            document.getElementById('detailModal').classList.add('hidden');
+        }
         let avgRmsChart = null;
         let anomalyRateChart = null;
         let analysisData = null;
