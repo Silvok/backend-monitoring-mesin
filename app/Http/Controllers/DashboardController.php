@@ -18,9 +18,12 @@ class DashboardController extends Controller
         $totalAnalysis = AnalysisResult::count();
 
         // Get machine with latest analysis
-        $machine = Machine::with(['latestAnalysis', 'rawSamples' => function($query) {
-            $query->latest()->limit(10);
-        }])->first();
+        $machine = Machine::with([
+            'latestAnalysis',
+            'rawSamples' => function ($query) {
+                $query->latest()->limit(10);
+            }
+        ])->first();
 
         // Get recent analysis results
         $recentAnalysis = AnalysisResult::with('machine')
@@ -48,7 +51,7 @@ class DashboardController extends Controller
         $rmsData = AnalysisResult::where('created_at', '>=', now()->subHours(24))
             ->orderBy('created_at', 'asc')
             ->get(['rms', 'created_at'])
-            ->map(function($item) {
+            ->map(function ($item) {
                 return [
                     'time' => $item->created_at->format('H:i'),
                     'value' => round($item->rms, 4)
@@ -93,7 +96,7 @@ class DashboardController extends Controller
         // Daftar mesin dengan status terburuk (FAULT/CRITICAL terbanyak)
         $worstMachines = $rawResults->whereIn('condition_status', ['FAULT', 'CRITICAL'])
             ->groupBy('machine_id')
-            ->map(function($items, $machineId) {
+            ->map(function ($items, $machineId) {
                 return [
                     'machine_id' => $machineId,
                     'machine_name' => optional($items->first()->machine)->name,
@@ -155,11 +158,11 @@ class DashboardController extends Controller
         if (!in_array($interval, $allowedIntervals)) {
             $interval = 3;
         }
-        $grouped = $rawResults->groupBy(function($item) use ($interval) {
+        $grouped = $rawResults->groupBy(function ($item) use ($interval) {
             $minute = floor($item->created_at->minute / $interval) * $interval;
             return $item->created_at->format('d-m H:') . str_pad($minute, 2, '0', STR_PAD_LEFT);
         });
-        $rmsData = $grouped->map(function($items, $label) {
+        $rmsData = $grouped->map(function ($items, $label) {
             // Ambil data pertama di grup untuk info tambahan
             $first = $items->first();
             return [
@@ -179,10 +182,50 @@ class DashboardController extends Controller
             'statuses' => $rmsData->pluck('status')->toArray(),
         ];
 
+        // FFT Chart Data - Data frekuensi dari analysis results
+        $fftData = $rawResults->map(function ($item) {
+            return [
+                'freq' => round($item->dominant_freq_hz ?? 0, 2),
+                'amp' => round($item->peak_amp ?? 0, 4),
+                'time' => $item->created_at->format('Y-m-d H:i:s'),
+            ];
+        })->values();
+
+        $fftChartData = [
+            'frequencies' => $fftData->pluck('freq')->toArray(),
+            'amplitudes' => $fftData->pluck('amp')->toArray(),
+            'times' => $fftData->pluck('time')->toArray(),
+            'dominant_freq' => $rawResults->max('dominant_freq_hz') ?? 0,
+            'peak_amp' => $rawResults->max('peak_amp') ?? 0,
+        ];
+
+        // Trend Chart Data - RMS harian untuk 7 hari terakhir
+        $trendData = AnalysisResult::where('created_at', '>=', now()->subDays(7))
+            ->get()
+            ->groupBy(function ($item) {
+                return $item->created_at->format('Y-m-d');
+            })
+            ->map(function ($items, $date) {
+                return [
+                    'date' => \Carbon\Carbon::parse($date)->locale('id')->translatedFormat('D, d M'),
+                    'avg_rms' => round($items->avg('rms'), 4),
+                    'max_rms' => round($items->max('rms'), 4),
+                    'count' => $items->count(),
+                ];
+            })
+            ->sortKeys()
+            ->values();
+
+        $trendChartData = [
+            'labels' => $trendData->pluck('date')->toArray(),
+            'avg_values' => $trendData->pluck('avg_rms')->toArray(),
+            'max_values' => $trendData->pluck('max_rms')->toArray(),
+        ];
+
         // Distribusi status mesin (berdasarkan status terakhir tiap mesin dalam filter)
         $statusLabels = ['NORMAL', 'WARNING', 'FAULT', 'CRITICAL', 'ANOMALY'];
         $statusDistribution = array_fill_keys($statusLabels, 0);
-        $latestStatusPerMachine = $rawResults->groupBy('machine_id')->map(function($items) {
+        $latestStatusPerMachine = $rawResults->groupBy('machine_id')->map(function ($items) {
             return strtoupper(optional($items->last())->condition_status);
         });
         foreach ($latestStatusPerMachine as $status) {
@@ -191,7 +234,7 @@ class DashboardController extends Controller
             }
         }
 
-        return view('pages.data-grafik', compact('machines', 'latestDate', 'earliestDate', 'rmsChartData', 'rawResults', 'lastUpdate', 'totalMachines', 'categories', 'statusDistribution', 'worstMachines'));
+        return view('pages.data-grafik', compact('machines', 'latestDate', 'earliestDate', 'rmsChartData', 'fftChartData', 'trendChartData', 'rawResults', 'lastUpdate', 'totalMachines', 'categories', 'statusDistribution', 'worstMachines'));
     }
 
     public function analisis()
@@ -211,11 +254,16 @@ class DashboardController extends Controller
             $latest = $machine->latestAnalysis;
             if ($latest) {
                 $status = strtoupper($latest->condition_status ?? '');
-                if ($status === 'NORMAL') $countNormal++;
-                elseif ($status === 'ANOMALY') $countAnomaly++;
-                elseif ($status === 'WARNING') $countWarning++;
-                elseif ($status === 'FAULT') $countFault++;
-                elseif ($status === 'CRITICAL') $countCritical++;
+                if ($status === 'NORMAL')
+                    $countNormal++;
+                elseif ($status === 'ANOMALY')
+                    $countAnomaly++;
+                elseif ($status === 'WARNING')
+                    $countWarning++;
+                elseif ($status === 'FAULT')
+                    $countFault++;
+                elseif ($status === 'CRITICAL')
+                    $countCritical++;
 
                 if (!$lastAnalysisTime || $latest->created_at > $lastAnalysisTime) {
                     $lastAnalysisTime = $latest->created_at;
@@ -247,7 +295,7 @@ class DashboardController extends Controller
                 ->latest()
                 ->limit(10)
                 ->get()
-                ->map(function($analysis) {
+                ->map(function ($analysis) {
                     $severity = 'WARNING';
                     if ($analysis->rms >= 1.8) {
                         $severity = 'CRITICAL';
