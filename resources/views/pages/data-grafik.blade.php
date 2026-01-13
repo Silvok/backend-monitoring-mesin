@@ -3,24 +3,33 @@
         <div class="flex items-center justify-between">
             <div class="flex items-center space-x-8">
                 <h2 class="font-bold text-xl" style="color: #185519;">
-                    Data Grafik
+                    Monitoring Mesin
                 </h2>
                 <!-- Live Status Indicator -->
-                <div class="flex items-center space-x-2 px-3 py-1.5 rounded-full border" style="background-color: #f0faf3; border-color: #b3e5c0;">
+                <div class="flex items-center space-x-2 px-3 py-1.5 rounded-full border"
+                    style="background-color: #f0faf3; border-color: #b3e5c0;">
                     <div class="relative flex h-3 w-3">
-                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full opacity-75" style="background-color: #2bc970;"></span>
-                        <span class="relative inline-flex rounded-full h-3 w-3" style="background-color: #118B50;"></span>
+                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full opacity-75"
+                            style="background-color: #2bc970;"></span>
+                        <span class="relative inline-flex rounded-full h-3 w-3"
+                            style="background-color: #118B50;"></span>
                     </div>
                     <span class="text-xs font-semibold" style="color: #185519;">Live</span>
                 </div>
             </div>
             <div class="flex items-center space-x-3">
                 <div class="text-sm text-gray-600 bg-gray-50 px-3 py-1.5 rounded-lg border border-gray-200">
-                    <span class="font-semibold" id="currentTime">{{ \Carbon\Carbon::now()->locale('id')->translatedFormat('l, d M Y, H:i') }}</span>
+                    <span class="font-semibold"
+                        id="currentTime">{{ \Carbon\Carbon::now()->locale('id')->translatedFormat('l, d M Y, H:i') }}</span>
                 </div>
-                <button onclick="refreshDashboard()" aria-label="Refresh Data Grafik" class="px-4 py-1.5 text-white text-sm font-medium rounded-lg transition flex items-center space-x-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:ring-offset-2" style="background-color: #118B50;" onmouseover="this.style.backgroundColor='#185519'" onmouseout="this.style.backgroundColor='#118B50'">
-                    <svg id="refreshIcon" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                <button onclick="refreshDashboard()" aria-label="Refresh Data Grafik"
+                    class="px-4 py-1.5 text-white text-sm font-medium rounded-lg transition flex items-center space-x-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:ring-offset-2"
+                    style="background-color: #118B50;" onmouseover="this.style.backgroundColor='#185519'"
+                    onmouseout="this.style.backgroundColor='#118B50'">
+                    <svg id="refreshIcon" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                        aria-hidden="true" focusable="false">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
                     </svg>
                     <span>Refresh</span>
                 </button>
@@ -31,112 +40,174 @@
     <div class="py-8">
         <div class="max-w-7xl mx-auto px-2 sm:px-4 lg:px-8">
             <!-- Filter Form: Tanggal & Mesin -->
-            <form method="GET" action="" class="mb-8 bg-white rounded-xl shadow p-4 sm:p-6 flex flex-wrap items-end gap-3 sm:gap-4">
-                <div class="w-full sm:w-auto flex-1 min-w-[160px]">
-                                    <label for="condition_status" class="block text-sm font-semibold text-emerald-900 mb-1">Status/Condition</label>
-                                    <select name="condition_status" id="condition_status" class="border-gray-300 rounded-lg focus:ring-emerald-500 focus:border-emerald-500">
-                                        <option value="">Semua Status</option>
-                                        <option value="NORMAL" {{ request('condition_status') == 'NORMAL' ? 'selected' : '' }}>NORMAL</option>
-                                        <option value="ANOMALY" {{ request('condition_status') == 'ANOMALY' ? 'selected' : '' }}>ANOMALY</option>
-                                        <option value="WARNING" {{ request('condition_status') == 'WARNING' ? 'selected' : '' }}>WARNING</option>
-                                        <option value="FAULT" {{ request('condition_status') == 'FAULT' ? 'selected' : '' }}>FAULT</option>
-                                        <option value="CRITICAL" {{ request('condition_status') == 'CRITICAL' ? 'selected' : '' }}>CRITICAL</option>
-                                    </select>
-                                </div>
-                <div class="w-full sm:w-auto flex-1 min-w-[160px]">
-                    <label for="machine_id" class="block text-sm font-semibold text-emerald-900 mb-1">Mesin</label>
-                    <select name="machine_id" id="machine_id" class="border-gray-300 rounded-lg focus:ring-emerald-500 focus:border-emerald-500 focus:outline-none" aria-label="Pilih Mesin">
-                        <option value="">Semua Mesin</option>
-                        @foreach($machines as $machine)
-                            <option value="{{ $machine->id }}" {{ request('machine_id') == $machine->id ? 'selected' : '' }}>{{ $machine->name }}</option>
-                        @endforeach
-                    </select>
-                </div>
-                <div class="w-full sm:w-auto flex-1 min-w-[160px]">
-                    <label for="start_date" class="block text-sm font-semibold text-emerald-900 mb-1">Tanggal Mulai</label>
-                    <input type="date" name="start_date" id="start_date" class="border-gray-300 rounded-lg focus:ring-emerald-500 focus:border-emerald-500 focus:outline-none" aria-label="Tanggal Mulai"
-                        min="{{ $earliestDate ? \Carbon\Carbon::parse($earliestDate)->format('Y-m-d') : '' }}"
-                        max="{{ $latestDate ? \Carbon\Carbon::parse($latestDate)->format('Y-m-d') : '' }}"
-                        value="{{ request('start_date') ? \Carbon\Carbon::parse(request('start_date'))->format('Y-m-d') : ($earliestDate ? \Carbon\Carbon::parse($earliestDate)->format('Y-m-d') : '') }}">
-                </div>
-                <div class="w-full sm:w-auto flex-1 min-w-[160px]">
-                    <label for="end_date" class="block text-sm font-semibold text-emerald-900 mb-1">Tanggal Akhir</label>
-                    <input type="date" name="end_date" id="end_date" class="border-gray-300 rounded-lg focus:ring-emerald-500 focus:border-emerald-500 focus:outline-none" aria-label="Tanggal Akhir"
-                        min="{{ $earliestDate ? \Carbon\Carbon::parse($earliestDate)->format('Y-m-d') : '' }}"
-                        max="{{ $latestDate ? \Carbon\Carbon::parse($latestDate)->format('Y-m-d') : '' }}"
-                        value="{{ request('end_date') ? \Carbon\Carbon::parse(request('end_date'))->format('Y-m-d') : ($latestDate ? \Carbon\Carbon::parse($latestDate)->format('Y-m-d') : '') }}">
-                </div>
-                <div class="w-full sm:w-auto flex-1 min-w-[160px]">
-                    <label for="aggregation_interval" class="block text-sm font-semibold text-emerald-900 mb-1">Interval Agregasi</label>
-                    <select name="aggregation_interval" id="aggregation_interval" class="border-gray-300 rounded-lg focus:ring-emerald-500 focus:border-emerald-500 focus:outline-none" aria-label="Interval Agregasi">
-                        <option value="1" {{ request('aggregation_interval', '3') == '1' ? 'selected' : '' }}>1 Menit</option>
-                        <option value="3" {{ request('aggregation_interval', '3') == '3' ? 'selected' : '' }}>3 Menit</option>
-                        <option value="5" {{ request('aggregation_interval', '3') == '5' ? 'selected' : '' }}>5 Menit</option>
-                        <option value="10" {{ request('aggregation_interval', '3') == '10' ? 'selected' : '' }}>10 Menit</option>
-                        <option value="15" {{ request('aggregation_interval', '3') == '15' ? 'selected' : '' }}>15 Menit</option>
-                    </select>
-                </div>
-                <div class="flex items-end h-full w-full sm:w-auto">
-                    <button type="submit" class="px-6 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-lg shadow mt-6 focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:ring-offset-2" aria-label="Terapkan Filter">Terapkan Filter</button>
-                </div>
-            </form>
-                                    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
-                        <!-- Grafik RMS Value Trend (24 Jam Terakhir) Card (Sama seperti dashboard) -->
-                        <div class="flex flex-wrap items-center gap-2 sm:gap-4 mb-4">
-                            <label for="chartType" class="font-semibold text-emerald-900">Tipe Grafik:</label>
-                            <div class="relative w-32 sm:w-48">
-                                <select id="chartType" class="appearance-none border border-gray-300 rounded focus:ring-emerald-500 focus:border-emerald-500 pl-3 pr-6 py-1 text-sm font-semibold text-emerald-900 bg-white shadow w-full focus:outline-none" aria-label="Tipe Grafik">
-                                    <option value="line">LINE</option>
-                                    <option value="bar">BAR</option>
-                                </select>
-                                <span class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-4">
-                                    <svg class="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"></svg>
-                                </span>
-                            </div>
-                        </div>
-                        <div class="overflow-x-auto rounded-xl">
-                            @component('components.dashboard.rms-chart', compact('rmsChartData'))
-                            @endcomponent
-                        </div>
-                        @if(empty($rmsChartData['labels']))
-                            <div class="bg-red-50 text-red-700 rounded-lg px-4 py-3 mt-4 text-center font-semibold">
-                                Tidak ada data anomaly ditemukan untuk filter ini.
-                            </div>
-                        @endif
-            <!-- Alert Panel -->
-            <div id="alertPanel" class="bg-white rounded-xl shadow-lg mb-8 overflow-hidden border-l-4 border-red-500" style="display: none;">
-                <div class="bg-gradient-to-r from-red-600 to-red-700 px-6 py-4">
-                    <div class="flex items-center justify-between">
-                        <div class="flex items-center space-x-3">
-                            <svg class="w-6 h-6 text-white animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+            <!-- Filter Global -->
+            <div class="bg-white rounded-lg mb-8 shadow-lg border border-gray-100 overflow-hidden">
+                <!-- Green Top Border -->
+                <div class="h-1 w-full" style="background: linear-gradient(90deg, #10b981 0%, #34d399 100%);"></div>
+                <div class="px-5 py-4">
+                    <!-- Header with Icon -->
+                    <div class="flex items-center gap-2 mb-4">
+                        <div class="flex items-center justify-center w-9 h-9 rounded-lg"
+                            style="background-color: #ecfdf5;">
+                            <svg class="w-5 h-5" style="color: #10b981;" fill="none" stroke="currentColor"
+                                viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z">
+                                </path>
                             </svg>
-                            <h3 class="text-xl font-bold text-white">
-                                Alert Panel - Anomali Terdeteksi
-                            </h3>
-                            <span id="alertCount" class="bg-white text-red-600 px-3 py-1 rounded-full text-sm font-bold">0</span>
                         </div>
-                        <div class="flex items-center space-x-2">
-                            <button onclick="toggleAlertSound()" id="soundToggle" class="bg-white/20 hover:bg-white/30 text-white px-3 py-1.5 rounded-lg text-sm font-medium transition flex items-center space-x-2">
-                                <svg id="soundIcon" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
-                                </svg>
-                                <span id="soundText">On</span>
-                            </button>
-                            <button onclick="dismissAllAlerts()" class="bg-white/20 hover:bg-white/30 text-white px-3 py-1.5 rounded-lg text-sm font-medium transition">
-                                Dismiss All
-                            </button>
-                            <button onclick="toggleAlertPanel()" class="bg-white/20 hover:bg-white/30 text-white p-1.5 rounded-lg transition">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                                </svg>
-                            </button>
-                        </div>
+                        <h2 class="text-lg font-semibold text-gray-800">Filter Global</h2>
                     </div>
+
+                    <form class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
+                        <!-- Mesin / Node ESP -->
+                        <div>
+                            <label for="machine" class="block text-sm font-medium text-gray-600 mb-2">Mesin / Node
+                                ESP</label>
+                            <select id="machine" name="machine"
+                                class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-gray-700 transition-all duration-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 focus:bg-white hover:border-gray-300">
+                                <option value="">Pilih Mesin</option>
+                                @foreach($machines as $machine)
+                                    <option value="{{ $machine->id }}">{{ $machine->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        <!-- Rentang Waktu -->
+                        <div>
+                            <label for="time-range" class="block text-sm font-medium text-gray-600 mb-2">Rentang
+                                Waktu</label>
+                            <select id="time-range" name="time-range"
+                                class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-gray-700 transition-all duration-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 focus:bg-white hover:border-gray-300">
+                                <option value="real-time">Real-time</option>
+                                <option value="1-hour">1 jam terakhir</option>
+                                <option value="24-hours">24 jam</option>
+                                <option value="custom">Custom range</option>
+                            </select>
+                        </div>
+
+                        <!-- Custom Date Range (Hidden by default) -->
+                        <div id="custom-date-range" class="hidden lg:col-span-2 grid grid-cols-2 gap-3">
+                            <div>
+                                <label for="date-start" class="block text-sm font-medium text-gray-600 mb-2">Tanggal
+                                    Mulai</label>
+                                <input type="datetime-local" id="date-start" name="date-start"
+                                    class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-gray-700 transition-all duration-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 focus:bg-white hover:border-gray-300">
+                            </div>
+                            <div>
+                                <label for="date-end" class="block text-sm font-medium text-gray-600 mb-2">Tanggal
+                                    Akhir</label>
+                                <input type="datetime-local" id="date-end" name="date-end"
+                                    class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-gray-700 transition-all duration-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 focus:bg-white hover:border-gray-300">
+                            </div>
+                        </div>
+
+                        <!-- Axis Getaran -->
+                        <div>
+                            <label for="axis" class="block text-sm font-medium text-gray-600 mb-2">Axis Getaran</label>
+                            <select id="axis" name="axis"
+                                class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-gray-700 transition-all duration-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 focus:bg-white hover:border-gray-300">
+                                <option value="x">X</option>
+                                <option value="y">Y</option>
+                                <option value="z">Z</option>
+                                <option value="resultant">Resultant</option>
+                            </select>
+                        </div>
+
+                        <!-- Jenis Data -->
+                        <div>
+                            <label for="data-type" class="block text-sm font-medium text-gray-600 mb-2">Jenis
+                                Data</label>
+                            <select id="data-type" name="data-type"
+                                class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-gray-700 transition-all duration-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 focus:bg-white hover:border-gray-300">
+                                <option value="raw">Raw signal</option>
+                                <option value="rms">RMS</option>
+                                <option value="fft">FFT</option>
+                            </select>
+                        </div>
+
+                        <!-- Sampling Window -->
+                        <div>
+                            <label for="sampling-window" class="block text-sm font-medium text-gray-600 mb-2">Sampling
+                                Window</label>
+                            <select id="sampling-window" name="sampling-window"
+                                class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-gray-700 transition-all duration-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 focus:bg-white hover:border-gray-300">
+                                <option value="1s">1s</option>
+                                <option value="5s">5s</option>
+                                <option value="10s">10s</option>
+                            </select>
+                        </div>
+                    </form>
                 </div>
             </div>
 
-            <!-- Main Content -->
+            <!-- Button Switch Modul -->
+            <div class="flex justify-center mb-6">
+                <div class="inline-flex bg-gray-100 rounded-full p-1">
+                    <button id="switch-graph" class="flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-medium transition-all duration-300 bg-white text-emerald-600 shadow-sm">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z"></path>
+                        </svg>
+                        Grafik
+                    </button>
+                    <button id="switch-analysis" class="flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-medium transition-all duration-300 text-gray-500 hover:text-gray-700">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                        </svg>
+                        Analisis
+                    </button>
+                </div>
+            </div>
+
+            <!-- Modul Grafik -->
+            <div id="graph-module" class="bg-white shadow rounded-lg p-4">
+                <h2 class="text-lg font-semibold mb-3">Grafik</h2>
+                <canvas id="graphCanvas"></canvas>
+            </div>
+
+            <!-- Modul Analisis -->
+            <div id="analysis-module" class="bg-white shadow rounded-lg p-4 hidden">
+                <h2 class="text-lg font-semibold mb-3">Analisis</h2>
+                <p>Hasil analisis akan ditampilkan di sini.</p>
+            </div>
         </div>
     </div>
+
+    <script>
+        const btnGraph = document.getElementById('switch-graph');
+        const btnAnalysis = document.getElementById('switch-analysis');
+        const activeClasses = ['bg-white', 'text-emerald-600', 'shadow-sm'];
+        const inactiveClasses = ['text-gray-500', 'hover:text-gray-700'];
+
+        // Switch between modules
+        btnGraph.addEventListener('click', function () {
+            document.getElementById('graph-module').classList.remove('hidden');
+            document.getElementById('analysis-module').classList.add('hidden');
+            // Update button styles
+            btnGraph.classList.add(...activeClasses);
+            btnGraph.classList.remove(...inactiveClasses);
+            btnAnalysis.classList.remove(...activeClasses);
+            btnAnalysis.classList.add(...inactiveClasses);
+        });
+
+        btnAnalysis.addEventListener('click', function () {
+            document.getElementById('analysis-module').classList.remove('hidden');
+            document.getElementById('graph-module').classList.add('hidden');
+            // Update button styles
+            btnAnalysis.classList.add(...activeClasses);
+            btnAnalysis.classList.remove(...inactiveClasses);
+            btnGraph.classList.remove(...activeClasses);
+            btnGraph.classList.add(...inactiveClasses);
+        });
+
+        // Toggle Custom Date Range
+        document.getElementById('time-range').addEventListener('change', function () {
+            const customDateRange = document.getElementById('custom-date-range');
+            if (this.value === 'custom') {
+                customDateRange.classList.remove('hidden');
+            } else {
+                customDateRange.classList.add('hidden');
+            }
+        });
+    </script>
 </x-app-layout>

@@ -87,11 +87,30 @@ class DashboardController extends Controller
 
     public function dataGrafik(Request $request)
     {
+        // Inisialisasi variabel $rawResults
+        $rawResults = AnalysisResult::with('machine')->get();
+
+        // Daftar mesin dengan status terburuk (FAULT/CRITICAL terbanyak)
+        $worstMachines = $rawResults->whereIn('condition_status', ['FAULT', 'CRITICAL'])
+            ->groupBy('machine_id')
+            ->map(function($items, $machineId) {
+                return [
+                    'machine_id' => $machineId,
+                    'machine_name' => optional($items->first()->machine)->name,
+                    'fault_count' => $items->count(),
+                ];
+            })
+            ->sortByDesc('fault_count')
+            ->values()
+            ->take(5); // Top 5
+
         // Get all machines for dropdown
         $machines = Machine::orderBy('name')->get();
         // Get earliest and latest date from analysis_results
         $latestDate = AnalysisResult::orderBy('created_at', 'desc')->value('created_at');
         $earliestDate = AnalysisResult::orderBy('created_at', 'asc')->value('created_at');
+        // Get last update (latest analysis result)
+        $lastUpdate = AnalysisResult::orderBy('created_at', 'desc')->first()?->created_at;
 
         // Ambil filter dari request
         $machineId = $request->input('machine_id');
@@ -119,6 +138,16 @@ class DashboardController extends Controller
 
         $rawResults = $query->orderBy('created_at', 'asc')->with('machine')->get();
 
+        // For summary cards (must be after $rawResults is defined)
+        $totalMachines = Machine::count();
+        $categories = [
+            'Alert' => $rawResults->whereIn('condition_status', ['FAULT', 'CRITICAL'])->count(),
+            'Warning' => $rawResults->where('condition_status', 'WARNING')->count(),
+        ];
+
+
+        // Ambil semua hasil analisis dari tabel analysis_results
+        $rawResults = AnalysisResult::all();
 
         // Agregasi sesuai interval yang dipilih user (default 3 menit)
         $interval = (int) $request->input('aggregation_interval', 3);
@@ -150,7 +179,19 @@ class DashboardController extends Controller
             'statuses' => $rmsData->pluck('status')->toArray(),
         ];
 
-        return view('pages.data-grafik', compact('machines', 'latestDate', 'earliestDate', 'rmsChartData', 'rawResults'));
+        // Distribusi status mesin (berdasarkan status terakhir tiap mesin dalam filter)
+        $statusLabels = ['NORMAL', 'WARNING', 'FAULT', 'CRITICAL', 'ANOMALY'];
+        $statusDistribution = array_fill_keys($statusLabels, 0);
+        $latestStatusPerMachine = $rawResults->groupBy('machine_id')->map(function($items) {
+            return strtoupper(optional($items->last())->condition_status);
+        });
+        foreach ($latestStatusPerMachine as $status) {
+            if (in_array($status, $statusLabels)) {
+                $statusDistribution[$status]++;
+            }
+        }
+
+        return view('pages.data-grafik', compact('machines', 'latestDate', 'earliestDate', 'rmsChartData', 'rawResults', 'lastUpdate', 'totalMachines', 'categories', 'statusDistribution', 'worstMachines'));
     }
 
     public function analisis()
@@ -233,4 +274,5 @@ class DashboardController extends Controller
                 'message' => $e->getMessage()
             ], 500);
         }
-    }}
+    }
+}
