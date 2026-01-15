@@ -41,6 +41,14 @@ class AnalysisResult extends Model
     }
 
     /**
+     * Get the FFT result associated with this analysis result
+     */
+    public function fftResult()
+    {
+        return $this->hasOne(FFTResult::class);
+    }
+
+    /**
      * Check if the result indicates an anomaly
      */
     public function isAnomalous(): bool

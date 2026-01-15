@@ -210,30 +210,30 @@
 
             if (alerts.length === 0) {
                 alertList.innerHTML = `
-                    <div class="px-6 py-8 text-center text-gray-500">
-                        <svg class="w-12 h-12 mx-auto mb-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
-                        <p>Tidak ada alert</p>
-                    </div>
-                `;
+                    <div     class="px-6 py-8 text-center text-gray-500">
+                        <svg     class="w-12 h-12 mx-auto mb-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <pat    h stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </sv    g>
+                        <p>T    idak ada alert</p>
+                    </di    v>
+                `;    
                 return;
             }
 
             alertList.innerHTML = alerts.map(alert => `
-                <div class="px-6 py-4 border-b border-gray-200 hover:bg-red-50 transition">
-                    <div class="flex items-start justify-between">
-                        <div class="flex-1">
-                            <p class="font-semibold text-gray-900">${alert.machine_name}</p>
-                            <p class="text-sm text-gray-600 mt-1">${alert.message}</p>
-                            <p class="text-xs text-gray-400 mt-2">${new Date(alert.created_at).toLocaleString('id-ID')}</p>
-                        </div>
-                        <span class="px-3 py-1 rounded-full text-sm font-bold ${getSeverityClass(alert.severity)}">
-                            ${alert.severity}
-                        </span>
-                    </div>
-                </div>
-            `).join('');
+                <div     class="px-6 py-4 border-b border-gray-200 hover:bg-red-50 transition">
+                    <div     class="flex items-start justify-between">
+                        <div     class="flex-1">
+                            <p c    lass="font-semibold text-gray-900">${alert.machine_name}</p>
+                            <p c    lass="text-sm text-gray-600 mt-1">${alert.message}</p>
+                            <p c    lass="text-xs text-gray-400 mt-2">${new Date(alert.created_at).toLocaleString('id-ID')}</p>
+                        </di    v>
+                        <spa    n class="px-3 py-1 rounded-full text-sm font-bold ${getSeverityClass(alert.severity)}">
+                            ${al    ert.severity}
+                        </sp    an>
+                    </di    v>
+                </di    v>
+            `).j    oin('');
         }
 
         function getSeverityClass(severity) {
@@ -295,63 +295,63 @@
                 const progressClass = rmsValue <= 0.5 ? 'bg-emerald-500' : rmsValue <= 1.5 ? 'bg-yellow-500' : 'bg-red-500';
 
                 return `
-                    <div class="group relative bg-white rounded-xl border border-gray-200 shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden">
-                        <!-- Status Indicator Bar with Green Accent -->
-                        <div class="absolute top-0 left-0 right-0 h-1.5 ${topBarClass}"></div>
-                        <div class="absolute top-0 left-0 right-0 h-12 bg-gradient-to-b from-emerald-50 to-transparent opacity-40"></div>
+                    <div     class="group relative bg-white rounded-xl border border-gray-200 shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden">
+                        <!--     Status Indicator Bar with Green Accent -->
+                        <div     class="absolute top-0 left-0 right-0 h-1.5 ${topBarClass}"></div>
+                        <div     class="absolute top-0 left-0 right-0 h-12 bg-gradient-to-b from-emerald-50 to-transparent opacity-40"></div>
 
-                        <div class="p-5 relative z-10">
-                            <!-- Header -->
-                            <div class="flex items-start justify-between mb-4">
-                                <div class="flex-1">
-                                    <h4 class="font-bold text-lg text-gray-900 mb-1">${machine.name}</h4>
-                                    <p class="text-xs text-gray-500">${machine.location || 'Location N/A'}</p>
-                                </div>
-                                <div class="flex items-center justify-center w-10 h-10 rounded-lg ${iconBgClass} flex-shrink-0">
-                                    ${statusIcon}
-                                </div>
-                            </div>
+                        <div     class="p-5 relative z-10">
+                            <!--     Header -->
+                            <div     class="flex items-start justify-between mb-4">
+                                <div     class="flex-1">
+                                    <h4     class="font-bold text-lg text-gray-900 mb-1">${machine.name}</h4>
+                                    <p c    lass="text-xs text-gray-500">${machine.location || 'Location N/A'}</p>
+                                </di    v>
+                                <div     class="flex items-center justify-center w-10 h-10 rounded-lg ${iconBgClass} flex-shrink-0">
+                                    ${st    atusIcon}
+                                </di    v>
+                            </di    v>
 
-                            <!-- Status Badge -->
-                            <div class="mb-4">
-                                <span class="inline-flex items-center px-3 py-1.5 rounded-full text-xs font-bold ${statusBgClass}">
-                                    ${statusText}
-                                </span>
-                            </div>
+                            <!--     Status Badge -->
+                            <div     class="mb-4">
+                                <spa    n class="inline-flex items-center px-3 py-1.5 rounded-full text-xs font-bold ${statusBgClass}">
+                                    ${st    atusText}
+                                </sp    an>
+                            </di    v>
 
-                            <!-- RMS Value with Progress Bar -->
-                            <div class="mb-4">
-                                <div class="flex items-center justify-between mb-2">
-                                    <span class="text-sm font-semibold text-gray-700">RMS Value</span>
-                                    <span class="text-lg font-bold text-gray-900">${rmsValue.toFixed(3)}</span>
-                                </div>
-                                <div class="w-full bg-gray-300 rounded-full h-2.5 overflow-hidden">
-                                    <div class="h-full ${progressClass} rounded-full transition-all duration-300" style="width: ${rmsPercent}%"></div>
-                                </div>
-                                <p class="text-xs text-gray-500 mt-1">Normal: 0 - 0.7g | Waspada: 0.7 - 1.8g | Bahaya: > 1.8g</p>
-                            </div>
+                            <!--     RMS Value with Progress Bar -->
+                            <div     class="mb-4">
+                                <div     class="flex items-center justify-between mb-2">
+                                    <spa    n class="text-sm font-semibold text-gray-700">RMS Value</span>
+                                    <spa    n class="text-lg font-bold text-gray-900">${rmsValue.toFixed(3)}</span>
+                                </di    v>
+                                <div     class="w-full bg-gray-300 rounded-full h-2.5 overflow-hidden">
+                                    <div     class="h-full ${progressClass} rounded-full transition-all duration-300" style="width: ${rmsPercent}%"></div>
+                                </di    v>
+                                <p c    lass="text-xs text-gray-500 mt-1">Normal: 0 - 0.7g | Waspada: 0.7 - 1.8g | Bahaya: > 1.8g</p>
+                            </di    v>
 
-                            <!-- Metrics Grid -->
-                            <div class="grid grid-cols-2 gap-3 mb-4">
-                                <div class="bg-gray-50 rounded-lg p-3 border border-gray-100 hover:bg-emerald-50 transition">
-                                    <p class="text-xs text-gray-600 font-medium">Peak Amplitude</p>
-                                    <p class="text-lg font-bold text-gray-900">${(machine.peak_amp || 0).toFixed(2)}</p>
-                                </div>
-                                <div class="bg-gray-50 rounded-lg p-3 border border-gray-100 hover:bg-emerald-50 transition">
-                                    <p class="text-xs text-gray-600 font-medium">Frequency</p>
-                                    <p class="text-lg font-bold text-gray-900">${(machine.dominant_freq || 0).toFixed(0)} Hz</p>
-                                </div>
-                            </div>
+                            <!--     Metrics Grid -->
+                            <div     class="grid grid-cols-2 gap-3 mb-4">
+                                <div     class="bg-gray-50 rounded-lg p-3 border border-gray-100 hover:bg-emerald-50 transition">
+                                    <p c    lass="text-xs text-gray-600 font-medium">Peak Amplitude</p>
+                                    <p c    lass="text-lg font-bold text-gray-900">${(machine.peak_amp || 0).toFixed(2)}</p>
+                                </di    v>
+                                <div     class="bg-gray-50 rounded-lg p-3 border border-gray-100 hover:bg-emerald-50 transition">
+                                    <p c    lass="text-xs text-gray-600 font-medium">Frequency</p>
+                                    <p c    lass="text-lg font-bold text-gray-900">${(machine.dominant_freq || 0).toFixed(0)} Hz</p>
+                                </di    v>
+                            </di    v>
 
-                            <!-- Last Check Info -->
-                            <div class="pt-3 border-t border-gray-200">
-                                <p class="text-xs text-gray-600">
-                                    <span class="font-semibold text-emerald-600">Last Check:</span> ${machine.last_check || 'No data'}
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                `;
+                            <!--     Last Check Info -->
+                            <div     class="pt-3 border-t border-gray-200">
+                                <p c    lass="text-xs text-gray-600">
+                                    <spa    n class="font-semibold text-emerald-600">Last Check:</span> ${machine.last_check || 'No data'}
+                                </p>    
+                            </di    v>
+                        </di    v>
+                    </di    v>
+                `;    
             }).join('');
         }
 
@@ -385,13 +385,13 @@
 
             if (!rows.length) {
                 list.innerHTML = `
-                    <div class="text-center text-gray-500 py-8">
-                        <svg class="w-12 h-12 mx-auto mb-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
-                        <p>Semua mesin dalam kondisi normal</p>
-                    </div>
-                `;
+                    <div     class="text-center text-gray-500 py-8">
+                        <svg     class="w-12 h-12 mx-auto mb-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <pat    h stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </sv    g>
+                        <p>S    emua mesin dalam kondisi normal</p>
+                    </di    v>
+                `;    
                 return;
             }
 
@@ -406,36 +406,36 @@
                 const severityLabel = rmsValue > 10 ? 'CRITICAL' : rmsValue > 5 ? 'HIGH' : 'MEDIUM';
 
                 return `
-                <div class="bg-gray-50 rounded-lg p-4 border-l-4 border-red-500">
-                    <div class="flex items-center justify-between">
-                        <div class="flex-1">
-                            <div class="flex items-center space-x-2">
-                                <span class="text-2xl font-bold text-red-600">#${index + 1}</span>
-                                <div>
-                                    <p class="font-semibold text-gray-900">${machineName}</p>
-                                    <p class="text-sm text-gray-600">RMS: ${rmsValue.toFixed(4)}</p>
-                                </div>
-                            </div>
-                        </div>
-                        <span class="px-3 py-1 rounded-full text-sm font-bold ${severityClass}">
-                            ${severityLabel}
-                        </span>
-                    </div>
-                </div>
-                `;
+                <div     class="bg-gray-50 rounded-lg p-4 border-l-4 border-red-500">
+                    <div     class="flex items-center justify-between">
+                        <div     class="flex-1">
+                            <div     class="flex items-center space-x-2">
+                                <spa    n class="text-2xl font-bold text-red-600">#${index + 1}</span>
+                                <div    >
+                                    <p c    lass="font-semibold text-gray-900">${machineName}</p>
+                                    <p c    lass="text-sm text-gray-600">RMS: ${rmsValue.toFixed(4)}</p>
+                                </di    v>
+                            </di    v>
+                        </di    v>
+                        <spa    n class="px-3 py-1 rounded-full text-sm font-bold ${severityClass}">
+                            ${se    verityLabel}
+                        </sp    an>
+                    </di    v>
+                </di    v>
+                `;    
             }).join('');
         }
 
         function renderTopMachinesError(message) {
             const list = document.getElementById('topMachinesList');
             list.innerHTML = `
-                <div class="text-center text-gray-500 py-8">
-                    <svg class="w-12 h-12 mx-auto mb-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4v2m0-10a4 4 0 110 8 4 4 0 010-8z" />
-                    </svg>
-                    <p>${message}</p>
-                </div>
-            `;
+                <div     class="text-center text-gray-500 py-8">
+                    <svg     class="w-12 h-12 mx-auto mb-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <pat    h stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4v2m0-10a4 4 0 110 8 4 4 0 010-8z" />
+                    </sv    g>
+                    <p>$    {message}</p>
+                </di    v>
+            `;    
         }
 
         // Alert Sound Control

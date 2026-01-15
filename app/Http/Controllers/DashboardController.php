@@ -7,6 +7,7 @@ use App\Models\RawSample;
 use App\Models\AnalysisResult;
 use App\Models\TemperatureReading;
 use Illuminate\Http\Request;
+use Carbon\Carbon;
 
 class DashboardController extends Controller
 {
@@ -174,30 +175,25 @@ class DashboardController extends Controller
             ];
         })->values();
 
+        // Ambil data suhu sesuai waktu label RMS (jika ada)
+        $labels = $rmsData->pluck('time')->toArray();
+        $fullTimes = $rmsData->pluck('full_time')->toArray();
+        $temperatures = [];
+        foreach ($fullTimes as $fullTime) {
+            $temp = TemperatureReading::where('recorded_at', '<=', $fullTime)
+                ->orderBy('recorded_at', 'desc')
+                ->value('temperature_c');
+            $temperatures[] = $temp !== null ? round($temp, 2) : null;
+        }
         $rmsChartData = [
-            'labels' => $rmsData->pluck('time')->toArray(),
+            'labels' => $labels,
             'values' => $rmsData->pluck('value')->toArray(),
-            'full_times' => $rmsData->pluck('full_time')->toArray(),
+            'full_times' => $fullTimes,
             'machines' => $rmsData->pluck('machine')->toArray(),
             'statuses' => $rmsData->pluck('status')->toArray(),
+            'temperatures' => $temperatures,
         ];
 
-        // FFT Chart Data - Data frekuensi dari analysis results
-        $fftData = $rawResults->map(function ($item) {
-            return [
-                'freq' => round($item->dominant_freq_hz ?? 0, 2),
-                'amp' => round($item->peak_amp ?? 0, 4),
-                'time' => $item->created_at->format('Y-m-d H:i:s'),
-            ];
-        })->values();
-
-        $fftChartData = [
-            'frequencies' => $fftData->pluck('freq')->toArray(),
-            'amplitudes' => $fftData->pluck('amp')->toArray(),
-            'times' => $fftData->pluck('time')->toArray(),
-            'dominant_freq' => $rawResults->max('dominant_freq_hz') ?? 0,
-            'peak_amp' => $rawResults->max('peak_amp') ?? 0,
-        ];
 
         // Trend Chart Data - RMS harian untuk 7 hari terakhir
         $trendData = AnalysisResult::where('created_at', '>=', now()->subDays(7))
@@ -220,6 +216,14 @@ class DashboardController extends Controller
             'labels' => $trendData->pluck('date')->toArray(),
             'avg_values' => $trendData->pluck('avg_rms')->toArray(),
             'max_values' => $trendData->pluck('max_rms')->toArray(),
+        ];
+
+        // FFT Chart Data (dummy, agar tidak error di Blade)
+        $fftChartData = [
+            'frequencies' => [],
+            'amplitudes' => [],
+            'peak_amp' => 0,
+            'dominant_freq' => 0,
         ];
 
         // Distribusi status mesin (berdasarkan status terakhir tiap mesin dalam filter)
@@ -269,29 +273,6 @@ class DashboardController extends Controller
             $machineStatus = 'WARNING';
         }
 
-        // C. Analisis Spektrum & Diagnosa (FFT Insights)
-        $latestRaw = $rawResults->last();
-        $fftAnalysis = [
-            'dominant_freq' => $latestRaw ? round($latestRaw->dominant_freq_hz, 2) : 0,
-            'peak_amp' => $latestRaw ? round($latestRaw->peak_amp, 4) : 0,
-            'indication' => 'Normal',
-            'diagnosis' => 'Tidak ada anomali frekuensi signifikan.'
-        ];
-
-        if ($latestRaw && $latestRaw->dominant_freq_hz > 0) {
-            $freq = $latestRaw->dominant_freq_hz;
-            if ($freq < 50) {
-                $fftAnalysis['indication'] = 'Unbalance';
-                $fftAnalysis['diagnosis'] = "Dominasi frekuensi rendah ({$freq} Hz). Kemungkinan unbalance atau kekenduran.";
-            } elseif ($freq < 200) {
-                $fftAnalysis['indication'] = 'Misalignment';
-                $fftAnalysis['diagnosis'] = "Dominasi frekuensi menengah ({$freq} Hz). Indikasi potensi misalignment.";
-            } else {
-                $fftAnalysis['indication'] = 'Bearing Fault';
-                $fftAnalysis['diagnosis'] = "Dominasi frekuensi tinggi ({$freq} Hz). Waspadai kerusakan bantalan (bearing).";
-            }
-        }
-
         // D. Analisis Tren (Predictive)
         $trendAnalysis = [
             'direction' => 'Stabil',
@@ -339,15 +320,15 @@ class DashboardController extends Controller
             $recommendation = "STOP MESIN & lakukan maintenance segera.";
         }
 
-        $analysisInsights = compact('stats', 'machineStatus', 'thresholds', 'fftAnalysis', 'trendAnalysis', 'conclusion', 'recommendation');
+        $analysisInsights = compact('stats', 'machineStatus', 'thresholds', 'trendAnalysis', 'conclusion', 'recommendation');
 
         return view('pages.data-grafik', compact(
             'machines',
             'latestDate',
             'earliestDate',
             'rmsChartData',
-            'fftChartData',
             'trendChartData',
+            'fftChartData',
             'rawResults',
             'lastUpdate',
             'totalMachines',

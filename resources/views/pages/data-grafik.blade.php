@@ -165,7 +165,7 @@
                 </div>
             </div>
 
-            <!-- Modul Grafik -->
+            <!-- MODUL Grafik -->
             <div id="graph-module" class="bg-white shadow -lg rounded-lg overflow-hidden border border-gray-100">
                 <!-- Sub-tabs untuk jenis grafik -->
                 <div class="border-b border-gray-200 bg-gray-50 px-4">
@@ -174,10 +174,7 @@
                             class="px-4 py-3 text-sm font-medium border-b-2 border-emerald-500 text-emerald-600">
                             Time Domain
                         </button>
-                        <button id="tab-fft"
-                            class="px-4 py-3 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300">
-                            FFT / Frequency
-                        </button>
+                        <!-- FFT / Frequency tab dihapus -->
                         <button id="tab-history"
                             class="px-4 py-3 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300">
                             Riwayat & Trend
@@ -442,103 +439,7 @@
 
                     <!-- RIGHT COLUMN: DIAGNOSTICS & THRESHOLDS -->
                     <div class="space-y-6">
-                        <!-- B. Threshold & Severity -->
-                        <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-                            <div class="px-5 py-3 bg-gray-50 border-b border-gray-200">
-                                <h3 class="font-bold text-gray-700 text-sm uppercase tracking-wide">B. Penilaian
-                                    Threshold (Limit)</h3>
-                            </div>
-                            <div class="p-5">
-                                <div class="relative pt-6 pb-2">
-                                    <!-- Progress Bar Background (Scale: 0 - 1.5g) -->
-                                    <div class="h-4 bg-gray-100 rounded-full w-full overflow-hidden flex shadow-inner">
-                                        <!-- Normal (0 - 0.5g) -->
-                                        <div class="h-full bg-gradient-to-r from-emerald-300 to-emerald-400 flex-1 border-r border-white/50"
-                                            title="Normal (< 0.5g)"></div>
-                                        <!-- Warning (0.5 - 1.0g) -->
-                                        <div class="h-full bg-gradient-to-r from-amber-300 to-amber-400 flex-1 border-r border-white/50"
-                                            title="Warning (0.5 - 1.0g)"></div>
-                                        <!-- Critical (> 1.0g) -->
-                                        <div class="h-full bg-gradient-to-r from-red-400 to-red-600 flex-1"
-                                            title="Critical (> 1.0g)"></div>
-                                    </div>
-
-                                    <!-- Marker for Current Value -->
-                                    @php
-                                        // Calculate position (0.5g = 33%, 1.0g = 66% approx mapping for visual)
-                                        $val = $analysisInsights['stats']['avg'];
-                                        $pos = ($val / 1.5) * 100; // Scale to 1.5g max
-                                        $pos = min(max($pos, 0), 100);
-                                    @endphp
-                                    <div class="absolute top-2 w-1 h-8 bg-black border-2 border-white shadow-lg transition-all duration-1000"
-                                        style="left: {{ $pos }}%;"></div>
-                                    <div class="absolute top-10 font-bold text-xs transform -translate-x-1/2"
-                                        style="left: {{ $pos }}%;">
-                                        {{ number_format($val, 3) }}g
-                                    </div>
-                                </div>
-                                <div class="flex justify-between text-[10px] text-gray-400 font-bold uppercase mt-6">
-                                    <span>0g</span>
-                                    <span>0.5g (Warn)</span>
-                                    <span>1.0g (Crit)</span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- C. Analisis Spektrum (FFT) -->
-                        <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-                            <div class="px-5 py-3 bg-gray-50 border-b border-gray-200">
-                                <h3 class="font-bold text-gray-700 text-sm uppercase tracking-wide">C. Diagnosa
-                                    Kerusakan (FFT)</h3>
-                            </div>
-                            <div class="p-5">
-                                <div class="flex items-start gap-4">
-                                    <div
-                                        class="p-3 {{ $analysisInsights['fftAnalysis']['indication'] == 'Normal' ? 'bg-emerald-100 text-emerald-600' : 'bg-red-100 text-red-600' }} rounded-xl">
-                                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z">
-                                            </path>
-                                        </svg>
-                                    </div>
-                                    <div>
-                                        <p class="text-xs text-gray-500 font-bold uppercase mb-1">Indikasi Masalah</p>
-                                        <h4 class="text-lg font-bold text-gray-900 leading-none mb-2">
-                                            {{ $analysisInsights['fftAnalysis']['indication'] }}</h4>
-                                        <p class="text-sm text-gray-600 italic">
-                                            "{{ $analysisInsights['fftAnalysis']['diagnosis'] }}"</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                </div>
-
-                <!-- 3. KESIMPULAN & REKOMENDASI (Full Width) -->
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                    <!-- E. Kesimpulan -->
-                    <div
-                        class="rounded-xl border-l-4 p-5 shadow-sm {{ $analysisInsights['machineStatus'] == 'NORMAL' ? 'bg-emerald-50 border-emerald-500' : ($analysisInsights['machineStatus'] == 'WARNING' ? 'bg-amber-50 border-amber-500' : 'bg-red-50 border-red-500') }}">
-                        <h3
-                            class="font-bold {{ $analysisInsights['machineStatus'] == 'NORMAL' ? 'text-emerald-800' : 'text-amber-800' }} uppercase tracking-wide text-sm mb-2 flex items-center gap-2">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                            </svg>
-                            E. Kesimpulan Sistem
-                        </h3>
-                        <p class="text-gray-800 font-medium leading-relaxed">
-                            {{ $analysisInsights['conclusion'] }}
-                        </p>
-                    </div>
-
-                    <!-- G. Rekomendasi -->
-                    <div class="bg-blue-50 border-l-4 border-blue-500 rounded-xl p-5 shadow-sm">
-                        <h3
-                            class="font-bold text-blue-800 uppercase tracking-wide text-sm mb-2 flex items-center gap-2">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        <!-- FFT / Frequency Domain Panel dihapus -->
                                     d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01">
                                 </path>
                             </svg>
@@ -551,449 +452,323 @@
                 </div>
 
             </div>
-        </div>
-    </div>
 
-    <script>
-        const btnGraph = document.getElementById('switch-graph');
-        const btnAnalysis = document.getElementById('switch-analysis');
-        const activeClasses = ['bg-white', 'text-emerald-600', 'shadow-sm'];
-        const inactiveClasses = ['text-gray-500', 'hover:text-gray-700'];
+            <!-- Tombol dan script proses FFT otomatis dihapus (rollback ke sebelum penambahan FFT) -->
 
-        // Switch between modules
-        btnGraph.addEventListener('click', function () {
-            document.getElementById('graph-module').classList.remove('hidden');
-            document.getElementById('analysis-module').classList.add('hidden');
-            // Update button styles
-            btnGraph.classList.add(...activeClasses);
-            btnGraph.classList.remove(...inactiveClasses);
-            btnAnalysis.classList.remove(...activeClasses);
-            btnAnalysis.classList.add(...inactiveClasses);
-        });
+            <script>
+                const btnGraph = document.getElementById('switch-graph');
+                const btnAnalysis = document.getElementById('switch-analysis');
+                const activeClasses = ['bg-white', 'text-emerald-600', 'shadow-sm'];
+                const inactiveClasses = ['text-gray-500', 'hover:text-gray-700'];
 
-        btnAnalysis.addEventListener('click', function () {
-            document.getElementById('analysis-module').classList.remove('hidden');
-            document.getElementById('graph-module').classList.add('hidden');
-            // Update button styles
-            btnAnalysis.classList.add(...activeClasses);
-            btnAnalysis.classList.remove(...inactiveClasses);
-            btnGraph.classList.remove(...activeClasses);
-            btnGraph.classList.add(...inactiveClasses);
-        });
-
-        // Toggle Custom Date Range
-        document.getElementById('time-range').addEventListener('change', function () {
-            const customDateRange = document.getElementById('custom-date-range');
-            if (this.value === 'custom') {
-                customDateRange.classList.remove('hidden');
-            } else {
-                customDateRange.classList.add('hidden');
-            }
-        });
-    </script>
-
-    <!-- Chart.js CDN -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@2.0.1/dist/chartjs-plugin-zoom.min.js"></script>
-
-    <script>
-        // Data from controller (Server-side Source of Truth)
-        const rmsChartData = @json($rmsChartData);
-        const fftChartData = @json($fftChartData);
-        const trendChartData = @json($trendChartData);
-
-        // =====================
-        // Graph Sub-Tab Navigation
-        // =====================
-        const tabs = {
-            'tab-time-domain': 'panel-time-domain',
-            'tab-fft': 'panel-fft',
-            'tab-history': 'panel-history'
-        };
-
-        Object.keys(tabs).forEach(tabId => {
-            document.getElementById(tabId)?.addEventListener('click', function () {
-                // Hide all panels
-                Object.values(tabs).forEach(panelId => {
-                    document.getElementById(panelId)?.classList.add('hidden');
+                // Switch between modules
+                btnGraph.addEventListener('click', function () {
+                    document.getElementById('graph-module').classList.remove('hidden');
+                    document.getElementById('analysis-module').classList.add('hidden');
+                    // Update button styles
+                    btnGraph.classList.add(...activeClasses);
+                    btnGraph.classList.remove(...inactiveClasses);
+                    btnAnalysis.classList.remove(...activeClasses);
+                    btnAnalysis.classList.add(...inactiveClasses);
                 });
-                // Remove active state from all tabs
-                Object.keys(tabs).forEach(t => {
-                    const tab = document.getElementById(t);
-                    tab?.classList.remove('border-emerald-500', 'text-emerald-600');
-                    tab?.classList.add('border-transparent', 'text-gray-500');
+
+                btnAnalysis.addEventListener('click', function () {
+                    document.getElementById('analysis-module').classList.remove('hidden');
+                    document.getElementById('graph-module').classList.add('hidden');
+                    // Update button styles
+                    btnAnalysis.classList.add(...activeClasses);
+                    btnAnalysis.classList.remove(...inactiveClasses);
+                    btnGraph.classList.remove(...activeClasses);
+                    btnGraph.classList.add(...inactiveClasses);
                 });
-                // Show selected panel
-                document.getElementById(tabs[tabId])?.classList.remove('hidden');
-                // Set active state
-                this.classList.add('border-emerald-500', 'text-emerald-600');
-                this.classList.remove('border-transparent', 'text-gray-500');
-            });
-        });
 
-        // =====================
-        // Time Domain Chart - RMS
-        // =====================
-        let rmsChart = null;
-        const rmsCtx = document.getElementById('rmsTimeDomainChart');
-
-        if (rmsCtx) {
-            rmsChart = new Chart(rmsCtx, {
-                type: 'line',
-                data: {
-                    labels: rmsChartData.labels || [],
-                    datasets: [{
-                        label: 'RMS Getaran (g)',
-                        data: rmsChartData.values || [],
-                        borderColor: '#10b981',
-                        backgroundColor: 'rgba(16, 185, 129, 0.1)',
-                        borderWidth: 2,
-                        fill: true,
-                        tension: 0.4,
-                        pointRadius: 3,
-                        pointHoverRadius: 6,
-                        pointBackgroundColor: '#10b981',
-                        pointHoverBackgroundColor: '#059669'
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    interaction: {
-                        mode: 'index',
-                        intersect: false,
-                    },
-                    plugins: {
-                        legend: {
-                            display: false
-                        },
-                        tooltip: {
-                            backgroundColor: 'rgba(0, 0, 0, 0.8)',
-                            titleColor: '#fff',
-                            bodyColor: '#fff',
-                            padding: 12,
-                            displayColors: false,
-                            callbacks: {
-                                title: function (context) {
-                                    const idx = context[0].dataIndex;
-                                    return rmsChartData.full_times?.[idx] || context[0].label;
-                                },
-                                label: function (context) {
-                                    return `RMS: ${context.parsed.y?.toFixed(4) || 0} g`;
-                                },
-                                afterLabel: function (context) {
-                                    const idx = context.dataIndex;
-                                    const machine = rmsChartData.machines?.[idx] || '-';
-                                    const status = rmsChartData.statuses?.[idx] || '-';
-                                    return `Mesin: ${machine}\nStatus: ${status}`;
-                                }
-                            }
-                        },
-                        zoom: {
-                            zoom: {
-                                wheel: { enabled: true },
-                                pinch: { enabled: true },
-                                mode: 'xy',
-                            },
-                            pan: {
-                                enabled: true,
-                                mode: 'xy',
-                            }
-                        }
-                    },
-                    scales: {
-                        x: {
-                            grid: { color: 'rgba(0,0,0,0.05)' },
-                            ticks: { maxRotation: 45, font: { size: 10 } }
-                        },
-                        y: {
-                            beginAtZero: true,
-                            grid: { color: 'rgba(0,0,0,0.05)' },
-                            title: { display: true, text: 'RMS (g)', font: { size: 12 } }
-                        }
+                // Toggle Custom Date Range
+                document.getElementById('time-range').addEventListener('change', function () {
+                    const customDateRange = document.getElementById('custom-date-range');
+                    if (this.value === 'custom') {
+                        customDateRange.classList.remove('hidden');
+                    } else {
+                        customDateRange.classList.add('hidden');
                     }
-                }
-            });
-        }
-
-        // Reset Zoom Button
-        document.getElementById('reset-zoom-rms')?.addEventListener('click', function () {
-            if (rmsChart) rmsChart.resetZoom();
-        });
-
-        // =====================
-        // Temperature Chart
-        // =====================
-        let tempChart = null;
-        const tempCtx = document.getElementById('temperatureChart');
-
-        if (tempCtx) {
-            const tempLabels = rmsChartData.labels || [];
-            // USE REAL DB DATA:
-            const tempData = rmsChartData.temperatures || [];
-
-            tempChart = new Chart(tempCtx, {
-                type: 'line',
-                data: {
-                    labels: tempLabels,
-                    datasets: [
-                        {
-                            label: 'Suhu Mesin (°C)',
-                            data: tempData,
-                            borderColor: '#f59e0b', // Amber-500
-                            backgroundColor: 'rgba(245, 158, 11, 0.1)',
-                            borderWidth: 2,
-                            tension: 0.3,
-                            pointRadius: 2,
-                            fill: true
-                        }
-                    ]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: { display: false },
-                        tooltip: {
-                            backgroundColor: 'rgba(0, 0, 0, 0.8)',
-                            callbacks: {
-                                label: function(context) {
-                                    return `Suhu: ${context.parsed.y?.toFixed(1) || 0} °C`;
-                                }
-                            }
-                        }
-                    },
-                    scales: {
-                        x: { display: false },
-                        y: {
-                            beginAtZero: false, // Suhu jarang mulai dari 0 untuk mesin
-                            grid: { borderDash: [2, 4] }
-                        }
-                    }
-                }
-            });
-        }
-
-        // =====================
-        // FFT Chart
-        // =====================
-        let fftChart = null;
-        const fftCtx = document.getElementById('fftChart');
-
-        if (fftCtx) {
-            // USE REAL DB DATA:
-            let fftFrequencies = fftChartData.frequencies || [];
-            let fftAmplitudes = fftChartData.amplitudes || [];
-
-            // Update info cards with REAL aggregated data
-            document.getElementById('dominant-freq').textContent = (fftChartData.dominant_freq || 0) + ' Hz';
-            document.getElementById('peak-amp').textContent = (fftChartData.peak_amp || 0).toFixed(4) + ' g';
-            // Count peaks > threshold (example > 0.05g)
-            const significantPeaks = fftAmplitudes.filter(a => a > 0.05).length;
-            document.getElementById('peak-count').textContent = significantPeaks;
-
-            fftChart = new Chart(fftCtx, {
-                type: 'bar', // Bar chart sering lebih jelas untuk FFT diskrit
-                data: {
-                    labels: fftFrequencies,
-                    datasets: [{
-                        label: 'Amplitudo (g)',
-                        data: fftAmplitudes,
-                        backgroundColor: function(context) {
-                            // Highlight dominant peak
-                            const val = context.parsed.y;
-                            return val >= (fftChartData.peak_amp || 999) ? '#ef4444' : '#3b82f6';
-                        },
-                        barPercentage: 0.8,
-                        categoryPercentage: 1.0
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: { display: false },
-                        zoom: {
-                            zoom: {
-                                wheel: { enabled: true },
-                                pinch: { enabled: true },
-                                mode: 'x',
-                            },
-                            pan: {
-                                enabled: true,
-                                mode: 'x',
-                            }
-                        },
-                        tooltip: {
-                            backgroundColor: 'rgba(0, 0, 0, 0.8)',
-                            callbacks: {
-                                title: function(context) {
-                                    return `Frekuensi: ${context[0].label} Hz`;
-                                },
-                                label: function(context) {
-                                    return `Amplitudo: ${context.parsed.y?.toFixed(4) || 0} g`;
-                                }
-                            }
-                        }
-                    },
-                    scales: {
-                        x: {
-                            title: { display: true, text: 'Frequency (Hz)' },
-                            grid: { display: false },
-                            ticks: {
-                                maxRotation: 0,
-                                font: { size: 9 },
-                                callback: function(value, index, values) {
-                                    // Show label only every Nth tick to avoid clutter
-                                    // ChartJS bar chart 'labels' are strings, value is index
-                                    const freq = this.getLabelForValue(value);
-                                    return index % 5 === 0 ? freq : '';
-                                }
-                            }
-                        },
-                        y: {
-                            title: { display: true, text: 'Amplitude (g)' },
-                            beginAtZero: true
-                        }
-                    }
-                }
-            });
-        }
-
-        // Band Toggle for FFT
-        document.querySelectorAll('.band-toggle').forEach(btn => {
-            btn.addEventListener('click', function () {
-                // Update button styles
-                document.querySelectorAll('.band-toggle').forEach(b => {
-                    b.classList.remove('bg-white', 'text-emerald-600', 'shadow-sm');
-                    b.classList.add('text-gray-500');
                 });
-                this.classList.add('bg-white', 'text-emerald-600', 'shadow-sm');
-                this.classList.remove('text-gray-500');
+            </script>
 
-                // Filter chart based on band
-                const band = this.dataset.band;
-                if (fftChart) {
-                    const allFreqs = fftChartData.frequencies || [];
-                    let filteredIndices;
+            <!-- Chart.js CDN -->
+            <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+            <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@2.0.1/dist/chartjs-plugin-zoom.min.js"></script>
 
-                    switch (band) {
-                        case 'low':
-                            filteredIndices = allFreqs.map((f, i) => f < 100 ? i : null).filter(i => i !== null);
-                            break;
-                        case 'mid':
-                            filteredIndices = allFreqs.map((f, i) => (f >= 100 && f < 500) ? i : null).filter(i => i !== null);
-                            break;
-                        case 'high':
-                            filteredIndices = allFreqs.map((f, i) => f >= 500 ? i : null).filter(i => i !== null);
-                            break;
-                        default:
-                            filteredIndices = allFreqs.map((f, i) => i);
-                    }
+            <script>
+                // Data from controller (Server-side Source of Truth)
+                const rmsChartData = @json($rmsChartData);
+                const trendChartData = @json($trendChartData);
 
-                    // Update chart visibility
-                    fftChart.data.datasets[0].data = allFreqs.map((f, i) => {
-                        if (band === 'all') return fftChartData.amplitudes[i];
-                        if (band === 'low' && f < 100) return fftChartData.amplitudes[i];
-                        if (band === 'mid' && f >= 100 && f < 500) return fftChartData.amplitudes[i];
-                        if (band === 'high' && f >= 500) return fftChartData.amplitudes[i];
-                        return 0;
-                    });
-                    fftChart.update();
-                }
-            });
-        });
-
-        // =====================
-        // Trend Chart
-        // =====================
-        let trendChart = null;
-        const trendCtx = document.getElementById('trendChart');
-
-        if (trendCtx) {
-            // USE REAL DB DATA:
-            const trendLabels = trendChartData.labels || [];
-            const trendData = trendChartData.avg_values || [];
-
-            // Calculate Moving Average (Simple 3-point)
-            const movingAvg = trendData.map((val, i, arr) => {
-                if (i < 2) return null;
-                return (arr[i-2] + arr[i-1] + val) / 3;
-            });
-
-            trendChart = new Chart(trendCtx, {
-                type: 'line',
-                data: {
-                    labels: trendLabels,
-                    datasets: [
-                        {
-                            label: 'RMS (Avg)',
-                            data: trendData,
-                            borderColor: '#10b981', // Emerald
-                            backgroundColor: 'rgba(16, 185, 129, 0.1)',
-                            borderWidth: 2,
-                            tension: 0.1,
-                            pointRadius: 3,
-                            fill: true
-                        },
-                        {
-                            label: 'Moving Avg (3-period)',
-                            data: movingAvg,
-                            borderColor: '#6b7280', // Gray
-                            borderWidth: 1.5,
-                            borderDash: [5, 5],
-                            pointRadius: 0,
-                            fill: false
-                        }
-                    ]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: { position: 'top' }
-                    },
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            grid: { color: 'rgba(0,0,0,0.05)' },
-                            title: { display: true, text: 'RMS (g)', font: { size: 12 } }
-                        }
-                    }
-                }
-            });
-        }
-
-        // =====================
-        // Axis Toggle for Time Domain
-        // =====================
-        document.querySelectorAll('.axis-toggle').forEach(btn => {
-            btn.addEventListener('click', function () {
-                // Update button styles
-                document.querySelectorAll('.axis-toggle').forEach(b => {
-                    b.classList.remove('bg-white', 'text-emerald-600', 'shadow-sm');
-                    b.classList.add('text-gray-500');
-                });
-                this.classList.add('bg-white', 'text-emerald-600', 'shadow-sm');
-                this.classList.remove('text-gray-500');
-
-                // Update chart color based on axis
-                const axis = this.dataset.axis;
-                const colors = {
-                    'x': { border: '#ef4444', bg: 'rgba(239, 68, 68, 0.1)' },
-                    'y': { border: '#3b82f6', bg: 'rgba(59, 130, 246, 0.1)' },
-                    'z': { border: '#8b5cf6', bg: 'rgba(139, 92, 246, 0.1)' },
-                    'resultant': { border: '#10b981', bg: 'rgba(16, 185, 129, 0.1)' }
+                // =====================
+                // Graph Sub-Tab Navigation
+                // =====================
+                const tabs = {
+                    'tab-time-domain': 'panel-time-domain',
+                    'tab-fft': 'panel-fft',
+                    'tab-history': 'panel-history'
                 };
 
-                if (rmsChart) {
-                    rmsChart.data.datasets[0].borderColor = colors[axis].border;
-                    rmsChart.data.datasets[0].backgroundColor = colors[axis].bg;
-                    rmsChart.data.datasets[0].pointBackgroundColor = colors[axis].border;
-                    rmsChart.data.datasets[0].label = `RMS Axis ${axis.toUpperCase()} (g)`;
-                    rmsChart.update();
+                Object.keys(tabs).forEach(tabId => {
+                    document.getElementById(tabId)?.addEventListener('click', function () {
+                        // Hide all panels
+                        Object.values(tabs).forEach(panelId => {
+                            document.getElementById(panelId)?.classList.add('hidden');
+                        });
+                        // Remove active state from all tabs
+                        Object.keys(tabs).forEach(t => {
+                            const tab = document.getElementById(t);
+                            tab?.classList.remove('border-emerald-500', 'text-emerald-600');
+                            tab?.classList.add('border-transparent', 'text-gray-500');
+                        });
+                        // Show selected panel
+                        document.getElementById(tabs[tabId])?.classList.remove('hidden');
+                        // Set active state
+                        this.classList.add('border-emerald-500', 'text-emerald-600');
+                        this.classList.remove('border-transparent', 'text-gray-500');
+                    });
+                });
+
+                // =====================
+                // Time Domain Chart - RMS
+                // =====================
+                let rmsChart = null;
+                const rmsCtx = document.getElementById('rmsTimeDomainChart');
+
+                if (rmsCtx) {
+                    rmsChart = new Chart(rmsCtx, {
+                        type: 'line',
+                        data: {
+                            labels: rmsChartData.labels || [],
+                            datasets: [{
+                                label: 'RMS Getaran (g)',
+                                data: rmsChartData.values || [],
+                                borderColor: '#10b981',
+                                backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                                borderWidth: 2,
+                                fill: true,
+                                tension: 0.4,
+                                pointRadius: 3,
+                                pointHoverRadius: 6,
+                                pointBackgroundColor: '#10b981',
+                                pointHoverBackgroundColor: '#059669'
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            interaction: {
+                                mode: 'index',
+                                intersect: false,
+                            },
+                            plugins: {
+                                legend: {
+                                    display: false
+                                },
+                                tooltip: {
+                                    backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                                    titleColor: '#fff',
+                                    bodyColor: '#fff',
+                                    padding: 12,
+                                    displayColors: false,
+                                    callbacks: {
+                                        title: function (context) {
+                                            const idx = context[0].dataIndex;
+                                            return rmsChartData.full_times?.[idx] || context[0].label;
+                                        },
+                                        label: function (context) {
+                                            return `RMS: ${context.parsed.y?.toFixed(4) || 0} g`;
+                                        },
+                                        afterLabel: function (context) {
+                                            const idx = context.dataIndex;
+                                            const machine = rmsChartData.machines?.[idx] || '-';
+                                            const status = rmsChartData.statuses?.[idx] || '-';
+                                            return `Mesin: ${machine}\nStatus: ${status}`;
+                                        }
+                                    }
+                                },
+                                zoom: {
+                                    zoom: {
+                                        wheel: { enabled: true },
+                                        pinch: { enabled: true },
+                                        mode: 'xy',
+                                    },
+                                    pan: {
+                                        enabled: true,
+                                        mode: 'xy',
+                                    }
+                                }
+                            },
+                            scales: {
+                                x: {
+                                    grid: { color: 'rgba(0,0,0,0.05)' },
+                                    ticks: { maxRotation: 45, font: { size: 10 } }
+                                },
+                                y: {
+                                    beginAtZero: true,
+                                    grid: { color: 'rgba(0,0,0,0.05)' },
+                                    title: { display: true, text: 'RMS (g)', font: { size: 12 } }
+                                }
+                            }
+                        }
+                    });
                 }
-            });
-        });
-    </script>
+
+                // Reset Zoom Button
+                document.getElementById('reset-zoom-rms')?.addEventListener('click', function () {
+                    if (rmsChart) rmsChart.resetZoom();
+                });
+
+                // =====================
+                // Temperature Chart
+                // =====================
+                let tempChart = null;
+                const tempCtx = document.getElementById('temperatureChart');
+
+                if (tempCtx) {
+                    const tempLabels = rmsChartData.labels || [];
+                    // USE REAL DB DATA:
+                    const tempData = rmsChartData.temperatures || [];
+
+                    tempChart = new Chart(tempCtx, {
+                        type: 'line',
+                        data: {
+                            labels: tempLabels,
+                            datasets: [
+                                {
+                                    label: 'Suhu Mesin (°C)',
+                                    data: tempData,
+                                    borderColor: '#f59e0b', // Amber-500
+                                    backgroundColor: 'rgba(245, 158, 11, 0.1)',
+                                    borderWidth: 2,
+                                    tension: 0.3,
+                                    pointRadius: 2,
+                                    fill: true
+                                }
+                            ]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: { display: false },
+                                tooltip: {
+                                    backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                                    callbacks: {
+                                        label: function(context) {
+                                            return `Suhu: ${context.parsed.y?.toFixed(1) || 0} °C`;
+                                        }
+                                    }
+                                }
+                            },
+                            scales: {
+                                x: { display: false },
+                                y: {
+                                    beginAtZero: false, // Suhu jarang mulai dari 0 untuk mesin
+                                    grid: { borderDash: [2, 4] }
+                                }
+                            }
+                        });
+                    }
+
+                    // =====================
+                    // FFT Chart & Band Toggle dihapus
+                    // =====================
+
+                    // =====================
+                    // Trend Chart
+                    // =====================
+                    let trendChart = null;
+                    const trendCtx = document.getElementById('trendChart');
+
+                    if (trendCtx) {
+                        // USE REAL DB DATA:
+                        const trendLabels = trendChartData.labels || [];
+                        const trendData = trendChartData.avg_values || [];
+
+                        // Calculate Moving Average (Simple 3-point)
+                        const movingAvg = trendData.map((val, i, arr) => {
+                            if (i < 2) return null;
+                            return (arr[i-2] + arr[i-1] + val) / 3;
+                        });
+
+                        trendChart = new Chart(trendCtx, {
+                            type: 'line',
+                            data: {
+                                labels: trendLabels,
+                                datasets: [
+                                    {
+                                        label: 'RMS (Avg)',
+                                        data: trendData,
+                                        borderColor: '#10b981', // Emerald
+                                        backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                                        borderWidth: 2,
+                                        tension: 0.1,
+                                        pointRadius: 3,
+                                        fill: true
+                                    },
+                                    {
+                                        label: 'Moving Avg (3-period)',
+                                        data: movingAvg,
+                                        borderColor: '#6b7280', // Gray
+                                        borderWidth: 1.5,
+                                        borderDash: [5, 5],
+                                        pointRadius: 0,
+                                        fill: false
+                                    }
+                                ]
+                            },
+                            options: {
+                                responsive: true,
+                                maintainAspectRatio: false,
+                                plugins: {
+                                    legend: { position: 'top' }
+                                },
+                                scales: {
+                                    y: {
+                                        beginAtZero: true,
+                                        grid: { color: 'rgba(0,0,0,0.05)' },
+                                        title: { display: true, text: 'RMS (g)', font: { size: 12 } }
+                                    }
+                                }
+                            }
+                        });
+                    }
+
+                    // =====================
+                    // Axis Toggle for Time Domain
+                    // =====================
+                    document.querySelectorAll('.axis-toggle').forEach(btn => {
+                        btn.addEventListener('click', function () {
+                            // Update button styles
+                            document.querySelectorAll('.axis-toggle').forEach(b => {
+                                b.classList.remove('bg-white', 'text-emerald-600', 'shadow-sm');
+                                b.classList.add('text-gray-500');
+                            });
+                            this.classList.add('bg-white', 'text-emerald-600', 'shadow-sm');
+                            this.classList.remove('text-gray-500');
+
+                            // Update chart color based on axis
+                            const axis = this.dataset.axis;
+                            const colors = {
+                                'x': { border: '#ef4444', bg: 'rgba(239, 68, 68, 0.1)' },
+                                'y': { border: '#3b82f6', bg: 'rgba(59, 130, 246, 0.1)' },
+                                'z': { border: '#8b5cf6', bg: 'rgba(139, 92, 246, 0.1)' },
+                                'resultant': { border: '#10b981', bg: 'rgba(16, 185, 129, 0.1)' }
+                            };
+
+                            if (rmsChart) {
+                                rmsChart.data.datasets[0].borderColor = colors[axis].border;
+                                rmsChart.data.datasets[0].backgroundColor = colors[axis].bg;
+                                rmsChart.data.datasets[0].pointBackgroundColor = colors[axis].border;
+                                rmsChart.data.datasets[0].label = `RMS Axis ${axis.toUpperCase()} (g)`;
+                                rmsChart.update();
+                            }
+                        });
+                    });
+            </script>
+        </div>
+    </div>
 </x-app-layout>

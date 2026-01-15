@@ -22,9 +22,14 @@ Route::get('/data-grafik', [DashboardController::class, 'dataGrafik'])
     ->middleware(['auth', 'verified'])
     ->name('data-grafik');
 
+
 Route::get('/analisis', [\App\Http\Controllers\AnalisisController::class, 'index'])
     ->middleware(['auth', 'verified'])
     ->name('analisis');
+
+// Route untuk trigger proses FFT otomatis (bisa dipanggil dari browser/postman)
+Route::post('/proses-fft/{analysisResultId}', [\App\Http\Controllers\AnalisisController::class, 'prosesFFT'])
+    ->middleware(['auth', 'verified']);
 
 // API Routes for real-time updates
 Route::middleware('auth')->group(function () {
@@ -36,6 +41,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/api/machine/{id}/historical-trend', [DashboardApiController::class, 'getHistoricalTrend']);
     Route::get('/api/machine/{id}/alerts', [DashboardController::class, 'getMachineAlerts']);
     Route::post('/api/analysis', [DashboardApiController::class, 'getAnalysisData']);
+
+    // FFT API route
+    Route::post('/api/fft-result', [DashboardController::class, 'storeFFT']);
 
     // Alert API routes
     Route::get('/api/alerts', [AlertController::class, 'getActiveAlerts']);

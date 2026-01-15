@@ -2,7 +2,8 @@
 <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
     <h3 class="text-xl font-bold text-emerald-900 mb-6 flex items-center">
         <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
         </svg>
         Grafik RMS Value Trend
     </h3>
@@ -11,18 +12,24 @@
     </div>
     <div class="flex mt-4 justify-end">
         <div class="relative">
-            <button id="downloadBtn" type="button" class="px-4 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-lg shadow text-sm">Download</button>
-            <div id="downloadMenu" class="absolute right-0 mt-2 w-32 bg-white border border-gray-200 rounded-lg shadow-lg z-10 hidden">
-                <button type="button" class="block w-full text-left px-4 py-2 text-sm text-emerald-900 hover:bg-emerald-50" data-format="png">PNG</button>
-                <button type="button" class="block w-full text-left px-4 py-2 text-sm text-emerald-900 hover:bg-emerald-50" data-format="jpg">JPG</button>
+            <button id="downloadBtn" type="button"
+                class="px-4 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-lg shadow text-sm">Download</button>
+            <div id="downloadMenu"
+                class="absolute right-0 mt-2 w-32 bg-white border border-gray-200 rounded-lg shadow-lg z-10 hidden">
+                <button type="button"
+                    class="block w-full text-left px-4 py-2 text-sm text-emerald-900 hover:bg-emerald-50"
+                    data-format="png">PNG</button>
+                <button type="button"
+                    class="block w-full text-left px-4 py-2 text-sm text-emerald-900 hover:bg-emerald-50"
+                    data-format="jpg">JPG</button>
             </div>
         </div>
     </div>
-    </div>
+</div>
 </div>
 
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function () {
         const chartData = JSON.parse(document.getElementById('rmsChart').dataset.chart);
         const ctx = document.getElementById('rmsChart').getContext('2d');
         let chartType = 'line';
@@ -78,12 +85,12 @@
                         },
                         tooltip: {
                             callbacks: {
-                                title: function(context) {
+                                title: function (context) {
                                     const idx = context[0].dataIndex;
                                     let waktu = chartData.full_times && chartData.full_times[idx] ? chartData.full_times[idx] : context[0].label;
                                     return 'Waktu: ' + waktu;
                                 },
-                                label: function(context) {
+                                label: function (context) {
                                     const idx = context.dataIndex;
                                     let rms = context.parsed.y;
                                     let label = 'RMS: ' + rms + ' mm/s';
@@ -114,7 +121,7 @@
         renderChart(chartType);
 
         if (chartTypeSelect) {
-            chartTypeSelect.addEventListener('change', function(e) {
+            chartTypeSelect.addEventListener('change', function (e) {
                 chartType = e.target.value;
                 renderChart(chartType);
             });
@@ -130,11 +137,11 @@
             link.click();
         }
         if (downloadBtn && downloadMenu) {
-            downloadBtn.addEventListener('click', function(e) {
+            downloadBtn.addEventListener('click', function (e) {
                 downloadMenu.classList.toggle('hidden');
             });
-            downloadMenu.querySelectorAll('button[data-format]').forEach(function(btn) {
-                btn.addEventListener('click', function(e) {
+            downloadMenu.querySelectorAll('button[data-format]').forEach(function (btn) {
+                btn.addEventListener('click', function (e) {
                     const format = btn.getAttribute('data-format');
                     if (format === 'png') {
                         downloadChart('image/png', 'png');
@@ -145,7 +152,7 @@
                 });
             });
             // Hide menu if click outside
-            document.addEventListener('click', function(e) {
+            document.addEventListener('click', function (e) {
                 if (!downloadBtn.contains(e.target) && !downloadMenu.contains(e.target)) {
                     downloadMenu.classList.add('hidden');
                 }
@@ -153,4 +160,3 @@
         }
     });
 </script>
-
