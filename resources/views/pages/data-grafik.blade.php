@@ -170,13 +170,16 @@
                 <!-- Sub-tabs untuk jenis grafik -->
                 <div class="border-b border-gray-200 bg-gray-50 px-4">
                     <nav class="flex space-x-1" aria-label="Tabs">
-                        <button id="tab-time-domain" class="px-4 py-3 text-sm font-medium border-b-2 border-emerald-500 text-emerald-600">
+                        <button id="tab-time-domain"
+                            class="px-4 py-3 text-sm font-medium border-b-2 border-emerald-500 text-emerald-600">
                             Time Domain
                         </button>
-                        <button id="tab-fft" class="px-4 py-3 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300">
+                        <button id="tab-fft"
+                            class="px-4 py-3 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300">
                             FFT / Frequency
                         </button>
-                        <button id="tab-history" class="px-4 py-3 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300">
+                        <button id="tab-history"
+                            class="px-4 py-3 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300">
                             Riwayat & Trend
                         </button>
                     </nav>
@@ -190,25 +193,32 @@
                             <div class="flex items-center justify-between mb-4">
                                 <div>
                                     <h3 class="text-lg font-semibold text-gray-800">RMS Getaran vs Waktu</h3>
-                                    <p class="text-sm text-gray-500">Visualisasi nilai RMS getaran mesin dalam domain waktu</p>
+                                    <p class="text-sm text-gray-500">Visualisasi nilai RMS getaran mesin dalam domain
+                                        waktu</p>
                                 </div>
                                 <!-- Axis Toggle -->
                                 <div class="flex items-center gap-2">
                                     <span class="text-xs font-medium text-gray-500">Axis:</span>
                                     <div class="inline-flex bg-gray-100 rounded-lg p-1">
-                                        <button data-axis="x" class="axis-toggle px-3 py-1 text-xs font-medium rounded-md bg-white text-emerald-600 shadow-sm">X</button>
-                                        <button data-axis="y" class="axis-toggle px-3 py-1 text-xs font-medium rounded-md text-gray-500 hover:text-gray-700">Y</button>
-                                        <button data-axis="z" class="axis-toggle px-3 py-1 text-xs font-medium rounded-md text-gray-500 hover:text-gray-700">Z</button>
-                                        <button data-axis="resultant" class="axis-toggle px-3 py-1 text-xs font-medium rounded-md text-gray-500 hover:text-gray-700">Resultant</button>
+                                        <button data-axis="x"
+                                            class="axis-toggle px-3 py-1 text-xs font-medium rounded-md bg-white text-emerald-600 shadow-sm">X</button>
+                                        <button data-axis="y"
+                                            class="axis-toggle px-3 py-1 text-xs font-medium rounded-md text-gray-500 hover:text-gray-700">Y</button>
+                                        <button data-axis="z"
+                                            class="axis-toggle px-3 py-1 text-xs font-medium rounded-md text-gray-500 hover:text-gray-700">Z</button>
+                                        <button data-axis="resultant"
+                                            class="axis-toggle px-3 py-1 text-xs font-medium rounded-md text-gray-500 hover:text-gray-700">Resultant</button>
                                     </div>
                                 </div>
                             </div>
-                            <div class="relative bg-gray-50 rounded-lg p-4 border border-gray-200" style="height: 320px;">
+                            <div class="relative bg-gray-50 rounded-lg p-4 border border-gray-200"
+                                style="height: 320px;">
                                 <canvas id="rmsTimeDomainChart"></canvas>
                             </div>
                             <div class="flex items-center justify-between mt-2 text-xs text-gray-500">
                                 <span>Gunakan scroll untuk zoom, drag untuk pan</span>
-                                <button id="reset-zoom-rms" class="text-emerald-600 hover:text-emerald-700 font-medium">Reset Zoom</button>
+                                <button id="reset-zoom-rms"
+                                    class="text-emerald-600 hover:text-emerald-700 font-medium">Reset Zoom</button>
                             </div>
                         </div>
 
@@ -217,10 +227,12 @@
                             <div class="flex items-center justify-between mb-4">
                                 <div>
                                     <h3 class="text-lg font-semibold text-gray-800">Suhu vs Waktu</h3>
-                                    <p class="text-sm text-gray-500">Visualisasi perubahan suhu mesin dalam domain waktu</p>
+                                    <p class="text-sm text-gray-500">Visualisasi perubahan suhu mesin dalam domain waktu
+                                    </p>
                                 </div>
                             </div>
-                            <div class="relative bg-gray-50 rounded-lg p-4 border border-gray-200" style="height: 240px;">
+                            <div class="relative bg-gray-50 rounded-lg p-4 border border-gray-200"
+                                style="height: 240px;">
                                 <canvas id="temperatureChart"></canvas>
                             </div>
                         </div>
@@ -232,33 +244,45 @@
                             <div class="flex items-center justify-between mb-4">
                                 <div>
                                     <h3 class="text-lg font-semibold text-gray-800">Spektrum Frekuensi (FFT)</h3>
-                                    <p class="text-sm text-gray-500">Analisis frekuensi menggunakan Fast Fourier Transform</p>
+                                    <p class="text-sm text-gray-500">Analisis frekuensi menggunakan Fast Fourier
+                                        Transform</p>
                                 </div>
                                 <!-- Band Frequency Selector -->
                                 <div class="flex items-center gap-2">
                                     <span class="text-xs font-medium text-gray-500">Band:</span>
                                     <div class="inline-flex bg-gray-100 rounded-lg p-1">
-                                        <button data-band="all" class="band-toggle px-3 py-1 text-xs font-medium rounded-md bg-white text-emerald-600 shadow-sm">All</button>
-                                        <button data-band="low" class="band-toggle px-3 py-1 text-xs font-medium rounded-md text-gray-500 hover:text-gray-700">Low (0-100Hz)</button>
-                                        <button data-band="mid" class="band-toggle px-3 py-1 text-xs font-medium rounded-md text-gray-500 hover:text-gray-700">Mid (100-500Hz)</button>
-                                        <button data-band="high" class="band-toggle px-3 py-1 text-xs font-medium rounded-md text-gray-500 hover:text-gray-700">High (>500Hz)</button>
+                                        <button data-band="all"
+                                            class="band-toggle px-3 py-1 text-xs font-medium rounded-md bg-white text-emerald-600 shadow-sm">All</button>
+                                        <button data-band="low"
+                                            class="band-toggle px-3 py-1 text-xs font-medium rounded-md text-gray-500 hover:text-gray-700">Low
+                                            (0-100Hz)</button>
+                                        <button data-band="mid"
+                                            class="band-toggle px-3 py-1 text-xs font-medium rounded-md text-gray-500 hover:text-gray-700">Mid
+                                            (100-500Hz)</button>
+                                        <button data-band="high"
+                                            class="band-toggle px-3 py-1 text-xs font-medium rounded-md text-gray-500 hover:text-gray-700">High
+                                            (>500Hz)</button>
                                     </div>
                                 </div>
                             </div>
-                            <div class="relative bg-gray-50 rounded-lg p-4 border border-gray-200" style="height: 350px;">
+                            <div class="relative bg-gray-50 rounded-lg p-4 border border-gray-200"
+                                style="height: 350px;">
                                 <canvas id="fftChart"></canvas>
                             </div>
                             <!-- FFT Info Cards -->
                             <div class="grid grid-cols-3 gap-4 mt-4">
-                                <div class="bg-gradient-to-br from-emerald-50 to-emerald-100 rounded-lg p-4 border border-emerald-200">
+                                <div
+                                    class="bg-gradient-to-br from-emerald-50 to-emerald-100 rounded-lg p-4 border border-emerald-200">
                                     <p class="text-xs text-emerald-600 font-medium mb-1">Frekuensi Dominan</p>
                                     <p id="dominant-freq" class="text-xl font-bold text-emerald-800">-- Hz</p>
                                 </div>
-                                <div class="bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg p-4 border border-blue-200">
+                                <div
+                                    class="bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg p-4 border border-blue-200">
                                     <p class="text-xs text-blue-600 font-medium mb-1">Amplitudo Peak</p>
                                     <p id="peak-amp" class="text-xl font-bold text-blue-800">-- g</p>
                                 </div>
-                                <div class="bg-gradient-to-br from-purple-50 to-purple-100 rounded-lg p-4 border border-purple-200">
+                                <div
+                                    class="bg-gradient-to-br from-purple-50 to-purple-100 rounded-lg p-4 border border-purple-200">
                                     <p class="text-xs text-purple-600 font-medium mb-1">Jumlah Peak Terdeteksi</p>
                                     <p id="peak-count" class="text-xl font-bold text-purple-800">--</p>
                                 </div>
@@ -268,14 +292,20 @@
                         <!-- Time vs Frequency Comparison -->
                         <div class="bg-amber-50 border border-amber-200 rounded-lg p-4 mt-4">
                             <div class="flex items-start gap-3">
-                                <svg class="w-5 h-5 text-amber-600 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                <svg class="w-5 h-5 text-amber-600 mt-0.5" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                                 </svg>
                                 <div>
-                                    <h4 class="font-semibold text-amber-800">Perbedaan Time Domain vs Frequency Domain</h4>
+                                    <h4 class="font-semibold text-amber-800">Perbedaan Time Domain vs Frequency Domain
+                                    </h4>
                                     <p class="text-sm text-amber-700 mt-1">
-                                        <strong>Time Domain:</strong> Menampilkan bagaimana getaran berubah seiring waktu (kapan terjadi).
-                                        <strong>Frequency Domain:</strong> Menampilkan komponen frekuensi getaran (apa yang terjadi) - membantu mengidentifikasi masalah seperti unbalance, misalignment, atau bearing defects.
+                                        <strong>Time Domain:</strong> Menampilkan bagaimana getaran berubah seiring
+                                        waktu (kapan terjadi).
+                                        <strong>Frequency Domain:</strong> Menampilkan komponen frekuensi getaran (apa
+                                        yang terjadi) - membantu mengidentifikasi masalah seperti unbalance,
+                                        misalignment, atau bearing defects.
                                     </p>
                                 </div>
                             </div>
@@ -288,18 +318,21 @@
                             <div class="flex items-center justify-between mb-4">
                                 <div>
                                     <h3 class="text-lg font-semibold text-gray-800">Trend RMS Harian/Mingguan</h3>
-                                    <p class="text-sm text-gray-500">Visualisasi trend getaran untuk deteksi degradasi mesin</p>
+                                    <p class="text-sm text-gray-500">Visualisasi trend getaran untuk deteksi degradasi
+                                        mesin</p>
                                 </div>
                                 <div class="flex items-center gap-2">
                                     <span class="text-xs font-medium text-gray-500">Periode:</span>
-                                    <select id="trend-period" class="text-xs bg-gray-100 border-0 rounded-lg px-3 py-1.5 focus:ring-2 focus:ring-emerald-500">
+                                    <select id="trend-period"
+                                        class="text-xs bg-gray-100 border-0 rounded-lg px-3 py-1.5 focus:ring-2 focus:ring-emerald-500">
                                         <option value="7">7 Hari</option>
                                         <option value="14">14 Hari</option>
                                         <option value="30">30 Hari</option>
                                     </select>
                                 </div>
                             </div>
-                            <div class="relative bg-gray-50 rounded-lg p-4 border border-gray-200" style="height: 300px;">
+                            <div class="relative bg-gray-50 rounded-lg p-4 border border-gray-200"
+                                style="height: 300px;">
                                 <canvas id="trendChart"></canvas>
                             </div>
                             <div class="flex items-center gap-4 mt-3 text-xs">
@@ -317,10 +350,206 @@
                 </div>
             </div>
 
-            <!-- Modul Analisis -->
-            <div id="analysis-module" class="bg-white shadow rounded-lg p-4 hidden">
-                <h2 class="text-lg font-semibold mb-3">Analisis</h2>
-                <p>Hasil analisis akan ditampilkan di sini.</p>
+            <!-- MODUL ANALISIS (SCIENTIFIC LAYER) -->
+            <div id="analysis-module" class="hidden space-y-6">
+
+                <!-- 1. Header & Status Utama -->
+                <div
+                    class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 flex flex-col md:flex-row items-center justify-between gap-4">
+                    <div>
+                        <h2 class="text-xl font-bold text-gray-800 flex items-center gap-2">
+                            <svg class="w-6 h-6 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01">
+                                </path>
+                            </svg>
+                            Modul Analisis Kondisi Mesin
+                        </h2>
+                        <p class="text-sm text-gray-500 mt-1">Status Komprehensif Berdasarkan ISO-10816 & Analisis
+                            Spektrum</p>
+                    </div>
+                    <span
+                        class="px-6 py-2 rounded-full text-lg font-bold border-2 {{ $analysisInsights['machineStatus'] == 'NORMAL' ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : ($analysisInsights['machineStatus'] == 'WARNING' ? 'bg-amber-50 text-amber-700 border-amber-200' : 'bg-red-50 text-red-700 border-red-200') }}">
+                        {{ $analysisInsights['machineStatus'] }}
+                    </span>
+                </div>
+
+                <!-- 2. Grid Analisis Detail -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+                    <!-- LEFT COLUMN: TIME DOMAIN & STATISTICS -->
+                    <div class="space-y-6">
+                        <!-- A. Statistik Getaran -->
+                        <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+                            <div class="px-5 py-3 bg-gray-50 border-b border-gray-200">
+                                <h3 class="font-bold text-gray-700 text-sm uppercase tracking-wide">A. Statistik Getaran
+                                    (RMS)</h3>
+                            </div>
+                            <div class="p-5">
+                                <div class="grid grid-cols-2 gap-4 mb-4">
+                                    <div class="text-center p-3 bg-gray-50 rounded-lg">
+                                        <p class="text-xs text-gray-500 font-medium uppercase">Maximum</p>
+                                        <p class="text-2xl font-black text-gray-800">
+                                            {{ number_format($analysisInsights['stats']['max'], 4) }} g</p>
+                                    </div>
+                                    <div class="text-center p-3 bg-gray-50 rounded-lg">
+                                        <p class="text-xs text-gray-500 font-medium uppercase">Rata-Rata (Avg)</p>
+                                        <p class="text-2xl font-black text-gray-800">
+                                            {{ number_format($analysisInsights['stats']['avg'], 4) }} g</p>
+                                    </div>
+                                </div>
+                                <table class="w-full text-sm text-center border-t border-gray-100">
+                                    <tbody class="divide-y divide-gray-100">
+                                        <tr>
+                                            <td class="py-2 text-gray-500 text-left">Minimum</td>
+                                            <td class="py-2 font-mono font-bold">
+                                                {{ number_format($analysisInsights['stats']['min'], 4) }} g</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="py-2 text-gray-500 text-left">Std. Deviasi (Fluktuasi)</td>
+                                            <td class="py-2 font-mono font-bold text-blue-600">
+                                                ±{{ number_format($analysisInsights['stats']['std_dev'], 4) }}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- D. Analisis Tren -->
+                        <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+                            <div class="px-5 py-3 bg-gray-50 border-b border-gray-200">
+                                <h3 class="font-bold text-gray-700 text-sm uppercase tracking-wide">D. Analisis Tren &
+                                    Degradasi</h3>
+                            </div>
+                            <div class="p-5 flex items-center justify-between">
+                                <div>
+                                    <p class="text-xs text-gray-500 mb-1">Arah Tren Getaran</p>
+                                    <p
+                                        class="text-xl font-bold {{ $analysisInsights['trendAnalysis']['direction'] == 'Stabil' ? 'text-emerald-600' : ($analysisInsights['trendAnalysis']['change_percent'] > 0 ? 'text-amber-600' : 'text-blue-600') }}">
+                                        {{ $analysisInsights['trendAnalysis']['direction'] }}
+                                    </p>
+                                </div>
+                                <div class="text-right">
+                                    <p class="text-xs text-gray-500 mb-1">Perubahan</p>
+                                    <p
+                                        class="text-2xl font-black {{ $analysisInsights['trendAnalysis']['change_percent'] > 0 ? 'text-amber-600' : 'text-emerald-600' }}">
+                                        {{ $analysisInsights['trendAnalysis']['change_percent'] > 0 ? '+' : '' }}{{ $analysisInsights['trendAnalysis']['change_percent'] }}%
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- RIGHT COLUMN: DIAGNOSTICS & THRESHOLDS -->
+                    <div class="space-y-6">
+                        <!-- B. Threshold & Severity -->
+                        <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+                            <div class="px-5 py-3 bg-gray-50 border-b border-gray-200">
+                                <h3 class="font-bold text-gray-700 text-sm uppercase tracking-wide">B. Penilaian
+                                    Threshold (Limit)</h3>
+                            </div>
+                            <div class="p-5">
+                                <div class="relative pt-6 pb-2">
+                                    <!-- Progress Bar Background (Scale: 0 - 1.5g) -->
+                                    <div class="h-4 bg-gray-100 rounded-full w-full overflow-hidden flex shadow-inner">
+                                        <!-- Normal (0 - 0.5g) -->
+                                        <div class="h-full bg-gradient-to-r from-emerald-300 to-emerald-400 flex-1 border-r border-white/50"
+                                            title="Normal (< 0.5g)"></div>
+                                        <!-- Warning (0.5 - 1.0g) -->
+                                        <div class="h-full bg-gradient-to-r from-amber-300 to-amber-400 flex-1 border-r border-white/50"
+                                            title="Warning (0.5 - 1.0g)"></div>
+                                        <!-- Critical (> 1.0g) -->
+                                        <div class="h-full bg-gradient-to-r from-red-400 to-red-600 flex-1"
+                                            title="Critical (> 1.0g)"></div>
+                                    </div>
+
+                                    <!-- Marker for Current Value -->
+                                    @php
+                                        // Calculate position (0.5g = 33%, 1.0g = 66% approx mapping for visual)
+                                        $val = $analysisInsights['stats']['avg'];
+                                        $pos = ($val / 1.5) * 100; // Scale to 1.5g max
+                                        $pos = min(max($pos, 0), 100);
+                                    @endphp
+                                    <div class="absolute top-2 w-1 h-8 bg-black border-2 border-white shadow-lg transition-all duration-1000"
+                                        style="left: {{ $pos }}%;"></div>
+                                    <div class="absolute top-10 font-bold text-xs transform -translate-x-1/2"
+                                        style="left: {{ $pos }}%;">
+                                        {{ number_format($val, 3) }}g
+                                    </div>
+                                </div>
+                                <div class="flex justify-between text-[10px] text-gray-400 font-bold uppercase mt-6">
+                                    <span>0g</span>
+                                    <span>0.5g (Warn)</span>
+                                    <span>1.0g (Crit)</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- C. Analisis Spektrum (FFT) -->
+                        <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+                            <div class="px-5 py-3 bg-gray-50 border-b border-gray-200">
+                                <h3 class="font-bold text-gray-700 text-sm uppercase tracking-wide">C. Diagnosa
+                                    Kerusakan (FFT)</h3>
+                            </div>
+                            <div class="p-5">
+                                <div class="flex items-start gap-4">
+                                    <div
+                                        class="p-3 {{ $analysisInsights['fftAnalysis']['indication'] == 'Normal' ? 'bg-emerald-100 text-emerald-600' : 'bg-red-100 text-red-600' }} rounded-xl">
+                                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z">
+                                            </path>
+                                        </svg>
+                                    </div>
+                                    <div>
+                                        <p class="text-xs text-gray-500 font-bold uppercase mb-1">Indikasi Masalah</p>
+                                        <h4 class="text-lg font-bold text-gray-900 leading-none mb-2">
+                                            {{ $analysisInsights['fftAnalysis']['indication'] }}</h4>
+                                        <p class="text-sm text-gray-600 italic">
+                                            "{{ $analysisInsights['fftAnalysis']['diagnosis'] }}"</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- 3. KESIMPULAN & REKOMENDASI (Full Width) -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <!-- E. Kesimpulan -->
+                    <div
+                        class="rounded-xl border-l-4 p-5 shadow-sm {{ $analysisInsights['machineStatus'] == 'NORMAL' ? 'bg-emerald-50 border-emerald-500' : ($analysisInsights['machineStatus'] == 'WARNING' ? 'bg-amber-50 border-amber-500' : 'bg-red-50 border-red-500') }}">
+                        <h3
+                            class="font-bold {{ $analysisInsights['machineStatus'] == 'NORMAL' ? 'text-emerald-800' : 'text-amber-800' }} uppercase tracking-wide text-sm mb-2 flex items-center gap-2">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                            E. Kesimpulan Sistem
+                        </h3>
+                        <p class="text-gray-800 font-medium leading-relaxed">
+                            {{ $analysisInsights['conclusion'] }}
+                        </p>
+                    </div>
+
+                    <!-- G. Rekomendasi -->
+                    <div class="bg-blue-50 border-l-4 border-blue-500 rounded-xl p-5 shadow-sm">
+                        <h3
+                            class="font-bold text-blue-800 uppercase tracking-wide text-sm mb-2 flex items-center gap-2">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01">
+                                </path>
+                            </svg>
+                            G. Rekomendasi Tindakan
+                        </h3>
+                        <p class="text-gray-700 italic">
+                            "{{ $analysisInsights['recommendation'] }}"
+                        </p>
+                    </div>
+                </div>
+
             </div>
         </div>
     </div>
@@ -368,8 +597,10 @@
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@2.0.1/dist/chartjs-plugin-zoom.min.js"></script>
 
     <script>
-        // Data dari controller
-        const rmsChartData = @json($rmsChartData ?? ['labels' => [], 'values' => []]);
+        // Data from controller (Server-side Source of Truth)
+        const rmsChartData = @json($rmsChartData);
+        const fftChartData = @json($fftChartData);
+        const trendChartData = @json($trendChartData);
 
         // =====================
         // Graph Sub-Tab Navigation
@@ -381,7 +612,7 @@
         };
 
         Object.keys(tabs).forEach(tabId => {
-            document.getElementById(tabId)?.addEventListener('click', function() {
+            document.getElementById(tabId)?.addEventListener('click', function () {
                 // Hide all panels
                 Object.values(tabs).forEach(panelId => {
                     document.getElementById(panelId)?.classList.add('hidden');
@@ -443,14 +674,14 @@
                             padding: 12,
                             displayColors: false,
                             callbacks: {
-                                title: function(context) {
+                                title: function (context) {
                                     const idx = context[0].dataIndex;
                                     return rmsChartData.full_times?.[idx] || context[0].label;
                                 },
-                                label: function(context) {
+                                label: function (context) {
                                     return `RMS: ${context.parsed.y?.toFixed(4) || 0} g`;
                                 },
-                                afterLabel: function(context) {
+                                afterLabel: function (context) {
                                     const idx = context.dataIndex;
                                     const machine = rmsChartData.machines?.[idx] || '-';
                                     const status = rmsChartData.statuses?.[idx] || '-';
@@ -486,7 +717,7 @@
         }
 
         // Reset Zoom Button
-        document.getElementById('reset-zoom-rms')?.addEventListener('click', function() {
+        document.getElementById('reset-zoom-rms')?.addEventListener('click', function () {
             if (rmsChart) rmsChart.resetZoom();
         });
 
@@ -497,26 +728,26 @@
         const tempCtx = document.getElementById('temperatureChart');
 
         if (tempCtx) {
-            // Generate sample temperature data (would come from actual data in production)
             const tempLabels = rmsChartData.labels || [];
-            const tempData = tempLabels.map(() => 25 + Math.random() * 15);
+            // USE REAL DB DATA:
+            const tempData = rmsChartData.temperatures || [];
 
             tempChart = new Chart(tempCtx, {
                 type: 'line',
                 data: {
                     labels: tempLabels,
-                    datasets: [{
-                        label: 'Suhu (°C)',
-                        data: tempData,
-                        borderColor: '#f59e0b',
-                        backgroundColor: 'rgba(245, 158, 11, 0.1)',
-                        borderWidth: 2,
-                        fill: true,
-                        tension: 0.4,
-                        pointRadius: 2,
-                        pointHoverRadius: 5,
-                        pointBackgroundColor: '#f59e0b'
-                    }]
+                    datasets: [
+                        {
+                            label: 'Suhu Mesin (°C)',
+                            data: tempData,
+                            borderColor: '#f59e0b', // Amber-500
+                            backgroundColor: 'rgba(245, 158, 11, 0.1)',
+                            borderWidth: 2,
+                            tension: 0.3,
+                            pointRadius: 2,
+                            fill: true
+                        }
+                    ]
                 },
                 options: {
                     responsive: true,
@@ -533,14 +764,10 @@
                         }
                     },
                     scales: {
-                        x: {
-                            grid: { color: 'rgba(0,0,0,0.05)' },
-                            ticks: { maxRotation: 45, font: { size: 10 } }
-                        },
+                        x: { display: false },
                         y: {
-                            beginAtZero: false,
-                            grid: { color: 'rgba(0,0,0,0.05)' },
-                            title: { display: true, text: 'Suhu (°C)', font: { size: 12 } }
+                            beginAtZero: false, // Suhu jarang mulai dari 0 untuk mesin
+                            grid: { borderDash: [2, 4] }
                         }
                     }
                 }
@@ -554,50 +781,31 @@
         const fftCtx = document.getElementById('fftChart');
 
         if (fftCtx) {
-            // Generate sample FFT data
-            const fftFrequencies = Array.from({length: 100}, (_, i) => i * 10); // 0-990 Hz
-            const fftAmplitudes = fftFrequencies.map(f => {
-                // Simulate some peaks
-                if (f === 120) return 0.8;
-                if (f === 240) return 0.45;
-                if (f === 360) return 0.25;
-                return Math.random() * 0.1;
-            });
+            // USE REAL DB DATA:
+            let fftFrequencies = fftChartData.frequencies || [];
+            let fftAmplitudes = fftChartData.amplitudes || [];
 
-            // Find peaks
-            const peaks = [];
-            for (let i = 1; i < fftAmplitudes.length - 1; i++) {
-                if (fftAmplitudes[i] > fftAmplitudes[i-1] && fftAmplitudes[i] > fftAmplitudes[i+1] && fftAmplitudes[i] > 0.2) {
-                    peaks.push({ freq: fftFrequencies[i], amp: fftAmplitudes[i] });
-                }
-            }
-
-            // Update info cards
-            if (peaks.length > 0) {
-                const maxPeak = peaks.reduce((a, b) => a.amp > b.amp ? a : b);
-                document.getElementById('dominant-freq').textContent = maxPeak.freq + ' Hz';
-                document.getElementById('peak-amp').textContent = maxPeak.amp.toFixed(3) + ' g';
-            }
-            document.getElementById('peak-count').textContent = peaks.length;
+            // Update info cards with REAL aggregated data
+            document.getElementById('dominant-freq').textContent = (fftChartData.dominant_freq || 0) + ' Hz';
+            document.getElementById('peak-amp').textContent = (fftChartData.peak_amp || 0).toFixed(4) + ' g';
+            // Count peaks > threshold (example > 0.05g)
+            const significantPeaks = fftAmplitudes.filter(a => a > 0.05).length;
+            document.getElementById('peak-count').textContent = significantPeaks;
 
             fftChart = new Chart(fftCtx, {
-                type: 'bar',
+                type: 'bar', // Bar chart sering lebih jelas untuk FFT diskrit
                 data: {
-                    labels: fftFrequencies.map(f => f + ' Hz'),
+                    labels: fftFrequencies,
                     datasets: [{
                         label: 'Amplitudo (g)',
                         data: fftAmplitudes,
-                        backgroundColor: fftFrequencies.map(f => {
-                            if (f < 100) return 'rgba(34, 197, 94, 0.7)'; // Low - green
-                            if (f < 500) return 'rgba(59, 130, 246, 0.7)'; // Mid - blue
-                            return 'rgba(168, 85, 247, 0.7)'; // High - purple
-                        }),
-                        borderColor: fftFrequencies.map(f => {
-                            if (f < 100) return '#22c55e';
-                            if (f < 500) return '#3b82f6';
-                            return '#a855f7';
-                        }),
-                        borderWidth: 1
+                        backgroundColor: function(context) {
+                            // Highlight dominant peak
+                            const val = context.parsed.y;
+                            return val >= (fftChartData.peak_amp || 999) ? '#ef4444' : '#3b82f6';
+                        },
+                        barPercentage: 0.8,
+                        categoryPercentage: 1.0
                     }]
                 },
                 options: {
@@ -605,11 +813,22 @@
                     maintainAspectRatio: false,
                     plugins: {
                         legend: { display: false },
+                        zoom: {
+                            zoom: {
+                                wheel: { enabled: true },
+                                pinch: { enabled: true },
+                                mode: 'x',
+                            },
+                            pan: {
+                                enabled: true,
+                                mode: 'x',
+                            }
+                        },
                         tooltip: {
                             backgroundColor: 'rgba(0, 0, 0, 0.8)',
                             callbacks: {
                                 title: function(context) {
-                                    return `Frekuensi: ${context[0].label}`;
+                                    return `Frekuensi: ${context[0].label} Hz`;
                                 },
                                 label: function(context) {
                                     return `Amplitudo: ${context.parsed.y?.toFixed(4) || 0} g`;
@@ -619,20 +838,22 @@
                     },
                     scales: {
                         x: {
+                            title: { display: true, text: 'Frequency (Hz)' },
                             grid: { display: false },
-                            ticks: { 
-                                maxRotation: 0, 
+                            ticks: {
+                                maxRotation: 0,
                                 font: { size: 9 },
-                                callback: function(value, index) {
-                                    return index % 10 === 0 ? this.getLabelForValue(value) : '';
+                                callback: function(value, index, values) {
+                                    // Show label only every Nth tick to avoid clutter
+                                    // ChartJS bar chart 'labels' are strings, value is index
+                                    const freq = this.getLabelForValue(value);
+                                    return index % 5 === 0 ? freq : '';
                                 }
-                            },
-                            title: { display: true, text: 'Frekuensi (Hz)', font: { size: 12 } }
+                            }
                         },
                         y: {
-                            beginAtZero: true,
-                            grid: { color: 'rgba(0,0,0,0.05)' },
-                            title: { display: true, text: 'Amplitudo (g)', font: { size: 12 } }
+                            title: { display: true, text: 'Amplitude (g)' },
+                            beginAtZero: true
                         }
                     }
                 }
@@ -641,7 +862,7 @@
 
         // Band Toggle for FFT
         document.querySelectorAll('.band-toggle').forEach(btn => {
-            btn.addEventListener('click', function() {
+            btn.addEventListener('click', function () {
                 // Update button styles
                 document.querySelectorAll('.band-toggle').forEach(b => {
                     b.classList.remove('bg-white', 'text-emerald-600', 'shadow-sm');
@@ -653,10 +874,10 @@
                 // Filter chart based on band
                 const band = this.dataset.band;
                 if (fftChart) {
-                    const allFreqs = Array.from({length: 100}, (_, i) => i * 10);
+                    const allFreqs = fftChartData.frequencies || [];
                     let filteredIndices;
-                    
-                    switch(band) {
+
+                    switch (band) {
                         case 'low':
                             filteredIndices = allFreqs.map((f, i) => f < 100 ? i : null).filter(i => i !== null);
                             break;
@@ -669,13 +890,13 @@
                         default:
                             filteredIndices = allFreqs.map((f, i) => i);
                     }
-                    
+
                     // Update chart visibility
                     fftChart.data.datasets[0].data = allFreqs.map((f, i) => {
-                        if (band === 'all') return fftChart.data.datasets[0].data[i];
-                        if (band === 'low' && f < 100) return fftChart.data.datasets[0].data[i];
-                        if (band === 'mid' && f >= 100 && f < 500) return fftChart.data.datasets[0].data[i];
-                        if (band === 'high' && f >= 500) return fftChart.data.datasets[0].data[i];
+                        if (band === 'all') return fftChartData.amplitudes[i];
+                        if (band === 'low' && f < 100) return fftChartData.amplitudes[i];
+                        if (band === 'mid' && f >= 100 && f < 500) return fftChartData.amplitudes[i];
+                        if (band === 'high' && f >= 500) return fftChartData.amplitudes[i];
                         return 0;
                     });
                     fftChart.update();
@@ -690,11 +911,11 @@
         const trendCtx = document.getElementById('trendChart');
 
         if (trendCtx) {
-            // Generate sample trend data
-            const days = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu', 'Minggu'];
-            const trendData = [0.35, 0.38, 0.36, 0.42, 0.45, 0.43, 0.48];
-            
-            // Calculate moving average
+            // USE REAL DB DATA:
+            const trendLabels = trendChartData.labels || [];
+            const trendData = trendChartData.avg_values || [];
+
+            // Calculate Moving Average (Simple 3-point)
             const movingAvg = trendData.map((val, i, arr) => {
                 if (i < 2) return null;
                 return (arr[i-2] + arr[i-1] + val) / 3;
@@ -703,28 +924,26 @@
             trendChart = new Chart(trendCtx, {
                 type: 'line',
                 data: {
-                    labels: days,
+                    labels: trendLabels,
                     datasets: [
                         {
-                            label: 'RMS Harian',
+                            label: 'RMS (Avg)',
                             data: trendData,
-                            borderColor: '#10b981',
+                            borderColor: '#10b981', // Emerald
                             backgroundColor: 'rgba(16, 185, 129, 0.1)',
                             borderWidth: 2,
-                            fill: true,
-                            tension: 0.3,
-                            pointRadius: 5,
-                            pointBackgroundColor: '#10b981'
+                            tension: 0.1,
+                            pointRadius: 3,
+                            fill: true
                         },
                         {
-                            label: 'Moving Average (3 hari)',
+                            label: 'Moving Avg (3-period)',
                             data: movingAvg,
-                            borderColor: '#f97316',
-                            borderWidth: 2,
+                            borderColor: '#6b7280', // Gray
+                            borderWidth: 1.5,
                             borderDash: [5, 5],
-                            fill: false,
-                            tension: 0.3,
-                            pointRadius: 0
+                            pointRadius: 0,
+                            fill: false
                         }
                     ]
                 },
@@ -732,20 +951,9 @@
                     responsive: true,
                     maintainAspectRatio: false,
                     plugins: {
-                        legend: { display: false },
-                        tooltip: {
-                            backgroundColor: 'rgba(0, 0, 0, 0.8)',
-                            callbacks: {
-                                label: function(context) {
-                                    return `${context.dataset.label}: ${context.parsed.y?.toFixed(3) || 0} g`;
-                                }
-                            }
-                        }
+                        legend: { position: 'top' }
                     },
                     scales: {
-                        x: {
-                            grid: { color: 'rgba(0,0,0,0.05)' }
-                        },
                         y: {
                             beginAtZero: true,
                             grid: { color: 'rgba(0,0,0,0.05)' },
@@ -760,7 +968,7 @@
         // Axis Toggle for Time Domain
         // =====================
         document.querySelectorAll('.axis-toggle').forEach(btn => {
-            btn.addEventListener('click', function() {
+            btn.addEventListener('click', function () {
                 // Update button styles
                 document.querySelectorAll('.axis-toggle').forEach(b => {
                     b.classList.remove('bg-white', 'text-emerald-600', 'shadow-sm');

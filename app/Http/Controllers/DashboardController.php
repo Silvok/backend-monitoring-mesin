@@ -234,7 +234,128 @@ class DashboardController extends Controller
             }
         }
 
-        return view('pages.data-grafik', compact('machines', 'latestDate', 'earliestDate', 'rmsChartData', 'fftChartData', 'trendChartData', 'rawResults', 'lastUpdate', 'totalMachines', 'categories', 'statusDistribution', 'worstMachines'));
+        // ==================================================================================
+        // MODUL ANALISIS (SCIENTIFIC LAYER)
+        // ==================================================================================
+
+        // 0. Data Preparation
+        $rmsValues = $rmsData->pluck('value');
+        $currentRMS = $rmsValues->last() ?? 0;
+
+        // A. Analisis Statistik Getaran (Stability Analysis)
+        $stats = [
+            'min' => $rmsValues->min() ?? 0,
+            'max' => $rmsValues->max() ?? 0,
+            'avg' => $rmsValues->avg() ?? 0,
+            'count' => $rmsValues->count(),
+            'std_dev' => 0
+        ];
+        // Calculate Standard Deviation for Stability Check
+        if ($stats['count'] > 1) {
+            $variance = $rmsValues->map(function ($val) use ($stats) {
+                return pow($val - $stats['avg'], 2);
+            })->avg();
+            $stats['std_dev'] = sqrt($variance);
+        }
+
+        // B. Analisis Threshold & Severity Level
+        // Thresholds adjusted for 'g' unit (Approximate ISO 10816-3 scale for demo)
+        $thresholds = ['warning' => 0.5, 'critical' => 1.0];
+        $machineStatus = 'NORMAL';
+
+        if ($currentRMS >= $thresholds['critical']) {
+            $machineStatus = 'CRITICAL';
+        } elseif ($currentRMS >= $thresholds['warning']) {
+            $machineStatus = 'WARNING';
+        }
+
+        // C. Analisis Spektrum & Diagnosa (FFT Insights)
+        $latestRaw = $rawResults->last();
+        $fftAnalysis = [
+            'dominant_freq' => $latestRaw ? round($latestRaw->dominant_freq_hz, 2) : 0,
+            'peak_amp' => $latestRaw ? round($latestRaw->peak_amp, 4) : 0,
+            'indication' => 'Normal',
+            'diagnosis' => 'Tidak ada anomali frekuensi signifikan.'
+        ];
+
+        if ($latestRaw && $latestRaw->dominant_freq_hz > 0) {
+            $freq = $latestRaw->dominant_freq_hz;
+            if ($freq < 50) {
+                $fftAnalysis['indication'] = 'Unbalance';
+                $fftAnalysis['diagnosis'] = "Dominasi frekuensi rendah ({$freq} Hz). Kemungkinan unbalance atau kekenduran.";
+            } elseif ($freq < 200) {
+                $fftAnalysis['indication'] = 'Misalignment';
+                $fftAnalysis['diagnosis'] = "Dominasi frekuensi menengah ({$freq} Hz). Indikasi potensi misalignment.";
+            } else {
+                $fftAnalysis['indication'] = 'Bearing Fault';
+                $fftAnalysis['diagnosis'] = "Dominasi frekuensi tinggi ({$freq} Hz). Waspadai kerusakan bantalan (bearing).";
+            }
+        }
+
+        // D. Analisis Tren (Predictive)
+        $trendAnalysis = [
+            'direction' => 'Stabil',
+            'change_percent' => 0,
+            'is_significant' => false
+        ];
+
+        if ($rmsValues->count() >= 2) {
+            $first = $rmsValues->first();
+            $last = $rmsValues->last();
+            if ($first > 0) {
+                $diff = $last - $first;
+                $percent = ($diff / $first) * 100;
+                $trendAnalysis['change_percent'] = round($percent, 1);
+
+                if ($percent > 10) {
+                    $trendAnalysis['direction'] = 'Naik (Degradasi)';
+                    $trendAnalysis['is_significant'] = true;
+                } elseif ($percent < -10) {
+                    $trendAnalysis['direction'] = 'Turun (Membaik)';
+                }
+            }
+        }
+
+        // E. Klasifikasi & Kesimpulan (Explainable Output)
+        $conclusion = "Mesin beroperate dalam kondisi {$machineStatus}.";
+        $reasons = [];
+
+        if ($machineStatus != 'NORMAL') {
+            $reasons[] = "RMS ({$currentRMS} g) > batas " . strtolower($machineStatus);
+        }
+        if ($trendAnalysis['is_significant'] && $trendAnalysis['change_percent'] > 0) {
+            $reasons[] = "tren naik {$trendAnalysis['change_percent']}%";
+        }
+
+        if (!empty($reasons)) {
+            $conclusion = "PERINGATAN: " . ucfirst(implode(', ', $reasons)) . ".";
+        }
+
+        // G. Rekomendasi
+        $recommendation = "Lanjutkan pemantauan rutin.";
+        if ($machineStatus == 'WARNING') {
+            $recommendation = "Jadwalkan inspeksi visual & cek pelumasan.";
+        } elseif ($machineStatus == 'CRITICAL') {
+            $recommendation = "STOP MESIN & lakukan maintenance segera.";
+        }
+
+        $analysisInsights = compact('stats', 'machineStatus', 'thresholds', 'fftAnalysis', 'trendAnalysis', 'conclusion', 'recommendation');
+
+        return view('pages.data-grafik', compact(
+            'machines',
+            'latestDate',
+            'earliestDate',
+            'rmsChartData',
+            'fftChartData',
+            'trendChartData',
+            'rawResults',
+            'lastUpdate',
+            'totalMachines',
+            'categories',
+            'statusDistribution',
+            'worstMachines',
+            'analysisInsights'
+        ));
     }
 
     public function analisis()
