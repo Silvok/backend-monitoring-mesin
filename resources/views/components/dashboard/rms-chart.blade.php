@@ -26,8 +26,6 @@
         </div>
     </div>
 </div>
-</div>
-
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         const chartData = JSON.parse(document.getElementById('rmsChart').dataset.chart);
