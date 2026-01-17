@@ -26,6 +26,9 @@ Route::get('/monitoring-mesin', [\App\Http\Controllers\MonitoringController::cla
     ->middleware(['auth', 'verified'])
     ->name('monitoring-mesin');
 
+Route::get('/api/monitoring/data', [\App\Http\Controllers\MonitoringController::class, 'getMonitoringData'])
+    ->middleware(['auth']);
+
 
 Route::get('/analisis', [\App\Http\Controllers\AnalisisController::class, 'index'])
     ->middleware(['auth', 'verified'])
