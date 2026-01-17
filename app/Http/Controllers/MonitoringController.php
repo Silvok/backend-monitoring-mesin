@@ -64,7 +64,7 @@ class MonitoringController extends Controller
 
         // Get Latest FFT Data for the last analysis
         $latestAnalysis = AnalysisResult::where('machine_id', $machineId)
-            ->where('status', 'success')
+            ->where('status', 'done')
             ->has('fftResult')
             ->latest()
             ->first();
@@ -121,7 +121,7 @@ class MonitoringController extends Controller
         }
 
         $query = AnalysisResult::where('machine_id', $machineId)
-            ->where('status', 'success');
+            ->where('status', 'done');
 
         if ($period === 'weekly') {
             // Group by Year and Week

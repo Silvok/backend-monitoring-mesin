@@ -61,6 +61,6 @@ class AnalysisResult extends Model
      */
     public function isSuccessful(): bool
     {
-        return strtolower($this->status) === 'success';
+        return strtolower($this->status) === 'done';
     }
 }

@@ -590,26 +590,40 @@
 
                     if (data.status === 'success') {
                         const trendPlaceholder = document.getElementById('trendChartPlaceholder');
-                        if (trendPlaceholder) trendPlaceholder.classList.add('hidden');
+                        
+                        if (data.trend && data.trend.length > 0) {
+                            if (trendPlaceholder) trendPlaceholder.classList.add('hidden');
 
-                        if (trendChart && data.trend) {
-                            const labels = data.trend.map(d => d.label);
-                            const avgValues = data.trend.map(d => d.avg_rms);
-                            const maxValues = data.trend.map(d => d.max_rms);
+                            if (trendChart) {
+                                const labels = data.trend.map(d => d.label);
+                                const avgValues = data.trend.map(d => d.avg_rms);
+                                const maxValues = data.trend.map(d => d.max_rms);
 
-                            // Calculate simple moving average (SMA) 7-period
-                            const smaValues = avgValues.map((val, idx, arr) => {
-                                if (idx < 6) return null;
-                                const slice = arr.slice(idx - 6, idx + 1);
-                                return slice.reduce((a, b) => a + b, 0) / 7;
-                            });
+                                // Calculate simple moving average (SMA) 7-period
+                                const smaValues = avgValues.map((val, idx, arr) => {
+                                    if (idx < 6) return null;
+                                    const slice = arr.slice(idx - 6, idx + 1);
+                                    return slice.reduce((a, b) => a + b, 0) / 7;
+                                });
 
-                            trendChart.data.labels = labels;
-                            trendChart.data.datasets[0].data = smaValues;
-                            trendChart.data.datasets[1].data = avgValues;
-                            trendChart.data.datasets[2].data = maxValues;
+                                trendChart.data.labels = labels;
+                                trendChart.data.datasets[0].data = smaValues;
+                                trendChart.data.datasets[1].data = avgValues;
+                                trendChart.data.datasets[2].data = maxValues;
 
-                            trendChart.update();
+                                trendChart.update();
+                            }
+                        } else {
+                            if (trendPlaceholder) {
+                                trendPlaceholder.classList.remove('hidden');
+                                const msg = trendPlaceholder.querySelector('p.text-sm');
+                                if (msg) msg.textContent = "Belum ada riwayat data untuk mesin ini";
+                            }
+                            if (trendChart) {
+                                trendChart.data.labels = [];
+                                trendChart.data.datasets.forEach(ds => ds.data = []);
+                                trendChart.update();
+                            }
                         }
                     }
                 } catch (error) {
