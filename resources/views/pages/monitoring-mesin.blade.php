@@ -7,18 +7,26 @@
         <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@2.0.1/dist/chartjs-plugin-zoom.min.js"></script>
     @endpush
     <x-slot name="header">
-        <!-- ... header code remains same or similar ... -->
         <div class="flex items-center justify-between">
-            <div class="flex items-center space-x-4">
-                <div class="p-2 bg-emerald-100 rounded-lg">
-                    <svg class="w-6 h-6 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-                    </svg>
-                </div>
-                <h2 class="font-bold text-2xl text-emerald-900 tracking-tight">
+            <div class="flex items-center space-x-8">
+                <h2 class="font-bold text-xl text-emerald-900">
                     Monitoring & Analisis Mesin
                 </h2>
+                <!-- Live Status Indicator -->
+                <div
+                    class="flex items-center space-x-2 px-3 py-1.5 bg-emerald-50 rounded-full border border-emerald-200">
+                    <div class="relative flex h-3 w-3">
+                        <span
+                            class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                        <span class="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
+                    </div>
+                    <span class="text-xs font-semibold text-emerald-700">Terhubung</span>
+                </div>
+            </div>
+            <div class="flex items-center space-x-3">
+                <div class="text-sm text-gray-600 bg-gray-50 px-3 py-1.5 rounded-lg border border-gray-200">
+                    <span class="font-semibold" id="currentTime">{{ now()->format('d M Y, H:i:s') }}</span>
+                </div>
             </div>
         </div>
     </x-slot>
@@ -590,7 +598,7 @@
 
                     if (data.status === 'success') {
                         const trendPlaceholder = document.getElementById('trendChartPlaceholder');
-                        
+
                         if (data.trend && data.trend.length > 0) {
                             if (trendPlaceholder) trendPlaceholder.classList.add('hidden');
 
@@ -728,8 +736,25 @@
                 }
             }
 
+            function updateClock() {
+                const now = new Date();
+                const clockEl = document.getElementById('currentTime');
+                if (clockEl) {
+                    clockEl.textContent = now.toLocaleString('id-ID', {
+                        day: '2-digit',
+                        month: 'short',
+                        year: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit',
+                        second: '2-digit'
+                    }).replace(/\./g, ':');
+                }
+            }
+
             document.addEventListener('DOMContentLoaded', () => {
                 initCharts();
+                updateClock();
+                setInterval(updateClock, 1000);
             });
         </script>
     @endpush
