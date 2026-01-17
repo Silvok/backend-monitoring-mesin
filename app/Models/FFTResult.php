@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class FFTResult extends Model
 {
     use HasFactory;
+    protected $table = 'fft_results';
 
     protected $fillable = [
         'analysis_result_id',

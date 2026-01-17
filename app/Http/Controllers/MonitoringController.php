@@ -110,4 +110,55 @@ class MonitoringController extends Controller
             ]
         ]);
     }
+
+    public function getTrendData(Request $request)
+    {
+        $machineId = $request->machine_id;
+        $period = $request->period ?? 'daily'; // daily or weekly
+
+        if (!$machineId) {
+            return response()->json(['error' => 'Machine ID is required'], 400);
+        }
+
+        $query = AnalysisResult::where('machine_id', $machineId)
+            ->where('status', 'success');
+
+        if ($period === 'weekly') {
+            // Group by Year and Week
+            $data = $query->select(
+                DB::raw('YEARWEEK(created_at, 1) as period_label'),
+                DB::raw('MIN(created_at) as timestamp'),
+                DB::raw('AVG(rms) as avg_rms'),
+                DB::raw('MAX(rms) as max_rms')
+            )
+                ->groupBy('period_label')
+                ->orderBy('timestamp', 'asc')
+                ->get();
+        } else {
+            // Default Daily Grouping
+            $data = $query->select(
+                DB::raw('DATE(created_at) as period_label'),
+                DB::raw('MIN(created_at) as timestamp'),
+                DB::raw('AVG(rms) as avg_rms'),
+                DB::raw('MAX(rms) as max_rms')
+            )
+                ->groupBy('period_label')
+                ->orderBy('period_label', 'asc')
+                ->get();
+        }
+
+        $formatted = $data->map(function ($item) {
+            return [
+                'label' => Carbon::parse($item->timestamp)->translatedFormat('d M'),
+                'timestamp' => Carbon::parse($item->timestamp)->timestamp * 1000,
+                'avg_rms' => round($item->avg_rms, 4),
+                'max_rms' => round($item->max_rms, 4)
+            ];
+        });
+
+        return response()->json([
+            'status' => 'success',
+            'trend' => $formatted
+        ]);
+    }
 }

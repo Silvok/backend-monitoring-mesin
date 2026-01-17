@@ -167,8 +167,8 @@
                                 </svg>
                             </div>
                             <p class="text-sm font-bold text-gray-600">Menunggu data FFT dari mesin...</p>
-                            <p class="text-[11px] text-gray-400 mt-1 uppercase tracking-widest">Spectrum akan diupdate
-                                otomatis</p>
+                            <p class="text-gray-400 mt-1 uppercase tracking-widest" style="font-size: 9px;">Spectrum
+                                akan diupdate otomatis</p>
                         </div>
                     </div>
                 </div>
@@ -194,17 +194,97 @@
                     <p class="text-gray-400/70 italic" style="font-size: 9px;">Dianalisis dari batch sensor terbaru</p>
                 </div>
             </div>
+
+            <!-- Long-term Trend Analysis Module (OPSIONAL tapi KUAT) -->
+            <div
+                class="bg-white shadow-sm border border-gray-100 p-6 flex flex-col rounded-xl h-[520px] animate-fade-in">
+                <div class="flex items-center justify-between mb-6">
+                    <div>
+                        <h3 class="text-lg font-bold text-gray-900 tracking-tight">Analisis Tren Kondisi (Riwayat)</h3>
+                        <p class="text-[12px] text-gray-500 font-medium">Monitoring tren degradasi mesin melalui Moving
+                            Average RMS harian</p>
+                    </div>
+                    <div class="flex items-center space-x-3">
+                        <!-- Trend View Toggles -->
+                        <div class="flex bg-gray-50 p-1 rounded-lg">
+                            <button onclick="setTrendPeriod('daily')" id="btn-trend-daily"
+                                class="px-3 py-1.5 text-[10px] font-black rounded-md bg-white shadow-sm text-blue-600 transition-all uppercase tracking-widest">Harian</button>
+                            <button onclick="setTrendPeriod('weekly')" id="btn-trend-weekly"
+                                class="px-3 py-1.5 text-[10px] font-black rounded-md text-gray-400 hover:text-blue-500 transition-all uppercase tracking-widest">Mingguan</button>
+                        </div>
+
+                        <!-- Reset Zoom Button -->
+                        <button onclick="trendChart.resetZoom()"
+                            class="p-1.5 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all"
+                            title="Reset Zoom">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="flex-grow relative min-h-0">
+                    <canvas id="trendChart"></canvas>
+                    <!-- Trend Loading / Empty State -->
+                    <div id="trendChartPlaceholder"
+                        class="absolute inset-0 flex items-center justify-center bg-gray-50/50 rounded-xl border border-dashed border-gray-200 z-10 transition-opacity">
+                        <div class="text-center">
+                            <div class="p-4 bg-white rounded-full shadow-sm inline-block mb-3">
+                                <svg class="w-6 h-6 text-blue-400" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z" />
+                                </svg>
+                            </div>
+                            <p class="text-sm font-bold text-gray-600">Pilih mesin untuk memuat tren riwayat</p>
+                            <p class="text-gray-400 mt-1 uppercase tracking-widest" style="font-size: 9px;">Data tren
+                                dihitung otomatis dari riwayat database</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Footer: Trend Indicators -->
+                <div class="mt-6 flex flex-wrap items-center gap-6 pt-4 border-t border-gray-50">
+                    <div class="flex items-center space-x-1.5">
+                        <div class="w-2 h-2 rounded-full bg-blue-500"></div>
+                        <span class="font-black text-gray-400 uppercase tracking-tight" style="font-size: 9px;">Avg
+                            RMS</span>
+                    </div>
+                    <div class="flex items-center space-x-1.5">
+                        <div class="w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.4)]"></div>
+                        <span class="font-black text-gray-400 uppercase tracking-tight" style="font-size: 9px;">SMA
+                            7-Day</span>
+                    </div>
+                    <div class="flex items-center space-x-1.5">
+                        <div class="w-2 h-2 rounded-lg bg-orange-200 border border-orange-400"></div>
+                        <span class="font-black text-gray-400 uppercase tracking-tight" style="font-size: 9px;">Max Peak
+                            Area</span>
+                    </div>
+                    <div class="flex-grow"></div>
+                    <p class="text-gray-400/70 italic" style="font-size: 9px;">Sangat berguna untuk bukti visual
+                        pemeliharaan predictif (PdM)</p>
+                </div>
+            </div>
         </div>
     </div>
 
     @push('scripts')
         <script>
-            let timeChart;
-            let fftChart;
+            let timeChart, fftChart, trendChart;
+            let currentTrendPeriod = 'daily';
 
             function initCharts() {
-                initTimeChart();
-                initFFTChart();
+                try {
+                    console.log("Initializing charts...");
+                    initTimeChart();
+                    initFFTChart();
+                    initTrendChart();
+                    console.log("Charts initialized successfully.");
+                } catch (e) {
+                    console.error("Error during chart initialization:", e);
+                }
             }
 
             function initTimeChart() {
@@ -324,125 +404,277 @@
                         }
                     }
                 });
-                function initFFTChart() {
-                    const ctx = document.getElementById('fftChart').getContext('2d');
-                    fftChart = new Chart(ctx, {
-                        type: 'line',
-                        data: {
-                            labels: [],
-                            datasets: [{
-                                label: 'Amplitude',
+            }
+
+            function initFFTChart() {
+                const ctx = document.getElementById('fftChart').getContext('2d');
+                fftChart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: [],
+                        datasets: [{
+                            label: 'Amplitude',
+                            data: [],
+                            borderColor: '#3b82f6',
+                            backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                            borderWidth: 2,
+                            tension: 0.1,
+                            fill: true,
+                            pointRadius: 0,
+                            pointHoverRadius: 5,
+                            pointBackgroundColor: '#2563eb'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { display: false },
+                            tooltip: {
+                                callbacks: {
+                                    title: (items) => `Frekuensi: ${items[0].label} Hz`,
+                                    label: (item) => `Amplitudo: ${item.parsed.y.toFixed(4)}`
+                                }
+                            },
+                            zoom: {
+                                pan: { enabled: true, mode: 'x' },
+                                zoom: {
+                                    wheel: { enabled: true },
+                                    pinch: { enabled: true },
+                                    mode: 'x',
+                                }
+                            }
+                        },
+                        scales: {
+                            x: {
+                                title: { display: true, text: 'Frequency (Hz)', font: { weight: 'bold', size: 10 } },
+                                ticks: { font: { size: 9 } }
+                            },
+                            y: {
+                                beginAtZero: true,
+                                title: { display: true, text: 'Amplitude', font: { weight: 'bold', size: 10 } },
+                                ticks: { font: { size: 9 } }
+                            }
+                        }
+                    },
+                    plugins: [{
+                        id: 'bandBackgrounds',
+                        beforeDraw: (chart) => {
+                            if (!chart.chartArea || !chart.scales.x || !chart.scales.y) return;
+                            const { ctx, chartArea: { top, bottom, left, right }, scales: { x, y } } = chart;
+                            function drawBand(startHz, endHz, color) {
+                                const startX = x.getPixelForValue(startHz);
+                                const endX = x.getPixelForValue(endHz);
+                                if (startX >= left && startX <= right) {
+                                    ctx.fillStyle = color;
+                                    ctx.fillRect(startX, top, Math.min(endX, right) - startX, bottom - top);
+                                }
+                            }
+                            ctx.save();
+                            drawBand(0, 100, 'rgba(96, 165, 250, 0.03)');   // Low
+                            drawBand(100, 500, 'rgba(52, 211, 153, 0.03)'); // Mid
+                            drawBand(500, 2000, 'rgba(251, 146, 60, 0.03)'); // High
+                            ctx.restore();
+                        }
+                    }]
+                });
+            }
+
+            function initTrendChart() {
+                const ctx = document.getElementById('trendChart').getContext('2d');
+                trendChart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: [],
+                        datasets: [
+                            {
+                                label: 'SMA 7-Period',
+                                data: [],
+                                borderColor: '#10b981',
+                                backgroundColor: 'transparent',
+                                borderWidth: 3,
+                                tension: 0.4,
+                                pointRadius: 0,
+                                order: 1
+                            },
+                            {
+                                label: 'Avg RMS',
                                 data: [],
                                 borderColor: '#3b82f6',
                                 backgroundColor: 'rgba(59, 130, 246, 0.1)',
                                 borderWidth: 2,
-                                tension: 0.1,
+                                tension: 0.3,
+                                fill: true,
+                                pointRadius: 3,
+                                pointBackgroundColor: '#3b82f6',
+                                order: 2
+                            },
+                            {
+                                label: 'Max Peak Area',
+                                data: [],
+                                borderColor: 'rgba(249, 115, 22, 0.3)',
+                                backgroundColor: 'rgba(249, 115, 22, 0.05)',
+                                borderWidth: 1,
+                                tension: 0.3,
                                 fill: true,
                                 pointRadius: 0,
-                                pointHoverRadius: 5,
-                                pointBackgroundColor: '#2563eb'
-                            }]
-                        },
-                        options: {
-                            responsive: true,
-                            maintainAspectRatio: false,
-                            plugins: {
-                                legend: { display: false },
-                                tooltip: {
-                                    callbacks: {
-                                        title: (items) => `Frekuensi: ${items[0].label} Hz`,
-                                        label: (item) => `Amplitudo: ${item.parsed.y.toFixed(4)}`
-                                    }
-                                },
-                                zoom: {
-                                    pan: { enabled: true, mode: 'x' },
-                                    zoom: {
-                                        wheel: { enabled: true },
-                                        pinch: { enabled: true },
-                                        mode: 'x',
+                                order: 3
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { display: false },
+                            tooltip: {
+                                mode: 'index',
+                                intersect: false,
+                                padding: 10,
+                                callbacks: {
+                                    label: function (context) {
+                                        return `${context.dataset.label}: ${context.parsed.y.toFixed(4)} mm/s`;
                                     }
                                 }
+                            }
+                        },
+                        scales: {
+                            x: {
+                                grid: { display: false },
+                                ticks: { font: { size: 9 }, color: '#9ca3af' }
                             },
-                            scales: {
-                                x: {
-                                    title: { display: true, text: 'Frequency (Hz)', font: { weight: 'bold', size: 10 } },
-                                    ticks: { font: { size: 9 } }
-                                },
-                                y: {
-                                    beginAtZero: true,
-                                    title: { display: true, text: 'Amplitude', font: { weight: 'bold', size: 10 } },
-                                    ticks: { font: { size: 9 } }
-                                }
+                            y: {
+                                beginAtZero: true,
+                                title: { display: true, text: 'RMS (mm/s)', font: { size: 10, weight: 'bold' } },
+                                ticks: { font: { size: 9 } }
                             }
-                        },
-                        plugins: [{
-                            id: 'bandBackgrounds',
-                            beforeDraw: (chart) => {
-                                const { ctx, chartArea: { top, bottom, left, right }, scales: { x, y } } = chart;
-
-                                function drawBand(startHz, endHz, color) {
-                                    const startX = x.getPixelForValue(startHz);
-                                    const endX = x.getPixelForValue(endHz);
-                                    if (startX >= left && startX <= right) {
-                                        ctx.fillStyle = color;
-                                        ctx.fillRect(startX, top, Math.min(endX, right) - startX, bottom - top);
-                                    }
-                                }
-
-                                ctx.save();
-                                drawBand(0, 100, 'rgba(96, 165, 250, 0.03)');   // Low
-                                drawBand(100, 500, 'rgba(52, 211, 153, 0.03)'); // Mid
-                                drawBand(500, 2000, 'rgba(251, 146, 60, 0.03)'); // High
-                                ctx.restore();
-                            }
-                        }]
-                    });
-                }
-
-                function toggleDataset(index) {
-                    const isVisible = timeChart.setDatasetVisibility(index, !timeChart.isDatasetVisible(index));
-                    timeChart.update();
-
-                    const btnRms = document.getElementById('btn-rms');
-                    const btnTemp = document.getElementById('btn-temp');
-
-                    if (index === 0) { // RMS
-                        btnRms.className = timeChart.isDatasetVisible(0)
-                            ? "px-4 py-1.5 text-xs font-bold rounded-md bg-white shadow-sm text-emerald-600 transition-all border border-emerald-50"
-                            : "px-4 py-1.5 text-xs font-bold rounded-md text-gray-500 hover:text-emerald-500 transition-all";
-                    } else { // Temp
-                        btnTemp.className = timeChart.isDatasetVisible(1)
-                            ? "px-4 py-1.5 text-xs font-bold rounded-md bg-white shadow-sm text-red-600 transition-all border border-red-50"
-                            : "px-4 py-1.5 text-xs font-bold rounded-md text-gray-500 hover:text-red-500 transition-all";
+                        }
                     }
+                });
+            }
+
+            async function setTrendPeriod(period) {
+                currentTrendPeriod = period;
+
+                // Update UI Toggles
+                const btnDaily = document.getElementById('btn-trend-daily');
+                const btnWeekly = document.getElementById('btn-trend-weekly');
+
+                if (period === 'daily') {
+                    btnDaily.className = "px-3 py-1.5 text-[10px] font-black rounded-md bg-white shadow-sm text-blue-600 transition-all uppercase tracking-widest";
+                    btnWeekly.className = "px-3 py-1.5 text-[10px] font-black rounded-md text-gray-400 hover:text-blue-500 transition-all uppercase tracking-widest";
+                } else {
+                    btnWeekly.className = "px-3 py-1.5 text-[10px] font-black rounded-md bg-white shadow-sm text-blue-600 transition-all uppercase tracking-widest";
+                    btnDaily.className = "px-3 py-1.5 text-[10px] font-black rounded-md text-gray-400 hover:text-blue-500 transition-all uppercase tracking-widest";
                 }
 
-                function resetZoom() {
-                    if (timeChart) timeChart.resetZoom();
-                    if (fftChart) fftChart.resetZoom();
+                await fetchTrendData();
+            }
+
+            async function fetchTrendData() {
+                const machineId = document.getElementById('filter-machine').value;
+                if (!machineId) return;
+
+                console.log(`Fetching trend data for period: ${currentTrendPeriod}`);
+
+                try {
+                    const response = await fetch(`/api/monitoring/trend?machine_id=${machineId}&period=${currentTrendPeriod}`);
+
+                    if (!response.ok) {
+                        console.error(`Trend Server error: ${response.status}`);
+                        return;
+                    }
+
+                    const data = await response.json();
+                    console.log("Trend Data:", data);
+
+                    if (data.status === 'success') {
+                        const trendPlaceholder = document.getElementById('trendChartPlaceholder');
+                        if (trendPlaceholder) trendPlaceholder.classList.add('hidden');
+
+                        if (trendChart && data.trend) {
+                            const labels = data.trend.map(d => d.label);
+                            const avgValues = data.trend.map(d => d.avg_rms);
+                            const maxValues = data.trend.map(d => d.max_rms);
+
+                            // Calculate simple moving average (SMA) 7-period
+                            const smaValues = avgValues.map((val, idx, arr) => {
+                                if (idx < 6) return null;
+                                const slice = arr.slice(idx - 6, idx + 1);
+                                return slice.reduce((a, b) => a + b, 0) / 7;
+                            });
+
+                            trendChart.data.labels = labels;
+                            trendChart.data.datasets[0].data = smaValues;
+                            trendChart.data.datasets[1].data = avgValues;
+                            trendChart.data.datasets[2].data = maxValues;
+
+                            trendChart.update();
+                        }
+                    }
+                } catch (error) {
+                    console.error('Error fetching trend data:', error);
                 }
+            }
 
-                async function applyFilter() {
-                    const machineId = document.getElementById('filter-machine').value;
-                    const range = document.getElementById('filter-time-range').value;
-                    const axis = document.getElementById('filter-axis').value;
+            function toggleDataset(index) {
+                const isVisible = timeChart.setDatasetVisibility(index, !timeChart.isDatasetVisible(index));
+                timeChart.update();
 
-                    if (!machineId) return;
+                const btnRms = document.getElementById('btn-rms');
+                const btnTemp = document.getElementById('btn-temp');
 
-                    document.getElementById('chartPlaceholder').style.opacity = '1';
-                    document.getElementById('fftChartPlaceholder').classList.remove('hidden');
-                    document.getElementById('fft-loading').classList.remove('hidden');
-                    document.getElementById('fft-result-info').classList.add('hidden');
+                if (index === 0) { // RMS
+                    btnRms.className = timeChart.isDatasetVisible(0)
+                        ? "px-4 py-1.5 text-xs font-bold rounded-md bg-white shadow-sm text-emerald-600 transition-all border border-emerald-50"
+                        : "px-4 py-1.5 text-xs font-bold rounded-md text-gray-500 hover:text-emerald-500 transition-all";
+                } else { // Temp
+                    btnTemp.className = timeChart.isDatasetVisible(1)
+                        ? "px-4 py-1.5 text-xs font-bold rounded-md bg-white shadow-sm text-red-600 transition-all border border-red-50"
+                        : "px-4 py-1.5 text-xs font-bold rounded-md text-gray-500 hover:text-red-500 transition-all";
+                }
+            }
 
-                    try {
-                        const response = await fetch(`/api/monitoring/data?machine_id=${machineId}&range=${range}&axis=${axis}`);
-                        const data = await response.json();
+            function resetZoom() {
+                if (timeChart) timeChart.resetZoom();
+                if (fftChart) fftChart.resetZoom();
+            }
 
-                        if (data.status === 'success') {
-                            // Update Time Domain
-                            document.getElementById('chartPlaceholder').style.opacity = '0';
-                            document.getElementById('chartPlaceholder').style.pointerEvents = 'none';
+            async function applyFilter() {
+                const machineId = document.getElementById('filter-machine').value;
+                const range = document.getElementById('filter-time-range').value;
+                const axis = document.getElementById('filter-axis').value;
 
+                if (!machineId) return;
+
+                console.log("Applying filter...");
+
+                // Show placeholders
+                const timePlaceholder = document.getElementById('chartPlaceholder');
+                const fftPlaceholder = document.getElementById('fftChartPlaceholder');
+                const trendPlaceholder = document.getElementById('trendChartPlaceholder');
+
+                if (timePlaceholder) timePlaceholder.classList.remove('hidden');
+                if (fftPlaceholder) fftPlaceholder.classList.remove('hidden');
+                if (trendPlaceholder) trendPlaceholder.classList.remove('hidden');
+                document.getElementById('fft-result-info').classList.add('hidden');
+
+                try {
+                    const response = await fetch(`/api/monitoring/data?machine_id=${machineId}&range=${range}&axis=${axis}`);
+
+                    if (!response.ok) {
+                        console.error(`Server error: ${response.status}`);
+                        return;
+                    }
+
+                    const data = await response.json();
+                    console.log("Monitoring Data:", data);
+
+                    if (data.status === 'success') {
+                        // Update Time Domain
+                        if (timePlaceholder) timePlaceholder.classList.add('hidden');
+
+                        if (timeChart && data.time_domain) {
                             timeChart.data.datasets[0].data = data.time_domain.vibration;
                             timeChart.data.datasets[1].data = data.time_domain.temperature;
 
@@ -453,39 +685,38 @@
                             } else if (range === '7d' || range === 'all') {
                                 timeChart.options.scales.x.time.unit = 'day';
                             }
-                            timeChart.update('none');
+                            timeChart.update();
+                        }
 
-                            // Update Frequency Domain (FFT)
-                            if (data.frequency_domain) {
-                                document.getElementById('fftChartPlaceholder').classList.add('hidden');
-                                document.getElementById('fft-result-info').classList.remove('hidden');
-                                document.getElementById('dominant-freq').textContent = data.frequency_domain.dominant_freq_hz.toFixed(2);
+                        // Update Frequency Domain (FFT)
+                        if (data.frequency_domain) {
+                            if (fftPlaceholder) fftPlaceholder.classList.add('hidden');
+                            document.getElementById('fft-result-info').classList.remove('hidden');
+                            document.getElementById('dominant-freq').textContent = data.frequency_domain.dominant_freq_hz.toFixed(2);
 
+                            if (fftChart) {
                                 fftChart.data.labels = data.frequency_domain.frequencies;
                                 fftChart.data.datasets[0].data = data.frequency_domain.amplitudes;
 
-                                // Peak detection visual - point at dominant freq
                                 const domFreq = data.frequency_domain.dominant_freq_hz;
                                 fftChart.data.datasets[0].pointRadius = data.frequency_domain.frequencies.map(f =>
                                     Math.abs(f - domFreq) < 1 ? 5 : 0
                                 );
-
                                 fftChart.update();
-                            } else {
-                                document.getElementById('fftChartPlaceholder').classList.remove('hidden');
                             }
-
-                            document.getElementById('fft-loading').classList.add('hidden');
                         }
-                    } catch (error) {
-                        console.error('Error fetching data:', error);
-                        document.getElementById('fft-loading').classList.add('hidden');
-                    }
-                }
 
-                document.addEventListener('DOMContentLoaded', () => {
-                    initCharts();
-                });
+                        // Load Trend Data
+                        fetchTrendData();
+                    }
+                } catch (error) {
+                    console.error('Error fetching data:', error);
+                }
+            }
+
+            document.addEventListener('DOMContentLoaded', () => {
+                initCharts();
+            });
         </script>
     @endpush
 
