@@ -34,48 +34,102 @@
     <div class="py-6">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
 
-            <!-- Global Filter Card (Simplified for now but functional) -->
-            <div class="bg-white shadow-sm border border-emerald-100 overflow-hidden" style="border-radius: 1rem;">
-                <div class="p-6">
-                    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 items-end">
-                        <div class="space-y-2">
-                            <label class="block text-xs font-bold text-gray-700 uppercase">Mesin / Node ESP</label>
+            <!-- Modern Filter Card (Reference-Style) -->
+            <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 mb-8">
+                <!-- Header "Filters" -->
+                <div class="flex items-center space-x-2.5 mb-6 leading-none">
+                    <div class="p-1.5 bg-gray-50 rounded-lg">
+                        <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
+                        </svg>
+                    </div>
+                    <h3 class="font-bold text-gray-900">Filters</h3>
+                </div>
+
+                <!-- Filter Grid -->
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-8 items-end">
+                    <!-- Machine Selection -->
+                    <div class="space-y-3">
+                        <div class="flex items-center space-x-2 text-gray-400">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10" />
+                            </svg>
+                            <span class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Machine Category</span>
+                        </div>
+                        <div class="relative group/select">
                             <select id="filter-machine" onchange="applyFilter()"
-                                class="w-full rounded-xl border-gray-200 focus:border-emerald-500 focus:ring-emerald-500 text-sm font-medium">
-                                <option value="">-- Pilih Mesin --</option>
+                                class="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-sm font-medium text-gray-700 focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all appearance-none cursor-pointer">
+                                <option value="">Select Machine</option>
                                 @foreach($machines as $machine)
                                     <option value="{{ $machine->id }}">{{ $machine->name }}</option>
                                 @endforeach
                             </select>
+                            <div class="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400 group-hover/select:text-emerald-500 transition-colors">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                                </svg>
+                            </div>
                         </div>
-                        <div class="space-y-2">
-                            <label class="block text-xs font-bold text-gray-700 uppercase">Rentang Waktu</label>
+                    </div>
+
+                    <!-- Region Selection (Used for Axis) -->
+                    <div class="space-y-3">
+                        <div class="flex items-center space-x-2 text-gray-400">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                            </svg>
+                            <span class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Sumbu Getaran</span>
+                        </div>
+                        <div class="relative group/select">
+                            <select id="filter-axis" onchange="applyFilter()"
+                                class="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-sm font-medium text-gray-700 focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all appearance-none cursor-pointer">
+                                <option value="x">Sumbu X</option>
+                                <option value="y">Sumbu Y</option>
+                                <option value="z">Sumbu Z</option>
+                                <option value="resultant" selected>Resultant (Total)</option>
+                            </select>
+                            <div class="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400 group-hover/select:text-emerald-500 transition-colors">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Time Period selection -->
+                    <div class="space-y-3">
+                        <div class="flex items-center space-x-2 text-gray-400">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2-2v12a2 2 0 002 2z" />
+                            </svg>
+                            <span class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Time Period</span>
+                        </div>
+                        <div class="relative group/select">
                             <select id="filter-time-range" onchange="applyFilter()"
-                                class="w-full rounded-xl border-gray-200 focus:border-emerald-500 focus:ring-emerald-500 text-sm font-medium">
+                                class="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-sm font-medium text-gray-700 focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all appearance-none cursor-pointer">
                                 <option value="realtime">Real-time (10m)</option>
                                 <option value="1h">1 Jam Terakhir</option>
                                 <option value="24h">24 Jam Terakhir</option>
                                 <option value="7d">7 Hari Terakhir</option>
                                 <option value="all" selected>Semua Waktu</option>
                             </select>
-                        </div>
-                        <div class="space-y-2">
-                            <label class="block text-xs font-bold text-gray-700 uppercase">Axis Getaran</label>
-                            <select id="filter-axis" onchange="applyFilter()"
-                                class="w-full rounded-xl border-gray-200 focus:border-emerald-500 focus:ring-emerald-500 text-sm font-medium">
-                                <option value="x">Sumbu X</option>
-                                <option value="y">Sumbu Y</option>
-                                <option value="z">Sumbu Z</option>
-                                <option value="resultant" selected>Resultant (Total)</option>
-                            </select>
-                        </div>
-                        <div>
-                            <button onclick="applyFilter()"
-                                class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2 px-4 rounded-xl transition-all shadow-sm">
-                                Apply Filter
-                            </button>
+                            <div class="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400 group-hover/select:text-emerald-500 transition-colors">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                                </svg>
+                            </div>
                         </div>
                     </div>
+
+                    <!-- Modern Action Button -->
+                    <button onclick="applyFilter()"
+                        class="w-full h-[46px] bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs uppercase tracking-widest rounded-xl transition-all shadow-lg shadow-emerald-100 flex items-center justify-center gap-2 group/btn">
+                        <svg class="w-4 h-4 transition-transform group-hover/btn:rotate-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                        </svg>
+                        <span>Cari Data</span>
+                    </button>
                 </div>
             </div>
 
