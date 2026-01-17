@@ -62,6 +62,24 @@ class MonitoringController extends Controller
         }
         $temperatureData = $tempQuery->orderBy('recorded_at', 'asc')->get();
 
+        // Get Latest FFT Data for the last analysis
+        $latestAnalysis = AnalysisResult::where('machine_id', $machineId)
+            ->where('status', 'success')
+            ->has('fftResult')
+            ->latest()
+            ->first();
+
+        $fftData = null;
+        if ($latestAnalysis && $latestAnalysis->fftResult) {
+            $fftData = [
+                'frequencies' => $latestAnalysis->fftResult->frequencies,
+                'amplitudes' => $latestAnalysis->fftResult->amplitudes,
+                'dominant_freq_hz' => $latestAnalysis->dominant_freq_hz,
+                'peak_amp' => $latestAnalysis->peak_amp,
+                'timestamp' => $latestAnalysis->created_at->translatedFormat('d M Y, H:i:s')
+            ];
+        }
+
         // Format data for Chart.js (Scatter/Line with Time Axis)
         $formattedVibration = $vibrationData->map(function ($v) {
             return [
@@ -83,6 +101,7 @@ class MonitoringController extends Controller
                 'vibration' => $formattedVibration,
                 'temperature' => $formattedTemperature,
             ],
+            'frequency_domain' => $fftData,
             'summary' => [
                 'max_rms' => round($vibrationData->max('rms') ?? 0, 4),
                 'avg_rms' => round($vibrationData->avg('rms') ?? 0, 4),
