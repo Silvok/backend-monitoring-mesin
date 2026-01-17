@@ -125,7 +125,7 @@
                 {{ __('Real-time Sensor') }}
             </x-responsive-nav-link>
 
-            <x-responsive-nav-link :href="route('data-grafik')" :active="request()->routeIs('data-grafik')"
+            <x-responsive-nav-link :href="route('monitoring-mesin')" :active="request()->routeIs('monitoring-mesin')"
                 class="text-white hover:bg-white/10 hover:text-white">
                 {{ __('Monitoring Mesin') }}
             </x-responsive-nav-link>

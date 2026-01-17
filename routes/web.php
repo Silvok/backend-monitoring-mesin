@@ -22,6 +22,10 @@ Route::get('/data-grafik', [DashboardController::class, 'dataGrafik'])
     ->middleware(['auth', 'verified'])
     ->name('data-grafik');
 
+Route::get('/monitoring-mesin', [\App\Http\Controllers\MonitoringController::class, 'index'])
+    ->middleware(['auth', 'verified'])
+    ->name('monitoring-mesin');
+
 
 Route::get('/analisis', [\App\Http\Controllers\AnalisisController::class, 'index'])
     ->middleware(['auth', 'verified'])
@@ -77,4 +81,4 @@ Route::get('/check-data', function () {
     ];
 });
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';
