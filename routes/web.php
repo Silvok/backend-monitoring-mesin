@@ -4,6 +4,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\Api\DashboardApiController;
 use App\Http\Controllers\Api\AlertController;
+use App\Http\Controllers\Api\FFTController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -56,6 +57,11 @@ Route::middleware('auth')->group(function () {
 
     // FFT API route
     Route::post('/api/fft-result', [DashboardController::class, 'storeFFT']);
+
+    // FFT Spectrum API routes
+    Route::get('/api/fft/latest', [FFTController::class, 'getLatestFFT']);
+    Route::get('/api/fft/history', [FFTController::class, 'getFFTHistory']);
+    Route::get('/api/fft/spectrum', [FFTController::class, 'getFFTSpectrum']);
 
     // Alert API routes
     Route::get('/api/alerts', [AlertController::class, 'getActiveAlerts']);

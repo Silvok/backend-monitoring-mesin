@@ -227,6 +227,9 @@
                 </div>
             </div>
 
+            <!-- FFT Spectrum Analysis Component -->
+            @include('components.fft-spectrum')
+
             <!-- Top Machines by Risk - PRIORITAS UTAMA -->
             <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
                 <div class="mb-4">
