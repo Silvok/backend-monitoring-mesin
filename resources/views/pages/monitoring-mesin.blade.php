@@ -625,19 +625,19 @@
                                     </svg>
                                     Hasil Analisis
                                 </h4>
-                                <div id="verdict-container" class="flex-1 bg-gradient-to-br from-emerald-50 to-teal-50 rounded-xl p-6 border border-emerald-200 flex flex-col justify-center">
+                                <div id="verdict-container" class="flex-1 bg-gradient-to-br from-emerald-50 to-teal-50 rounded-xl p-4 border border-emerald-200 flex flex-col justify-center">
                                     <div class="flex flex-col items-center text-center">
-                                        <div id="verdict-icon" class="p-4 bg-emerald-100 rounded-2xl mb-4">
-                                            <svg class="w-12 h-12 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <div id="verdict-icon" class="p-2.5 bg-emerald-100 rounded-xl mb-2">
+                                            <svg class="w-8 h-8 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                                             </svg>
                                         </div>
-                                        <div id="verdict-status" class="text-xl font-black text-emerald-700 mb-3 tracking-wide">KONDISI OPTIMAL</div>
-                                        <p id="diagnostic-verdict" class="text-sm text-emerald-600 leading-relaxed max-w-xs">
+                                        <div id="verdict-status" class="text-base font-black text-emerald-700 mb-1 tracking-wide">KONDISI OPTIMAL</div>
+                                        <p id="diagnostic-verdict" class="text-xs text-emerald-600 leading-relaxed">
                                             Kondisi mesin terpantau optimal tanpa indikasi kerusakan frekuensi yang signifikan.
                                         </p>
-                                        <div class="mt-5 pt-4 border-t border-emerald-200/70 w-full">
-                                            <p class="text-xs text-emerald-500">
+                                        <div class="mt-3 pt-2 border-t border-emerald-200/70 w-full">
+                                            <p class="text-[10px] text-emerald-500">
                                                 <span class="font-semibold">Referensi:</span> ISO 10816-3 & Analisis Spektrum FFT
                                             </p>
                                         </div>
