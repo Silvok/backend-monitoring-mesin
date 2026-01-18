@@ -1,18 +1,18 @@
 <nav x-data="{ open: false }" class="shadow-lg border-b-2 fixed top-0 left-0 right-0 z-50"
     style="background: linear-gradient(to right, #31694E, #275640); border-bottom-color: #1e4030;">
     <!-- Primary Navigation Menu -->
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="w-full px-4">
         <div class="flex justify-between items-center h-20">
-            <div class="flex items-center">
+            <div class="flex items-center ml-12">
                 <!-- Logo & Brand -->
-                <div class="flex items-center space-x-2 sm:space-x-3">
+                <div class="flex items-center">
                     <a href="{{ route('dashboard') }}" class="flex items-center space-x-2 hover:opacity-90 transition">
-                        <div class="w-16 h-16 sm:w-24 sm:h-24 flex-shrink-0">
+                        <div class="w-14 h-14 sm:w-16 sm:h-16 flex-shrink-0">
                             <img src="{{ asset('images/unnamed.png') }}" alt="PreMaint Logo"
                                 class="w-full h-full object-contain">
                         </div>
                         <span
-                            class="text-white font-black text-3xl sm:text-5xl bg-gradient-to-r from-white to-emerald-100 bg-clip-text text-transparent"
+                            class="text-white font-black text-2xl sm:text-3xl"
                             style="font-weight: 900;">PreMaint</span>
                     </a>
                 </div>
