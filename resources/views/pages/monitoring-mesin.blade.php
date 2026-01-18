@@ -35,14 +35,14 @@
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
 
             <!-- Clean Industry-Standard Filter Card with Green Accents -->
-            <div
-                class="bg-white !rounded-[50px] border border-gray-100 shadow-sm p-8 mb-8 uppercase tracking-tight relative overflow-hidden">
+            <div style="border-radius: 24px !important;"
+                class="bg-white border border-gray-100 shadow-sm p-8 mb-8 uppercase tracking-tight relative overflow-hidden">
                 <!-- Top Accent Bar -->
                 <div class="absolute top-0 left-0 w-full h-1.5 bg-emerald-500/80"></div>
 
                 <!-- Header "Filters" -->
                 <div class="flex items-center space-x-2.5 mb-8 border-b border-gray-50 pb-4">
-                    <div class="p-1.5 bg-emerald-50 rounded-lg">
+                    <div style="border-radius: 10px !important;" class="p-1.5 bg-emerald-50">
                         <svg class="w-5 h-5 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
@@ -63,8 +63,8 @@
                             <span class="text-sm font-bold tracking-wide">Machine</span>
                         </div>
                         <div class="relative group">
-                            <select id="filter-machine" onchange="applyFilter()"
-                                class="w-full bg-white border border-gray-200 !rounded-full px-4 py-2.5 text-sm font-medium text-gray-700 focus:ring-2 focus:ring-emerald-500/10 focus:border-emerald-500 transition-all appearance-none cursor-pointer">
+                            <select id="filter-machine" onchange="applyFilter()" style="border-radius: 12px !important;"
+                                class="w-full bg-white border border-gray-200 px-4 py-2.5 text-sm font-medium text-gray-700 focus:ring-2 focus:ring-emerald-500/10 focus:border-emerald-500 transition-all appearance-none cursor-pointer">
                                 <option value="">All Systems</option>
                                 @foreach($machines as $machine)
                                     <option value="{{ $machine->id }}">{{ $machine->name }}</option>
@@ -85,8 +85,8 @@
                             <span class="text-sm font-bold tracking-wide">Analysis Axis</span>
                         </div>
                         <div class="relative group">
-                            <select id="filter-axis" onchange="applyFilter()"
-                                class="w-full bg-white border border-gray-200 !rounded-full px-4 py-2.5 text-sm font-medium text-gray-700 focus:ring-2 focus:ring-emerald-500/10 focus:border-emerald-500 transition-all appearance-none cursor-pointer">
+                            <select id="filter-axis" onchange="applyFilter()" style="border-radius: 12px !important;"
+                                class="w-full bg-white border border-gray-200 px-4 py-2.5 text-sm font-medium text-gray-700 focus:ring-2 focus:ring-emerald-500/10 focus:border-emerald-500 transition-all appearance-none cursor-pointer">
                                 <option value="x">X-Axis Horizontal</option>
                                 <option value="y">Y-Axis Vertical</option>
                                 <option value="z">Z-Axis Longitudinal</option>
@@ -106,7 +106,8 @@
                         </div>
                         <div class="relative group">
                             <select id="filter-time-range" onchange="applyFilter()"
-                                class="w-full bg-white border border-gray-200 !rounded-full px-4 py-2.5 text-sm font-medium text-gray-700 focus:ring-2 focus:ring-emerald-500/10 focus:border-emerald-500 transition-all appearance-none cursor-pointer">
+                                style="border-radius: 12px !important;"
+                                class="w-full bg-white border border-gray-200 px-4 py-2.5 text-sm font-medium text-gray-700 focus:ring-2 focus:ring-emerald-500/10 focus:border-emerald-500 transition-all appearance-none cursor-pointer">
                                 <option value="realtime">Live Monitoring</option>
                                 <option value="1h">Last 1 Hour</option>
                                 <option value="24h">Last 24 Hours</option>
@@ -289,18 +290,20 @@
                     <!-- NEW: Modul Analisis RMS (Decision Layer) -->
                     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                         <!-- Status Kondisi Card -->
-                        <div style="border-radius: 16px !important;"
-                            class="bg-white border border-gray-100 shadow-sm p-6 flex flex-col items-center justify-center text-center relative overflow-hidden min-h-[200px]">
-                            <div id="status-bg"
-                                class="absolute inset-0 bg-gray-50 opacity-10 transition-colors duration-500"></div>
+                        <div id="status-card" style="border-radius: 16px !important;"
+                            class="bg-white border border-gray-100 shadow-sm p-6 flex flex-col items-center justify-center text-center relative overflow-hidden min-h-[220px] transition-all duration-500">
+                            <!-- Background Accent -->
+                            <div id="status-bg" class="absolute inset-0 opacity-0 transition-opacity duration-500">
+                            </div>
 
-                            <div class="relative z-10 w-full">
-                                <h3 class="text-[9px] font-black text-gray-400 uppercase tracking-[0.2em] mb-3">Status
+                            <div class="relative z-10 w-full flex flex-col items-center">
+                                <h3 id="status-label"
+                                    class="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-4">Status
                                     Kondisi</h3>
 
                                 <div id="status-indicator"
-                                    class="w-16 h-16 mx-auto rounded-full border-4 border-gray-100 flex items-center justify-center mb-3 transition-all duration-500 relative">
-                                    <svg id="status-icon" class="w-7 h-7 text-gray-300" fill="none"
+                                    class="w-16 h-16 rounded-full border-4 border-gray-100 flex items-center justify-center mb-4 transition-all duration-500 relative shadow-sm bg-gray-50/50">
+                                    <svg id="status-icon" class="w-8 h-8 text-gray-300" fill="none"
                                         stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                             d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -308,12 +311,23 @@
                                 </div>
 
                                 <h2 id="status-text"
-                                    class="text-lg font-black text-gray-400 uppercase tracking-tight mb-1">MENUNGGU DATA
-                                </h2>
-                                <p id="status-interpretation"
-                                    class="text-[10px] text-gray-500 font-medium px-2 leading-tight">
-                                    Silakan pilih mesin untuk memulai analisis
-                                </p>
+                                    class="text-2xl font-black text-gray-400 uppercase tracking-tight mb-3">MENUNGGU
+                                    DATA</h2>
+
+                                <div id="interpretation-box"
+                                    class="px-3 py-2.5 bg-gray-50 rounded-xl border border-gray-100 w-full transition-colors duration-500">
+                                    <p id="status-interpretation"
+                                        class="text-[11px] text-gray-500 font-bold leading-tight">
+                                        Silakan pilih mesin untuk memulai analisis
+                                    </p>
+                                </div>
+
+                                <div class="mt-4 flex items-center space-x-1.5 opacity-50">
+                                    <div id="iso-dot" class="w-1.5 h-1.5 rounded-full bg-gray-300"></div>
+                                    <span
+                                        class="text-[9px] font-bold text-gray-400 uppercase tracking-widest leading-none">ISO
+                                        10816-3 Thresholds</span>
+                                </div>
                             </div>
                         </div>
 
@@ -1001,16 +1015,30 @@
                     const statusIndicator = document.getElementById('status-indicator');
                     const statusIcon = document.getElementById('status-icon');
                     const statusBg = document.getElementById('status-bg');
+                    const statusLabel = document.getElementById('status-label');
+                    const interpBox = document.getElementById('interpretation-box');
+                    const isoDot = document.getElementById('iso-dot');
 
                     statusText.textContent = status;
                     statusInterp.textContent = interpretation;
 
-                    // Apply Dynamic Colors matching the refined design
-                    statusText.className = `text-xl font-black uppercase tracking-tight mb-2 text-${colorClass}-600`;
-                    statusIndicator.className = `w-16 h-16 mx-auto rounded-full border-4 flex items-center justify-center mb-3 transition-all duration-500 relative border-${colorClass}-100 bg-${colorClass}-50/30`;
-                    statusIcon.className = `w-7 h-7 text-${colorClass}-500 transition-colors`;
+                    // HIGH CONTRAST REFINEMENT:
+                    // Color the text and icons, keep background mostly white for maximum readability
+                    statusText.className = `text-2xl font-black uppercase tracking-tight mb-3 text-${colorClass}-600`;
+                    statusLabel.className = `text-[10px] font-black uppercase tracking-[0.2em] mb-4 text-${colorClass}-500/70`;
+
+                    statusIndicator.className = `w-16 h-16 rounded-full border-4 flex items-center justify-center mb-4 transition-all duration-500 relative shadow-sm border-${colorClass}-100 bg-${colorClass}-50/50`;
+                    statusIcon.className = `w-8 h-8 text-${colorClass}-500 transition-colors`;
                     statusIcon.innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="${iconPath}" />`;
-                    statusBg.className = `absolute inset-0 opacity-10 transition-colors duration-500 bg-${colorClass}-600`;
+
+                    // Box Interpretation: Solid dark text (slate-800) for maximum clarity
+                    interpBox.className = `px-3 py-2.5 rounded-xl border w-full transition-colors duration-500 bg-${colorClass}-50/40 border-${colorClass}-100/50`;
+                    statusInterp.className = `text-[11px] text-slate-800 font-bold leading-tight`;
+
+                    // Background Accent: Very subtle glow
+                    statusBg.className = `absolute inset-0 opacity-[0.05] transition-opacity duration-500 bg-gradient-to-br from-${colorClass}-600 to-transparent`;
+
+                    isoDot.className = `w-1.5 h-1.5 rounded-full bg-${colorClass}-400`;
                 }
 
                 function updateClock() {
