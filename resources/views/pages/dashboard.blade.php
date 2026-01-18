@@ -17,10 +17,8 @@
                 </div>
             </div>
             <div class="flex items-center space-x-3">
-                <div
-                    class="hidden sm:block text-sm text-gray-600 bg-gray-50 px-3 py-1.5 rounded-lg border border-gray-200">
-                    <span class="font-semibold"
-                        id="currentTime">{{ now()->locale('id')->translatedFormat('l, d M Y, H:i') }}</span>
+                <div class="text-sm text-gray-600 bg-gray-50 px-3 py-1.5 rounded-lg border border-gray-200">
+                    <span class="font-semibold" id="currentTime">{{ now()->locale('id')->translatedFormat('l, d M Y, H:i') }}</span>
                 </div>
                 <button onclick="refreshDashboard()"
                     class="px-4 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-medium rounded-lg transition flex items-center space-x-2 shadow-sm">
