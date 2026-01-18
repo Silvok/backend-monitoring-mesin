@@ -508,70 +508,141 @@
                         </div>
                     </div>
 
-                    <!-- NEW: Modul Diagnosa FFT (Fault Identification) -->
+                    <!-- NEW: Modul Diagnosa FFT (Fault Identification) - ENHANCED -->
                     <div id="fft-diagnostic-card" style="border-radius: 16px !important;"
                         class="bg-white border border-gray-100 shadow-sm p-6 relative overflow-hidden transition-all duration-500">
-                        <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
-                            <!-- Left Side: Basic Info -->
-                            <div class="flex-1 space-y-6">
-                                <div>
-                                    <h3 class="text-[10px] font-black text-emerald-500 uppercase tracking-[0.2em] mb-4">
-                                        Analisis Kerahasiaan FFT (Diagnosa)</h3>
-                                    <h2 class="text-xl font-bold text-gray-900 leading-tight">Kerusakan apa yang berpotensi terjadi?</h2>
-                                    <p class="text-xs text-gray-500 mt-1 italic">Analisis otomatis berdasarkan pola spektrum frekuensi</p>
-                                </div>
 
-                                <div class="grid grid-cols-2 gap-4">
-                                    <div class="p-3 bg-gray-50 rounded-xl border border-gray-100">
-                                        <p class="text-[9px] font-black text-gray-400 uppercase tracking-widest mb-1">Frekuensi Dominan</p>
-                                        <div class="flex items-baseline space-x-1">
-                                            <span id="diagnostic-freq" class="text-xl font-black text-gray-900">0</span>
-                                            <span class="text-[10px] font-bold text-gray-400">Hz</span>
+                        <!-- Header Section -->
+                        <div class="flex items-center gap-3 pb-5 mb-5 border-b border-gray-100">
+                            <div class="p-2.5 bg-emerald-100 rounded-xl">
+                                <svg class="w-6 h-6 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                                </svg>
+                            </div>
+                            <div>
+                                <h3 class="text-lg font-bold text-gray-900">Analisis FFT & Diagnosa Kerusakan</h3>
+                                <p class="text-sm text-gray-500">Deteksi otomatis berdasarkan pola spektrum frekuensi</p>
+                            </div>
+                        </div>
+
+                        <!-- Main Content Grid - 3 Columns Equal Height -->
+                        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+                            <!-- LEFT COLUMN: Parameter FFT (4 cols) - 50/50 layout -->
+                            <div class="lg:col-span-4 flex flex-col">
+                                <h4 class="text-xs font-bold text-gray-500 uppercase tracking-wider flex items-center gap-2 mb-4">
+                                    <svg class="w-4 h-4 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                                    </svg>
+                                    Parameter FFT
+                                </h4>
+                                <div class="flex-1 grid grid-cols-2 gap-4">
+                                    <!-- Frekuensi Dominan -->
+                                    <div class="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-5 border border-blue-100 flex flex-col justify-center">
+                                        <div class="text-xs font-semibold text-blue-600 uppercase tracking-wider mb-1">Frekuensi Dominan</div>
+                                        <div class="flex items-baseline gap-1">
+                                            <span id="diagnostic-freq" class="text-4xl font-black text-blue-700">0</span>
+                                            <span class="text-lg font-bold text-blue-400">Hz</span>
                                         </div>
+                                        <p class="text-xs text-blue-500 mt-2">Frekuensi dengan amplitudo tertinggi</p>
                                     </div>
-                                    <div class="p-3 bg-gray-50 rounded-xl border border-gray-100">
-                                        <p class="text-[9px] font-black text-gray-400 uppercase tracking-widest mb-1">Amplitudo Tertinggi</p>
-                                        <div class="flex items-baseline space-x-1">
-                                            <span id="diagnostic-amp" class="text-xl font-black text-gray-900">0.00</span>
-                                            <span class="text-[10px] font-bold text-gray-400">mm/s</span>
+                                    <!-- Amplitudo Tertinggi -->
+                                    <div class="bg-gradient-to-br from-purple-50 to-pink-50 rounded-xl p-5 border border-purple-100 flex flex-col justify-center">
+                                        <div class="text-xs font-semibold text-purple-600 uppercase tracking-wider mb-1">Amplitudo Tertinggi</div>
+                                        <div class="flex items-baseline gap-1">
+                                            <span id="diagnostic-amp" class="text-4xl font-black text-purple-700">0.00</span>
+                                            <span class="text-lg font-bold text-purple-400">mm/s</span>
                                         </div>
+                                        <p class="text-xs text-purple-500 mt-2">Intensitas getaran pada frekuensi dominan</p>
                                     </div>
                                 </div>
                             </div>
 
-                            <!-- Middle Section: Fault Indicators -->
-                            <div class="flex-1 bg-gray-50/50 rounded-2xl p-5 border border-gray-100/50">
-                                <h4 class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-4">Indikasi Kerusakan</h4>
-                                <div class="grid grid-cols-2 gap-3">
-                                    <div id="indicator-unbalance" class="flex items-center space-x-2 grayscale opacity-40 transition-all duration-500">
-                                        <div class="w-2.5 h-2.5 rounded-full bg-red-500"></div>
-                                        <span class="text-xs font-bold text-gray-700">Unbalance</span>
+                            <!-- MIDDLE COLUMN: Indikasi Kerusakan (5 cols) -->
+                            <div class="lg:col-span-5 flex flex-col">
+                                <h4 class="text-xs font-bold text-gray-500 uppercase tracking-wider flex items-center gap-2 mb-4">
+                                    <svg class="w-4 h-4 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                                    </svg>
+                                    Indikasi Kerusakan
+                                </h4>
+                                <div class="flex-1 grid grid-cols-1 gap-3">
+                                    <!-- Unbalance -->
+                                    <div id="indicator-unbalance" class="fault-indicator flex items-center justify-between p-4 rounded-xl border-2 border-gray-200 bg-gray-50/80 opacity-60 transition-all duration-300 hover:opacity-80">
+                                        <div class="flex items-center gap-3">
+                                            <div class="w-3.5 h-3.5 rounded-full bg-red-400 indicator-dot ring-4 ring-red-100"></div>
+                                            <div>
+                                                <span class="text-sm font-bold text-gray-700 block">Unbalance</span>
+                                                <span class="text-xs text-gray-500">Ketidakseimbangan rotor (1x RPM)</span>
+                                            </div>
+                                        </div>
+                                        <div class="indicator-badge hidden px-3 py-1 bg-red-500 text-white text-xs font-bold rounded-full shadow-sm">TERDETEKSI</div>
                                     </div>
-                                    <div id="indicator-misalignment" class="flex items-center space-x-2 grayscale opacity-40 transition-all duration-500">
-                                        <div class="w-2.5 h-2.5 rounded-full bg-orange-500"></div>
-                                        <span class="text-xs font-bold text-gray-700">Misalignment</span>
+
+                                    <!-- Misalignment -->
+                                    <div id="indicator-misalignment" class="fault-indicator flex items-center justify-between p-4 rounded-xl border-2 border-gray-200 bg-gray-50/80 opacity-60 transition-all duration-300 hover:opacity-80">
+                                        <div class="flex items-center gap-3">
+                                            <div class="w-3.5 h-3.5 rounded-full bg-orange-400 indicator-dot ring-4 ring-orange-100"></div>
+                                            <div>
+                                                <span class="text-sm font-bold text-gray-700 block">Misalignment</span>
+                                                <span class="text-xs text-gray-500">Ketidaksejajaran poros (2x RPM)</span>
+                                            </div>
+                                        </div>
+                                        <div class="indicator-badge hidden px-3 py-1 bg-orange-500 text-white text-xs font-bold rounded-full shadow-sm">TERDETEKSI</div>
                                     </div>
-                                    <div id="indicator-bearing" class="flex items-center space-x-2 grayscale opacity-40 transition-all duration-500">
-                                        <div class="w-2.5 h-2.5 rounded-full bg-blue-500"></div>
-                                        <span class="text-xs font-bold text-gray-700">Bearing Defect</span>
+
+                                    <!-- Bearing Defect -->
+                                    <div id="indicator-bearing" class="fault-indicator flex items-center justify-between p-4 rounded-xl border-2 border-gray-200 bg-gray-50/80 opacity-60 transition-all duration-300 hover:opacity-80">
+                                        <div class="flex items-center gap-3">
+                                            <div class="w-3.5 h-3.5 rounded-full bg-blue-400 indicator-dot ring-4 ring-blue-100"></div>
+                                            <div>
+                                                <span class="text-sm font-bold text-gray-700 block">Bearing Defect</span>
+                                                <span class="text-xs text-gray-500">Kerusakan bearing (Freq tinggi)</span>
+                                            </div>
+                                        </div>
+                                        <div class="indicator-badge hidden px-3 py-1 bg-blue-500 text-white text-xs font-bold rounded-full shadow-sm">TERDETEKSI</div>
                                     </div>
-                                    <div id="indicator-looseness" class="flex items-center space-x-2 grayscale opacity-40 transition-all duration-500">
-                                        <div class="w-2.5 h-2.5 rounded-full bg-yellow-500"></div>
-                                        <span class="text-xs font-bold text-gray-700">Looseness</span>
+
+                                    <!-- Looseness -->
+                                    <div id="indicator-looseness" class="fault-indicator flex items-center justify-between p-4 rounded-xl border-2 border-gray-200 bg-gray-50/80 opacity-60 transition-all duration-300 hover:opacity-80">
+                                        <div class="flex items-center gap-3">
+                                            <div class="w-3.5 h-3.5 rounded-full bg-yellow-400 indicator-dot ring-4 ring-yellow-100"></div>
+                                            <div>
+                                                <span class="text-sm font-bold text-gray-700 block">Looseness</span>
+                                                <span class="text-xs text-gray-500">Kelonggaran mekanis (Sub-harmonik)</span>
+                                            </div>
+                                        </div>
+                                        <div class="indicator-badge hidden px-3 py-1 bg-yellow-500 text-white text-xs font-bold rounded-full shadow-sm">TERDETEKSI</div>
                                     </div>
                                 </div>
                             </div>
 
-                            <!-- Right Side: Final Verdict -->
-                            <div class="flex-1 flex flex-col items-center justify-center text-center p-6 border-l md:border-dashed border-gray-200">
-                                <div class="p-3 bg-emerald-50 rounded-2xl mb-3">
-                                    <svg class="w-6 h-6 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <!-- RIGHT COLUMN: Hasil Analisis (4 cols) -->
+                            <div class="lg:col-span-4 flex flex-col">
+                                <h4 class="text-xs font-bold text-gray-500 uppercase tracking-wider flex items-center gap-2 mb-4">
+                                    <svg class="w-4 h-4 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0012 18.75c-1.03 0-1.9-.4-2.593-.895l-.548-.547z"></path>
                                     </svg>
+                                    Hasil Analisis
+                                </h4>
+                                <div id="verdict-container" class="flex-1 bg-gradient-to-br from-emerald-50 to-teal-50 rounded-xl p-6 border border-emerald-200 flex flex-col justify-center">
+                                    <div class="flex flex-col items-center text-center">
+                                        <div id="verdict-icon" class="p-4 bg-emerald-100 rounded-2xl mb-4">
+                                            <svg class="w-12 h-12 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                            </svg>
+                                        </div>
+                                        <div id="verdict-status" class="text-xl font-black text-emerald-700 mb-3 tracking-wide">KONDISI OPTIMAL</div>
+                                        <p id="diagnostic-verdict" class="text-sm text-emerald-600 leading-relaxed max-w-xs">
+                                            Kondisi mesin terpantau optimal tanpa indikasi kerusakan frekuensi yang signifikan.
+                                        </p>
+                                        <div class="mt-5 pt-4 border-t border-emerald-200/70 w-full">
+                                            <p class="text-xs text-emerald-500">
+                                                <span class="font-semibold">Referensi:</span> ISO 10816-3 & Analisis Spektrum FFT
+                                            </p>
+                                        </div>
+                                    </div>
                                 </div>
-                                <p id="diagnostic-verdict" class="text-sm font-bold text-emerald-700 leading-tight">
-                                    "Kondisi mesin terpantau optimal tanpa indikasi kerusakan frekuensi yang signifikan."
-                                </p>
                             </div>
                         </div>
 
@@ -1411,17 +1482,24 @@
                         }
                     }
 
-                    // 3. Update UI Indicators
+                    // 3. Update UI Indicators (Enhanced version)
                     const resetIndicator = (id) => {
                         const el = document.getElementById(id);
-                        el.classList.add('grayscale', 'opacity-40');
-                        el.classList.remove('scale-110');
+                        if (!el) return;
+                        el.classList.add('opacity-50');
+                        el.classList.remove('opacity-100', 'border-red-300', 'border-orange-300', 'border-blue-300', 'border-yellow-300', 'bg-red-50', 'bg-orange-50', 'bg-blue-50', 'bg-yellow-50');
+                        el.classList.add('border-gray-100', 'bg-gray-50');
+                        const badge = el.querySelector('.indicator-badge');
+                        if (badge) badge.classList.add('hidden');
                     };
 
-                    const setActiveIndicator = (id) => {
+                    const setActiveIndicator = (id, color) => {
                         const el = document.getElementById(id);
-                        el.classList.remove('grayscale', 'opacity-40');
-                        el.classList.add('scale-110');
+                        if (!el) return;
+                        el.classList.remove('opacity-50', 'border-gray-100', 'bg-gray-50');
+                        el.classList.add('opacity-100', `border-${color}-300`, `bg-${color}-50`);
+                        const badge = el.querySelector('.indicator-badge');
+                        if (badge) badge.classList.remove('hidden');
                     };
 
                     resetIndicator('indicator-unbalance');
@@ -1429,18 +1507,67 @@
                     resetIndicator('indicator-bearing');
                     resetIndicator('indicator-looseness');
 
-                    if (indicators.unbalance) setActiveIndicator('indicator-unbalance');
-                    if (indicators.misalignment) setActiveIndicator('indicator-misalignment');
-                    if (indicators.bearing) setActiveIndicator('indicator-bearing');
-                    if (indicators.looseness) setActiveIndicator('indicator-looseness');
+                    if (indicators.unbalance) setActiveIndicator('indicator-unbalance', 'red');
+                    if (indicators.misalignment) setActiveIndicator('indicator-misalignment', 'orange');
+                    if (indicators.bearing) setActiveIndicator('indicator-bearing', 'blue');
+                    if (indicators.looseness) setActiveIndicator('indicator-looseness', 'yellow');
 
-                    // Update Verdict & Glow
+                    // Update Verdict Container & Icon
+                    const verdictContainer = document.getElementById('verdict-container');
+                    const verdictIcon = document.getElementById('verdict-icon');
+                    const verdictStatus = document.getElementById('verdict-status');
                     const verdictEl = document.getElementById('diagnostic-verdict');
                     const glowEl = document.getElementById('diagnostic-glow');
 
-                    verdictEl.textContent = `"${verdict}"`;
-                    verdictEl.className = `text-sm font-bold leading-tight transition-colors duration-500 text-${statusColor}-700`;
-                    glowEl.className = `absolute -right-20 -bottom-20 w-64 h-64 rounded-full blur-3xl opacity-50 transition-colors duration-500 bg-${statusColor}-50`;
+                    // Define status messages and icons based on detection
+                    let statusText = "KONDISI OPTIMAL";
+                    let iconSvg = `<svg class="w-10 h-10 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>`;
+
+                    if (indicators.unbalance || indicators.misalignment || indicators.bearing || indicators.looseness) {
+                        if (indicators.unbalance) {
+                            statusText = "UNBALANCE TERDETEKSI";
+                            iconSvg = `<svg class="w-10 h-10 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                            </svg>`;
+                        } else if (indicators.misalignment) {
+                            statusText = "MISALIGNMENT TERDETEKSI";
+                            iconSvg = `<svg class="w-10 h-10 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                            </svg>`;
+                        } else if (indicators.bearing) {
+                            statusText = "BEARING DEFECT TERDETEKSI";
+                            iconSvg = `<svg class="w-10 h-10 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>`;
+                        } else if (indicators.looseness) {
+                            statusText = "LOOSENESS TERDETEKSI";
+                            iconSvg = `<svg class="w-10 h-10 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>`;
+                        }
+                    }
+
+                    // Apply updates to verdict section
+                    if (verdictContainer) {
+                        verdictContainer.className = `bg-gradient-to-br from-${statusColor}-50 to-${statusColor === 'emerald' ? 'teal' : statusColor}-50 rounded-xl p-6 border border-${statusColor}-100 h-full transition-all duration-500`;
+                    }
+                    if (verdictIcon) {
+                        verdictIcon.className = `p-4 bg-${statusColor}-100 rounded-2xl mb-4 transition-all duration-500`;
+                        verdictIcon.innerHTML = iconSvg;
+                    }
+                    if (verdictStatus) {
+                        verdictStatus.textContent = statusText;
+                        verdictStatus.className = `text-lg font-black text-${statusColor}-700 mb-2 transition-all duration-500`;
+                    }
+                    if (verdictEl) {
+                        verdictEl.textContent = verdict;
+                        verdictEl.className = `text-sm text-${statusColor}-600 leading-relaxed transition-all duration-500`;
+                    }
+                    if (glowEl) {
+                        glowEl.className = `absolute -right-20 -bottom-20 w-64 h-64 rounded-full blur-3xl opacity-50 transition-colors duration-500 bg-${statusColor}-50`;
+                    }
                 }
 
                 function updateClock() {
