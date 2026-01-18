@@ -398,6 +398,77 @@
                         </div>
                     </div>
 
+                    <!-- NEW: Modul Diagnosa FFT (Fault Identification) -->
+                    <div id="fft-diagnostic-card" style="border-radius: 16px !important;"
+                        class="bg-white border border-gray-100 shadow-sm p-6 relative overflow-hidden transition-all duration-500">
+                        <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
+                            <!-- Left Side: Basic Info -->
+                            <div class="flex-1 space-y-6">
+                                <div>
+                                    <h3 class="text-[10px] font-black text-emerald-500 uppercase tracking-[0.2em] mb-4">
+                                        Analisis Kerahasiaan FFT (Diagnosa)</h3>
+                                    <h2 class="text-xl font-bold text-gray-900 leading-tight">Kerusakan apa yang berpotensi terjadi?</h2>
+                                    <p class="text-xs text-gray-500 mt-1 italic">Analisis otomatis berdasarkan pola spektrum frekuensi</p>
+                                </div>
+
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div class="p-3 bg-gray-50 rounded-xl border border-gray-100">
+                                        <p class="text-[9px] font-black text-gray-400 uppercase tracking-widest mb-1">Frekuensi Dominan</p>
+                                        <div class="flex items-baseline space-x-1">
+                                            <span id="diagnostic-freq" class="text-xl font-black text-gray-900">0</span>
+                                            <span class="text-[10px] font-bold text-gray-400">Hz</span>
+                                        </div>
+                                    </div>
+                                    <div class="p-3 bg-gray-50 rounded-xl border border-gray-100">
+                                        <p class="text-[9px] font-black text-gray-400 uppercase tracking-widest mb-1">Amplitudo Tertinggi</p>
+                                        <div class="flex items-baseline space-x-1">
+                                            <span id="diagnostic-amp" class="text-xl font-black text-gray-900">0.00</span>
+                                            <span class="text-[10px] font-bold text-gray-400">mm/s</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Middle Section: Fault Indicators -->
+                            <div class="flex-1 bg-gray-50/50 rounded-2xl p-5 border border-gray-100/50">
+                                <h4 class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-4">Indikasi Kerusakan</h4>
+                                <div class="grid grid-cols-2 gap-3">
+                                    <div id="indicator-unbalance" class="flex items-center space-x-2 grayscale opacity-40 transition-all duration-500">
+                                        <div class="w-2.5 h-2.5 rounded-full bg-red-500"></div>
+                                        <span class="text-xs font-bold text-gray-700">Unbalance</span>
+                                    </div>
+                                    <div id="indicator-misalignment" class="flex items-center space-x-2 grayscale opacity-40 transition-all duration-500">
+                                        <div class="w-2.5 h-2.5 rounded-full bg-orange-500"></div>
+                                        <span class="text-xs font-bold text-gray-700">Misalignment</span>
+                                    </div>
+                                    <div id="indicator-bearing" class="flex items-center space-x-2 grayscale opacity-40 transition-all duration-500">
+                                        <div class="w-2.5 h-2.5 rounded-full bg-blue-500"></div>
+                                        <span class="text-xs font-bold text-gray-700">Bearing Defect</span>
+                                    </div>
+                                    <div id="indicator-looseness" class="flex items-center space-x-2 grayscale opacity-40 transition-all duration-500">
+                                        <div class="w-2.5 h-2.5 rounded-full bg-yellow-500"></div>
+                                        <span class="text-xs font-bold text-gray-700">Looseness</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Right Side: Final Verdict -->
+                            <div class="flex-1 flex flex-col items-center justify-center text-center p-6 border-l md:border-dashed border-gray-200">
+                                <div class="p-3 bg-emerald-50 rounded-2xl mb-3">
+                                    <svg class="w-6 h-6 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0012 18.75c-1.03 0-1.9-.4-2.593-.895l-.548-.547z"></path>
+                                    </svg>
+                                </div>
+                                <p id="diagnostic-verdict" class="text-sm font-bold text-emerald-700 leading-tight">
+                                    "Kondisi mesin terpantau optimal tanpa indikasi kerusakan frekuensi yang signifikan."
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Subtle background glow -->
+                        <div id="diagnostic-glow" class="absolute -right-20 -bottom-20 w-64 h-64 bg-emerald-50 rounded-full blur-3xl opacity-50 transition-colors duration-500"></div>
+                    </div>
+
                     <!-- Long-term Trend Analysis Module (OPSIONAL tapi KUAT) -->
                     <div style="border-radius: 16px !important;"
                         class="bg-white shadow-sm border border-gray-100 p-8 flex flex-col h-[520px]">
@@ -960,6 +1031,12 @@
                                     );
                                     fftChart.update();
                                 }
+
+                                // NEW: Update Analysis Diagnostic
+                                updateFFTDiagnostic(data.frequency_domain.frequencies.map((f, i) => ({
+                                    x: f,
+                                    y: data.frequency_domain.amplitudes[i]
+                                })));
                             }
 
                             // Update Analysis Module (Decision Layer)
@@ -1039,6 +1116,99 @@
                     statusBg.className = `absolute inset-0 opacity-[0.05] transition-opacity duration-500 bg-gradient-to-br from-${colorClass}-600 to-transparent`;
 
                     isoDot.className = `w-1.5 h-1.5 rounded-full bg-${colorClass}-400`;
+                }
+
+                function updateFFTDiagnostic(fftData) {
+                    if (!fftData || fftData.length === 0) return;
+
+                    // 1. Find the Peak Frequency & Amplitude
+                    let maxAmp = 0;
+                    let dominantFreq = 0;
+                    fftData.forEach(p => {
+                        if (p.y > maxAmp) {
+                            maxAmp = p.y;
+                            dominantFreq = p.x;
+                        }
+                    });
+
+                    // Update UI Numbers
+                    document.getElementById('diagnostic-freq').textContent = dominantFreq.toFixed(1);
+                    document.getElementById('diagnostic-amp').textContent = maxAmp.toFixed(3);
+                    document.getElementById('dominant-freq').textContent = dominantFreq.toFixed(1);
+
+                    // 2. Logic Diagnosa (Simplified Machine Learning Heuristic)
+                    // Assumption: Machine Base RPM is approx 1450-1500 RPM (~24-25 Hz)
+                    // This is for demonstration, real logic usually needs RPM sensor input
+                    const machineRPM_Hz = 24.8; // Example: 1488 RPM
+
+                    let indicators = {
+                        unbalance: false,
+                        misalignment: false,
+                        bearing: false,
+                        looseness: false
+                    };
+
+                    let verdict = "Kondisi mesin terpantau optimal tanpa indikasi kerusakan frekuensi yang signifikan.";
+                    let statusColor = "emerald";
+
+                    // Threshold amplitude for diagnostic concern (e.g., > 0.5 mm/s at specific peak)
+                    if (maxAmp > 0.3) {
+                        // Check Unbalance (Large 1x RPM)
+                        if (dominantFreq >= machineRPM_Hz - 2 && dominantFreq <= machineRPM_Hz + 2) {
+                            indicators.unbalance = true;
+                            verdict = `Puncak dominan pada ${dominantFreq.toFixed(1)} Hz (1x RPM) mengindikasikan kemungkinan Unbalance Rotor.`;
+                            statusColor = "red";
+                        }
+                        // Check Misalignment (Large 2x RPM)
+                        else if (dominantFreq >= (machineRPM_Hz * 2) - 3 && dominantFreq <= (machineRPM_Hz * 2) + 3) {
+                            indicators.misalignment = true;
+                            verdict = `Terdeteksi puncak tinggi pada ${dominantFreq.toFixed(1)} Hz (2x RPM), menunjukkan potensi Misalignment pada coupling/shaft.`;
+                            statusColor = "orange";
+                        }
+                        // Check Looseness (Harmonics or lower freq)
+                        else if (dominantFreq < machineRPM_Hz - 5) {
+                            indicators.looseness = true;
+                            verdict = `Getaran frekuensi rendah pada ${dominantFreq.toFixed(1)} Hz kemungkinan disebabkan oleh Mechanical Looseness atau fondasi longgar.`;
+                            statusColor = "yellow";
+                        }
+                        // Check Bearing Defect (High Freq Peaks)
+                        else if (dominantFreq > 100) {
+                            indicators.bearing = true;
+                            verdict = `Puncak frekuensi tinggi pada ${dominantFreq.toFixed(1)} Hz terdeteksi. Ini adalah karakteristik awal kerusakan pada Roller Bearing.`;
+                            statusColor = "blue";
+                        }
+                    }
+
+                    // 3. Update UI Indicators
+                    const resetIndicator = (id) => {
+                        const el = document.getElementById(id);
+                        el.classList.add('grayscale', 'opacity-40');
+                        el.classList.remove('scale-110');
+                    };
+
+                    const setActiveIndicator = (id) => {
+                        const el = document.getElementById(id);
+                        el.classList.remove('grayscale', 'opacity-40');
+                        el.classList.add('scale-110');
+                    };
+
+                    resetIndicator('indicator-unbalance');
+                    resetIndicator('indicator-misalignment');
+                    resetIndicator('indicator-bearing');
+                    resetIndicator('indicator-looseness');
+
+                    if (indicators.unbalance) setActiveIndicator('indicator-unbalance');
+                    if (indicators.misalignment) setActiveIndicator('indicator-misalignment');
+                    if (indicators.bearing) setActiveIndicator('indicator-bearing');
+                    if (indicators.looseness) setActiveIndicator('indicator-looseness');
+
+                    // Update Verdict & Glow
+                    const verdictEl = document.getElementById('diagnostic-verdict');
+                    const glowEl = document.getElementById('diagnostic-glow');
+
+                    verdictEl.textContent = `"${verdict}"`;
+                    verdictEl.className = `text-sm font-bold leading-tight transition-colors duration-500 text-${statusColor}-700`;
+                    glowEl.className = `absolute -right-20 -bottom-20 w-64 h-64 rounded-full blur-3xl opacity-50 transition-colors duration-500 bg-${statusColor}-50`;
                 }
 
                 function updateClock() {
