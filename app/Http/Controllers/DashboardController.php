@@ -51,9 +51,10 @@ class DashboardController extends Controller
                 ->limit(20)
                 ->get()
                 ->map(function ($analysis) {
+                    // ISO 10816-3 Thresholds (mm/s) for Medium Machines
                     $severity = 'medium';
-                    if ($analysis->rms >= 1.8) $severity = 'critical';
-                    elseif ($analysis->rms >= 0.7) $severity = 'high';
+                    if ($analysis->rms >= 7.1) $severity = 'critical';  // Danger zone
+                    elseif ($analysis->rms >= 2.8) $severity = 'high';  // Warning zone
 
                     return [
                         'id' => $analysis->id,
@@ -74,9 +75,10 @@ class DashboardController extends Controller
                 ->limit(5)
                 ->get()
                 ->map(function($analysis) {
+                    // ISO 10816-3 Thresholds (mm/s) for Medium Machines
                     $severity = 'low';
-                    if ($analysis->rms >= 1.8) $severity = 'critical';
-                    elseif ($analysis->rms >= 0.7) $severity = 'high';
+                    if ($analysis->rms >= 7.1) $severity = 'critical';  // Danger zone
+                    elseif ($analysis->rms >= 2.8) $severity = 'high';  // Warning zone
 
                     return [
                         'machine_id' => $analysis->machine_id,
@@ -336,8 +338,8 @@ class DashboardController extends Controller
         }
 
         // B. Analisis Threshold & Severity Level
-        // Thresholds adjusted for 'g' unit (Approximate ISO 10816-3 scale for demo)
-        $thresholds = ['warning' => 0.5, 'critical' => 1.0];
+        // ISO 10816-3 Thresholds (mm/s) for Medium Machines (Class II)
+        $thresholds = ['warning' => 2.8, 'critical' => 7.1];
         $machineStatus = 'NORMAL';
 
         if ($currentRMS >= $thresholds['critical']) {
@@ -471,13 +473,14 @@ class DashboardController extends Controller
                 ->limit(10)
                 ->get()
                 ->map(function ($analysis) {
+                    // ISO 10816-3 Thresholds (mm/s) for Medium Machines
                     $severity = 'WARNING';
-                    if ($analysis->rms >= 1.8) {
-                        $severity = 'CRITICAL';
-                    } elseif ($analysis->rms >= 0.7) {
-                        $severity = 'WARNING';
+                    if ($analysis->rms >= 7.1) {
+                        $severity = 'CRITICAL';  // Danger zone
+                    } elseif ($analysis->rms >= 2.8) {
+                        $severity = 'WARNING';   // Warning zone
                     } else {
-                        $severity = 'NORMAL';
+                        $severity = 'NORMAL';    // Good zone
                     }
                     return [
                         'id' => $analysis->id,

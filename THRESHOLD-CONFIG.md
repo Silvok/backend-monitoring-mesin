@@ -4,17 +4,24 @@
 
 Dokumen ini menjelaskan konfigurasi threshold yang digunakan di sistem backend monitoring mesin untuk dashboard dan API endpoints.
 
+**Standar yang digunakan**: **ISO 10816-3** (Mechanical Vibration - Evaluation of Machine Vibration)
+
 ---
 
 ## ⚙️ Current Threshold Configuration
 
-### ISO 10816 Adapted Standard
+### ISO 10816-3 Standard (Velocity - mm/s)
 
-| Status Level | RMS Range (g) | Visual Indicator | Dashboard Display |
-|--------------|---------------|------------------|-------------------|
-| **Good (Normal)** | 0.0 - 0.7 | ✅ Green | "Good: 0-0.7g" |
-| **Acceptable (Warning)** | 0.7 - 1.8 | ⚠️ Yellow | "Acceptable: 0.7-1.8g" |
-| **Unsatisfactory (Alert)** | > 1.8 | 🚨 Red | "Unsatisfactory: >1.8g" |
+**Kategori Mesin**: Class II (Medium Machines: 15-75 kW)
+
+| Zone | RMS Range (mm/s) | Visual Indicator | Status | Tindakan |
+|------|------------------|------------------|--------|----------|
+| **Zone A** | 0.0 - 2.8 | ✅ Green | Normal | Operasi normal |
+| **Zone B** | 2.8 - 7.1 | ⚠️ Yellow | Warning | Perlu monitoring |
+| **Zone C** | 7.1 - 11.2 | 🟠 Orange | Unsatisfactory | Jadwalkan maintenance |
+| **Zone D** | > 11.2 | 🚨 Red | Danger | Stop mesin segera |
+
+**Referensi**: ISO 10816-3:2009 - Table B.1
 
 ---
 
@@ -23,73 +30,56 @@ Dokumen ini menjelaskan konfigurasi threshold yang digunakan di sistem backend m
 ### 1. Dashboard View
 **File**: `backend/resources/views/dashboard.blade.php`
 
-**Lines**: 
-- Line 153: Anomali card threshold display
-- Line 207-217: Chart threshold panel with color indicators
-- Line 357-373: Chart.js threshold lines (0.7 and 1.8)
-
-**Changes**:
+**Threshold Display**:
 ```blade
-<!-- Before -->
-✅ Normal: 0-0.5 | ⚠️ Caution: 0.5-1.5 | 🚨 Alert: >1.5
-
-<!-- After -->
-✅ Good: 0-0.7g | ⚠️ Acceptable: 0.7-1.8g | 🚨 Unsatisfactory: >1.8g
+✅ Normal: 0-2.8 mm/s | ⚠️ Waspada: 2.8-7.1 mm/s | 🚨 Bahaya: >7.1 mm/s
 ```
 
-### 2. API Controller
+### 2. Dashboard Controller
+**File**: `backend/app/Http/Controllers/DashboardController.php`
+
+```php
+// ISO 10816-3 Thresholds (mm/s) for Medium Machines (Class II)
+$thresholds = ['warning' => 2.8, 'critical' => 7.1];
+```
+
+### 3. API Controller
 **File**: `backend/app/Http/Controllers/Api/DashboardApiController.php`
 
-**Line**: ~103-115
-
-**Changes**:
 ```php
-// Before
-if ($analysis->rms >= 2.0) {
-    $severity = 'critical';
-} elseif ($analysis->rms >= 1.5) {
-    $severity = 'high';
-} elseif ($analysis->rms >= 1.0) {
-    $severity = 'medium';
-}
-
-// After (ISO 10816 Adapted)
-if ($analysis->rms >= 1.8) {
-    $severity = 'critical';  // Unsatisfactory
-} elseif ($analysis->rms >= 0.7) {
-    $severity = 'high';      // Acceptable
+// ISO 10816-3 Thresholds (mm/s) for Medium Machines
+if ($analysis->rms >= 7.1) {
+    $severity = 'critical';  // Danger zone
+} elseif ($analysis->rms >= 2.8) {
+    $severity = 'high';      // Warning zone
 } else {
-    $severity = 'low';       // Good
+    $severity = 'low';       // Good zone
+}
+```
+
+### 4. Monitoring Mesin Page
+**File**: `backend/resources/views/pages/monitoring-mesin.blade.php`
+
+```javascript
+// ISO 10816-3 Thresholds for Medium Machines
+if (currentValue >= 7.1) {
+    status = "DANGER";
+} else if (currentValue >= 2.8) {
+    status = "WARNING";
+} else {
+    status = "NORMAL";
 }
 ```
 
 ---
 
-## 🔄 Synchronization dengan Predictive API
+## 🔄 Status Mapping
 
-### Predictive API Threshold
-**File**: `predictive-api/app/Jobs/AnalyzeBatchJob.php`
-
-**Line**: ~153-165
-
-```php
-// ISO 10816 Adapted - Threshold RMS (g-force)
-if ($rms >= 1.8) {
-    $conditionStatus = 'ALERT';    // Unsatisfactory
-} elseif ($rms >= 0.7) {
-    $conditionStatus = 'WARNING';  // Acceptable
-} else {
-    $conditionStatus = 'NORMAL';   // Good
-}
-```
-
-### Status Mapping
-
-| Predictive API | Backend | Dashboard Display |
-|----------------|---------|-------------------|
-| `NORMAL` | `NORMAL` | ✅ Good (Green) |
-| `WARNING` | `WARNING` / `HIGH` | ⚠️ Acceptable (Yellow) |
-| `ALERT` | `ALERT` / `CRITICAL` | 🚨 Unsatisfactory (Red) |
+| RMS Value (mm/s) | Backend Status | Dashboard Display | Severity |
+|------------------|----------------|-------------------|----------|
+| 0 - 2.8 | `NORMAL` | ✅ Normal (Green) | `low` |
+| 2.8 - 7.1 | `WARNING` | ⚠️ Waspada (Yellow) | `high` |
+| > 7.1 | `CRITICAL` | 🚨 Bahaya (Red) | `critical` |
 
 ---
 
@@ -98,18 +88,18 @@ if ($rms >= 1.8) {
 ### Threshold Lines pada RMS Chart
 
 ```javascript
-// Threshold Line 1: Good/Acceptable boundary (0.7g)
+// Threshold Line 1: Normal/Warning boundary (2.8 mm/s) - ISO 10816-3
 {
-    label: 'Threshold: Good (0.7g)',
-    data: Array(rmsData.length).fill(0.7),
+    label: 'Threshold: Normal (2.8 mm/s)',
+    data: Array(rmsData.length).fill(2.8),
     borderColor: 'rgba(234, 179, 8, 0.7)',
     borderDash: [5, 5],
 }
 
-// Threshold Line 2: Acceptable/Unsatisfactory boundary (1.8g)
+// Threshold Line 2: Warning/Danger boundary (7.1 mm/s) - ISO 10816-3
 {
-    label: 'Threshold: Unsatisfactory (1.8g)',
-    data: Array(rmsData.length).fill(1.8),
+    label: 'Threshold: Bahaya (7.1 mm/s)',
+    data: Array(rmsData.length).fill(7.1),
     borderColor: 'rgba(239, 68, 68, 0.7)',
     borderDash: [5, 5],
 }

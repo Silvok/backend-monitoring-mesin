@@ -305,25 +305,25 @@
                         </div>
                     </div>
 
-                    {{-- Threshold Bar --}}
+                    {{-- Threshold Bar - ISO 10816-3 (mm/s) --}}
                     <div class="mb-4">
                         <div class="flex justify-between text-xs text-gray-500 mb-2">
-                            <span>0g</span>
-                            <span>0.5g (Warning)</span>
-                            <span>1.0g (Critical)</span>
-                            <span>1.5g+</span>
+                            <span>0 mm/s</span>
+                            <span>2.8 mm/s (Warning)</span>
+                            <span>7.1 mm/s (Critical)</span>
+                            <span>11.2+ mm/s</span>
                         </div>
                         <div class="relative h-6 bg-gray-200 rounded-full overflow-hidden">
-                            {{-- Gradient zones --}}
+                            {{-- Gradient zones based on ISO 10816-3 --}}
                             <div class="absolute inset-0 flex">
-                                <div class="h-full bg-gradient-to-r from-emerald-400 to-emerald-500" style="width: 33%"></div>
-                                <div class="h-full bg-gradient-to-r from-amber-400 to-amber-500" style="width: 33%"></div>
-                                <div class="h-full bg-gradient-to-r from-red-400 to-red-600" style="width: 34%"></div>
+                                <div class="h-full bg-gradient-to-r from-emerald-400 to-emerald-500" style="width: 25%"></div>
+                                <div class="h-full bg-gradient-to-r from-amber-400 to-amber-500" style="width: 38%"></div>
+                                <div class="h-full bg-gradient-to-r from-red-400 to-red-600" style="width: 37%"></div>
                             </div>
                             {{-- Current value marker --}}
                             @php
                                 $currentRMS = $analysisInsights['stats']['avg'] ?? 0;
-                                $markerPosition = min(($currentRMS / 1.5) * 100, 100);
+                                $markerPosition = min(($currentRMS / 11.2) * 100, 100);
                             @endphp
                             <div class="absolute top-0 bottom-0 w-1 bg-gray-900 shadow-lg transition-all duration-500"
                                  style="left: {{ $markerPosition }}%;">

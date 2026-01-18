@@ -1364,9 +1364,11 @@
                     document.getElementById('dominant-freq').textContent = dominantFreq.toFixed(1);
 
                     // 2. Logic Diagnosa (Simplified Machine Learning Heuristic)
-                    // Assumption: Machine Base RPM is approx 1450-1500 RPM (~24-25 Hz)
-                    // This is for demonstration, real logic usually needs RPM sensor input
-                    const machineRPM_Hz = 24.8; // Example: 1488 RPM
+                    // Support multiple machine speeds:
+                    // - Motor 1500 RPM = 25 Hz
+                    // - Motor 3000 RPM = 50 Hz (common for pumps/fans)
+                    const machineRPM_Hz = 50; // 50 Hz = 3000 RPM motor (common)
+                    const machineRPM_Hz_low = 25; // 25 Hz = 1500 RPM motor
 
                     let indicators = {
                         unbalance: false,
@@ -1378,27 +1380,30 @@
                     let verdict = "Kondisi mesin terpantau optimal tanpa indikasi kerusakan frekuensi yang signifikan.";
                     let statusColor = "emerald";
 
-                    // Threshold amplitude for diagnostic concern (e.g., > 0.5 mm/s at specific peak)
-                    if (maxAmp > 0.3) {
-                        // Check Unbalance (Large 1x RPM)
-                        if (dominantFreq >= machineRPM_Hz - 2 && dominantFreq <= machineRPM_Hz + 2) {
+                    // Threshold amplitude for diagnostic concern (adjusted for sensitivity)
+                    // Lower threshold to 0.05 mm/s for more sensitive detection
+                    if (maxAmp > 0.05) {
+                        // Check Unbalance (Large 1x RPM) - for both 25 Hz and 50 Hz motors
+                        if ((dominantFreq >= machineRPM_Hz - 3 && dominantFreq <= machineRPM_Hz + 3) ||
+                            (dominantFreq >= machineRPM_Hz_low - 2 && dominantFreq <= machineRPM_Hz_low + 2)) {
                             indicators.unbalance = true;
                             verdict = `Puncak dominan pada ${dominantFreq.toFixed(1)} Hz (1x RPM) mengindikasikan kemungkinan Unbalance Rotor.`;
                             statusColor = "red";
                         }
-                        // Check Misalignment (Large 2x RPM)
-                        else if (dominantFreq >= (machineRPM_Hz * 2) - 3 && dominantFreq <= (machineRPM_Hz * 2) + 3) {
+                        // Check Misalignment (Large 2x RPM) - for both motor speeds
+                        else if ((dominantFreq >= (machineRPM_Hz * 2) - 5 && dominantFreq <= (machineRPM_Hz * 2) + 5) ||
+                                 (dominantFreq >= (machineRPM_Hz_low * 2) - 3 && dominantFreq <= (machineRPM_Hz_low * 2) + 3)) {
                             indicators.misalignment = true;
                             verdict = `Terdeteksi puncak tinggi pada ${dominantFreq.toFixed(1)} Hz (2x RPM), menunjukkan potensi Misalignment pada coupling/shaft.`;
                             statusColor = "orange";
                         }
-                        // Check Looseness (Harmonics or lower freq)
-                        else if (dominantFreq < machineRPM_Hz - 5) {
+                        // Check Looseness (Sub-synchronous or low freq harmonics)
+                        else if (dominantFreq < 20 || (dominantFreq > 60 && dominantFreq < 100)) {
                             indicators.looseness = true;
-                            verdict = `Getaran frekuensi rendah pada ${dominantFreq.toFixed(1)} Hz kemungkinan disebabkan oleh Mechanical Looseness atau fondasi longgar.`;
+                            verdict = `Getaran frekuensi pada ${dominantFreq.toFixed(1)} Hz kemungkinan disebabkan oleh Mechanical Looseness atau fondasi longgar.`;
                             statusColor = "yellow";
                         }
-                        // Check Bearing Defect (High Freq Peaks)
+                        // Check Bearing Defect (High Freq Peaks > 100 Hz)
                         else if (dominantFreq > 100) {
                             indicators.bearing = true;
                             verdict = `Puncak frekuensi tinggi pada ${dominantFreq.toFixed(1)} Hz terdeteksi. Ini adalah karakteristik awal kerusakan pada Roller Bearing.`;

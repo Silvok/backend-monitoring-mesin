@@ -57,12 +57,26 @@ class DashboardApiController extends Controller
                     ->get()
                     ->map(function($machine) {
                         $latest = $machine->latestAnalysis;
+                        $rmsValue = $latest ? $latest->rms : 0;
+
+                        // Calculate status based on ISO 10816-3 thresholds (mm/s)
+                        $status = 'UNKNOWN';
+                        if ($latest) {
+                            if ($rmsValue < 2.8) {
+                                $status = 'NORMAL';      // Zone A: Good
+                            } elseif ($rmsValue < 7.1) {
+                                $status = 'WARNING';     // Zone B: Acceptable
+                            } else {
+                                $status = 'ANOMALY';     // Zone C/D: Unsatisfactory
+                            }
+                        }
+
                         return [
                             'id' => $machine->id,
                             'name' => $machine->name,
                             'location' => $machine->location,
-                            'status' => $latest ? $latest->condition_status : 'UNKNOWN',
-                            'rms' => $latest ? $latest->rms : 0,
+                            'status' => $status,
+                            'rms' => $rmsValue,
                             'peak_amp' => $latest ? $latest->peak_amp : 0,
                             'dominant_freq' => $latest ? $latest->dominant_freq_hz : 0,
                             'last_check' => $latest ? $latest->created_at->diffForHumans() : 'Never',
@@ -107,11 +121,12 @@ class DashboardApiController extends Controller
                 }
 
                 return $query->map(function($analysis) {
+                    // ISO 10816-3 Thresholds (mm/s) for Medium Machines
                     $severity = 'low';
-                    if ($analysis->rms >= 1.8) {
-                        $severity = 'critical';
-                    } elseif ($analysis->rms >= 0.7) {
-                        $severity = 'high';
+                    if ($analysis->rms >= 7.1) {
+                        $severity = 'critical';  // Danger zone
+                    } elseif ($analysis->rms >= 2.8) {
+                        $severity = 'high';      // Warning zone
                     }
 
                     return [
@@ -200,15 +215,15 @@ class DashboardApiController extends Controller
             // Get latest analysis
             $latestAnalysis = $machine->latestAnalysis;
 
-            // Tentukan status berdasarkan RMS
+            // Tentukan status berdasarkan RMS (ISO 10816-3 Thresholds - mm/s)
             $rmsValue = $latestAnalysis ? round($latestAnalysis->rms, 4) : 0;
             if ($latestAnalysis) {
-                if ($rmsValue < 0.05) {
-                    $status = 'NORMAL';
-                } elseif ($rmsValue < 0.15) {
-                    $status = 'WASPADA';
+                if ($rmsValue < 2.8) {
+                    $status = 'NORMAL';      // Zone A: Good
+                } elseif ($rmsValue < 7.1) {
+                    $status = 'WASPADA';     // Zone B: Acceptable
                 } else {
-                    $status = 'ANOMALI';
+                    $status = 'ANOMALI';     // Zone C/D: Unsatisfactory/Danger
                 }
             } else {
                 $status = 'UNKNOWN';

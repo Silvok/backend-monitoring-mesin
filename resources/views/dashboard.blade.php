@@ -160,8 +160,8 @@
                     </div>
                     <p class="text-sm" style="color: rgba(255,255,255,0.8);">Dari {{ $normalCount }} kondisi normal</p>
                     <div class="mt-2 pt-2 border-t border-white/20">
-                        <p class="text-xs font-semibold" style="color: rgba(255,255,255,0.9);">Threshold RMS (ISO 10816):</p>
-                        <p class="text-xs mt-1" style="color: rgba(255,255,255,0.7);">✅ Normal: 0-0.7g | ⚠️ Waspada: 0.7-1.8g | 🚨 Bahaya: >1.8g</p>
+                        <p class="text-xs font-semibold" style="color: rgba(255,255,255,0.9);">Threshold RMS (ISO 10816-3):</p>
+                        <p class="text-xs mt-1" style="color: rgba(255,255,255,0.7);">✅ Normal: 0-2.8 mm/s | ⚠️ Waspada: 2.8-7.1 mm/s | 🚨 Bahaya: >7.1 mm/s</p>
                     </div>
                 </div>
             </div>
@@ -203,20 +203,20 @@
                             <p class="text-xs text-blue-600 mt-1">√(AX² + AY² + AZ²)</p>
                         </div>
                         <div class="bg-gradient-to-br from-green-50 to-red-50 px-4 py-2 rounded-lg border border-gray-200">
-                            <p class="text-xs text-gray-800 font-semibold mb-1">Threshold ISO 10816 Adapted</p>
-                            <p class="text-xs text-gray-500 mb-2 italic">Accelerometer-based vibration monitoring</p>
+                            <p class="text-xs text-gray-800 font-semibold mb-1">Threshold ISO 10816-3 (Class II)</p>
+                            <p class="text-xs text-gray-500 mb-2 italic">Velocity-based vibration monitoring</p>
                             <div class="space-y-1">
                                 <div class="flex items-center space-x-2">
                                     <div class="w-3 h-3 rounded-full bg-green-500"></div>
-                                    <p class="text-xs text-gray-700"><strong>Normal:</strong> 0 - 0.7g</p>
+                                    <p class="text-xs text-gray-700"><strong>Normal:</strong> 0 - 2.8 mm/s</p>
                                 </div>
                                 <div class="flex items-center space-x-2">
                                     <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
-                                    <p class="text-xs text-gray-700"><strong>Waspada:</strong> 0.7 - 1.8g</p>
+                                    <p class="text-xs text-gray-700"><strong>Waspada:</strong> 2.8 - 7.1 mm/s</p>
                                 </div>
                                 <div class="flex items-center space-x-2">
                                     <div class="w-3 h-3 rounded-full bg-red-500"></div>
-                                    <p class="text-xs text-gray-700"><strong>Bahaya:</strong> > 1.8g</p>
+                                    <p class="text-xs text-gray-700"><strong>Bahaya:</strong> > 7.1 mm/s</p>
                                 </div>
                             </div>
                         </div>
@@ -369,10 +369,10 @@
                             pointHoverBackgroundColor: 'rgb(24, 85, 25)',
                             pointHoverBorderColor: '#fff'
                         },
-                        // Threshold Line - Normal/Waspada boundary (0.7g) - ISO 10816
+                        // Threshold Line - Normal/Waspada boundary (2.8 mm/s) - ISO 10816-3
                         {
-                            label: 'Threshold: Normal (0.7g)',
-                            data: Array(rmsData.length).fill(0.7),
+                            label: 'Threshold: Normal (2.8 mm/s)',
+                            data: Array(rmsData.length).fill(2.8),
                             borderColor: 'rgba(234, 179, 8, 0.7)',
                             backgroundColor: 'transparent',
                             borderWidth: 2,
@@ -380,11 +380,11 @@
                             pointRadius: 0,
                             fill: false
                         },
-                        // Threshold Line - Waspada/Bahaya boundary (1.8g) - ISO 10816
+                        // Threshold Line - Waspada/Bahaya boundary (7.1 mm/s) - ISO 10816-3
                         {
-                            label: 'Threshold: Bahaya (1.8g)',
-                            data: Array(rmsData.length).fill(1.8),
-                            borderColor: 'rgba(239, 68, 68, 0.7)',
+                            label: 'Threshold: Bahaya (7.1 mm/s)',
+                            data: Array(rmsData.length).fill(7.1),
+                            borderColor: 'rgba(239, 68, 68, 0.7),
                             backgroundColor: 'transparent',
                             borderWidth: 2,
                             borderDash: [5, 5],
