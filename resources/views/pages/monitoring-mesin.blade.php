@@ -287,6 +287,116 @@
                 </div>
 
                 <div id="section-analisis" class="space-y-6 hidden animate-fade-in">
+                    <!-- ============================================== -->
+                    <!-- CARD: ANALISIS TREN - EARLY WARNING DETECTION -->
+                    <!-- ============================================== -->
+                    <div id="early-warning-card" style="border-radius: 16px !important;"
+                        class="bg-white border border-gray-100 shadow-sm overflow-hidden transition-all duration-500">
+                        <!-- Header dengan gradient -->
+                        <div class="px-6 py-4 border-b border-gray-100 bg-gradient-to-r from-emerald-50 to-blue-50">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-3">
+                                    <div class="p-2 bg-emerald-100 rounded-lg">
+                                        <svg class="w-6 h-6 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                                        </svg>
+                                    </div>
+                                    <div>
+                                        <h3 class="text-lg font-bold text-gray-800">Analisis Tren RMS</h3>
+                                        <p class="text-sm text-gray-500">Early Warning Detection System</p>
+                                    </div>
+                                </div>
+                                <span class="text-xs text-gray-400">24 Jam Terakhir</span>
+                            </div>
+                        </div>
+
+                        <div class="p-6">
+                            <!-- Alert Box - Trend Warning -->
+                            <div id="trend-alert-box" class="mb-6 p-4 rounded-xl border-2 bg-blue-50 border-blue-200 flex items-start gap-4 transition-all duration-500">
+                                <div class="flex-shrink-0">
+                                    <svg id="trend-alert-icon" class="w-8 h-8 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                    </svg>
+                                </div>
+                                <div class="flex-1">
+                                    <h4 id="trend-alert-title" class="font-bold text-blue-800 text-lg mb-1">
+                                        ℹ️ Pilih mesin untuk melihat analisis tren
+                                    </h4>
+                                    <p id="trend-alert-desc" class="text-sm text-blue-700 opacity-80">
+                                        <strong>INFO:</strong> Silakan pilih mesin dari filter untuk memulai analisis.
+                                    </p>
+                                </div>
+                                <div class="flex-shrink-0 text-right">
+                                    <div id="trend-change-percent" class="text-3xl font-black text-blue-800">--%</div>
+                                    <div class="text-xs text-blue-600 opacity-60">Perubahan RMS</div>
+                                </div>
+                            </div>
+
+                            <!-- Stats Grid -->
+                            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                                <!-- Current RMS -->
+                                <div class="bg-gray-50 rounded-xl p-4 border border-gray-100">
+                                    <div class="flex items-center gap-2 mb-2">
+                                        <div class="w-2 h-2 rounded-full bg-emerald-500"></div>
+                                        <span class="text-xs font-medium text-gray-500 uppercase">RMS Rata-rata</span>
+                                    </div>
+                                    <div class="text-2xl font-bold text-gray-800">
+                                        <span id="trend-current-avg">0.0000</span> <span class="text-sm font-normal text-gray-500">mm/s</span>
+                                    </div>
+                                </div>
+
+                                <!-- Max RMS -->
+                                <div class="bg-gray-50 rounded-xl p-4 border border-gray-100">
+                                    <div class="flex items-center gap-2 mb-2">
+                                        <div class="w-2 h-2 rounded-full bg-red-500"></div>
+                                        <span class="text-xs font-medium text-gray-500 uppercase">RMS Maksimum</span>
+                                    </div>
+                                    <div class="text-2xl font-bold text-gray-800">
+                                        <span id="trend-current-max">0.0000</span> <span class="text-sm font-normal text-gray-500">mm/s</span>
+                                    </div>
+                                </div>
+
+                                <!-- Min RMS -->
+                                <div class="bg-gray-50 rounded-xl p-4 border border-gray-100">
+                                    <div class="flex items-center gap-2 mb-2">
+                                        <div class="w-2 h-2 rounded-full bg-blue-500"></div>
+                                        <span class="text-xs font-medium text-gray-500 uppercase">RMS Minimum</span>
+                                    </div>
+                                    <div class="text-2xl font-bold text-gray-800">
+                                        <span id="trend-current-min">0.0000</span> <span class="text-sm font-normal text-gray-500">mm/s</span>
+                                    </div>
+                                </div>
+
+                                <!-- Trend Direction -->
+                                <div class="bg-gray-50 rounded-xl p-4 border border-gray-100">
+                                    <div class="flex items-center gap-2 mb-2">
+                                        <div class="w-2 h-2 rounded-full bg-purple-500"></div>
+                                        <span class="text-xs font-medium text-gray-500 uppercase">Arah Tren</span>
+                                    </div>
+                                    <div id="trend-direction-box" class="text-lg font-bold flex items-center gap-2 text-gray-600">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14"></path>
+                                        </svg>
+                                        <span id="trend-direction-text">Menunggu</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Rekomendasi -->
+                            <div class="p-4 bg-blue-50 rounded-xl border border-blue-100">
+                                <div class="flex items-start gap-3">
+                                    <svg class="w-6 h-6 text-blue-500 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
+                                    </svg>
+                                    <div>
+                                        <h5 class="font-semibold text-blue-800 mb-1">Rekomendasi Tindakan</h5>
+                                        <p id="trend-recommendation" class="text-sm text-blue-700">Pilih mesin untuk melihat rekomendasi.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                     <!-- NEW: Modul Analisis RMS (Decision Layer) -->
                     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                         <!-- Status Kondisi Card -->
@@ -1044,10 +1154,127 @@
 
                             // Load Trend Data
                             fetchTrendData();
+
+                            // Load Trend Analysis (Early Warning)
+                            fetchTrendAnalysis();
                         }
                     } catch (error) {
                         console.error('Error fetching data:', error);
                     }
+                }
+
+                // =====================
+                // TREND ANALYSIS - Early Warning Detection
+                // =====================
+                async function fetchTrendAnalysis() {
+                    const machineId = document.getElementById('filter-machine').value;
+                    if (!machineId) return;
+
+                    console.log("Fetching trend analysis for early warning...");
+
+                    try {
+                        const response = await fetch(`/api/monitoring/trend-analysis?machine_id=${machineId}`);
+
+                        if (!response.ok) {
+                            console.error(`Trend Analysis Server error: ${response.status}`);
+                            return;
+                        }
+
+                        const data = await response.json();
+                        console.log("Trend Analysis Data:", data);
+
+                        if (data.status === 'success' && data.trend_analysis) {
+                            updateEarlyWarningUI(data.trend_analysis);
+                        }
+                    } catch (error) {
+                        console.error('Error fetching trend analysis:', error);
+                    }
+                }
+
+                function updateEarlyWarningUI(analysis) {
+                    const alertBox = document.getElementById('trend-alert-box');
+                    const alertIcon = document.getElementById('trend-alert-icon');
+                    const alertTitle = document.getElementById('trend-alert-title');
+                    const alertDesc = document.getElementById('trend-alert-desc');
+                    const changePercent = document.getElementById('trend-change-percent');
+                    const currentAvg = document.getElementById('trend-current-avg');
+                    const currentMax = document.getElementById('trend-current-max');
+                    const currentMin = document.getElementById('trend-current-min');
+                    const directionBox = document.getElementById('trend-direction-box');
+                    const directionText = document.getElementById('trend-direction-text');
+                    const recommendation = document.getElementById('trend-recommendation');
+
+                    // Update stats
+                    currentAvg.textContent = analysis.current_avg.toFixed(4);
+                    currentMax.textContent = analysis.current_max.toFixed(4);
+                    currentMin.textContent = analysis.current_min.toFixed(4);
+                    recommendation.textContent = analysis.recommendation;
+
+                    // Update change percent
+                    const percent = analysis.change_percent;
+                    changePercent.textContent = (percent > 0 ? '+' : '') + percent + '%';
+
+                    // Update direction
+                    let directionIcon = '';
+                    let directionLabel = '';
+                    let directionColor = 'text-gray-600';
+
+                    if (analysis.trend_direction === 'increasing') {
+                        directionIcon = '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg>';
+                        directionLabel = 'Naik';
+                        directionColor = 'text-red-600';
+                    } else if (analysis.trend_direction === 'decreasing') {
+                        directionIcon = '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 17h8m0 0v-8m0 8l-8-8-4 4-6-6"></path></svg>';
+                        directionLabel = 'Turun';
+                        directionColor = 'text-emerald-600';
+                    } else {
+                        directionIcon = '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14"></path></svg>';
+                        directionLabel = 'Stabil';
+                        directionColor = 'text-gray-600';
+                    }
+
+                    directionBox.className = `text-lg font-bold flex items-center gap-2 ${directionColor}`;
+                    directionBox.innerHTML = directionIcon + `<span id="trend-direction-text">${directionLabel}</span>`;
+
+                    // Update alert box based on severity
+                    let bgClass = 'bg-blue-50 border-blue-200';
+                    let iconColor = 'text-blue-500';
+                    let textColor = 'text-blue-800';
+                    let descColor = 'text-blue-700';
+                    let iconSvg = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>';
+                    let emoji = 'ℹ️';
+
+                    if (analysis.severity === 'danger') {
+                        bgClass = 'bg-red-50 border-red-200';
+                        iconColor = 'text-red-500';
+                        textColor = 'text-red-800';
+                        descColor = 'text-red-700';
+                        iconSvg = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>';
+                        emoji = '🚨';
+                    } else if (analysis.severity === 'warning') {
+                        bgClass = 'bg-amber-50 border-amber-200';
+                        iconColor = 'text-amber-500';
+                        textColor = 'text-amber-800';
+                        descColor = 'text-amber-700';
+                        iconSvg = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>';
+                        emoji = '⚠️';
+                    } else if (analysis.severity === 'success') {
+                        bgClass = 'bg-emerald-50 border-emerald-200';
+                        iconColor = 'text-emerald-500';
+                        textColor = 'text-emerald-800';
+                        descColor = 'text-emerald-700';
+                        iconSvg = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>';
+                        emoji = '✅';
+                    }
+
+                    alertBox.className = `mb-6 p-4 rounded-xl border-2 ${bgClass} flex items-start gap-4 transition-all duration-500`;
+                    alertIcon.className = `w-8 h-8 ${iconColor}`;
+                    alertIcon.innerHTML = iconSvg;
+                    alertTitle.className = `font-bold ${textColor} text-lg mb-1`;
+                    alertTitle.textContent = `${emoji} ${analysis.alert_message}`;
+                    alertDesc.className = `text-sm ${descColor} opacity-80`;
+                    alertDesc.innerHTML = `<strong>${analysis.severity === 'danger' ? 'KRITIS' : analysis.severity === 'warning' ? 'PERINGATAN' : analysis.severity === 'success' ? 'MEMBAIK' : 'INFO'}:</strong> ${analysis.recommendation}`;
+                    changePercent.className = `text-3xl font-black ${textColor}`;
                 }
 
                 function updateAnalysisModule(vibrationData) {

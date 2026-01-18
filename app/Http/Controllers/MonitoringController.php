@@ -161,4 +161,106 @@ class MonitoringController extends Controller
             'trend' => $formatted
         ]);
     }
+
+    /**
+     * Analisis Tren RMS - Early Warning Detection
+     * Menghitung perubahan persentase RMS dalam 24 jam terakhir
+     */
+    public function getTrendAnalysis(Request $request)
+    {
+        $machineId = $request->machine_id;
+
+        if (!$machineId) {
+            return response()->json(['error' => 'Machine ID is required'], 400);
+        }
+
+        // Ambil data 24 jam terakhir
+        $last24h = AnalysisResult::where('machine_id', $machineId)
+            ->where('created_at', '>=', now()->subHours(24))
+            ->orderBy('created_at', 'asc')
+            ->get();
+
+        // Ambil data 24-48 jam lalu (untuk perbandingan)
+        $prev24h = AnalysisResult::where('machine_id', $machineId)
+            ->where('created_at', '>=', now()->subHours(48))
+            ->where('created_at', '<', now()->subHours(24))
+            ->get();
+
+        // Hitung statistik
+        $currentAvg = $last24h->avg('rms') ?? 0;
+        $currentMax = $last24h->max('rms') ?? 0;
+        $currentMin = $last24h->min('rms') ?? 0;
+        $currentCount = $last24h->count();
+
+        $prevAvg = $prev24h->avg('rms') ?? 0;
+
+        // Hitung persentase perubahan
+        $changePercent = 0;
+        if ($prevAvg > 0) {
+            $changePercent = round((($currentAvg - $prevAvg) / $prevAvg) * 100, 1);
+        }
+
+        // Tentukan arah tren
+        $trendDirection = 'stable';
+        $isSignificant = false;
+        if ($changePercent > 10) {
+            $trendDirection = 'increasing';
+            $isSignificant = true;
+        } elseif ($changePercent < -10) {
+            $trendDirection = 'decreasing';
+            $isSignificant = false;
+        }
+
+        // Tentukan severity level
+        $severity = 'info';
+        $alertMessage = "Nilai RMS stabil dalam 24 jam terakhir.";
+
+        if ($changePercent > 20) {
+            $severity = 'danger';
+            $alertMessage = "Terjadi peningkatan RMS sebesar " . abs($changePercent) . "% dalam 24 jam terakhir.";
+        } elseif ($changePercent > 10) {
+            $severity = 'warning';
+            $alertMessage = "Terjadi peningkatan RMS sebesar " . abs($changePercent) . "% dalam 24 jam terakhir.";
+        } elseif ($changePercent < -10) {
+            $severity = 'success';
+            $alertMessage = "Terjadi penurunan RMS sebesar " . abs($changePercent) . "% dalam 24 jam terakhir.";
+        }
+
+        // Buat rekomendasi
+        $recommendation = "Lanjutkan pemantauan rutin.";
+        if ($severity === 'danger') {
+            $recommendation = "KRITIS: Peningkatan signifikan terdeteksi! Segera lakukan inspeksi mesin.";
+        } elseif ($severity === 'warning') {
+            $recommendation = "PERINGATAN: Tren kenaikan getaran perlu diperhatikan. Jadwalkan pemeriksaan.";
+        } elseif ($severity === 'success') {
+            $recommendation = "MEMBAIK: Kondisi mesin menunjukkan perbaikan. Lanjutkan pemantauan.";
+        }
+
+        // Hitung standard deviation untuk stability check
+        $stdDev = 0;
+        if ($currentCount > 1) {
+            $variance = $last24h->map(function ($item) use ($currentAvg) {
+                return pow($item->rms - $currentAvg, 2);
+            })->avg();
+            $stdDev = sqrt($variance);
+        }
+
+        return response()->json([
+            'status' => 'success',
+            'trend_analysis' => [
+                'current_avg' => round($currentAvg, 4),
+                'current_max' => round($currentMax, 4),
+                'current_min' => round($currentMin, 4),
+                'previous_avg' => round($prevAvg, 4),
+                'change_percent' => $changePercent,
+                'trend_direction' => $trendDirection,
+                'is_significant' => $isSignificant,
+                'severity' => $severity,
+                'alert_message' => $alertMessage,
+                'recommendation' => $recommendation,
+                'std_dev' => round($stdDev, 4),
+                'data_count' => $currentCount
+            ]
+        ]);
+    }
 }

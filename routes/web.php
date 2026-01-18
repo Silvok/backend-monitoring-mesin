@@ -32,6 +32,8 @@ Route::get('/api/monitoring/data', [\App\Http\Controllers\MonitoringController::
 Route::get('/api/monitoring/trend', [\App\Http\Controllers\MonitoringController::class, 'getTrendData'])
     ->middleware(['auth']);
 
+Route::get('/api/monitoring/trend-analysis', [\App\Http\Controllers\MonitoringController::class, 'getTrendAnalysis'])
+    ->middleware(['auth']);
 
 Route::get('/analisis', [\App\Http\Controllers\AnalisisController::class, 'index'])
     ->middleware(['auth', 'verified'])
