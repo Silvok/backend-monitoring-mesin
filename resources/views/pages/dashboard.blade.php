@@ -36,9 +36,6 @@
 
     <div class="py-8">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <!-- Alert Panel Component -->
-            @include('components.dashboard.alert-panel')
-
             <!-- Metrics Cards Component -->
             @component('components.dashboard.metrics-cards', compact('totalMachines', 'totalSamples', 'totalAnalysis', 'anomalyCount', 'normalCount'))
             @endcomponent
@@ -50,6 +47,9 @@
             @component('components.dashboard.rms-chart', compact('rmsChartData'))
             @endcomponent
 
+            <!-- Alert Panel Component (moved below RMS Chart) -->
+            @include('components.dashboard.alert-panel')
+
             <!-- Top Machines by Risk Component -->
             @include('components.dashboard.top-machines')
 
@@ -60,85 +60,78 @@
     </div>
 
     @push('scripts')
-        <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js" defer></script>
         <script>
             let rmsChart;
             let refreshInterval;
             let isRefreshing = false;
+            let isInitialized = false;
+
+            // Preloaded data from server - NO AJAX needed on initial load!
+            const preloadedData = @json($preloadedData ?? []);
 
             document.addEventListener('DOMContentLoaded', function () {
-                console.log('DOMContentLoaded fired');
+                if (isInitialized) return;
+                isInitialized = true;
 
-                // Ensure all elements are ready before initializing
-                setTimeout(() => {
+                // Use preloaded data immediately - no waiting for AJAX!
+                if (preloadedData.machineStatus) {
+                    renderMachineStatus(preloadedData.machineStatus);
+                }
+                if (preloadedData.alerts) {
+                    renderAlerts(preloadedData.alerts);
+                }
+                if (preloadedData.topMachines) {
+                    renderTopMachines(preloadedData.topMachines);
+                }
+
+                updateLiveIndicator({{ $anomalyCount }});
+                startClock();
+                initAlertSound();
+
+                // Initialize chart after a small delay to not block rendering
+                requestAnimationFrame(() => {
                     initializeChart();
-                    updateLiveIndicator({{ $anomalyCount }});
-                    startAutoRefresh();
-                    startClock();
-                    initAlertSound();
-                    loadAlerts();
-                    loadMachineStatus();
-                    loadTopMachinesByRisk();
-                    subscribeToRealTimeUpdates();
-                }, 100);
+                });
+
+                // Start auto refresh for subsequent updates
+                startAutoRefresh();
+                subscribeToRealTimeUpdates();
             });
 
-            // Also load data immediately as fallback
-            if (document.readyState === 'loading') {
-                document.addEventListener('DOMContentLoaded', () => {
-                    loadMachineStatus();
-                    loadAlerts();
-                    loadTopMachinesByRisk();
-                });
-            } else {
-                // DOM is already loaded
-                loadMachineStatus();
-                loadAlerts();
-                loadTopMachinesByRisk();
-            }
-
             function initializeChart() {
-                const ctx = document.getElementById('rmsChart').getContext('2d');
+                const ctx = document.getElementById('rmsChart');
+                if (!ctx) return;
 
                 const chartData = @json($rmsChartData);
 
-                rmsChart = new Chart(ctx, {
+                rmsChart = new Chart(ctx.getContext('2d'), {
                     type: 'line',
                     data: {
                         labels: chartData.labels,
-                        datasets: [
-                            {
-                                label: 'RMS Value',
-                                data: chartData.values,
-                                borderColor: '#059669',
-                                backgroundColor: 'rgba(5, 150, 105, 0.1)',
-                                borderWidth: 2,
-                                fill: true,
-                                tension: 0.4,
-                                pointBackgroundColor: '#059669',
-                                pointBorderColor: '#fff',
-                                pointBorderWidth: 2,
-                                pointRadius: 4,
-                                pointHoverRadius: 6
-                            }
-                        ]
+                        datasets: [{
+                            label: 'RMS Value',
+                            data: chartData.values,
+                            borderColor: '#059669',
+                            backgroundColor: 'rgba(5, 150, 105, 0.1)',
+                            borderWidth: 2,
+                            fill: true,
+                            tension: 0.4,
+                            pointRadius: 2,
+                            pointHoverRadius: 4
+                        }]
                     },
                     options: {
                         responsive: true,
                         maintainAspectRatio: false,
+                        animation: { duration: 0 }, // Disable animation for faster render
                         plugins: {
-                            legend: {
-                                display: true,
-                                position: 'top',
-                            }
+                            legend: { display: true, position: 'top' }
                         },
                         scales: {
                             y: {
                                 beginAtZero: true,
-                                title: {
-                                    display: true,
-                                    text: 'RMS Value (mm/s)'
-                                }
+                                title: { display: true, text: 'RMS Value (mm/s)' }
                             }
                         }
                     }
@@ -146,8 +139,9 @@
             }
 
             function updateLiveIndicator(anomalyCount) {
-                if (anomalyCount > 0) {
-                    document.getElementById('alertPanel').style.display = 'block';
+                const panel = document.getElementById('alertPanel');
+                if (panel && anomalyCount > 0) {
+                    panel.style.display = 'block';
                 }
             }
 
@@ -162,14 +156,14 @@
             function refreshDashboard() {
                 isRefreshing = true;
                 const icon = document.getElementById('refreshIcon');
-                icon.classList.add('animate-spin');
+                if (icon) icon.classList.add('animate-spin');
 
                 Promise.all([
                     loadAlerts(),
                     loadMachineStatus(),
                     loadTopMachinesByRisk()
                 ]).finally(() => {
-                    icon.classList.remove('animate-spin');
+                    if (icon) icon.classList.remove('animate-spin');
                     isRefreshing = false;
                 });
             }
@@ -180,28 +174,20 @@
 
                 function updateTime() {
                     const now = new Date();
-                    const dayName = days[now.getDay()];
-                    const day = String(now.getDate()).padStart(2, '0');
-                    const month = months[now.getMonth()];
-                    const year = now.getFullYear();
-                    const hours = String(now.getHours()).padStart(2, '0');
-                    const minutes = String(now.getMinutes()).padStart(2, '0');
-
-                    const timeString = `${dayName}, ${day} ${month} ${year}, ${hours}:${minutes}`;
-                    document.getElementById('currentTime').textContent = timeString;
+                    const timeString = `${days[now.getDay()]}, ${String(now.getDate()).padStart(2, '0')} ${months[now.getMonth()]} ${now.getFullYear()}, ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+                    const el = document.getElementById('currentTime');
+                    if (el) el.textContent = timeString;
                 }
 
-                updateTime(); // Update immediately
-                setInterval(updateTime, 60000); // Update every minute
+                updateTime();
+                setInterval(updateTime, 60000);
             }
 
-            // Alert Functions
+            // Alert Functions - only used for refresh, not initial load
             function loadAlerts() {
                 return fetch('/api/alerts')
                     .then(response => response.json())
                     .then(data => {
-                        console.log('Alerts data:', data);
-                        // Handle both array response and wrapped response
                         const alerts = Array.isArray(data) ? data : (data.alerts || []);
                         renderAlerts(alerts);
                     })
@@ -211,20 +197,18 @@
             function renderAlerts(alerts) {
                 const alertList = document.getElementById('alertList');
                 const alertCount = document.getElementById('alertCount');
+                const alertPanel = document.getElementById('alertPanel');
 
                 alertCount.textContent = alerts.length;
 
+                // Hide panel if no alerts
                 if (alerts.length === 0) {
-                    alertList.innerHTML = `
-                            <div class="px-6 py-8 text-center text-gray-500">
-                                <svg class="w-12 h-12 mx-auto mb-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                </svg>
-                                <p>Tidak ada alert</p>
-                            </div>
-                        `;
+                    if (alertPanel) alertPanel.style.display = 'none';
                     return;
                 }
+
+                // Show panel if there are alerts
+                if (alertPanel) alertPanel.style.display = 'block';
 
                 alertList.innerHTML = alerts.map(alert => `
                         <div class="px-6 py-4 border-b border-gray-200 hover:bg-red-50 transition">

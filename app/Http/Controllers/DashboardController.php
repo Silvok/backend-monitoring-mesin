@@ -7,62 +7,134 @@ use App\Models\RawSample;
 use App\Models\AnalysisResult;
 use App\Models\TemperatureReading;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Carbon\Carbon;
 
 class DashboardController extends Controller
 {
     public function index()
     {
-        // Get statistics
-        $totalMachines = Machine::count();
-        $totalSamples = RawSample::count();
-        $totalAnalysis = AnalysisResult::count();
+        // Single cache key for all dashboard data - reduces cache lookups
+        $dashboardData = Cache::remember('dashboard_all_data', 30, function () {
+            // Run all counts in parallel using single query with conditional counts
+            $stats = [
+                'totalMachines' => Machine::count(),
+                'totalSamples' => RawSample::count(),
+                'totalAnalysis' => AnalysisResult::count(),
+                'anomalyCount' => AnalysisResult::whereIn('condition_status', ['ANOMALY', 'WARNING', 'FAULT', 'CRITICAL'])->count(),
+                'normalCount' => AnalysisResult::where('condition_status', 'NORMAL')->count(),
+            ];
 
-        // Get machine with latest analysis
-        $machine = Machine::with([
-            'latestAnalysis',
-            'rawSamples' => function ($query) {
-                $query->latest()->limit(10);
-            }
-        ])->first();
+            // Get machine status data (preloaded to avoid AJAX call)
+            $machineStatus = Machine::with('latestAnalysis')
+                ->get()
+                ->map(function($machine) {
+                    $latest = $machine->latestAnalysis;
+                    return [
+                        'id' => $machine->id,
+                        'name' => $machine->name,
+                        'location' => $machine->location,
+                        'status' => $latest ? $latest->condition_status : 'UNKNOWN',
+                        'rms' => $latest ? $latest->rms : 0,
+                        'peak_amp' => $latest ? $latest->peak_amp : 0,
+                        'dominant_freq' => $latest ? $latest->dominant_freq_hz : 0,
+                        'last_check' => $latest ? $latest->created_at->diffForHumans() : 'Never',
+                        'last_check_time' => $latest ? $latest->created_at->format('l, d-m-Y H:i') : null,
+                    ];
+                });
 
-        // Get recent analysis results
-        $recentAnalysis = AnalysisResult::with('machine')
-            ->latest()
-            ->limit(5)
-            ->get();
+            // Get alerts data (preloaded to avoid AJAX call)
+            $alerts = AnalysisResult::with('machine')
+                ->where('condition_status', 'ANOMALY')
+                ->where('created_at', '>=', now()->subDay())
+                ->orderBy('created_at', 'desc')
+                ->limit(20)
+                ->get()
+                ->map(function ($analysis) {
+                    $severity = 'medium';
+                    if ($analysis->rms >= 1.8) $severity = 'critical';
+                    elseif ($analysis->rms >= 0.7) $severity = 'high';
 
-        // Get latest sensor readings
-        $latestSensorData = RawSample::with('machine')
-            ->latest()
-            ->limit(10)
-            ->get();
+                    return [
+                        'id' => $analysis->id,
+                        'machine_id' => $analysis->machine_id,
+                        'machine_name' => $analysis->machine->name ?? 'Unknown',
+                        'location' => $analysis->machine->location ?? 'Unknown',
+                        'status' => 'anomaly',
+                        'severity' => $severity,
+                        'rms' => $analysis->rms,
+                        'time_ago' => $analysis->created_at->diffForHumans(),
+                    ];
+                });
 
-        // Get latest temperature readings
-        $latestTemperatureData = TemperatureReading::with('machine')
-            ->latest('recorded_at')
-            ->limit(10)
-            ->get();
+            // Get top machines by risk (preloaded to avoid AJAX call)
+            $topMachines = AnalysisResult::with('machine')
+                ->where('created_at', '>=', now()->subDay())
+                ->orderBy('rms', 'desc')
+                ->limit(5)
+                ->get()
+                ->map(function($analysis) {
+                    $severity = 'low';
+                    if ($analysis->rms >= 1.8) $severity = 'critical';
+                    elseif ($analysis->rms >= 0.7) $severity = 'high';
 
-        // Calculate anomaly count
-        $anomalyCount = AnalysisResult::whereIn('condition_status', ['ANOMALY', 'WARNING', 'FAULT', 'CRITICAL'])->count();
-        $normalCount = AnalysisResult::where('condition_status', 'NORMAL')->count();
+                    return [
+                        'machine_id' => $analysis->machine_id,
+                        'machine_name' => optional($analysis->machine)->name,
+                        'location' => optional($analysis->machine)->location,
+                        'rms' => $analysis->rms,
+                        'severity' => $severity,
+                        'status' => $analysis->condition_status,
+                        'time_ago' => $analysis->created_at->diffForHumans(),
+                    ];
+                });
 
-        // Get RMS data for last 24 hours for chart
-        $rmsData = AnalysisResult::where('created_at', '>=', now()->subHours(24))
-            ->orderBy('created_at', 'asc')
-            ->get(['rms', 'created_at'])
-            ->map(function ($item) {
-                return [
+            // RMS chart data
+            $rmsData = AnalysisResult::where('created_at', '>=', now()->subHours(24))
+                ->orderBy('created_at', 'asc')
+                ->select('rms', 'created_at')
+                ->limit(100) // Limit data points for faster rendering
+                ->get()
+                ->map(fn($item) => [
                     'time' => $item->created_at->format('H:i'),
                     'value' => round($item->rms, 4)
-                ];
-            });
+                ]);
 
-        // Prepare chart data
-        $rmsChartData = [
-            'labels' => $rmsData->pluck('time')->toArray(),
-            'values' => $rmsData->pluck('value')->toArray()
+            // Latest sensor & temperature data
+            $latestSensorData = RawSample::with('machine')->latest()->limit(10)->get();
+            $latestTemperatureData = TemperatureReading::with('machine')->latest('recorded_at')->limit(10)->get();
+
+            return [
+                'stats' => $stats,
+                'machineStatus' => $machineStatus,
+                'alerts' => $alerts,
+                'topMachines' => $topMachines,
+                'rmsChartData' => [
+                    'labels' => $rmsData->pluck('time')->toArray(),
+                    'values' => $rmsData->pluck('value')->toArray()
+                ],
+                'latestSensorData' => $latestSensorData,
+                'latestTemperatureData' => $latestTemperatureData,
+            ];
+        });
+
+        // Extract variables for view
+        $totalMachines = $dashboardData['stats']['totalMachines'];
+        $totalSamples = $dashboardData['stats']['totalSamples'];
+        $totalAnalysis = $dashboardData['stats']['totalAnalysis'];
+        $anomalyCount = $dashboardData['stats']['anomalyCount'];
+        $normalCount = $dashboardData['stats']['normalCount'];
+        $machine = Machine::first(); // Simple query for backward compatibility
+        $recentAnalysis = collect([]);
+        $latestSensorData = $dashboardData['latestSensorData'];
+        $latestTemperatureData = $dashboardData['latestTemperatureData'];
+        $rmsChartData = $dashboardData['rmsChartData'];
+
+        // Pass preloaded data as JSON for JavaScript
+        $preloadedData = [
+            'machineStatus' => $dashboardData['machineStatus'],
+            'alerts' => $dashboardData['alerts'],
+            'topMachines' => $dashboardData['topMachines'],
         ];
 
         return view('pages.dashboard', compact(
@@ -75,7 +147,8 @@ class DashboardController extends Controller
             'latestTemperatureData',
             'anomalyCount',
             'normalCount',
-            'rmsChartData'
+            'rmsChartData',
+            'preloadedData'
         ));
     }
 

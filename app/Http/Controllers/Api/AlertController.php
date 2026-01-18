@@ -16,28 +16,30 @@ class AlertController extends Controller
     public function getActiveAlerts()
     {
         try {
-            // Get all anomalies from the last 24 hours
-            $alerts = AnalysisResult::with('machine')
-                ->where('condition_status', 'ANOMALY')
-                ->where('created_at', '>=', now()->subDay())
-                ->orderBy('created_at', 'desc')
-                ->get()
-                ->map(function ($analysis) {
-                    return [
-                        'id' => $analysis->id,
-                        'machine_id' => $analysis->machine_id,
-                        'machine_name' => $analysis->machine->name ?? 'Unknown',
-                        'location' => $analysis->machine->location ?? 'Unknown',
-                        'status' => 'anomaly',
-                        'severity' => $this->calculateSeverity($analysis),
-                        'rms' => $analysis->rms,
-                        'peak_amp' => $analysis->peak_amp,
-                        'dominant_freq_hz' => $analysis->dominant_freq_hz,
-                        'timestamp' => $analysis->created_at->toDateTimeString(),
-                        'time_ago' => $analysis->created_at->diffForHumans(),
-                        'acknowledged' => Cache::get("alert_ack_{$analysis->id}", false),
-                    ];
-                });
+            // Cache alerts for 15 seconds
+            $alerts = Cache::remember('api_active_alerts', 15, function () {
+                return AnalysisResult::with('machine')
+                    ->where('condition_status', 'ANOMALY')
+                    ->where('created_at', '>=', now()->subDay())
+                    ->orderBy('created_at', 'desc')
+                    ->get()
+                    ->map(function ($analysis) {
+                        return [
+                            'id' => $analysis->id,
+                            'machine_id' => $analysis->machine_id,
+                            'machine_name' => $analysis->machine->name ?? 'Unknown',
+                            'location' => $analysis->machine->location ?? 'Unknown',
+                            'status' => 'anomaly',
+                            'severity' => $this->calculateSeverity($analysis),
+                            'rms' => $analysis->rms,
+                            'peak_amp' => $analysis->peak_amp,
+                            'dominant_freq_hz' => $analysis->dominant_freq_hz,
+                            'timestamp' => $analysis->created_at->toDateTimeString(),
+                            'time_ago' => $analysis->created_at->diffForHumans(),
+                            'acknowledged' => Cache::get("alert_ack_{$analysis->id}", false),
+                        ];
+                    });
+            });
 
             return response()->json([
                 'success' => true,
