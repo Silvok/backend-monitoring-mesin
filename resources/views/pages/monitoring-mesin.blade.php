@@ -36,7 +36,7 @@
 
             <!-- Clean Industry-Standard Filter Card with Green Accents -->
             <div
-                class="bg-white rounded-xl border border-gray-100 shadow-sm p-6 mb-8 uppercase tracking-tight relative overflow-hidden">
+                class="bg-white !rounded-[50px] border border-gray-100 shadow-sm p-8 mb-8 uppercase tracking-tight relative overflow-hidden">
                 <!-- Top Accent Bar -->
                 <div class="absolute top-0 left-0 w-full h-1.5 bg-emerald-500/80"></div>
 
@@ -64,7 +64,7 @@
                         </div>
                         <div class="relative group">
                             <select id="filter-machine" onchange="applyFilter()"
-                                class="w-full bg-white border border-gray-200 rounded-xl px-4 py-2.5 text-sm font-medium text-gray-700 focus:ring-2 focus:ring-emerald-500/10 focus:border-emerald-500 transition-all appearance-none cursor-pointer">
+                                class="w-full bg-white border border-gray-200 !rounded-full px-4 py-2.5 text-sm font-medium text-gray-700 focus:ring-2 focus:ring-emerald-500/10 focus:border-emerald-500 transition-all appearance-none cursor-pointer">
                                 <option value="">All Systems</option>
                                 @foreach($machines as $machine)
                                     <option value="{{ $machine->id }}">{{ $machine->name }}</option>
@@ -86,7 +86,7 @@
                         </div>
                         <div class="relative group">
                             <select id="filter-axis" onchange="applyFilter()"
-                                class="w-full bg-white border border-gray-200 rounded-xl px-4 py-2.5 text-sm font-medium text-gray-700 focus:ring-2 focus:ring-emerald-500/10 focus:border-emerald-500 transition-all appearance-none cursor-pointer">
+                                class="w-full bg-white border border-gray-200 !rounded-full px-4 py-2.5 text-sm font-medium text-gray-700 focus:ring-2 focus:ring-emerald-500/10 focus:border-emerald-500 transition-all appearance-none cursor-pointer">
                                 <option value="x">X-Axis Horizontal</option>
                                 <option value="y">Y-Axis Vertical</option>
                                 <option value="z">Z-Axis Longitudinal</option>
@@ -106,7 +106,7 @@
                         </div>
                         <div class="relative group">
                             <select id="filter-time-range" onchange="applyFilter()"
-                                class="w-full bg-white border border-gray-200 rounded-xl px-4 py-2.5 text-sm font-medium text-gray-700 focus:ring-2 focus:ring-emerald-500/10 focus:border-emerald-500 transition-all appearance-none cursor-pointer">
+                                class="w-full bg-white border border-gray-200 !rounded-full px-4 py-2.5 text-sm font-medium text-gray-700 focus:ring-2 focus:ring-emerald-500/10 focus:border-emerald-500 transition-all appearance-none cursor-pointer">
                                 <option value="realtime">Live Monitoring</option>
                                 <option value="1h">Last 1 Hour</option>
                                 <option value="24h">Last 24 Hours</option>
@@ -150,18 +150,19 @@
                 <div id="section-grafik" class="space-y-6 animate-fade-in">
                     <!-- Modul Grafik: Time Domain -->
                     <div class="grid grid-cols-1 gap-6">
-                        <div class="bg-white shadow-sm border border-gray-100 p-6 flex flex-col rounded-xl h-[520px]">
+                        <div style="border-radius: 16px !important;"
+                            class="bg-white shadow-sm border border-gray-100 p-6 flex flex-col h-[520px]">
                             <div class="flex items-center justify-between mb-6">
                                 <div>
                                     <h3 class="text-lg font-bold text-gray-900 tracking-tight">Analisis Time Domain</h3>
                                     <p class="text-[12px] text-gray-500 font-medium">Visualisasi amplitudo getaran (RMS)
-                                        dan
-                                        suhu terhadap waktu</p>
+                                        dan suhu terhadap waktu</p>
                                 </div>
                                 <div class="flex items-center space-x-3">
                                     <!-- Reset Zoom Button -->
                                     <button onclick="resetZoom()"
-                                        class="p-1.5 text-gray-400 hover:text-emerald-600 hover:bg-emerald-50 rounded-lg transition-all title='Reset Zoom'">
+                                        class="p-1.5 text-gray-400 hover:text-emerald-600 hover:bg-emerald-50 rounded-lg transition-all"
+                                        title="Reset Zoom">
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                 d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
@@ -200,157 +201,269 @@
                             </div>
                         </div>
                     </div>
+
+                    <!-- Frequency Domain Analysis Module (FFT) -->
+                    <div style="border-radius: 16px !important;"
+                        class="bg-white shadow-sm border border-gray-100 p-6 flex flex-col h-[520px]">
+                        <div class="flex items-center justify-between mb-6">
+                            <div>
+                                <h3 class="text-lg font-bold text-gray-900 tracking-tight">Analisis Frequency Domain
+                                    (FFT)
+                                </h3>
+                                <p class="text-[12px] text-gray-500 font-medium">Visualisasi spektrum frekuensi hasil
+                                    Fast
+                                    Fourier Transform</p>
+                            </div>
+                            <div class="flex items-center space-x-3">
+                                <!-- Frequency Info Badge -->
+                                <div id="fft-result-info"
+                                    class="hidden flex items-center space-x-3 bg-blue-50 px-3 py-1.5 rounded-lg border border-blue-100">
+                                    <span
+                                        class="text-[10px] font-black text-blue-600 uppercase tracking-widest">Puncak:</span>
+                                    <span class="text-xs font-black text-blue-700" id="dominant-freq">0</span>
+                                    <span class="text-[10px] font-bold text-blue-600">Hz</span>
+                                </div>
+
+                                <!-- Reset Zoom Button -->
+                                <button onclick="resetZoom()"
+                                    class="p-1.5 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all"
+                                    title="Reset Zoom">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="flex-grow relative min-h-0">
+                            <canvas id="fftChart"></canvas>
+                            <!-- FFT Loading / Empty State -->
+                            <div id="fftChartPlaceholder"
+                                class="absolute inset-0 flex items-center justify-center bg-gray-50/50 rounded-xl border border-dashed border-gray-200 z-10 transition-opacity">
+                                <div class="text-center">
+                                    <div class="p-4 bg-white rounded-full shadow-sm inline-block mb-3">
+                                        <svg class="w-6 h-6 text-blue-400" fill="none" stroke="currentColor"
+                                            viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+                                        </svg>
+                                    </div>
+                                    <p class="text-sm font-bold text-gray-600">Menunggu data FFT dari mesin...</p>
+                                    <p class="text-gray-400 mt-1 uppercase tracking-widest" style="font-size: 9px;">
+                                        Spectrum
+                                        akan diupdate otomatis</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Footer: Frequency Bands -->
+                        <div class="mt-4 flex flex-wrap items-center gap-4 pt-3 border-t border-gray-50">
+                            <div class="flex items-center space-x-1.5">
+                                <div class="w-2 h-2 rounded-full bg-blue-400"></div>
+                                <span class="font-black text-gray-400 uppercase tracking-tight"
+                                    style="font-size: 9px;">Low
+                                    (0-100Hz)</span>
+                            </div>
+                            <div class="flex items-center space-x-1.5">
+                                <div class="w-2 h-2 rounded-full bg-emerald-400"></div>
+                                <span class="font-black text-gray-400 uppercase tracking-tight"
+                                    style="font-size: 9px;">Mid
+                                    (100-500Hz)</span>
+                            </div>
+                            <div class="flex items-center space-x-1.5">
+                                <div class="w-2 h-2 rounded-full bg-orange-400"></div>
+                                <span class="font-black text-gray-400 uppercase tracking-tight"
+                                    style="font-size: 9px;">High
+                                    (500Hz+)</span>
+                            </div>
+                            <div class="flex-grow"></div>
+                            <p class="text-gray-400/70 italic" style="font-size: 9px;">Dianalisis dari batch sensor
+                                terbaru
+                            </p>
+                        </div>
+                    </div>
                 </div>
 
-                <!-- Frequency Domain Analysis Module (FFT) -->
-                <div
-                    class="bg-white shadow-sm border border-gray-100 p-6 flex flex-col rounded-xl h-[520px] animate-fade-in">
-                    <div class="flex items-center justify-between mb-6">
-                        <div>
-                            <h3 class="text-lg font-bold text-gray-900 tracking-tight">Analisis Frequency Domain (FFT)
-                            </h3>
-                            <p class="text-[12px] text-gray-500 font-medium">Visualisasi spektrum frekuensi hasil Fast
-                                Fourier Transform</p>
-                        </div>
-                        <div class="flex items-center space-x-3">
-                            <!-- Frequency Info Badge -->
-                            <div id="fft-result-info"
-                                class="hidden flex items-center space-x-3 bg-blue-50 px-3 py-1.5 rounded-lg border border-blue-100">
-                                <span
-                                    class="text-[10px] font-black text-blue-600 uppercase tracking-widest">Puncak:</span>
-                                <span class="text-xs font-black text-blue-700" id="dominant-freq">0</span>
-                                <span class="text-[10px] font-bold text-blue-600">Hz</span>
-                            </div>
+                <div id="section-analisis" class="space-y-6 hidden animate-fade-in">
+                    <!-- NEW: Modul Analisis RMS (Decision Layer) -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                        <!-- Status Kondisi Card -->
+                        <div style="border-radius: 16px !important;"
+                            class="bg-white border border-gray-100 shadow-sm p-6 flex flex-col items-center justify-center text-center relative overflow-hidden min-h-[200px]">
+                            <div id="status-bg"
+                                class="absolute inset-0 bg-gray-50 opacity-10 transition-colors duration-500"></div>
 
-                            <!-- Reset Zoom Button -->
-                            <button onclick="resetZoom()"
-                                class="p-1.5 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all title='Reset Zoom'">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                                </svg>
-                            </button>
-                        </div>
-                    </div>
+                            <div class="relative z-10 w-full">
+                                <h3 class="text-[9px] font-black text-gray-400 uppercase tracking-[0.2em] mb-3">Status
+                                    Kondisi</h3>
 
-                    <div class="flex-grow relative min-h-0">
-                        <canvas id="fftChart"></canvas>
-                        <!-- FFT Loading / Empty State -->
-                        <div id="fftChartPlaceholder"
-                            class="absolute inset-0 flex items-center justify-center bg-gray-50/50 rounded-xl border border-dashed border-gray-200 z-10 transition-opacity">
-                            <div class="text-center">
-                                <div class="p-4 bg-white rounded-full shadow-sm inline-block mb-3">
-                                    <svg class="w-6 h-6 text-blue-400" fill="none" stroke="currentColor"
-                                        viewBox="0 0 24 24">
+                                <div id="status-indicator"
+                                    class="w-16 h-16 mx-auto rounded-full border-4 border-gray-100 flex items-center justify-center mb-3 transition-all duration-500 relative">
+                                    <svg id="status-icon" class="w-7 h-7 text-gray-300" fill="none"
+                                        stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+                                            d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                                     </svg>
                                 </div>
-                                <p class="text-sm font-bold text-gray-600">Menunggu data FFT dari mesin...</p>
-                                <p class="text-gray-400 mt-1 uppercase tracking-widest" style="font-size: 9px;">Spectrum
-                                    akan diupdate otomatis</p>
+
+                                <h2 id="status-text"
+                                    class="text-lg font-black text-gray-400 uppercase tracking-tight mb-1">MENUNGGU DATA
+                                </h2>
+                                <p id="status-interpretation"
+                                    class="text-[10px] text-gray-500 font-medium px-2 leading-tight">
+                                    Silakan pilih mesin untuk memulai analisis
+                                </p>
                             </div>
                         </div>
-                    </div>
 
-                    <!-- Footer: Frequency Bands -->
-                    <div class="mt-4 flex flex-wrap items-center gap-4 pt-3 border-t border-gray-50">
-                        <div class="flex items-center space-x-1.5">
-                            <div class="w-2 h-2 rounded-full bg-blue-400"></div>
-                            <span class="font-black text-gray-400 uppercase tracking-tight" style="font-size: 9px;">Low
-                                (0-100Hz)</span>
-                        </div>
-                        <div class="flex items-center space-x-1.5">
-                            <div class="w-2 h-2 rounded-full bg-emerald-400"></div>
-                            <span class="font-black text-gray-400 uppercase tracking-tight" style="font-size: 9px;">Mid
-                                (100-500Hz)</span>
-                        </div>
-                        <div class="flex items-center space-x-1.5">
-                            <div class="w-2 h-2 rounded-full bg-orange-400"></div>
-                            <span class="font-black text-gray-400 uppercase tracking-tight" style="font-size: 9px;">High
-                                (500Hz+)</span>
-                        </div>
-                        <div class="flex-grow"></div>
-                        <p class="text-gray-400/70 italic" style="font-size: 9px;">Dianalisis dari batch sensor terbaru
-                        </p>
-                    </div>
-                </div>
-
-                <!-- Long-term Trend Analysis Module (OPSIONAL tapi KUAT) -->
-                <div
-                    class="bg-white shadow-sm border border-gray-100 p-6 flex flex-col rounded-xl h-[520px] animate-fade-in">
-                    <div class="flex items-center justify-between mb-6">
-                        <div>
-                            <h3 class="text-lg font-bold text-gray-900 tracking-tight">Analisis Tren Kondisi (Riwayat)
-                            </h3>
-                            <p class="text-[12px] text-gray-500 font-medium">Monitoring tren degradasi mesin melalui
-                                Moving
-                                Average RMS harian</p>
-                        </div>
-                        <div class="flex items-center space-x-3">
-                            <!-- Trend View Toggles -->
-                            <div class="flex bg-gray-50 p-1 rounded-lg">
-                                <button onclick="setTrendPeriod('daily')" id="btn-trend-daily"
-                                    class="px-4 py-1.5 text-xs font-bold rounded-md bg-white shadow-sm text-emerald-600 transition-all uppercase tracking-widest">Harian</button>
-                                <button onclick="setTrendPeriod('weekly')" id="btn-trend-weekly"
-                                    class="px-4 py-1.5 text-xs font-bold rounded-md text-gray-400 hover:text-emerald-500 transition-all uppercase tracking-widest">Mingguan</button>
-                            </div>
-
-                            <!-- Reset Zoom Button -->
-                            <button onclick="trendChart.resetZoom()"
-                                class="p-1.5 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all"
-                                title="Reset Zoom">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <!-- Current RMS Metric Card -->
+                        <div style="border-radius: 16px !important;"
+                            class="bg-white border border-gray-100 shadow-sm p-6 group hover:border-emerald-200 hover:shadow-md transition-all flex items-center space-x-6">
+                            <div
+                                class="flex-shrink-0 p-3 bg-emerald-50 rounded-2xl group-hover:bg-emerald-500 transition-colors duration-300">
+                                <svg class="w-6 h-6 text-emerald-500 group-hover:text-white" fill="none"
+                                    stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                                        d="M13 10V3L4 14h7v7l9-11h-7z" />
                                 </svg>
-                            </button>
-                        </div>
-                    </div>
-
-                    <div class="flex-grow relative min-h-0">
-                        <canvas id="trendChart"></canvas>
-                        <!-- Trend Loading / Empty State -->
-                        <div id="trendChartPlaceholder"
-                            class="absolute inset-0 flex items-center justify-center bg-gray-50/50 rounded-xl border border-dashed border-gray-200 z-10 transition-opacity">
-                            <div class="text-center">
-                                <div class="p-4 bg-white rounded-full shadow-sm inline-block mb-3">
-                                    <svg class="w-6 h-6 text-blue-400" fill="none" stroke="currentColor"
-                                        viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z" />
-                                    </svg>
+                            </div>
+                            <div class="min-w-0 flex-1">
+                                <p class="text-[9px] font-black text-gray-400 uppercase tracking-widest mb-1 truncate">
+                                    RMS Saat Ini</p>
+                                <div class="flex flex-wrap items-baseline gap-x-1">
+                                    <span id="analysis-rms-current"
+                                        class="text-2xl font-black text-gray-900 tracking-tight leading-none">0.000</span>
+                                    <span class="text-[9px] font-bold text-gray-400">mm/s</span>
                                 </div>
-                                <p class="text-sm font-bold text-gray-600">Pilih mesin untuk memuat tren riwayat</p>
-                                <p class="text-gray-400 mt-1 uppercase tracking-widest" style="font-size: 9px;">Data
-                                    tren
-                                    dihitung otomatis dari riwayat database</p>
+                            </div>
+                        </div>
+
+                        <!-- Average RMS Metric Card -->
+                        <div style="border-radius: 16px !important;"
+                            class="bg-white border border-gray-100 shadow-sm p-6 group hover:border-blue-200 hover:shadow-md transition-all flex items-center space-x-6">
+                            <div
+                                class="flex-shrink-0 p-3 bg-blue-50 rounded-2xl group-hover:bg-blue-500 transition-colors duration-300">
+                                <svg class="w-6 h-6 text-blue-500 group-hover:text-white" fill="none"
+                                    stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                                </svg>
+                            </div>
+                            <div class="min-w-0 flex-1">
+                                <p class="text-[9px] font-black text-gray-400 uppercase tracking-widest mb-1 truncate">
+                                    Rata-rata RMS</p>
+                                <div class="flex flex-wrap items-baseline gap-x-1">
+                                    <span id="analysis-rms-avg"
+                                        class="text-2xl font-black text-gray-900 tracking-tight leading-none">0.000</span>
+                                    <span class="text-[9px] font-bold text-gray-400">mm/s</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Max RMS Metric Card -->
+                        <div style="border-radius: 16px !important;"
+                            class="bg-white border border-gray-100 shadow-sm p-6 group hover:border-red-200 hover:shadow-md transition-all flex items-center space-x-6">
+                            <div
+                                class="flex-shrink-0 p-3 bg-red-50 rounded-2xl group-hover:bg-red-500 transition-colors duration-300">
+                                <svg class="w-6 h-6 text-red-500 group-hover:text-white" fill="none"
+                                    stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M13 17h8m0 0V9m0 8l-8-8-4 4-6-6" />
+                                </svg>
+                            </div>
+                            <div class="min-w-0 flex-1">
+                                <p class="text-[9px] font-black text-gray-400 uppercase tracking-widest mb-1 truncate">
+                                    RMS Maksimum</p>
+                                <div class="flex flex-wrap items-baseline gap-x-1">
+                                    <span id="analysis-rms-max"
+                                        class="text-2xl font-black text-gray-900 tracking-tight leading-none">0.000</span>
+                                    <span class="text-[9px] font-bold text-gray-400">mm/s</span>
+                                </div>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Footer: Trend Indicators -->
-                    <div class="mt-6 flex flex-wrap items-center gap-6 pt-4 border-t border-gray-50">
-                        <div class="flex items-center space-x-1.5">
-                            <div class="w-2 h-2 rounded-full bg-blue-500"></div>
-                            <span class="font-black text-gray-400 uppercase tracking-tight" style="font-size: 9px;">Avg
-                                RMS</span>
-                        </div>
-                        <div class="flex items-center space-x-1.5">
-                            <div class="w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.4)]">
+                    <!-- Long-term Trend Analysis Module (OPSIONAL tapi KUAT) -->
+                    <div style="border-radius: 16px !important;"
+                        class="bg-white shadow-sm border border-gray-100 p-8 flex flex-col h-[520px]">
+                        <div class="flex items-center justify-between mb-6">
+                            <div>
+                                <h3 class="text-lg font-bold text-gray-900 tracking-tight">Analisis Tren Kondisi
+                                    (Riwayat)
+                                </h3>
+                                <p class="text-[12px] text-gray-500 font-medium">Monitoring tren degradasi mesin melalui
+                                    Moving
+                                    Average RMS harian</p>
                             </div>
-                            <span class="font-black text-gray-400 uppercase tracking-tight" style="font-size: 9px;">SMA
-                                7-Day</span>
+                            <div class="flex items-center space-x-3">
+                                <!-- Trend View Toggles -->
+                                <div class="flex bg-gray-50 p-1 rounded-2xl">
+                                    <button onclick="setTrendPeriod('daily')" id="btn-trend-daily"
+                                        class="px-4 py-1.5 text-xs font-bold rounded-xl bg-white shadow-sm text-emerald-600 transition-all uppercase tracking-widest">Harian</button>
+                                    <button onclick="setTrendPeriod('weekly')" id="btn-trend-weekly"
+                                        class="px-4 py-1.5 text-xs font-bold rounded-xl text-gray-400 hover:text-emerald-500 transition-all uppercase tracking-widest">Mingguan</button>
+                                </div>
+
+                                <!-- Reset Zoom Button -->
+                                <button onclick="trendChart.resetZoom()"
+                                    class="p-1.5 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all"
+                                    title="Reset Zoom">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                                    </svg>
+                                </button>
+                            </div>
                         </div>
-                        <div class="flex items-center space-x-1.5">
-                            <div class="w-2 h-2 rounded-lg bg-orange-200 border border-orange-400"></div>
-                            <span class="font-black text-gray-400 uppercase tracking-tight" style="font-size: 9px;">Max
-                                Peak
-                                Area</span>
+
+                        <div class="flex-grow relative min-h-0">
+                            <canvas id="trendChart"></canvas>
+                            <!-- Trend Loading / Empty State -->
+                            <div id="trendChartPlaceholder"
+                                class="absolute inset-0 flex items-center justify-center bg-gray-50/50 rounded-3xl border border-dashed border-gray-200 z-10 transition-opacity">
+                                <div class="text-center">
+                                    <div class="p-4 bg-white rounded-full shadow-sm inline-block mb-3">
+                                        <svg class="w-6 h-6 text-blue-400" fill="none" stroke="currentColor"
+                                            viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z" />
+                                        </svg>
+                                    </div>
+                                    <p class="text-sm font-bold text-gray-600">Pilih mesin untuk memuat tren riwayat</p>
+                                    <p class="text-gray-400 mt-1 uppercase tracking-widest" style="font-size: 9px;">Data
+                                        tren
+                                        dihitung otomatis dari riwayat database</p>
+                                </div>
+                            </div>
                         </div>
-                        <div class="flex-grow"></div>
-                        <p class="text-gray-400/70 italic" style="font-size: 9px;">Sangat berguna untuk bukti visual
-                            pemeliharaan predictif (PdM)</p>
+
+                        <!-- Footer: Trend Indicators -->
+                        <div class="mt-6 flex flex-wrap items-center gap-6 pt-4 border-t border-gray-50">
+                            <div class="flex items-center space-x-1.5">
+                                <div class="w-2 h-2 rounded-full bg-blue-500"></div>
+                                <span class="font-black text-gray-400 uppercase tracking-tight"
+                                    style="font-size: 9px;">Avg
+                                    RMS</span>
+                            </div>
+                            <div class="flex items-center space-x-1.5">
+                                <div class="w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.4)]">
+                                </div>
+                                <span class="font-black text-gray-400 uppercase tracking-tight"
+                                    style="font-size: 9px;">SMA
+                                    7-Day</span>
+                            </div>
+                            <div class="flex items-center space-x-1.5">
+                                <div class="w-2 h-2 rounded-lg bg-orange-200 border border-orange-400"></div>
+                                <span class="font-black text-gray-400 uppercase tracking-tight"
+                                    style="font-size: 9px;">Max
+                                    Peak
+                                    Area</span>
+                            </div>
+                            <div class="flex-grow"></div>
+                            <p class="text-gray-400/70 italic" style="font-size: 9px;">Sangat berguna untuk bukti visual
+                                pemeliharaan predictif (PdM)</p>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -361,7 +474,7 @@
                 let timeChart, fftChart, trendChart;
                 let currentTrendPeriod = 'daily';
 
-                    function switchModule(type) {
+                function switchModule(type) {
                     const sectionGrafik = document.getElementById('section-grafik');
                     const sectionAnalisis = document.getElementById('section-analisis');
                     const btnGrafik = document.getElementById('btn-modul-grafik');
@@ -835,12 +948,69 @@
                                 }
                             }
 
+                            // Update Analysis Module (Decision Layer)
+                            updateAnalysisModule(data.time_domain.vibration);
+
                             // Load Trend Data
                             fetchTrendData();
                         }
                     } catch (error) {
                         console.error('Error fetching data:', error);
                     }
+                }
+
+                function updateAnalysisModule(vibrationData) {
+                    if (!vibrationData || vibrationData.length === 0) return;
+
+                    const values = vibrationData.map(v => v.y);
+                    const currentValue = values[values.length - 1];
+                    const avgValue = values.reduce((a, b) => a + b, 0) / values.length;
+                    const maxValue = Math.max(...values);
+
+                    // Update UI Numbers (3 decimal places for precision)
+                    document.getElementById('analysis-rms-current').textContent = currentValue.toFixed(3);
+                    document.getElementById('analysis-rms-avg').textContent = avgValue.toFixed(3);
+                    document.getElementById('analysis-rms-max').textContent = maxValue.toFixed(3);
+
+                    // Determine Status (ISO 10816-3 Thresholds for Medium Machines)
+                    let status = "NORMAL";
+                    let interpretation = "";
+                    let colorClass = "emerald";
+                    let iconPath = "M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"; // Checkmark
+
+                    if (currentValue >= 7.1) {
+                        status = "DANGER";
+                        interpretation = `Nilai RMS sebesar ${currentValue.toFixed(2)} mm/s berada pada kategori Danger. Sangat tinggi, segera lakukan inspeksi mendalam!`;
+                        colorClass = "red";
+                        iconPath = "M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"; // Warning Triangle
+                    } else if (currentValue >= 2.8) {
+                        status = "WARNING";
+                        interpretation = `Nilai RMS sebesar ${currentValue.toFixed(2)} mm/s berada pada kategori Warning. Terdeteksi peningkatan getaran yang tidak wajar.`;
+                        colorClass = "orange";
+                        iconPath = "M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"; // Exclamation
+                    } else {
+                        status = "NORMAL";
+                        interpretation = `Nilai RMS sebesar ${currentValue.toFixed(2)} mm/s dalam kondisi Normal (ISO 10816-3). Kondisi mesin stabil.`;
+                        colorClass = "emerald";
+                        iconPath = "M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z";
+                    }
+
+                    // Update Status UI
+                    const statusText = document.getElementById('status-text');
+                    const statusInterp = document.getElementById('status-interpretation');
+                    const statusIndicator = document.getElementById('status-indicator');
+                    const statusIcon = document.getElementById('status-icon');
+                    const statusBg = document.getElementById('status-bg');
+
+                    statusText.textContent = status;
+                    statusInterp.textContent = interpretation;
+
+                    // Apply Dynamic Colors matching the refined design
+                    statusText.className = `text-xl font-black uppercase tracking-tight mb-2 text-${colorClass}-600`;
+                    statusIndicator.className = `w-16 h-16 mx-auto rounded-full border-4 flex items-center justify-center mb-3 transition-all duration-500 relative border-${colorClass}-100 bg-${colorClass}-50/30`;
+                    statusIcon.className = `w-7 h-7 text-${colorClass}-500 transition-colors`;
+                    statusIcon.innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="${iconPath}" />`;
+                    statusBg.className = `absolute inset-0 opacity-10 transition-colors duration-500 bg-${colorClass}-600`;
                 }
 
                 function updateClock() {
