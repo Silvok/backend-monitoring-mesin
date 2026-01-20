@@ -5,6 +5,7 @@
             src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns@3.0.0/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/hammerjs@2.0.8/hammer.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@2.0.1/dist/chartjs-plugin-zoom.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@3.0.1/dist/chartjs-plugin-annotation.min.js"></script>
     @endpush
     <x-slot name="header">
         <div class="flex items-center justify-between">
@@ -197,6 +198,28 @@
                                         <p class="text-[11px] text-gray-400 mt-1">Gunakan wheel mouse untuk zoom, drag
                                             untuk
                                             pan</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Threshold Legend -->
+                            <div class="mt-3 pt-3 border-t border-gray-100">
+                                <div class="flex flex-wrap items-center justify-center gap-4 text-xs">
+                                    <div class="flex items-center gap-1.5">
+                                        <div class="w-3 h-3 rounded-full bg-emerald-500"></div>
+                                        <span class="text-gray-600">Normal (0-1.8 mm/s)</span>
+                                    </div>
+                                    <div class="flex items-center gap-1.5">
+                                        <div class="w-6 h-0.5 bg-yellow-500" style="border-top: 2px dashed #eab308;"></div>
+                                        <span class="text-gray-600">Warning (1.8 mm/s)</span>
+                                    </div>
+                                    <div class="flex items-center gap-1.5">
+                                        <div class="w-6 h-0.5 bg-red-500" style="border-top: 2px dashed #ef4444;"></div>
+                                        <span class="text-gray-600">Critical (4.5 mm/s)</span>
+                                    </div>
+                                    <div class="flex items-center gap-1.5">
+                                        <div class="w-6 h-0.5" style="border-top: 2px dashed #ef4444;"></div>
+                                        <span class="text-gray-600">Suhu (°C)</span>
                                     </div>
                                 </div>
                             </div>
@@ -791,24 +814,31 @@
                                     label: 'Vibration RMS (mm/s)',
                                     data: [],
                                     borderColor: '#10b981',
-                                    backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                                    backgroundColor: 'rgba(16, 185, 129, 0.15)',
                                     borderWidth: 2.5,
                                     tension: 0.35,
                                     fill: true,
-                                    pointRadius: 0,
-                                    pointHoverRadius: 4,
+                                    pointRadius: 2,
+                                    pointHoverRadius: 6,
+                                    pointBackgroundColor: '#10b981',
+                                    pointBorderColor: '#fff',
+                                    pointBorderWidth: 1,
                                     yAxisID: 'y'
                                 },
                                 {
                                     label: 'Temperature (°C)',
                                     data: [],
                                     borderColor: '#ef4444',
-                                    backgroundColor: 'transparent',
-                                    borderWidth: 2,
+                                    backgroundColor: 'rgba(239, 68, 68, 0.1)',
+                                    borderWidth: 2.5,
                                     borderDash: [5, 5],
                                     tension: 0.3,
-                                    pointRadius: 0,
-                                    pointHoverRadius: 4,
+                                    fill: true,
+                                    pointRadius: 2,
+                                    pointHoverRadius: 6,
+                                    pointBackgroundColor: '#ef4444',
+                                    pointBorderColor: '#fff',
+                                    pointBorderWidth: 1,
                                     hidden: true,
                                     yAxisID: 'y1'
                                 }
@@ -858,6 +888,44 @@
                                         pinch: { enabled: true },
                                         mode: 'x',
                                     }
+                                },
+                                annotation: {
+                                    annotations: {
+                                        warningLine: {
+                                            type: 'line',
+                                            yMin: 1.8,
+                                            yMax: 1.8,
+                                            borderColor: 'rgba(234, 179, 8, 0.7)',
+                                            borderWidth: 2,
+                                            borderDash: [6, 4],
+                                            label: {
+                                                display: true,
+                                                content: 'Warning (1.8)',
+                                                position: 'end',
+                                                backgroundColor: 'rgba(234, 179, 8, 0.8)',
+                                                color: '#fff',
+                                                font: { size: 9, weight: 'bold' },
+                                                padding: 3
+                                            }
+                                        },
+                                        criticalLine: {
+                                            type: 'line',
+                                            yMin: 4.5,
+                                            yMax: 4.5,
+                                            borderColor: 'rgba(239, 68, 68, 0.7)',
+                                            borderWidth: 2,
+                                            borderDash: [6, 4],
+                                            label: {
+                                                display: true,
+                                                content: 'Critical (4.5)',
+                                                position: 'end',
+                                                backgroundColor: 'rgba(239, 68, 68, 0.8)',
+                                                color: '#fff',
+                                                font: { size: 9, weight: 'bold' },
+                                                padding: 3
+                                            }
+                                        }
+                                    }
                                 }
                             },
                             scales: {
@@ -882,18 +950,32 @@
                                     type: 'linear',
                                     display: true,
                                     position: 'left',
-                                    title: { display: true, text: 'RMS (mm/s)', font: { weight: 'bold', size: 11 } },
+                                    title: { display: true, text: 'RMS (mm/s)', font: { weight: 'bold', size: 11 }, color: '#10b981' },
                                     beginAtZero: true,
-                                    ticks: { font: { size: 10 } }
+                                    suggestedMax: 5,
+                                    grid: {
+                                        color: 'rgba(16, 185, 129, 0.1)',
+                                        drawBorder: false
+                                    },
+                                    ticks: {
+                                        font: { size: 10 },
+                                        color: '#10b981',
+                                        stepSize: 1
+                                    }
                                 },
                                 y1: {
                                     type: 'linear',
                                     display: true,
                                     position: 'right',
-                                    title: { display: true, text: 'Temp (°C)', font: { weight: 'bold', size: 11 } },
+                                    title: { display: true, text: 'Temp (°C)', font: { weight: 'bold', size: 11 }, color: '#ef4444' },
                                     grid: { drawOnChartArea: false },
                                     beginAtZero: false,
-                                    ticks: { font: { size: 10 } }
+                                    suggestedMin: 20,
+                                    suggestedMax: 80,
+                                    ticks: {
+                                        font: { size: 10 },
+                                        color: '#ef4444'
+                                    }
                                 }
                             }
                         }
