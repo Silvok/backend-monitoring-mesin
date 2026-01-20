@@ -284,13 +284,13 @@ class DashboardApiController extends Controller
     }
 
     /**
-     * Get historical sensor data for a specific machine, date, and time range
+     * Get historical sensor data for a specific machine, date, and time range (optimized)
      */
     public function getHistoricalData($id, Request $request)
     {
         try {
             $date = $request->input('date', now()->format('Y-m-d'));
-            $hours = $request->input('hours', 24); // Default to 24 hours
+            $hours = (int) $request->input('hours', 24); // Default to 24 hours
 
             // Parse the date and calculate trailing time window
             $selectedDayStart = \Carbon\Carbon::parse($date)->startOfDay();
@@ -308,37 +308,54 @@ class DashboardApiController extends Controller
                 $startDate = $selectedDayStart;
             }
 
-            // Get sensor data within the date range
-            $sensorData = RawSample::where('machine_id', $id)
+            // Optimized query: select only needed columns, use index
+            $query = RawSample::where('machine_id', $id)
                 ->whereBetween('created_at', [$startDate, $endDate])
-                ->orderBy('created_at', 'asc')
-                ->get()
-                ->map(function($sample) {
-                    return [
-                        'id' => $sample->id,
-                        'timestamp' => $sample->created_at->toIso8601String(),
-                        'acceleration_x' => round($sample->ax_g ?? 0, 4),
-                        'acceleration_y' => round($sample->ay_g ?? 0, 4),
-                        'acceleration_z' => round($sample->az_g ?? 0, 4),
-                    ];
-                });
+                ->select('id', 'ax_g', 'ay_g', 'az_g', 'created_at')
+                ->orderBy('created_at', 'asc');
 
-            // If we have too many data points, sample them (e.g., max 500 points)
-            if ($sensorData->count() > 500) {
-                $step = ceil($sensorData->count() / 500);
-                $sensorData = $sensorData->filter(function($item, $key) use ($step) {
-                    return $key % $step === 0;
-                })->values();
+            // Get total count first for sampling decision
+            $totalCount = $query->count();
+
+            // Determine sampling strategy based on count and hours
+            $maxPoints = min(300, $hours * 20); // Adaptive max points based on time range
+
+            if ($totalCount > $maxPoints) {
+                // Use database-level sampling for better performance
+                $step = ceil($totalCount / $maxPoints);
+
+                // Get sampled data using modulo on id (faster than PHP filtering)
+                $sensorData = RawSample::where('machine_id', $id)
+                    ->whereBetween('created_at', [$startDate, $endDate])
+                    ->select('id', 'ax_g', 'ay_g', 'az_g', 'created_at')
+                    ->whereRaw("MOD(id, {$step}) = 0")
+                    ->orderBy('created_at', 'asc')
+                    ->limit($maxPoints)
+                    ->get();
+            } else {
+                $sensorData = $query->get();
             }
+
+            // Transform data efficiently
+            $transformedData = $sensorData->map(function($sample) {
+                return [
+                    'id' => $sample->id,
+                    'timestamp' => $sample->created_at->toIso8601String(),
+                    'acceleration_x' => round($sample->ax_g ?? 0, 4),
+                    'acceleration_y' => round($sample->ay_g ?? 0, 4),
+                    'acceleration_z' => round($sample->az_g ?? 0, 4),
+                ];
+            });
 
             return response()->json([
                 'success' => true,
-                'sensor_data' => $sensorData,
+                'sensor_data' => $transformedData,
                 'date_range' => [
                     'start' => $startDate->format('l, d-m-Y H:i'),
                     'end' => $endDate->format('l, d-m-Y H:i'),
                 ],
-                'total_points' => $sensorData->count(),
+                'total_points' => $transformedData->count(),
+                'original_count' => $totalCount,
             ]);
         } catch (\Exception $e) {
             return response()->json([

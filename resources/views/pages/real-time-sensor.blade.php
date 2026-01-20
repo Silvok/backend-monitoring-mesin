@@ -315,14 +315,6 @@
                                 <p class="text-xs text-gray-600 mt-1">Pemantauan percepatan secara real-time di semua sumbu</p>
                             </div>
                             <div class="flex items-center space-x-3 flex-wrap gap-2">
-                                <!-- Threshold Config Button -->
-                                <button id="thresholdConfigBtn" class="px-4 py-2 text-xs font-semibold rounded-full bg-gradient-to-r from-orange-600 to-amber-500 text-gray-900 shadow-md hover:shadow-lg transition transform hover:scale-105 flex items-center space-2">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path>
-                                    </svg>
-                                    <span>Ambang Batas</span>
-                                </button>
-
                                 <!-- Chart Mode Toggle -->
                                 <div class="flex items-center bg-gray-100 rounded-full shadow-sm p-1 gap-1">
                                     <button id="liveModeBtn" class="px-4 py-2 text-xs font-semibold rounded-full bg-emerald-500 text-white shadow-md transition transform hover:scale-105">
@@ -383,12 +375,31 @@
                                     </svg>
                                     <span class="text-xs font-semibold text-purple-700">Data Historis</span>
                                 </div>
+                                <!-- Loading Indicator for Historical Data -->
+                                <div id="historicalLoading" class="hidden flex items-center space-x-2 px-3 py-1.5 bg-gradient-to-r from-blue-50 to-cyan-50 rounded-full border border-blue-200 shadow-sm">
+                                    <svg class="animate-spin w-3 h-3 text-blue-600" fill="none" viewBox="0 0 24 24">
+                                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                    </svg>
+                                    <span class="text-xs font-semibold text-blue-700">Memuat data...</span>
+                                </div>
                             </div>
                         </div>
                     </div>
                     <div class="p-6">
                         <div class="relative" style="height: 400px;">
                             <canvas id="multiAxisChart"></canvas>
+                            <!-- Chart Loading Overlay -->
+                            <div id="chartLoadingOverlay" class="hidden absolute inset-0 bg-white/80 flex items-center justify-center rounded-lg">
+                                <div class="text-center">
+                                    <svg class="animate-spin w-10 h-10 text-emerald-600 mx-auto mb-3" fill="none" viewBox="0 0 24 24">
+                                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                    </svg>
+                                    <p class="text-sm font-medium text-gray-600">Memuat data historis...</p>
+                                    <p class="text-xs text-gray-400 mt-1">Mohon tunggu sebentar</p>
+                                </div>
+                            </div>
                         </div>
                         <!-- Chart Legend -->
                         <div class="mt-4 pt-4 border-t border-gray-200">
@@ -447,52 +458,6 @@
                 </div>
             </div>
 
-        </div>
-    </div>
-
-    <!-- Threshold Configuration Modal -->
-    <div id="thresholdModal" class="hidden fixed inset-0 bg-gray-900 bg-opacity-50 z-50 flex items-center justify-center">
-        <div class="bg-white rounded-xl shadow-2xl max-w-md w-full mx-4">
-            <div class="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
-                <h3 class="text-lg font-bold text-gray-900">⚙️ Konfigurasi Ambang Batas</h3>
-                <button id="closeModalBtn" class="text-gray-400 hover:text-gray-600 transition">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                    </svg>
-                </button>
-            </div>
-            <div class="p-6 space-y-6">
-                <!-- Warning Threshold -->
-                <div>
-                    <label class="text-sm font-semibold text-gray-700 mb-2 block">Ambang Peringatan (mm/s)</label>
-                    <input type="range" id="warningThreshold" min="0.5" max="5.0" step="0.1" value="1.8" class="w-full">
-                    <div class="flex justify-between text-xs text-gray-600 mt-1">
-                        <span>0.5 mm/s</span>
-                        <span id="warningValue" class="font-bold text-yellow-600">1.8 mm/s</span>
-                        <span>5.0 mm/s</span>
-                    </div>
-                </div>
-
-                <!-- Critical Threshold -->
-                <div>
-                    <label class="text-sm font-semibold text-gray-700 mb-2 block">Ambang Kritis (mm/s)</label>
-                    <input type="range" id="criticalThreshold" min="3.0" max="12.0" step="0.1" value="4.5" class="w-full">
-                    <div class="flex justify-between text-xs text-gray-600 mt-1">
-                        <span>3.0 mm/s</span>
-                        <span id="criticalValue" class="font-bold text-red-600">4.5 mm/s</span>
-                        <span>12.0 mm/s</span>
-                    </div>
-                </div>
-
-                <div class="flex space-x-3">
-                    <button id="applyThresholdBtn" class="flex-1 px-4 py-2 bg-emerald-500 text-white font-semibold rounded-lg hover:bg-emerald-600 transition">
-                        Terapkan
-                    </button>
-                    <button id="cancelThresholdBtn" class="flex-1 px-4 py-2 bg-gray-200 text-gray-700 font-semibold rounded-lg hover:bg-gray-300 transition">
-                        Batal
-                    </button>
-                </div>
-            </div>
         </div>
     </div>
 
@@ -1272,11 +1237,26 @@
             }, 1000); // Update every second
         }
 
+        function showChartLoading(show) {
+            const overlay = document.getElementById('chartLoadingOverlay');
+            const loadingIndicator = document.getElementById('historicalLoading');
+            if (show) {
+                overlay?.classList.remove('hidden');
+                loadingIndicator?.classList.remove('hidden');
+            } else {
+                overlay?.classList.add('hidden');
+                loadingIndicator?.classList.add('hidden');
+            }
+        }
+
         function loadHistoricalData() {
             if (!selectedMachineId) return;
 
             const selectedDate = document.getElementById('chartDatePicker').value;
             const timeRange = document.getElementById('historicalTimeRange').value;
+
+            // Show loading indicator immediately
+            showChartLoading(true);
 
             // Clear existing data
             clearChartData();
@@ -1286,29 +1266,40 @@
                 .then(response => response.json())
                 .then(data => {
                     if (data.success && data.sensor_data && data.sensor_data.length > 0) {
-                        // Populate chart with historical data
+                        // Batch process data for better performance
+                        const labels = [];
+                        const axData = [];
+                        const ayData = [];
+                        const azData = [];
+
                         data.sensor_data.forEach(sample => {
                             const timestamp = new Date(sample.timestamp);
-                            const timeLabel = timestamp.toLocaleTimeString('id-ID', {
+                            labels.push(timestamp.toLocaleTimeString('id-ID', {
                                 hour: '2-digit',
                                 minute: '2-digit',
                                 second: '2-digit'
-                            });
-
-                            chartData.labels.push(timeLabel);
-                            chartData.ax.push(parseFloat(sample.acceleration_x));
-                            chartData.ay.push(parseFloat(sample.acceleration_y));
-                            chartData.az.push(parseFloat(sample.acceleration_z));
+                            }));
+                            axData.push(parseFloat(sample.acceleration_x));
+                            ayData.push(parseFloat(sample.acceleration_y));
+                            azData.push(parseFloat(sample.acceleration_z));
                         });
 
-                        // Update chart
+                        // Update chartData
+                        chartData.labels = labels;
+                        chartData.ax = axData;
+                        chartData.ay = ayData;
+                        chartData.az = azData;
+
+                        // Update chart in single operation
                         if (multiAxisChart) {
-                            multiAxisChart.data.labels = chartData.labels;
-                            multiAxisChart.data.datasets[0].data = chartData.ax;
-                            multiAxisChart.data.datasets[1].data = chartData.ay;
-                            multiAxisChart.data.datasets[2].data = chartData.az;
+                            multiAxisChart.data.labels = labels;
+                            multiAxisChart.data.datasets[0].data = axData;
+                            multiAxisChart.data.datasets[1].data = ayData;
+                            multiAxisChart.data.datasets[2].data = azData;
                             updateYAxisScale();
                         }
+
+                        console.log(`Loaded ${data.total_points} points (from ${data.original_count || data.total_points} total)`);
                     } else {
                         console.warn('No historical data available for selected date and range', data.date_range);
                         if (multiAxisChart) {
@@ -1317,7 +1308,11 @@
                         }
                     }
                 })
-                .catch(error => console.error('Error loading historical data:', error));
+                .catch(error => console.error('Error loading historical data:', error))
+                .finally(() => {
+                    // Hide loading indicator
+                    showChartLoading(false);
+                });
         }
 
         function stopChartUpdate() {
@@ -1438,91 +1433,6 @@
                 ? ((statistics.normalCount / statistics.totalReadings) * 100).toFixed(1)
                 : '100.0';
             document.getElementById('statNormalTime').textContent = `${normalTimeFallback}%`;
-        }
-
-        // === Threshold Configuration ===
-        const thresholdModal = document.getElementById('thresholdModal');
-        const thresholdConfigBtn = document.getElementById('thresholdConfigBtn');
-        const closeModalBtn = document.getElementById('closeModalBtn');
-        const cancelThresholdBtn = document.getElementById('cancelThresholdBtn');
-        const applyThresholdBtn = document.getElementById('applyThresholdBtn');
-        const warningThresholdInput = document.getElementById('warningThreshold');
-        const criticalThresholdInput = document.getElementById('criticalThreshold');
-        const warningValueDisplay = document.getElementById('warningValue');
-        const criticalValueDisplay = document.getElementById('criticalValue');
-
-        // Open modal
-        thresholdConfigBtn.addEventListener('click', function() {
-            thresholdModal.classList.remove('hidden');
-            // Set current values
-            warningThresholdInput.value = THRESHOLDS.acceleration.normal;
-            criticalThresholdInput.value = THRESHOLDS.acceleration.warning;
-            warningValueDisplay.textContent = THRESHOLDS.acceleration.normal.toFixed(1);
-            criticalValueDisplay.textContent = THRESHOLDS.acceleration.warning.toFixed(1);
-        });
-
-        // Close modal
-        [closeModalBtn, cancelThresholdBtn].forEach(btn => {
-            btn.addEventListener('click', function() {
-                thresholdModal.classList.add('hidden');
-            });
-        });
-
-        // Update value displays
-        warningThresholdInput.addEventListener('input', function() {
-            warningValueDisplay.textContent = parseFloat(this.value).toFixed(1);
-        });
-
-        criticalThresholdInput.addEventListener('input', function() {
-            criticalValueDisplay.textContent = parseFloat(this.value).toFixed(1);
-        });
-
-        // Apply thresholds
-        applyThresholdBtn.addEventListener('click', function() {
-            const newWarning = parseFloat(warningThresholdInput.value);
-            const newCritical = parseFloat(criticalThresholdInput.value);
-
-            // Validation
-            if (newWarning >= newCritical) {
-                alert('Warning threshold must be less than critical threshold');
-                return;
-            }
-
-            // Update thresholds
-            THRESHOLDS.acceleration.normal = newWarning;
-            THRESHOLDS.acceleration.warning = newCritical;
-
-            // Update chart annotations
-            if (multiAxisChart && multiAxisChart.options.plugins.annotation) {
-                multiAxisChart.options.plugins.annotation.annotations.warningLineTop.yMin = newWarning;
-                multiAxisChart.options.plugins.annotation.annotations.warningLineTop.yMax = newWarning;
-                multiAxisChart.options.plugins.annotation.annotations.warningLineBottom.yMin = -newWarning;
-                multiAxisChart.options.plugins.annotation.annotations.warningLineBottom.yMax = -newWarning;
-                multiAxisChart.options.plugins.annotation.annotations.criticalLineTop.yMin = newCritical;
-                multiAxisChart.options.plugins.annotation.annotations.criticalLineTop.yMax = newCritical;
-                multiAxisChart.options.plugins.annotation.annotations.criticalLineBottom.yMin = -newCritical;
-                multiAxisChart.options.plugins.annotation.annotations.criticalLineBottom.yMax = -newCritical;
-                multiAxisChart.update();
-            }
-
-            // Save to localStorage
-            localStorage.setItem('accelerationThresholds', JSON.stringify({
-                normal: newWarning,
-                warning: newCritical
-            }));
-
-            // Close modal
-            thresholdModal.classList.add('hidden');
-
-            alert('Thresholds updated successfully');
-        });
-
-        // Load saved thresholds on page load
-        const savedThresholds = localStorage.getItem('accelerationThresholds');
-        if (savedThresholds) {
-            const thresholds = JSON.parse(savedThresholds);
-            THRESHOLDS.acceleration.normal = thresholds.normal;
-            THRESHOLDS.acceleration.warning = thresholds.warning;
         }
 
         }); // End DOMContentLoaded
