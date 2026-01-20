@@ -139,6 +139,8 @@
                 <span class="text-sm" x-show="sidebarOpen" x-transition>Pengaturan</span>
             </a>
 
+            <!-- User Management -->
+
         </nav>
     </div>
 

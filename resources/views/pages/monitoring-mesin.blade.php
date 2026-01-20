@@ -533,124 +533,118 @@
 
                     <!-- NEW: Modul Diagnosa FFT (Fault Identification) - ENHANCED -->
                     <div id="fft-diagnostic-card" style="border-radius: 16px !important;"
-                        class="bg-white border border-gray-100 shadow-sm p-6 relative overflow-hidden transition-all duration-500">
+                        class="bg-gradient-to-br from-white to-emerald-50 border border-gray-100 shadow-md p-4 md:p-5 relative overflow-hidden transition-all duration-500 rounded-2xl">
 
                         <!-- Header Section -->
-                        <div class="flex items-center gap-3 pb-5 mb-5 border-b border-gray-100">
-                            <div class="p-2.5 bg-emerald-100 rounded-xl">
+                        <div class="flex items-center gap-3 pb-4 mb-4 border-b border-gray-100">
+                            <div class="p-2 bg-emerald-100 rounded-lg flex items-center justify-center">
                                 <svg class="w-6 h-6 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
                                 </svg>
                             </div>
-                            <div>
-                                <h3 class="text-lg font-bold text-gray-900">Analisis FFT & Diagnosa Kerusakan</h3>
-                                <p class="text-sm text-gray-500">Deteksi otomatis berdasarkan pola spektrum frekuensi</p>
+                            <div class="flex-1 min-w-0">
+                                <h3 class="text-lg font-bold text-gray-900 leading-tight">Analisis FFT & Diagnosa Kerusakan</h3>
+                                <p class="text-sm text-gray-500 leading-tight">Deteksi otomatis berdasarkan pola spektrum frekuensi</p>
                             </div>
                         </div>
 
                         <!-- Main Content Grid - 3 Columns Equal Height -->
-                        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-
-                            <!-- LEFT COLUMN: Parameter FFT (4 cols) - 50/50 layout -->
-                            <div class="lg:col-span-4 flex flex-col">
-                                <h4 class="text-xs font-bold text-gray-500 uppercase tracking-wider flex items-center gap-2 mb-4">
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 w-full">
+                            <!-- LEFT COLUMN: Parameter FFT -->
+                            <div class="flex flex-col min-w-0 h-full">
+                                <h4 class="text-xs font-bold text-gray-500 uppercase tracking-wider flex items-center gap-2 mb-3">
                                     <svg class="w-4 h-4 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
                                     </svg>
                                     Parameter FFT
                                 </h4>
-                                <div class="flex-1 grid grid-cols-2 gap-4">
+                                <div class="flex-1 grid grid-cols-2 gap-2">
                                     <!-- Frekuensi Dominan -->
-                                    <div class="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-5 border border-blue-100 flex flex-col justify-center">
+                                    <div class="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-2 border border-blue-100 flex flex-col justify-center min-w-0">
                                         <div class="text-xs font-semibold text-blue-600 uppercase tracking-wider mb-1">Frekuensi Dominan</div>
                                         <div class="flex items-baseline gap-1">
-                                            <span id="diagnostic-freq" class="text-4xl font-black text-blue-700">0</span>
-                                            <span class="text-lg font-bold text-blue-400">Hz</span>
+                                            <span id="diagnostic-freq" class="text-3xl font-black text-blue-700">0</span>
+                                            <span class="text-base font-bold text-blue-400">Hz</span>
                                         </div>
-                                        <p class="text-xs text-blue-500 mt-2">Frekuensi dengan amplitudo tertinggi</p>
+                                        <p class="text-xs text-blue-500 mt-1">Frekuensi dengan amplitudo tertinggi</p>
                                     </div>
                                     <!-- Amplitudo Tertinggi -->
-                                    <div class="bg-gradient-to-br from-purple-50 to-pink-50 rounded-xl p-5 border border-purple-100 flex flex-col justify-center">
+                                    <div class="bg-gradient-to-br from-purple-50 to-pink-50 rounded-xl p-2 border border-purple-100 flex flex-col justify-center min-w-0">
                                         <div class="text-xs font-semibold text-purple-600 uppercase tracking-wider mb-1">Amplitudo Tertinggi</div>
                                         <div class="flex items-baseline gap-1">
-                                            <span id="diagnostic-amp" class="text-4xl font-black text-purple-700">0.00</span>
-                                            <span class="text-lg font-bold text-purple-400">mm/s</span>
+                                            <span id="diagnostic-amp" class="text-3xl font-black text-purple-700">0.00</span>
+                                            <span class="text-base font-bold text-purple-400">mm/s</span>
                                         </div>
-                                        <p class="text-xs text-purple-500 mt-2">Intensitas getaran pada frekuensi dominan</p>
+                                        <p class="text-xs text-purple-500 mt-1">Intensitas getaran pada frekuensi dominan</p>
                                     </div>
                                 </div>
                             </div>
-
-                            <!-- MIDDLE COLUMN: Indikasi Kerusakan (5 cols) -->
-                            <div class="lg:col-span-5 flex flex-col">
-                                <h4 class="text-xs font-bold text-gray-500 uppercase tracking-wider flex items-center gap-2 mb-4">
+                            <!-- MIDDLE COLUMN: Indikasi Kerusakan -->
+                            <div class="flex flex-col min-w-0 h-full">
+                                <h4 class="text-xs font-bold text-gray-500 uppercase tracking-wider flex items-center gap-2 mb-3">
                                     <svg class="w-4 h-4 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
                                     </svg>
                                     Indikasi Kerusakan
                                 </h4>
-                                <div class="flex-1 grid grid-cols-1 gap-3">
+                                <div class="flex-1 flex flex-col gap-2 justify-between">
                                     <!-- Unbalance -->
-                                    <div id="indicator-unbalance" class="fault-indicator flex items-center justify-between p-4 rounded-xl border-2 border-gray-200 bg-gray-50/80 opacity-60 transition-all duration-300 hover:opacity-80">
-                                        <div class="flex items-center gap-3">
-                                            <div class="w-3.5 h-3.5 rounded-full bg-red-400 indicator-dot ring-4 ring-red-100"></div>
+                                    <div id="indicator-unbalance" class="fault-indicator flex items-center justify-between p-2 rounded-xl border-2 border-red-200 bg-red-50/80 opacity-100 transition-all duration-300">
+                                        <div class="flex items-center gap-2">
+                                            <div class="w-3 h-3 rounded-full bg-red-400 indicator-dot ring-2 ring-red-100"></div>
                                             <div>
-                                                <span class="text-sm font-bold text-gray-700 block">Unbalance</span>
-                                                <span class="text-xs text-gray-500">Ketidakseimbangan rotor (1x RPM)</span>
+                                                <span class="text-xs font-bold text-gray-700 block">Unbalance</span>
+                                                <span class="text-[10px] text-gray-500">Ketidakseimbangan rotor (1x RPM)</span>
                                             </div>
                                         </div>
-                                        <div class="indicator-badge hidden px-3 py-1 bg-red-500 text-white text-xs font-bold rounded-full shadow-sm">TERDETEKSI</div>
+                                        <div class="indicator-badge px-2 py-0.5 bg-red-500 text-white text-[10px] font-bold rounded-full shadow-sm">TERDETEKSI</div>
                                     </div>
-
                                     <!-- Misalignment -->
-                                    <div id="indicator-misalignment" class="fault-indicator flex items-center justify-between p-4 rounded-xl border-2 border-gray-200 bg-gray-50/80 opacity-60 transition-all duration-300 hover:opacity-80">
-                                        <div class="flex items-center gap-3">
-                                            <div class="w-3.5 h-3.5 rounded-full bg-orange-400 indicator-dot ring-4 ring-orange-100"></div>
+                                    <div id="indicator-misalignment" class="fault-indicator flex items-center justify-between p-2 rounded-xl border-2 border-orange-200 bg-orange-50/80 opacity-60 transition-all duration-300">
+                                        <div class="flex items-center gap-2">
+                                            <div class="w-3 h-3 rounded-full bg-orange-400 indicator-dot ring-2 ring-orange-100"></div>
                                             <div>
-                                                <span class="text-sm font-bold text-gray-700 block">Misalignment</span>
-                                                <span class="text-xs text-gray-500">Ketidaksejajaran poros (2x RPM)</span>
+                                                <span class="text-xs font-bold text-gray-700 block">Misalignment</span>
+                                                <span class="text-[10px] text-gray-500">Ketidaksejajaran poros (2x RPM)</span>
                                             </div>
                                         </div>
-                                        <div class="indicator-badge hidden px-3 py-1 bg-orange-500 text-white text-xs font-bold rounded-full shadow-sm">TERDETEKSI</div>
+                                        <div class="indicator-badge hidden px-2 py-0.5 bg-orange-500 text-white text-[10px] font-bold rounded-full shadow-sm">TERDETEKSI</div>
                                     </div>
-
                                     <!-- Bearing Defect -->
-                                    <div id="indicator-bearing" class="fault-indicator flex items-center justify-between p-4 rounded-xl border-2 border-gray-200 bg-gray-50/80 opacity-60 transition-all duration-300 hover:opacity-80">
-                                        <div class="flex items-center gap-3">
-                                            <div class="w-3.5 h-3.5 rounded-full bg-blue-400 indicator-dot ring-4 ring-blue-100"></div>
+                                    <div id="indicator-bearing" class="fault-indicator flex items-center justify-between p-2 rounded-xl border-2 border-blue-200 bg-blue-50/80 opacity-60 transition-all duration-300">
+                                        <div class="flex items-center gap-2">
+                                            <div class="w-3 h-3 rounded-full bg-blue-400 indicator-dot ring-2 ring-blue-100"></div>
                                             <div>
-                                                <span class="text-sm font-bold text-gray-700 block">Bearing Defect</span>
-                                                <span class="text-xs text-gray-500">Kerusakan bearing (Freq tinggi)</span>
+                                                <span class="text-xs font-bold text-gray-700 block">Bearing Defect</span>
+                                                <span class="text-[10px] text-gray-500">Kerusakan bearing (Freq tinggi)</span>
                                             </div>
                                         </div>
-                                        <div class="indicator-badge hidden px-3 py-1 bg-blue-500 text-white text-xs font-bold rounded-full shadow-sm">TERDETEKSI</div>
+                                        <div class="indicator-badge hidden px-2 py-0.5 bg-blue-500 text-white text-[10px] font-bold rounded-full shadow-sm">TERDETEKSI</div>
                                     </div>
-
                                     <!-- Looseness -->
-                                    <div id="indicator-looseness" class="fault-indicator flex items-center justify-between p-4 rounded-xl border-2 border-gray-200 bg-gray-50/80 opacity-60 transition-all duration-300 hover:opacity-80">
-                                        <div class="flex items-center gap-3">
-                                            <div class="w-3.5 h-3.5 rounded-full bg-yellow-400 indicator-dot ring-4 ring-yellow-100"></div>
+                                    <div id="indicator-looseness" class="fault-indicator flex items-center justify-between p-2 rounded-xl border-2 border-yellow-200 bg-yellow-50/80 opacity-60 transition-all duration-300">
+                                        <div class="flex items-center gap-2">
+                                            <div class="w-3 h-3 rounded-full bg-yellow-400 indicator-dot ring-2 ring-yellow-100"></div>
                                             <div>
-                                                <span class="text-sm font-bold text-gray-700 block">Looseness</span>
-                                                <span class="text-xs text-gray-500">Kelonggaran mekanis (Sub-harmonik)</span>
+                                                <span class="text-xs font-bold text-gray-700 block">Looseness</span>
+                                                <span class="text-[10px] text-gray-500">Kelonggaran mekanis (Sub-harmonik)</span>
                                             </div>
                                         </div>
-                                        <div class="indicator-badge hidden px-3 py-1 bg-yellow-500 text-white text-xs font-bold rounded-full shadow-sm">TERDETEKSI</div>
+                                        <div class="indicator-badge hidden px-2 py-0.5 bg-yellow-500 text-white text-[10px] font-bold rounded-full shadow-sm">TERDETEKSI</div>
                                     </div>
                                 </div>
                             </div>
-
-                            <!-- RIGHT COLUMN: Hasil Analisis (4 cols) -->
-                            <div class="lg:col-span-4 flex flex-col">
-                                <h4 class="text-xs font-bold text-gray-500 uppercase tracking-wider flex items-center gap-2 mb-4">
+                            <!-- RIGHT COLUMN: Hasil Analisis -->
+                            <div class="flex flex-col min-w-0 h-full">
+                                <h4 class="text-xs font-bold text-gray-500 uppercase tracking-wider flex items-center gap-2 mb-3">
                                     <svg class="w-4 h-4 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0012 18.75c-1.03 0-1.9-.4-2.593-.895l-.548-.547z"></path>
                                     </svg>
                                     Hasil Analisis
                                 </h4>
-                                <div id="verdict-container" class="flex-1 bg-gradient-to-br from-emerald-50 to-teal-50 rounded-xl p-4 border border-emerald-200 flex flex-col justify-center">
+                                <div id="verdict-container" class="bg-gradient-to-br from-emerald-50 to-teal-50 rounded-xl p-3 border border-emerald-200 flex-1 flex flex-col justify-center transition-all duration-500">
                                     <div class="flex flex-col items-center text-center">
-                                        <div id="verdict-icon" class="p-2.5 bg-emerald-100 rounded-xl mb-2">
+                                        <div id="verdict-icon" class="p-2 bg-emerald-100 rounded-xl mb-2">
                                             <svg class="w-8 h-8 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                                             </svg>
@@ -659,7 +653,7 @@
                                         <p id="diagnostic-verdict" class="text-xs text-emerald-600 leading-relaxed">
                                             Kondisi mesin terpantau optimal tanpa indikasi kerusakan frekuensi yang signifikan.
                                         </p>
-                                        <div class="mt-3 pt-2 border-t border-emerald-200/70 w-full">
+                                        <div class="mt-2 pt-2 border-t border-emerald-200/70 w-full">
                                             <p class="text-[10px] text-emerald-500">
                                                 <span class="font-semibold">Referensi:</span> ISO 10816-3 & Analisis Spektrum FFT
                                             </p>
@@ -667,6 +661,7 @@
                                     </div>
                                 </div>
                             </div>
+                        </div>
                         </div>
 
                         <!-- Subtle background glow -->
