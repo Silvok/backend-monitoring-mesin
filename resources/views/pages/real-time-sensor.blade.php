@@ -283,19 +283,19 @@
 
                         <!-- Legend -->
                         <div class="mt-6 p-4 bg-gray-50 rounded-lg border border-gray-200">
-                            <p class="text-xs font-bold text-gray-700 mb-2">Indikator Status (ISO 10816-3):</p>
+                            <p class="text-xs font-bold text-gray-700 mb-2">Indikator Status (ISO 10816-3 Class I):</p>
                             <div class="flex flex-wrap gap-4">
                                 <div class="flex items-center space-x-2">
                                     <div class="w-3 h-3 rounded-full bg-emerald-500"></div>
-                                    <span class="text-xs text-gray-600">Normal (0-2.8 mm/s / 0-60°C)</span>
+                                    <span class="text-xs text-gray-600">Normal (0-1.8 mm/s / 0-60°C)</span>
                                 </div>
                                 <div class="flex items-center space-x-2">
                                     <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
-                                    <span class="text-xs text-gray-600">Waspada (2.8-7.1 mm/s / 60-80°C)</span>
+                                    <span class="text-xs text-gray-600">Waspada (1.8-4.5 mm/s / 60-80°C)</span>
                                 </div>
                                 <div class="flex items-center space-x-2">
                                     <div class="w-3 h-3 rounded-full bg-red-500"></div>
-                                    <span class="text-xs text-gray-600">Bahaya (>7.1 mm/s / >80°C)</span>
+                                    <span class="text-xs text-gray-600">Bahaya (>4.5 mm/s / >80°C)</span>
                                 </div>
                             </div>
                         </div>
@@ -465,10 +465,10 @@
                 <!-- Warning Threshold -->
                 <div>
                     <label class="text-sm font-semibold text-gray-700 mb-2 block">Ambang Peringatan (mm/s)</label>
-                    <input type="range" id="warningThreshold" min="0.5" max="5.0" step="0.1" value="2.8" class="w-full">
+                    <input type="range" id="warningThreshold" min="0.5" max="5.0" step="0.1" value="1.8" class="w-full">
                     <div class="flex justify-between text-xs text-gray-600 mt-1">
                         <span>0.5 mm/s</span>
-                        <span id="warningValue" class="font-bold text-yellow-600">2.8 mm/s</span>
+                        <span id="warningValue" class="font-bold text-yellow-600">1.8 mm/s</span>
                         <span>5.0 mm/s</span>
                     </div>
                 </div>
@@ -476,10 +476,10 @@
                 <!-- Critical Threshold -->
                 <div>
                     <label class="text-sm font-semibold text-gray-700 mb-2 block">Ambang Kritis (mm/s)</label>
-                    <input type="range" id="criticalThreshold" min="3.0" max="12.0" step="0.1" value="7.1" class="w-full">
+                    <input type="range" id="criticalThreshold" min="3.0" max="12.0" step="0.1" value="4.5" class="w-full">
                     <div class="flex justify-between text-xs text-gray-600 mt-1">
                         <span>3.0 mm/s</span>
-                        <span id="criticalValue" class="font-bold text-red-600">7.1 mm/s</span>
+                        <span id="criticalValue" class="font-bold text-red-600">4.5 mm/s</span>
                         <span>12.0 mm/s</span>
                     </div>
                 </div>

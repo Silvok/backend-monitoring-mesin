@@ -161,7 +161,7 @@
                     <p class="text-sm" style="color: rgba(255,255,255,0.8);">Dari {{ $normalCount }} kondisi normal</p>
                     <div class="mt-2 pt-2 border-t border-white/20">
                         <p class="text-xs font-semibold" style="color: rgba(255,255,255,0.9);">Threshold RMS (ISO 10816-3):</p>
-                        <p class="text-xs mt-1" style="color: rgba(255,255,255,0.7);">✅ Normal: 0-2.8 mm/s | ⚠️ Waspada: 2.8-7.1 mm/s | 🚨 Bahaya: >7.1 mm/s</p>
+                        <p class="text-xs mt-1" style="color: rgba(255,255,255,0.7);">✅ Normal: 0-1.8 mm/s | ⚠️ Waspada: 1.8-4.5 mm/s | 🚨 Bahaya: >4.5 mm/s</p>
                     </div>
                 </div>
             </div>
@@ -203,20 +203,20 @@
                             <p class="text-xs text-blue-600 mt-1">√(AX² + AY² + AZ²)</p>
                         </div>
                         <div class="bg-gradient-to-br from-green-50 to-red-50 px-4 py-2 rounded-lg border border-gray-200">
-                            <p class="text-xs text-gray-800 font-semibold mb-1">Threshold ISO 10816-3 (Class II)</p>
+                            <p class="text-xs text-gray-800 font-semibold mb-1">Threshold ISO 10816-3 (Class I)</p>
                             <p class="text-xs text-gray-500 mb-2 italic">Velocity-based vibration monitoring</p>
                             <div class="space-y-1">
                                 <div class="flex items-center space-x-2">
                                     <div class="w-3 h-3 rounded-full bg-green-500"></div>
-                                    <p class="text-xs text-gray-700"><strong>Normal:</strong> 0 - 2.8 mm/s</p>
+                                    <p class="text-xs text-gray-700"><strong>Normal:</strong> 0 - 1.8 mm/s</p>
                                 </div>
                                 <div class="flex items-center space-x-2">
                                     <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
-                                    <p class="text-xs text-gray-700"><strong>Waspada:</strong> 2.8 - 7.1 mm/s</p>
+                                    <p class="text-xs text-gray-700"><strong>Waspada:</strong> 1.8 - 4.5 mm/s</p>
                                 </div>
                                 <div class="flex items-center space-x-2">
                                     <div class="w-3 h-3 rounded-full bg-red-500"></div>
-                                    <p class="text-xs text-gray-700"><strong>Bahaya:</strong> > 7.1 mm/s</p>
+                                    <p class="text-xs text-gray-700"><strong>Bahaya:</strong> > 4.5 mm/s</p>
                                 </div>
                             </div>
                         </div>
@@ -369,10 +369,10 @@
                             pointHoverBackgroundColor: 'rgb(24, 85, 25)',
                             pointHoverBorderColor: '#fff'
                         },
-                        // Threshold Line - Normal/Waspada boundary (2.8 mm/s) - ISO 10816-3
+                        // Threshold Line - Normal/Waspada boundary (1.8 mm/s) - ISO 10816-3 Class I
                         {
-                            label: 'Threshold: Normal (2.8 mm/s)',
-                            data: Array(rmsData.length).fill(2.8),
+                            label: 'Threshold: Normal (1.8 mm/s)',
+                            data: Array(rmsData.length).fill(1.8),
                             borderColor: 'rgba(234, 179, 8, 0.7)',
                             backgroundColor: 'transparent',
                             borderWidth: 2,
@@ -380,10 +380,10 @@
                             pointRadius: 0,
                             fill: false
                         },
-                        // Threshold Line - Waspada/Bahaya boundary (7.1 mm/s) - ISO 10816-3
+                        // Threshold Line - Waspada/Bahaya boundary (4.5 mm/s) - ISO 10816-3 Class I
                         {
-                            label: 'Threshold: Bahaya (7.1 mm/s)',
-                            data: Array(rmsData.length).fill(7.1),
+                            label: 'Threshold: Bahaya (4.5 mm/s)',
+                            data: Array(rmsData.length).fill(4.5),
                             borderColor: 'rgba(239, 68, 68, 0.7),
                             backgroundColor: 'transparent',
                             borderWidth: 2,
@@ -639,27 +639,37 @@
                 return;
             }
 
-            grid.innerHTML = machines.map(machine => `
-                <div class="bg-white rounded-lg shadow-md p-4 border-l-4" style="border-left-color: ${
-                    machine.status === 'ANOMALY' ? '#ef4444' : '#118B50'
-                };">
+            // Helper function for status colors
+            const getStatusColors = (status) => {
+                switch(status) {
+                    case 'ANOMALY':
+                        return { border: '#ef4444', bg: '#fee2e2', text: '#991b1b', label: 'Bahaya' };
+                    case 'WARNING':
+                        return { border: '#f59e0b', bg: '#fef3c7', text: '#92400e', label: 'Peringatan' };
+                    case 'NORMAL':
+                        return { border: '#118B50', bg: '#e0f5e8', text: '#185519', label: 'Normal' };
+                    default:
+                        return { border: '#9ca3af', bg: '#f3f4f6', text: '#4b5563', label: 'Unknown' };
+                }
+            };
+
+            grid.innerHTML = machines.map(machine => {
+                const colors = getStatusColors(machine.status);
+                return `
+                <div class="bg-white rounded-lg shadow-md p-4 border-l-4" style="border-left-color: ${colors.border};">
                     <div class="flex items-start justify-between mb-3">
                         <div>
                             <h4 class="font-bold text-gray-900">${machine.name}</h4>
                             <p class="text-xs text-gray-500">${machine.location}</p>
                         </div>
-                        <span class="px-2 py-1 rounded-full text-xs font-bold" style="${
-                            machine.status === 'ANOMALY'
-                                ? 'background-color: #fee2e2; color: #991b1b;'
-                                : 'background-color: #e0f5e8; color: #185519;'
-                        }">
-                            ${machine.status}
+                        <span class="px-2 py-1 rounded-full text-xs font-bold" style="background-color: ${colors.bg}; color: ${colors.text};">
+                            ${colors.label}
                         </span>
                     </div>
                     <div class="space-y-2 text-sm">
                         <div class="flex justify-between">
                             <span class="text-gray-600">RMS:</span>
-                            <span class="font-semibold text-gray-900">${machine.rms.toFixed(4)}</span>
+                            <span class="font-semibold ${machine.status === 'ANOMALY' ? 'text-red-600' : machine.status === 'WARNING' ? 'text-amber-600' : 'text-gray-900'}">${machine.rms.toFixed(4)} mm/s</span>
                         </div>
                         <div class="flex justify-between">
                             <span class="text-gray-600">Peak Amp:</span>
@@ -669,12 +679,19 @@
                             <span class="text-gray-600">Dominant Freq:</span>
                             <span class="font-semibold text-gray-900">${machine.dominant_freq.toFixed(2)} Hz</span>
                         </div>
-                        <div class="text-xs text-gray-400 mt-2 pt-2 border-t">
+                        <div class="flex justify-between text-xs text-gray-500 pt-1 border-t border-gray-100">
+                            <span>Threshold:</span>
+                            <span>
+                                <span class="text-yellow-600">${machine.threshold_warning}</span> /
+                                <span class="text-red-600">${machine.threshold_critical}</span> mm/s
+                            </span>
+                        </div>
+                        <div class="text-xs text-gray-400 pt-1">
                             ${machine.last_check}
                         </div>
                     </div>
                 </div>
-            `).join('');
+            `}).join('');
         }
 
         // ============================================
@@ -721,6 +738,10 @@
                                 <h4 class="font-bold text-gray-900">${machine.machine_name}</h4>
                                 <p class="text-sm text-gray-600">${machine.location}</p>
                                 <p class="text-xs text-gray-500 mt-1">${machine.time_ago}</p>
+                                ${machine.threshold_warning ? `
+                                <p class="text-xs text-gray-400 mt-1">
+                                    Threshold: <span class="text-yellow-600">${machine.threshold_warning}</span> / <span class="text-red-600">${machine.threshold_critical}</span>
+                                </p>` : ''}
                             </div>
                         </div>
                         <div class="text-right">
@@ -731,13 +752,16 @@
                             }">
                                 ${machine.rms.toFixed(2)}
                             </p>
-                            <span class="text-xs font-semibold uppercase ${
-                                machine.severity === 'critical' ? 'text-red-600' :
-                                machine.severity === 'high' ? 'text-orange-600' :
-                                'text-yellow-600'
-                            }">
-                                ${machine.severity}
-                            </span>
+                            <span class="text-xs text-gray-500">mm/s</span>
+                            <div class="mt-1">
+                                <span class="text-xs font-semibold uppercase px-2 py-0.5 rounded ${
+                                    machine.severity === 'critical' ? 'bg-red-100 text-red-600' :
+                                    machine.severity === 'high' ? 'bg-orange-100 text-orange-600' :
+                                    'bg-yellow-100 text-yellow-600'
+                                }">
+                                    ${machine.severity === 'critical' ? 'Bahaya' : machine.severity === 'high' ? 'Peringatan' : 'Waspada'}
+                                </span>
+                            </div>
                         </div>
                     </div>
                 </div>

@@ -10,18 +10,21 @@ use Illuminate\Support\Facades\Cache;
 class AlertManagementController extends Controller
 {
     /**
+     * Default ISO 10816-3 thresholds by class
+     */
+    private const ISO_THRESHOLDS = [
+        'Class I' => ['warning' => 1.8, 'critical' => 4.5],   // Motors ≤15 kW
+        'Class II' => ['warning' => 2.8, 'critical' => 7.1],  // Motors 15-75 kW
+        'Class III' => ['warning' => 4.5, 'critical' => 11.2], // Large motors 75-300 kW
+        'Class IV' => ['warning' => 7.1, 'critical' => 18.0],  // Turbines, rigid foundation
+    ];
+
+    /**
      * Display alert management page
      */
     public function index()
     {
         $machines = Machine::all();
-
-        // Get threshold config from cache or default
-        // ISO 10816-3 Thresholds (mm/s) for Medium Machines (Class II)
-        $thresholdConfig = Cache::get('alert_threshold_config', [
-            'warning' => 2.8,  // ISO 10816-3 Zone B
-            'critical' => 7.1, // ISO 10816-3 Zone C/D
-        ]);
 
         // Get notification config
         $notificationConfig = Cache::get('alert_notification_config', [
@@ -31,7 +34,26 @@ class AlertManagementController extends Controller
             'alert_sound_enabled' => false,
         ]);
 
-        return view('pages.alert-management', compact('machines', 'thresholdConfig', 'notificationConfig'));
+        return view('pages.alert-management', compact('machines', 'notificationConfig'));
+    }
+
+    /**
+     * Get threshold for a specific machine
+     */
+    private function getMachineThreshold(Machine $machine): array
+    {
+        return [
+            'warning' => (float) ($machine->threshold_warning ?? 1.8),
+            'critical' => (float) ($machine->threshold_critical ?? 4.5),
+        ];
+    }
+
+    /**
+     * Get default threshold (used when no machine context)
+     */
+    private function getDefaultThreshold(): array
+    {
+        return self::ISO_THRESHOLDS['Class I'];
     }
 
     /**
@@ -49,22 +71,9 @@ class AlertManagementController extends Controller
                 $query->where('machine_id', $request->machine_id);
             }
 
-            // Filter by severity
+            // Filter by severity - now uses per-machine thresholds
             if ($request->filled('severity')) {
-                $thresholds = Cache::get('alert_threshold_config', [
-                    'warning' => 2.8,
-                    'critical' => 7.1,
-                ]);
-
-                switch ($request->severity) {
-                    case 'critical':
-                        $query->where('rms', '>=', $thresholds['critical']);
-                        break;
-                    case 'warning':
-                        $query->where('rms', '>=', $thresholds['warning'])
-                              ->where('rms', '<', $thresholds['critical']);
-                        break;
-                }
+                // Will be handled after fetch to use per-machine thresholds
             }
 
             // Filter by status (acknowledged/unacknowledged)
@@ -82,12 +91,12 @@ class AlertManagementController extends Controller
 
             $alerts = $query->paginate($request->get('per_page', 15));
 
-            $thresholds = Cache::get('alert_threshold_config', [
-                'warning' => 2.8,
-                'critical' => 7.1,
-            ]);
+            $alerts->getCollection()->transform(function ($alert) {
+                // Use per-machine threshold
+                $thresholds = $alert->machine
+                    ? $this->getMachineThreshold($alert->machine)
+                    : $this->getDefaultThreshold();
 
-            $alerts->getCollection()->transform(function ($alert) use ($thresholds) {
                 return [
                     'id' => $alert->id,
                     'machine_id' => $alert->machine_id,
@@ -107,8 +116,19 @@ class AlertManagementController extends Controller
                     'resolved' => Cache::get("alert_resolved_{$alert->id}", false),
                     'resolved_at' => Cache::get("alert_resolved_time_{$alert->id}"),
                     'notes' => Cache::get("alert_notes_{$alert->id}", ''),
+                    'threshold_warning' => $thresholds['warning'],
+                    'threshold_critical' => $thresholds['critical'],
                 ];
             });
+
+            // Filter by severity after transformation
+            if ($request->filled('severity')) {
+                $severity = $request->severity;
+                $filtered = $alerts->getCollection()->filter(function ($alert) use ($severity) {
+                    return $alert['severity'] === $severity;
+                })->values();
+                $alerts->setCollection($filtered);
+            }
 
             return response()->json([
                 'success' => true,
@@ -128,11 +148,6 @@ class AlertManagementController extends Controller
     public function getStats()
     {
         try {
-            $thresholds = Cache::get('alert_threshold_config', [
-                'warning' => 2.8,
-                'critical' => 7.1,
-            ]);
-
             $baseQuery = AnalysisResult::whereIn('condition_status', ['ANOMALY', 'WARNING', 'CRITICAL', 'DANGER']);
 
             // Today's alerts
@@ -144,19 +159,28 @@ class AlertManagementController extends Controller
             // Last 7 days
             $last7days = (clone $baseQuery)->where('created_at', '>=', now()->subDays(7))->count();
 
-            // By severity (last 24h) - 2 levels only
-            $criticalCount = AnalysisResult::whereIn('condition_status', ['ANOMALY', 'WARNING', 'CRITICAL', 'DANGER'])
+            // By severity (last 24h) - using per-machine thresholds
+            $recentAlerts = AnalysisResult::with('machine')
+                ->whereIn('condition_status', ['ANOMALY', 'WARNING', 'CRITICAL', 'DANGER'])
                 ->where('created_at', '>=', now()->subHours(24))
-                ->where('rms', '>=', $thresholds['critical'])
-                ->count();
+                ->get();
 
-            $warningCount = AnalysisResult::whereIn('condition_status', ['ANOMALY', 'WARNING', 'CRITICAL', 'DANGER'])
-                ->where('created_at', '>=', now()->subHours(24))
-                ->where('rms', '>=', $thresholds['warning'])
-                ->where('rms', '<', $thresholds['critical'])
-                ->count();
+            $criticalCount = 0;
+            $warningCount = 0;
 
-            // By machine
+            foreach ($recentAlerts as $alert) {
+                $thresholds = $alert->machine
+                    ? $this->getMachineThreshold($alert->machine)
+                    : $this->getDefaultThreshold();
+
+                if ($alert->rms >= $thresholds['critical']) {
+                    $criticalCount++;
+                } elseif ($alert->rms >= $thresholds['warning']) {
+                    $warningCount++;
+                }
+            }
+
+            // By machine with threshold info
             $machineStats = Machine::withCount(['analysisResults as alert_count' => function ($query) {
                 $query->whereIn('condition_status', ['ANOMALY', 'WARNING', 'CRITICAL', 'DANGER'])
                       ->where('created_at', '>=', now()->subHours(24));
@@ -166,13 +190,15 @@ class AlertManagementController extends Controller
                     'name' => $machine->name,
                     'location' => $machine->location,
                     'alert_count' => $machine->alert_count,
+                    'threshold_warning' => (float) ($machine->threshold_warning ?? 1.8),
+                    'threshold_critical' => (float) ($machine->threshold_critical ?? 4.5),
+                    'iso_class' => $machine->iso_class ?? 'Class I',
+                    'motor_power_hp' => $machine->motor_power_hp,
                 ];
             });
 
             // Acknowledged count
-            $acknowledgedCount = AnalysisResult::whereIn('condition_status', ['ANOMALY', 'WARNING', 'CRITICAL', 'DANGER'])
-                ->where('created_at', '>=', now()->subHours(24))
-                ->get()
+            $acknowledgedCount = $recentAlerts
                 ->filter(fn($a) => Cache::get("alert_ack_{$a->id}", false))
                 ->count();
 
@@ -286,14 +312,18 @@ class AlertManagementController extends Controller
     }
 
     /**
-     * Update threshold configuration
+     * Update threshold configuration for a specific machine
      */
     public function updateThresholds(Request $request)
     {
         try {
             $validated = $request->validate([
+                'machine_id' => 'required|exists:machines,id',
                 'warning' => 'required|numeric|min:0',
                 'critical' => 'required|numeric|min:0',
+                'motor_power_hp' => 'nullable|numeric|min:0',
+                'motor_rpm' => 'nullable|integer|min:0',
+                'iso_class' => 'nullable|string|in:Class I,Class II,Class III,Class IV',
             ]);
 
             // Validate that thresholds are in ascending order
@@ -304,17 +334,132 @@ class AlertManagementController extends Controller
                 ], 422);
             }
 
-            Cache::forever('alert_threshold_config', $validated);
+            $machine = Machine::findOrFail($validated['machine_id']);
+            $machine->update([
+                'threshold_warning' => $validated['warning'],
+                'threshold_critical' => $validated['critical'],
+                'motor_power_hp' => $validated['motor_power_hp'] ?? $machine->motor_power_hp,
+                'motor_rpm' => $validated['motor_rpm'] ?? $machine->motor_rpm,
+                'iso_class' => $validated['iso_class'] ?? $machine->iso_class,
+            ]);
 
             return response()->json([
                 'success' => true,
-                'message' => 'Threshold configuration updated successfully',
-                'config' => $validated,
+                'message' => 'Threshold configuration updated for ' . $machine->name,
+                'config' => [
+                    'machine_id' => $machine->id,
+                    'machine_name' => $machine->name,
+                    'warning' => $machine->threshold_warning,
+                    'critical' => $machine->threshold_critical,
+                    'motor_power_hp' => $machine->motor_power_hp,
+                    'motor_rpm' => $machine->motor_rpm,
+                    'iso_class' => $machine->iso_class,
+                ],
             ]);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
                 'message' => 'Error updating thresholds: ' . $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    /**
+     * Get threshold configuration for a specific machine
+     */
+    public function getMachineThresholds($machineId)
+    {
+        try {
+            $machine = Machine::findOrFail($machineId);
+
+            return response()->json([
+                'success' => true,
+                'config' => [
+                    'machine_id' => $machine->id,
+                    'machine_name' => $machine->name,
+                    'warning' => (float) ($machine->threshold_warning ?? 1.8),
+                    'critical' => (float) ($machine->threshold_critical ?? 4.5),
+                    'motor_power_hp' => $machine->motor_power_hp,
+                    'motor_rpm' => $machine->motor_rpm,
+                    'iso_class' => $machine->iso_class ?? 'Class I',
+                ],
+                'iso_reference' => self::ISO_THRESHOLDS,
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error fetching machine thresholds: ' . $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    /**
+     * Apply ISO class preset to a machine
+     */
+    public function applyIsoPreset(Request $request)
+    {
+        try {
+            $validated = $request->validate([
+                'machine_id' => 'required|exists:machines,id',
+                'iso_class' => 'required|string|in:Class I,Class II,Class III,Class IV',
+            ]);
+
+            $machine = Machine::findOrFail($validated['machine_id']);
+            $preset = self::ISO_THRESHOLDS[$validated['iso_class']];
+
+            $machine->update([
+                'threshold_warning' => $preset['warning'],
+                'threshold_critical' => $preset['critical'],
+                'iso_class' => $validated['iso_class'],
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'message' => "Applied {$validated['iso_class']} preset to {$machine->name}",
+                'config' => [
+                    'machine_id' => $machine->id,
+                    'machine_name' => $machine->name,
+                    'warning' => $machine->threshold_warning,
+                    'critical' => $machine->threshold_critical,
+                    'iso_class' => $machine->iso_class,
+                ],
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error applying ISO preset: ' . $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    /**
+     * Get all machines with their threshold configs
+     */
+    public function getAllMachineThresholds()
+    {
+        try {
+            $machines = Machine::all()->map(function ($machine) {
+                return [
+                    'id' => $machine->id,
+                    'name' => $machine->name,
+                    'location' => $machine->location,
+                    'threshold_warning' => (float) ($machine->threshold_warning ?? 1.8),
+                    'threshold_critical' => (float) ($machine->threshold_critical ?? 4.5),
+                    'motor_power_hp' => $machine->motor_power_hp,
+                    'motor_rpm' => $machine->motor_rpm,
+                    'iso_class' => $machine->iso_class ?? 'Class I',
+                ];
+            });
+
+            return response()->json([
+                'success' => true,
+                'machines' => $machines,
+                'iso_reference' => self::ISO_THRESHOLDS,
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error fetching machine thresholds: ' . $e->getMessage(),
             ], 500);
         }
     }
@@ -372,15 +517,14 @@ class AlertManagementController extends Controller
                 $query->where('machine_id', $request->machine_id);
             }
 
-            $thresholds = Cache::get('alert_threshold_config', [
-                'warning' => 2.8,
-                'critical' => 7.1,
-                'danger' => 11.2,
-            ]);
-
             $alerts = $query->paginate($request->get('per_page', 20));
 
-            $alerts->getCollection()->transform(function ($alert) use ($thresholds) {
+            $alerts->getCollection()->transform(function ($alert) {
+                // Use per-machine threshold
+                $thresholds = $alert->machine
+                    ? $this->getMachineThreshold($alert->machine)
+                    : $this->getDefaultThreshold();
+
                 return [
                     'id' => $alert->id,
                     'machine_name' => $alert->machine->name ?? 'Unknown',
@@ -395,6 +539,8 @@ class AlertManagementController extends Controller
                     'resolved' => Cache::get("alert_resolved_{$alert->id}", false),
                     'resolved_at' => Cache::get("alert_resolved_time_{$alert->id}"),
                     'resolution_notes' => Cache::get("alert_resolution_notes_{$alert->id}", ''),
+                    'threshold_warning' => $thresholds['warning'],
+                    'threshold_critical' => $thresholds['critical'],
                 ];
             });
 
@@ -430,17 +576,16 @@ class AlertManagementController extends Controller
                 $query->where('machine_id', $request->machine_id);
             }
 
-            $thresholds = Cache::get('alert_threshold_config', [
-                'warning' => 2.8,
-                'critical' => 7.1,
-                'danger' => 11.2,
-            ]);
-
             $alerts = $query->get();
 
-            $csvData = "ID,Machine,Location,RMS (mm/s),Severity,Status,Timestamp,Acknowledged,Acknowledged By,Acknowledged At\n";
+            $csvData = "ID,Machine,Location,RMS (mm/s),Severity,Status,Timestamp,Threshold Warning,Threshold Critical,Acknowledged,Acknowledged By,Acknowledged At\n";
 
             foreach ($alerts as $alert) {
+                // Use per-machine threshold
+                $thresholds = $alert->machine
+                    ? $this->getMachineThreshold($alert->machine)
+                    : $this->getDefaultThreshold();
+
                 $ack = Cache::get("alert_ack_{$alert->id}", false) ? 'Yes' : 'No';
                 $ackBy = Cache::get("alert_ack_by_{$alert->id}", '-');
                 $ackAt = Cache::get("alert_ack_time_{$alert->id}", '-');
@@ -453,6 +598,8 @@ class AlertManagementController extends Controller
                     $this->getSeverityLabel($alert->rms, $thresholds),
                     $alert->condition_status,
                     $alert->created_at->format('Y-m-d H:i:s'),
+                    $thresholds['warning'],
+                    $thresholds['critical'],
                     $ack,
                     '"' . $ackBy . '"',
                     $ackAt,

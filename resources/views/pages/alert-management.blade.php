@@ -105,7 +105,7 @@
                                 </svg>
                             </div>
                         </div>
-                        <p class="text-xs text-gray-400 mt-2">RMS ≥ <span id="criticalThreshold">7.1</span> mm/s</p>
+                        <p class="text-xs text-gray-400 mt-2">RMS ≥ <span id="criticalThreshold">4.5</span> mm/s</p>
                     </div>
 
                     <!-- Warning Alerts -->
@@ -121,7 +121,7 @@
                                 </svg>
                             </div>
                         </div>
-                        <p class="text-xs text-gray-400 mt-2">RMS ≥ <span id="warningThreshold">2.8</span> mm/s</p>
+                        <p class="text-xs text-gray-400 mt-2">RMS ≥ <span id="warningThreshold">1.8</span> mm/s</p>
                     </div>
                 </div>
 
@@ -344,152 +344,269 @@
 
             <!-- Tab Content: Settings -->
             <div id="content-settings" class="tab-content hidden">
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                    <!-- Threshold Configuration -->
+                <div class="grid grid-cols-1 gap-6">
+                    <!-- Per-Machine Threshold Configuration -->
                     <div class="bg-white rounded-xl border border-gray-100 shadow-sm p-6">
-                        <div class="flex items-center space-x-3 mb-6">
-                            <div class="p-2 bg-emerald-50 rounded-lg">
-                                <svg class="w-6 h-6 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"/>
+                        <div class="flex items-center justify-between mb-6">
+                            <div class="flex items-center space-x-3">
+                                <div class="p-2 bg-emerald-50 rounded-lg">
+                                    <svg class="w-6 h-6 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"/>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h3 class="text-lg font-semibold text-gray-900">Konfigurasi Threshold Per-Mesin</h3>
+                                    <p class="text-sm text-gray-500">Berdasarkan standar ISO 10816-3</p>
+                                </div>
+                            </div>
+                            <button onclick="loadMachineThresholds()" class="px-3 py-1.5 text-sm text-emerald-600 hover:bg-emerald-50 rounded-lg transition">
+                                <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
                                 </svg>
-                            </div>
-                            <div>
-                                <h3 class="text-lg font-semibold text-gray-900">Konfigurasi Threshold</h3>
-                                <p class="text-sm text-gray-500">Berdasarkan standar ISO 10816-3</p>
-                            </div>
+                                Refresh
+                            </button>
                         </div>
 
-                        <form id="thresholdForm" onsubmit="saveThresholds(event)">
-                            <div class="space-y-4">
-                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    <!-- Warning Threshold -->
-                                    <div>
-                                        <label class="flex items-center justify-between text-sm font-medium text-gray-700 mb-1">
-                                            <span class="flex items-center">
-                                                <span class="w-3 h-3 rounded-full bg-yellow-400 mr-2"></span>
-                                                Threshold Peringatan (Zone B)
+                        <!-- Machine Threshold Table -->
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-sm">
+                                <thead class="bg-gray-50">
+                                    <tr>
+                                        <th class="text-left py-3 px-4 font-semibold text-gray-700">Mesin</th>
+                                        <th class="text-left py-3 px-4 font-semibold text-gray-700">Lokasi</th>
+                                        <th class="text-center py-3 px-4 font-semibold text-gray-700">Daya Motor</th>
+                                        <th class="text-center py-3 px-4 font-semibold text-gray-700">ISO Class</th>
+                                        <th class="text-center py-3 px-4 font-semibold text-gray-700">
+                                            <span class="inline-flex items-center">
+                                                <span class="w-2.5 h-2.5 rounded-full bg-yellow-400 mr-1.5"></span>
+                                                Warning
                                             </span>
-                                            <span class="text-xs text-gray-400">mm/s</span>
-                                        </label>
-                                        <input type="number" step="0.1" id="thresholdWarning" value="{{ $thresholdConfig['warning'] }}"
-                                            class="w-full rounded-lg border-gray-300 text-sm focus:ring-emerald-500 focus:border-emerald-500" required>
-                                        <p class="text-xs text-gray-400 mt-1">ISO 10816-3 default: 2.8 mm/s</p>
-                                    </div>
-
-                                    <!-- Critical Threshold (Bahaya) -->
-                                    <div>
-                                        <label class="flex items-center justify-between text-sm font-medium text-gray-700 mb-1">
-                                            <span class="flex items-center">
-                                                <span class="w-3 h-3 rounded-full bg-red-500 mr-2"></span>
-                                                Threshold Bahaya (Zone C/D)
+                                        </th>
+                                        <th class="text-center py-3 px-4 font-semibold text-gray-700">
+                                            <span class="inline-flex items-center">
+                                                <span class="w-2.5 h-2.5 rounded-full bg-red-500 mr-1.5"></span>
+                                                Critical
                                             </span>
-                                            <span class="text-xs text-gray-400">mm/s</span>
-                                        </label>
-                                        <input type="number" step="0.1" id="thresholdCritical" value="{{ $thresholdConfig['critical'] }}"
-                                            class="w-full rounded-lg border-gray-300 text-sm focus:ring-emerald-500 focus:border-emerald-500" required>
-                                        <p class="text-xs text-gray-400 mt-1">ISO 10816-3 default: 7.1 mm/s</p>
-                                    </div>
-                                </div>
-
-                                <button type="submit" class="w-full px-4 py-2 bg-emerald-600 text-white text-sm font-medium rounded-lg hover:bg-emerald-700 transition">
-                                    Simpan Konfigurasi Threshold
-                                </button>
-                            </div>
-                        </form>
-
-                        <!-- ISO 10816-3 Reference -->
-                        <div class="mt-6 p-4 bg-gray-50 rounded-lg">
-                            <h4 class="text-sm font-semibold text-gray-700 mb-2">Referensi ISO 10816-3 (Simplified)</h4>
-                            <table class="w-full text-xs">
-                                <thead>
-                                    <tr class="text-gray-500">
-                                        <th class="text-left py-1">Level</th>
-                                        <th class="text-left py-1">RMS (mm/s)</th>
-                                        <th class="text-left py-1">Kondisi</th>
+                                        </th>
+                                        <th class="text-center py-3 px-4 font-semibold text-gray-700">Aksi</th>
                                     </tr>
                                 </thead>
-                                <tbody class="text-gray-600">
+                                <tbody id="machineThresholdTable" class="divide-y divide-gray-100">
                                     <tr>
-                                        <td class="py-1"><span class="w-2 h-2 inline-block rounded-full bg-green-400 mr-1"></span>Normal</td>
-                                        <td>< 2.8</td>
-                                        <td>Aman / Good</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="py-1"><span class="w-2 h-2 inline-block rounded-full bg-yellow-400 mr-1"></span>Warning</td>
-                                        <td>2.8 - 7.1</td>
-                                        <td>Peringatan / Acceptable</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="py-1"><span class="w-2 h-2 inline-block rounded-full bg-red-500 mr-1"></span>Critical</td>
-                                        <td>≥ 7.1</td>
-                                        <td>Bahaya / Unsatisfactory</td>
+                                        <td colspan="7" class="py-8 text-center text-gray-400">
+                                            <svg class="w-8 h-8 mx-auto mb-2 animate-spin" fill="none" viewBox="0 0 24 24">
+                                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+                                            </svg>
+                                            Memuat data...
+                                        </td>
                                     </tr>
                                 </tbody>
                             </table>
                         </div>
+
+                        <!-- ISO 10816-3 Reference -->
+                        <div class="mt-6 p-4 bg-gray-50 rounded-lg">
+                            <h4 class="text-sm font-semibold text-gray-700 mb-3">Referensi ISO 10816-3 Threshold</h4>
+                            <div class="grid grid-cols-1 md:grid-cols-4 gap-3 text-xs">
+                                <div class="p-3 bg-white rounded-lg border border-gray-200">
+                                    <div class="font-semibold text-gray-700 mb-1">Class I</div>
+                                    <div class="text-gray-500 mb-2">Motor ≤ 15 kW (20 HP)</div>
+                                    <div class="space-y-1">
+                                        <div class="flex justify-between"><span class="text-yellow-600">Warning:</span> <span>1.8 mm/s</span></div>
+                                        <div class="flex justify-between"><span class="text-red-600">Critical:</span> <span>4.5 mm/s</span></div>
+                                    </div>
+                                </div>
+                                <div class="p-3 bg-white rounded-lg border border-gray-200">
+                                    <div class="font-semibold text-gray-700 mb-1">Class II</div>
+                                    <div class="text-gray-500 mb-2">Motor 15-75 kW (20-100 HP)</div>
+                                    <div class="space-y-1">
+                                        <div class="flex justify-between"><span class="text-yellow-600">Warning:</span> <span>2.8 mm/s</span></div>
+                                        <div class="flex justify-between"><span class="text-red-600">Critical:</span> <span>7.1 mm/s</span></div>
+                                    </div>
+                                </div>
+                                <div class="p-3 bg-white rounded-lg border border-gray-200">
+                                    <div class="font-semibold text-gray-700 mb-1">Class III</div>
+                                    <div class="text-gray-500 mb-2">Motor 75-300 kW (100-400 HP)</div>
+                                    <div class="space-y-1">
+                                        <div class="flex justify-between"><span class="text-yellow-600">Warning:</span> <span>4.5 mm/s</span></div>
+                                        <div class="flex justify-between"><span class="text-red-600">Critical:</span> <span>11.2 mm/s</span></div>
+                                    </div>
+                                </div>
+                                <div class="p-3 bg-white rounded-lg border border-gray-200">
+                                    <div class="font-semibold text-gray-700 mb-1">Class IV</div>
+                                    <div class="text-gray-500 mb-2">Turbines, Rigid Foundation</div>
+                                    <div class="space-y-1">
+                                        <div class="flex justify-between"><span class="text-yellow-600">Warning:</span> <span>7.1 mm/s</span></div>
+                                        <div class="flex justify-between"><span class="text-red-600">Critical:</span> <span>18.0 mm/s</span></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
                     <!-- Notification Settings -->
-                    <div class="bg-white rounded-xl border border-gray-100 shadow-sm p-4">
-                        <div class="flex items-center space-x-2 mb-4">
-                            <div class="p-1.5 bg-blue-50 rounded-lg">
-                                <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div class="bg-white rounded-xl border border-gray-100 shadow-sm p-6">
+                        <div class="flex items-center space-x-3 mb-6">
+                            <div class="p-2 bg-blue-50 rounded-lg">
+                                <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
                                 </svg>
                             </div>
-                            <h3 class="text-base font-semibold text-gray-900">Pengaturan Notifikasi</h3>
+                            <div>
+                                <h3 class="text-lg font-semibold text-gray-900">Pengaturan Notifikasi</h3>
+                                <p class="text-sm text-gray-500">Konfigurasi alert dan notifikasi</p>
+                            </div>
                         </div>
 
                         <form id="notificationForm" onsubmit="saveNotifications(event)">
-                            <div class="space-y-3">
-                                <!-- Toggle Options Row -->
-                                <div class="grid grid-cols-2 gap-3">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <!-- Toggle Options -->
+                                <div class="space-y-4">
                                     <!-- Email Notifications -->
-                                    <div class="flex items-center justify-between p-2.5 bg-gray-50 rounded-lg">
+                                    <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
                                         <div>
-                                            <h4 class="text-xs font-medium text-gray-700">Notifikasi Email</h4>
+                                            <h4 class="text-sm font-medium text-gray-700">Notifikasi Email</h4>
+                                            <p class="text-xs text-gray-500">Kirim alert ke email</p>
                                         </div>
                                         <button type="button" id="emailToggle" onclick="toggleSwitch('email')"
-                                            class="relative inline-flex h-5 w-9 items-center rounded-full transition-all duration-300"
+                                            class="relative inline-flex h-6 w-11 items-center rounded-full transition-all duration-300"
                                             style="background-color: {{ $notificationConfig['email_enabled'] ? '#059669' : '#d1d5db' }}">
-                                            <span id="emailKnob" class="inline-block h-4 w-4 rounded-full bg-white shadow-md transition-all duration-300"
-                                                style="transform: translateX({{ $notificationConfig['email_enabled'] ? '18px' : '2px' }})"></span>
+                                            <span id="emailKnob" class="inline-block h-5 w-5 rounded-full bg-white shadow-md transition-all duration-300"
+                                                style="transform: translateX({{ $notificationConfig['email_enabled'] ? '22px' : '2px' }})"></span>
                                         </button>
                                         <input type="hidden" id="emailEnabled" value="{{ $notificationConfig['email_enabled'] ? '1' : '0' }}">
                                     </div>
 
                                     <!-- Sound Notifications -->
-                                    <div class="flex items-center justify-between p-2.5 bg-gray-50 rounded-lg">
+                                    <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
                                         <div>
-                                            <h4 class="text-xs font-medium text-gray-700">Notifikasi Suara</h4>
+                                            <h4 class="text-sm font-medium text-gray-700">Notifikasi Suara</h4>
+                                            <p class="text-xs text-gray-500">Bunyi saat alert muncul</p>
                                         </div>
                                         <button type="button" id="soundToggle" onclick="toggleSwitch('sound')"
-                                            class="relative inline-flex h-5 w-9 items-center rounded-full transition-all duration-300"
+                                            class="relative inline-flex h-6 w-11 items-center rounded-full transition-all duration-300"
                                             style="background-color: {{ $notificationConfig['alert_sound_enabled'] ? '#059669' : '#d1d5db' }}">
-                                            <span id="soundKnob" class="inline-block h-4 w-4 rounded-full bg-white shadow-md transition-all duration-300"
-                                                style="transform: translateX({{ $notificationConfig['alert_sound_enabled'] ? '18px' : '2px' }})"></span>
+                                            <span id="soundKnob" class="inline-block h-5 w-5 rounded-full bg-white shadow-md transition-all duration-300"
+                                                style="transform: translateX({{ $notificationConfig['alert_sound_enabled'] ? '22px' : '2px' }})"></span>
                                         </button>
                                         <input type="hidden" id="soundEnabled" value="{{ $notificationConfig['alert_sound_enabled'] ? '1' : '0' }}">
+                                    </div>
+
+                                    <!-- Auto Acknowledge -->
+                                    <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                                        <div>
+                                            <h4 class="text-sm font-medium text-gray-700">Auto-Acknowledge</h4>
+                                            <p class="text-xs text-gray-500">Otomatis acknowledge setelah</p>
+                                        </div>
+                                        <div class="flex items-center gap-2">
+                                            <input type="number" id="autoAcknowledgeHours" value="{{ $notificationConfig['auto_acknowledge_hours'] }}" min="1" max="168"
+                                                class="w-16 rounded-lg border-gray-300 text-sm focus:ring-emerald-500 focus:border-emerald-500">
+                                            <span class="text-sm text-gray-500">jam</span>
+                                        </div>
                                     </div>
                                 </div>
 
                                 <!-- Email Recipients -->
                                 <div id="emailRecipientsContainer" class="{{ $notificationConfig['email_enabled'] ? '' : 'hidden' }}">
-                                    <label class="block text-xs font-medium text-gray-700 mb-1">Penerima Email</label>
-                                    <textarea id="emailRecipients" rows="2" placeholder="email1@example.com&#10;email2@example.com"
-                                        class="w-full rounded-lg border-gray-300 text-xs focus:ring-emerald-500 focus:border-emerald-500">{{ $notificationConfig['email_recipients'] }}</textarea>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Penerima Email</label>
+                                    <textarea id="emailRecipients" rows="4" placeholder="email1@example.com&#10;email2@example.com"
+                                        class="w-full rounded-lg border-gray-300 text-sm focus:ring-emerald-500 focus:border-emerald-500">{{ $notificationConfig['email_recipients'] }}</textarea>
+                                    <p class="text-xs text-gray-400 mt-1">Satu email per baris</p>
+                                </div>
+                            </div>
+
+                            <div class="mt-6">
+                                <button type="submit" class="px-6 py-2.5 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition">
+                                    Simpan Pengaturan Notifikasi
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Machine Threshold Edit Modal -->
+            <div id="thresholdModal" class="fixed inset-0 z-50 hidden overflow-y-auto">
+                <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:p-0">
+                    <div class="fixed inset-0 transition-opacity bg-gray-500 bg-opacity-75" onclick="closeThresholdModal()"></div>
+                    <div class="relative bg-white rounded-xl shadow-xl sm:max-w-lg sm:w-full">
+                        <div class="px-6 py-4 border-b border-gray-100">
+                            <div class="flex items-center justify-between">
+                                <h3 class="text-lg font-semibold text-gray-900" id="modalMachineName">Edit Threshold</h3>
+                                <button onclick="closeThresholdModal()" class="text-gray-400 hover:text-gray-500">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                        <form id="machineThresholdForm" onsubmit="saveMachineThreshold(event)">
+                            <input type="hidden" id="modalMachineId">
+                            <div class="px-6 py-4 space-y-4">
+                                <!-- ISO Class Preset -->
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Preset ISO 10816-3</label>
+                                    <select id="modalIsoClass" onchange="applyIsoPreset()"
+                                        class="w-full rounded-lg border-gray-300 text-sm focus:ring-emerald-500 focus:border-emerald-500">
+                                        <option value="Class I">Class I - Motor ≤ 15 kW (1.8 / 4.5)</option>
+                                        <option value="Class II">Class II - Motor 15-75 kW (2.8 / 7.1)</option>
+                                        <option value="Class III">Class III - Motor 75-300 kW (4.5 / 11.2)</option>
+                                        <option value="Class IV">Class IV - Turbines (7.1 / 18.0)</option>
+                                    </select>
                                 </div>
 
-                                <!-- Auto Acknowledge -->
-                                <div class="flex items-center gap-3">
-                                    <label class="text-xs font-medium text-gray-700 whitespace-nowrap">Auto-Acknowledge</label>
-                                    <input type="number" id="autoAcknowledgeHours" value="{{ $notificationConfig['auto_acknowledge_hours'] }}" min="1" max="168"
-                                        class="w-20 rounded-lg border-gray-300 text-xs focus:ring-emerald-500 focus:border-emerald-500">
-                                    <span class="text-xs text-gray-500">jam</span>
+                                <!-- Motor Info -->
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">Daya Motor (HP)</label>
+                                        <input type="number" step="0.1" id="modalMotorPower" placeholder="e.g. 20"
+                                            class="w-full rounded-lg border-gray-300 text-sm focus:ring-emerald-500 focus:border-emerald-500">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">RPM Motor</label>
+                                        <input type="number" id="modalMotorRpm" placeholder="e.g. 3500"
+                                            class="w-full rounded-lg border-gray-300 text-sm focus:ring-emerald-500 focus:border-emerald-500">
+                                    </div>
                                 </div>
 
-                                <button type="submit" class="w-full px-3 py-2 bg-blue-600 text-white text-xs font-medium rounded-lg hover:bg-blue-700 transition">
-                                    Simpan Pengaturan
+                                <!-- Thresholds -->
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="flex items-center text-sm font-medium text-gray-700 mb-1">
+                                            <span class="w-3 h-3 rounded-full bg-yellow-400 mr-2"></span>
+                                            Warning (mm/s)
+                                        </label>
+                                        <input type="number" step="0.1" id="modalWarning" required
+                                            class="w-full rounded-lg border-gray-300 text-sm focus:ring-emerald-500 focus:border-emerald-500">
+                                    </div>
+                                    <div>
+                                        <label class="flex items-center text-sm font-medium text-gray-700 mb-1">
+                                            <span class="w-3 h-3 rounded-full bg-red-500 mr-2"></span>
+                                            Critical (mm/s)
+                                        </label>
+                                        <input type="number" step="0.1" id="modalCritical" required
+                                            class="w-full rounded-lg border-gray-300 text-sm focus:ring-emerald-500 focus:border-emerald-500">
+                                    </div>
+                                </div>
+
+                                <!-- Info Note -->
+                                <div class="p-3 bg-blue-50 rounded-lg">
+                                    <p class="text-xs text-blue-700">
+                                        <strong>Tip:</strong> Pilih preset ISO sesuai daya motor. Untuk Westfalia CA 505-01-12:
+                                        <br>• Motor Scroll (20 HP) → Class I
+                                        <br>• Motor Bowl (120 HP) → Class II
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="px-6 py-4 border-t border-gray-100 flex justify-end space-x-3">
+                                <button type="button" onclick="closeThresholdModal()"
+                                    class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition">
+                                    Batal
+                                </button>
+                                <button type="submit"
+                                    class="px-4 py-2 text-sm font-medium text-white bg-emerald-600 rounded-lg hover:bg-emerald-700 transition">
+                                    Simpan Threshold
                                 </button>
                             </div>
                         </form>
@@ -560,6 +677,7 @@
             if (tabName === 'alerts') loadAlerts();
             if (tabName === 'history') loadHistory();
             if (tabName === 'overview') loadStats();
+            if (tabName === 'settings') loadMachineThresholds();
         }
 
         // Load statistics
@@ -1051,14 +1169,138 @@
             document.querySelectorAll('.alert-checkbox').forEach(cb => cb.checked = selectAll);
         }
 
-        // Save thresholds
-        async function saveThresholds(e) {
+        // ISO Threshold presets
+        const isoPresets = {
+            'Class I': { warning: 1.8, critical: 4.5 },
+            'Class II': { warning: 2.8, critical: 7.1 },
+            'Class III': { warning: 4.5, critical: 11.2 },
+            'Class IV': { warning: 7.1, critical: 18.0 }
+        };
+
+        // Load machine thresholds
+        async function loadMachineThresholds() {
+            try {
+                const response = await fetch('/api/alert-management/machine-thresholds');
+                const data = await response.json();
+
+                if (data.success) {
+                    renderMachineThresholdTable(data.machines);
+                }
+            } catch (error) {
+                console.error('Error loading machine thresholds:', error);
+                showToast('Gagal memuat data threshold mesin', 'error');
+            }
+        }
+
+        // Render machine threshold table
+        function renderMachineThresholdTable(machines) {
+            const tbody = document.getElementById('machineThresholdTable');
+
+            if (machines.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="7" class="py-8 text-center text-gray-400">
+                            <svg class="w-12 h-12 mx-auto mb-2 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                            Belum ada mesin terdaftar
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            tbody.innerHTML = machines.map(machine => `
+                <tr class="hover:bg-gray-50">
+                    <td class="py-3 px-4">
+                        <div class="font-medium text-gray-900">${machine.name}</div>
+                    </td>
+                    <td class="py-3 px-4 text-gray-600">${machine.location || '-'}</td>
+                    <td class="py-3 px-4 text-center">
+                        ${machine.motor_power_hp ? machine.motor_power_hp + ' HP' : '-'}
+                    </td>
+                    <td class="py-3 px-4 text-center">
+                        <span class="px-2 py-1 text-xs font-medium rounded-full ${getIsoClassColor(machine.iso_class)}">
+                            ${machine.iso_class || 'Class I'}
+                        </span>
+                    </td>
+                    <td class="py-3 px-4 text-center">
+                        <span class="font-mono text-yellow-600 font-semibold">${machine.threshold_warning}</span>
+                    </td>
+                    <td class="py-3 px-4 text-center">
+                        <span class="font-mono text-red-600 font-semibold">${machine.threshold_critical}</span>
+                    </td>
+                    <td class="py-3 px-4 text-center">
+                        <button onclick="openThresholdModal(${machine.id}, '${machine.name}', ${machine.threshold_warning}, ${machine.threshold_critical}, '${machine.iso_class || 'Class I'}', ${machine.motor_power_hp || 'null'}, ${machine.motor_rpm || 'null'})"
+                            class="px-3 py-1.5 text-xs font-medium text-emerald-600 bg-emerald-50 rounded-lg hover:bg-emerald-100 transition">
+                            <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                            </svg>
+                            Edit
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        // Get ISO class badge color
+        function getIsoClassColor(isoClass) {
+            const colors = {
+                'Class I': 'bg-blue-100 text-blue-700',
+                'Class II': 'bg-green-100 text-green-700',
+                'Class III': 'bg-yellow-100 text-yellow-700',
+                'Class IV': 'bg-red-100 text-red-700'
+            };
+            return colors[isoClass] || colors['Class I'];
+        }
+
+        // Open threshold modal
+        function openThresholdModal(machineId, machineName, warning, critical, isoClass, motorPower, motorRpm) {
+            document.getElementById('modalMachineId').value = machineId;
+            document.getElementById('modalMachineName').textContent = 'Edit Threshold - ' + machineName;
+            document.getElementById('modalWarning').value = warning;
+            document.getElementById('modalCritical').value = critical;
+            document.getElementById('modalIsoClass').value = isoClass || 'Class I';
+            document.getElementById('modalMotorPower').value = motorPower || '';
+            document.getElementById('modalMotorRpm').value = motorRpm || '';
+
+            document.getElementById('thresholdModal').classList.remove('hidden');
+        }
+
+        // Close threshold modal
+        function closeThresholdModal() {
+            document.getElementById('thresholdModal').classList.add('hidden');
+        }
+
+        // Apply ISO preset when dropdown changes
+        function applyIsoPreset() {
+            const isoClass = document.getElementById('modalIsoClass').value;
+            const preset = isoPresets[isoClass];
+
+            if (preset) {
+                document.getElementById('modalWarning').value = preset.warning;
+                document.getElementById('modalCritical').value = preset.critical;
+            }
+        }
+
+        // Save machine threshold
+        async function saveMachineThreshold(e) {
             e.preventDefault();
 
             const data = {
-                warning: parseFloat(document.getElementById('thresholdWarning').value),
-                critical: parseFloat(document.getElementById('thresholdCritical').value),
+                machine_id: parseInt(document.getElementById('modalMachineId').value),
+                warning: parseFloat(document.getElementById('modalWarning').value),
+                critical: parseFloat(document.getElementById('modalCritical').value),
+                iso_class: document.getElementById('modalIsoClass').value,
+                motor_power_hp: document.getElementById('modalMotorPower').value || null,
+                motor_rpm: document.getElementById('modalMotorRpm').value || null
             };
+
+            // Validate thresholds
+            if (data.warning >= data.critical) {
+                showToast('Threshold Warning harus lebih kecil dari Critical', 'error');
+                return;
+            }
 
             try {
                 const response = await fetch('/api/alert-management/thresholds', {
@@ -1072,16 +1314,16 @@
 
                 const result = await response.json();
                 if (result.success) {
-                    showToast('Konfigurasi threshold berhasil disimpan', 'success');
-                    // Update threshold displays
-                    document.getElementById('warningThreshold').textContent = data.warning;
-                    document.getElementById('criticalThreshold').textContent = data.critical;
+                    showToast('Threshold berhasil disimpan untuk ' + result.config.machine_name, 'success');
+                    closeThresholdModal();
+                    loadMachineThresholds();
+                    loadStats(); // Refresh stats
                 } else {
                     showToast(result.message, 'error');
                 }
             } catch (error) {
-                console.error('Error saving thresholds:', error);
-                showToast('Gagal menyimpan konfigurasi', 'error');
+                console.error('Error saving threshold:', error);
+                showToast('Gagal menyimpan threshold', 'error');
             }
         }
 
@@ -1101,7 +1343,7 @@
             } else {
                 // Turn on
                 toggle.style.backgroundColor = '#059669'; // emerald-600
-                knob.style.transform = 'translateX(18px)';
+                knob.style.transform = 'translateX(22px)';
                 input.value = '1';
             }
 

@@ -281,8 +281,8 @@
                     const statusBgClass = isNormal ? 'bg-emerald-100 text-emerald-800' : 'bg-red-100 text-red-800';
                     const statusText = isNormal ? '✓ NORMAL' : '⚠ ANOMALI';
                     const iconBgClass = isNormal ? 'bg-emerald-100 text-emerald-600' : 'bg-red-100 text-red-600';
-                    // ISO 10816-3 Thresholds: < 2.8 (green), 2.8-7.1 (yellow), > 7.1 (red)
-                    const progressClass = rmsValue <= 2.8 ? 'bg-emerald-500' : rmsValue <= 7.1 ? 'bg-yellow-500' : 'bg-red-500';
+                    // ISO 10816-3 Thresholds Class I: < 1.8 (green), 1.8-4.5 (yellow), > 4.5 (red)
+                    const progressClass = rmsValue <= 1.8 ? 'bg-emerald-500' : rmsValue <= 4.5 ? 'bg-yellow-500' : 'bg-red-500';
 
                     return `
                             <div class="group relative bg-white rounded-xl border border-gray-200 shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden">
@@ -318,7 +318,7 @@
                                         <div class="w-full bg-gray-300 rounded-full h-2.5 overflow-hidden">
                                             <div class="h-full ${progressClass} rounded-full transition-all duration-300" style="width: ${rmsPercent}%"></div>
                                         </div>
-                                        <p class="text-xs text-gray-500 mt-1">Normal: 0 - 2.8 mm/s | Waspada: 2.8 - 7.1 mm/s | Bahaya: > 7.1 mm/s</p>
+                                        <p class="text-xs text-gray-500 mt-1">Normal: 0 - 1.8 mm/s | Waspada: 1.8 - 4.5 mm/s | Bahaya: > 4.5 mm/s</p>
                                     </div>
 
                                     <!-- Metrics Grid -->

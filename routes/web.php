@@ -85,6 +85,11 @@ Route::middleware('auth')->group(function () {
     Route::post('/api/alert-management/notifications', [AlertManagementController::class, 'updateNotifications']);
     Route::get('/api/alert-management/history', [AlertManagementController::class, 'getHistory']);
     Route::get('/api/alert-management/export', [AlertManagementController::class, 'exportAlerts']);
+
+    // Per-machine threshold API routes
+    Route::get('/api/alert-management/machine-thresholds', [AlertManagementController::class, 'getAllMachineThresholds']);
+    Route::get('/api/alert-management/machine-thresholds/{machineId}', [AlertManagementController::class, 'getMachineThresholds']);
+    Route::post('/api/alert-management/apply-iso-preset', [AlertManagementController::class, 'applyIsoPreset']);
 });
 
 Route::middleware('auth')->group(function () {
