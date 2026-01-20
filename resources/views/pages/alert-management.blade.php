@@ -1,0 +1,1240 @@
+<x-app-layout>
+    @push('scripts')
+        <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    @endpush
+
+    <x-slot name="header">
+        <div class="flex items-center justify-between">
+            <div class="flex items-center space-x-8">
+                <h2 class="font-bold text-xl text-emerald-900">
+                    Manajemen Alert
+                </h2>
+                <!-- Active Alerts Indicator -->
+                <div id="alertIndicator" class="flex items-center space-x-2 px-3 py-1.5 bg-yellow-50 rounded-full border border-yellow-200">
+                    <div class="relative flex h-3 w-3">
+                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-yellow-400 opacity-75"></span>
+                        <span class="relative inline-flex rounded-full h-3 w-3 bg-yellow-500"></span>
+                    </div>
+                    <span class="text-xs font-semibold text-yellow-700" id="activeAlertCount">Loading...</span>
+                </div>
+            </div>
+            <div class="flex items-center space-x-3">
+                <button onclick="exportAlerts()" class="inline-flex items-center px-4 py-2 bg-emerald-600 text-white text-sm font-medium rounded-lg hover:bg-emerald-700 transition">
+                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                    </svg>
+                    Export CSV
+                </button>
+                <div class="text-sm text-gray-600 bg-gray-50 px-3 py-1.5 rounded-lg border border-gray-200">
+                    <span class="font-semibold" id="currentTime">{{ now()->format('d M Y, H:i:s') }}</span>
+                </div>
+            </div>
+        </div>
+    </x-slot>
+
+    <div class="py-6">
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
+
+            <!-- Tabs Navigation -->
+            <div class="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
+                <div class="border-b border-gray-200">
+                    <nav class="flex -mb-px">
+                        <button onclick="switchTab('overview')" id="tab-overview"
+                            class="tab-btn active px-6 py-4 text-sm font-medium border-b-2 border-emerald-500 text-emerald-600 bg-emerald-50/50">
+                            <svg class="w-5 h-5 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                            </svg>
+                            Overview
+                        </button>
+                        <button onclick="switchTab('alerts')" id="tab-alerts"
+                            class="tab-btn px-6 py-4 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300">
+                            <svg class="w-5 h-5 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
+                            </svg>
+                            Daftar Alert
+                        </button>
+                        <button onclick="switchTab('history')" id="tab-history"
+                            class="tab-btn px-6 py-4 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300">
+                            <svg class="w-5 h-5 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                            Riwayat
+                        </button>
+                        <button onclick="switchTab('settings')" id="tab-settings"
+                            class="tab-btn px-6 py-4 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300">
+                            <svg class="w-5 h-5 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                            </svg>
+                            Pengaturan
+                        </button>
+                    </nav>
+                </div>
+            </div>
+
+            <!-- Tab Content: Overview -->
+            <div id="content-overview" class="tab-content">
+                <!-- Statistics Cards -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+                    <!-- Total Alerts Today -->
+                    <div class="bg-white rounded-xl border border-gray-100 shadow-sm p-6">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm font-medium text-gray-500">Alert Hari Ini</p>
+                                <p class="text-3xl font-bold text-gray-900" id="statToday">-</p>
+                            </div>
+                            <div class="p-3 bg-blue-50 rounded-xl">
+                                <svg class="w-8 h-8 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
+                                </svg>
+                            </div>
+                        </div>
+                        <p class="text-xs text-gray-400 mt-2">Sejak pukul 00:00</p>
+                    </div>
+
+                    <!-- Danger Alerts -->
+                    <div class="bg-white rounded-xl border border-gray-100 shadow-sm p-6">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm font-medium text-gray-500">Alert Bahaya</p>
+                                <p class="text-3xl font-bold text-red-600" id="statDanger">-</p>
+                            </div>
+                            <div class="p-3 bg-red-50 rounded-xl">
+                                <svg class="w-8 h-8 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                                </svg>
+                            </div>
+                        </div>
+                        <p class="text-xs text-gray-400 mt-2">RMS ≥ <span id="dangerThreshold">11.2</span> mm/s</p>
+                    </div>
+
+                    <!-- Critical Alerts -->
+                    <div class="bg-white rounded-xl border border-gray-100 shadow-sm p-6">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm font-medium text-gray-500">Alert Kritis</p>
+                                <p class="text-3xl font-bold text-orange-600" id="statCritical">-</p>
+                            </div>
+                            <div class="p-3 bg-orange-50 rounded-xl">
+                                <svg class="w-8 h-8 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                </svg>
+                            </div>
+                        </div>
+                        <p class="text-xs text-gray-400 mt-2">RMS ≥ <span id="criticalThreshold">7.1</span> mm/s</p>
+                    </div>
+
+                    <!-- Warning Alerts -->
+                    <div class="bg-white rounded-xl border border-gray-100 shadow-sm p-6">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm font-medium text-gray-500">Alert Peringatan</p>
+                                <p class="text-3xl font-bold text-yellow-600" id="statWarning">-</p>
+                            </div>
+                            <div class="p-3 bg-yellow-50 rounded-xl">
+                                <svg class="w-8 h-8 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                                </svg>
+                            </div>
+                        </div>
+                        <p class="text-xs text-gray-400 mt-2">RMS ≥ <span id="warningThreshold">2.8</span> mm/s</p>
+                    </div>
+                </div>
+
+                <!-- Charts Row -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+                    <!-- Alerts by Machine -->
+                    <div class="bg-white rounded-xl border border-gray-100 shadow-sm p-6 overflow-hidden" style="max-height: 350px;">
+                        <h3 class="text-lg font-semibold text-gray-900 mb-4">Alert per Mesin (24 Jam)</h3>
+                        <div style="position: relative; height: 250px; width: 100%;">
+                            <canvas id="alertsByMachineChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Alerts by Severity -->
+                    <div class="bg-white rounded-xl border border-gray-100 shadow-sm p-6 overflow-hidden" style="max-height: 350px;">
+                        <h3 class="text-lg font-semibold text-gray-900 mb-4">Distribusi Severity</h3>
+                        <div style="position: relative; height: 250px; width: 100%;">
+                            <canvas id="alertsBySeverityChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Acknowledgment Status -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <div class="bg-white rounded-xl border border-gray-100 shadow-sm p-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-lg font-semibold text-gray-900">Status Acknowledgment</h3>
+                        </div>
+                        <div class="space-y-4">
+                            <div class="flex items-center justify-between p-4 bg-green-50 rounded-lg">
+                                <div class="flex items-center space-x-3">
+                                    <div class="p-2 bg-green-100 rounded-lg">
+                                        <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                                        </svg>
+                                    </div>
+                                    <span class="font-medium text-green-800">Acknowledged</span>
+                                </div>
+                                <span class="text-2xl font-bold text-green-600" id="statAcknowledged">-</span>
+                            </div>
+                            <div class="flex items-center justify-between p-4 bg-red-50 rounded-lg">
+                                <div class="flex items-center space-x-3">
+                                    <div class="p-2 bg-red-100 rounded-lg">
+                                        <svg class="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                                        </svg>
+                                    </div>
+                                    <span class="font-medium text-red-800">Unacknowledged</span>
+                                </div>
+                                <span class="text-2xl font-bold text-red-600" id="statUnacknowledged">-</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Recent Critical Alerts -->
+                    <div class="lg:col-span-2 bg-white rounded-xl border border-gray-100 shadow-sm p-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-lg font-semibold text-gray-900">Alert Terbaru</h3>
+                            <button onclick="switchTab('alerts')" class="text-sm text-emerald-600 hover:text-emerald-700 font-medium">
+                                Lihat Semua →
+                            </button>
+                        </div>
+                        <div class="space-y-3" id="recentAlertsList">
+                            <div class="text-center py-8 text-gray-400">
+                                <svg class="w-12 h-12 mx-auto mb-3 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"/>
+                                </svg>
+                                <p>Memuat data alert...</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab Content: Alerts List -->
+            <div id="content-alerts" class="tab-content hidden">
+                <!-- Filters -->
+                <div class="bg-white rounded-xl border border-gray-100 shadow-sm p-6 mb-6">
+                    <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Mesin</label>
+                            <select id="filterMachine" onchange="loadAlerts()" class="w-full rounded-lg border-gray-300 text-sm focus:ring-emerald-500 focus:border-emerald-500">
+                                <option value="">Semua Mesin</option>
+                                @foreach($machines as $machine)
+                                    <option value="{{ $machine->id }}">{{ $machine->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Severity</label>
+                            <select id="filterSeverity" onchange="loadAlerts()" class="w-full rounded-lg border-gray-300 text-sm focus:ring-emerald-500 focus:border-emerald-500">
+                                <option value="">Semua Level</option>
+                                <option value="danger">Bahaya</option>
+                                <option value="critical">Kritis</option>
+                                <option value="warning">Peringatan</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Dari Tanggal</label>
+                            <input type="date" id="filterDateFrom" onchange="loadAlerts()" class="w-full rounded-lg border-gray-300 text-sm focus:ring-emerald-500 focus:border-emerald-500">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Sampai Tanggal</label>
+                            <input type="date" id="filterDateTo" onchange="loadAlerts()" class="w-full rounded-lg border-gray-300 text-sm focus:ring-emerald-500 focus:border-emerald-500">
+                        </div>
+                        <div class="flex items-end">
+                            <button onclick="bulkAcknowledge()" class="w-full px-4 py-2 bg-emerald-600 text-white text-sm font-medium rounded-lg hover:bg-emerald-700 transition">
+                                Acknowledge Terpilih
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Alerts Table -->
+                <div class="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-4 py-3 text-left">
+                                        <input type="checkbox" id="selectAll" onchange="toggleSelectAll()" class="rounded border-gray-300 text-emerald-600 focus:ring-emerald-500">
+                                    </th>
+                                    <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">ID</th>
+                                    <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Mesin</th>
+                                    <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Lokasi</th>
+                                    <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">RMS (mm/s)</th>
+                                    <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Severity</th>
+                                    <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Waktu</th>
+                                    <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Status</th>
+                                    <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody class="bg-white divide-y divide-gray-200" id="alertsTableBody">
+                                <tr>
+                                    <td colspan="9" class="px-4 py-8 text-center text-gray-400">
+                                        Memuat data alert...
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <!-- Pagination -->
+                    <div class="px-6 py-4 border-t border-gray-200 flex items-center justify-between">
+                        <div class="text-sm text-gray-500" id="paginationInfo">
+                            Menampilkan 0 dari 0 alert
+                        </div>
+                        <div class="flex space-x-2" id="paginationControls">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab Content: History -->
+            <div id="content-history" class="tab-content hidden">
+                <!-- History Filters -->
+                <div class="bg-white rounded-xl border border-gray-100 shadow-sm p-6 mb-6">
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Mesin</label>
+                            <select id="historyFilterMachine" onchange="loadHistory()" class="w-full rounded-lg border-gray-300 text-sm focus:ring-emerald-500 focus:border-emerald-500">
+                                <option value="">Semua Mesin</option>
+                                @foreach($machines as $machine)
+                                    <option value="{{ $machine->id }}">{{ $machine->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Dari Tanggal</label>
+                            <input type="date" id="historyDateFrom" onchange="loadHistory()" class="w-full rounded-lg border-gray-300 text-sm focus:ring-emerald-500 focus:border-emerald-500">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Sampai Tanggal</label>
+                            <input type="date" id="historyDateTo" onchange="loadHistory()" class="w-full rounded-lg border-gray-300 text-sm focus:ring-emerald-500 focus:border-emerald-500">
+                        </div>
+                        <div class="flex items-end">
+                            <button onclick="loadHistory()" class="w-full px-4 py-2 bg-gray-100 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-200 transition">
+                                <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+                                </svg>
+                                Refresh
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- History Table -->
+                <div class="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">ID</th>
+                                    <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Mesin</th>
+                                    <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Lokasi</th>
+                                    <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">RMS (mm/s)</th>
+                                    <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Severity</th>
+                                    <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Terjadi</th>
+                                    <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Diakui Oleh</th>
+                                    <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Waktu Akui</th>
+                                </tr>
+                            </thead>
+                            <tbody class="bg-white divide-y divide-gray-200" id="historyTableBody">
+                                <tr>
+                                    <td colspan="8" class="px-4 py-8 text-center text-gray-400">
+                                        Memuat riwayat alert...
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <!-- History Pagination -->
+                    <div class="px-6 py-4 border-t border-gray-200 flex items-center justify-between">
+                        <div class="text-sm text-gray-500" id="historyPaginationInfo">
+                            Menampilkan 0 dari 0 riwayat
+                        </div>
+                        <div class="flex space-x-2" id="historyPaginationControls">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab Content: Settings -->
+            <div id="content-settings" class="tab-content hidden">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <!-- Threshold Configuration -->
+                    <div class="bg-white rounded-xl border border-gray-100 shadow-sm p-6">
+                        <div class="flex items-center space-x-3 mb-6">
+                            <div class="p-2 bg-emerald-50 rounded-lg">
+                                <svg class="w-6 h-6 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"/>
+                                </svg>
+                            </div>
+                            <div>
+                                <h3 class="text-lg font-semibold text-gray-900">Konfigurasi Threshold</h3>
+                                <p class="text-sm text-gray-500">Berdasarkan standar ISO 10816-3</p>
+                            </div>
+                        </div>
+
+                        <form id="thresholdForm" onsubmit="saveThresholds(event)">
+                            <div class="space-y-4">
+                                <!-- Warning Threshold -->
+                                <div>
+                                    <label class="flex items-center justify-between text-sm font-medium text-gray-700 mb-1">
+                                        <span class="flex items-center">
+                                            <span class="w-3 h-3 rounded-full bg-yellow-400 mr-2"></span>
+                                            Threshold Peringatan (Zone B)
+                                        </span>
+                                        <span class="text-xs text-gray-400">mm/s</span>
+                                    </label>
+                                    <input type="number" step="0.1" id="thresholdWarning" value="{{ $thresholdConfig['warning'] }}"
+                                        class="w-full rounded-lg border-gray-300 text-sm focus:ring-emerald-500 focus:border-emerald-500" required>
+                                    <p class="text-xs text-gray-400 mt-1">ISO 10816-3 default: 2.8 mm/s</p>
+                                </div>
+
+                                <!-- Critical Threshold -->
+                                <div>
+                                    <label class="flex items-center justify-between text-sm font-medium text-gray-700 mb-1">
+                                        <span class="flex items-center">
+                                            <span class="w-3 h-3 rounded-full bg-orange-400 mr-2"></span>
+                                            Threshold Kritis (Zone C)
+                                        </span>
+                                        <span class="text-xs text-gray-400">mm/s</span>
+                                    </label>
+                                    <input type="number" step="0.1" id="thresholdCritical" value="{{ $thresholdConfig['critical'] }}"
+                                        class="w-full rounded-lg border-gray-300 text-sm focus:ring-emerald-500 focus:border-emerald-500" required>
+                                    <p class="text-xs text-gray-400 mt-1">ISO 10816-3 default: 7.1 mm/s</p>
+                                </div>
+
+                                <!-- Danger Threshold -->
+                                <div>
+                                    <label class="flex items-center justify-between text-sm font-medium text-gray-700 mb-1">
+                                        <span class="flex items-center">
+                                            <span class="w-3 h-3 rounded-full bg-red-500 mr-2"></span>
+                                            Threshold Bahaya (Zone D)
+                                        </span>
+                                        <span class="text-xs text-gray-400">mm/s</span>
+                                    </label>
+                                    <input type="number" step="0.1" id="thresholdDanger" value="{{ $thresholdConfig['danger'] }}"
+                                        class="w-full rounded-lg border-gray-300 text-sm focus:ring-emerald-500 focus:border-emerald-500" required>
+                                    <p class="text-xs text-gray-400 mt-1">ISO 10816-3 default: 11.2 mm/s</p>
+                                </div>
+
+                                <button type="submit" class="w-full px-4 py-2 bg-emerald-600 text-white text-sm font-medium rounded-lg hover:bg-emerald-700 transition mt-4">
+                                    Simpan Konfigurasi Threshold
+                                </button>
+                            </div>
+                        </form>
+
+                        <!-- ISO 10816-3 Reference -->
+                        <div class="mt-6 p-4 bg-gray-50 rounded-lg">
+                            <h4 class="text-sm font-semibold text-gray-700 mb-2">Referensi ISO 10816-3</h4>
+                            <table class="w-full text-xs">
+                                <thead>
+                                    <tr class="text-gray-500">
+                                        <th class="text-left py-1">Zone</th>
+                                        <th class="text-left py-1">RMS (mm/s)</th>
+                                        <th class="text-left py-1">Kondisi</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="text-gray-600">
+                                    <tr>
+                                        <td class="py-1"><span class="w-2 h-2 inline-block rounded-full bg-green-400 mr-1"></span>A</td>
+                                        <td>0 - 2.8</td>
+                                        <td>Normal</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="py-1"><span class="w-2 h-2 inline-block rounded-full bg-yellow-400 mr-1"></span>B</td>
+                                        <td>2.8 - 7.1</td>
+                                        <td>Acceptable</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="py-1"><span class="w-2 h-2 inline-block rounded-full bg-orange-400 mr-1"></span>C</td>
+                                        <td>7.1 - 11.2</td>
+                                        <td>Unsatisfactory</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="py-1"><span class="w-2 h-2 inline-block rounded-full bg-red-500 mr-1"></span>D</td>
+                                        <td>> 11.2</td>
+                                        <td>Unacceptable</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Notification Settings -->
+                    <div class="bg-white rounded-xl border border-gray-100 shadow-sm p-6">
+                        <div class="flex items-center space-x-3 mb-6">
+                            <div class="p-2 bg-blue-50 rounded-lg">
+                                <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
+                                </svg>
+                            </div>
+                            <div>
+                                <h3 class="text-lg font-semibold text-gray-900">Pengaturan Notifikasi</h3>
+                                <p class="text-sm text-gray-500">Konfigurasi pemberitahuan alert</p>
+                            </div>
+                        </div>
+
+                        <form id="notificationForm" onsubmit="saveNotifications(event)">
+                            <div class="space-y-4">
+                                <!-- Email Notifications -->
+                                <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                                    <div>
+                                        <h4 class="text-sm font-medium text-gray-700">Notifikasi Email</h4>
+                                        <p class="text-xs text-gray-500">Kirim alert via email</p>
+                                    </div>
+                                    <label class="relative inline-flex items-center cursor-pointer">
+                                        <input type="checkbox" id="emailEnabled" {{ $notificationConfig['email_enabled'] ? 'checked' : '' }} class="sr-only peer">
+                                        <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-emerald-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-600"></div>
+                                    </label>
+                                </div>
+
+                                <!-- Email Recipients -->
+                                <div id="emailRecipientsContainer" class="{{ $notificationConfig['email_enabled'] ? '' : 'hidden' }}">
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Penerima Email</label>
+                                    <textarea id="emailRecipients" rows="3" placeholder="email1@example.com&#10;email2@example.com"
+                                        class="w-full rounded-lg border-gray-300 text-sm focus:ring-emerald-500 focus:border-emerald-500">{{ $notificationConfig['email_recipients'] }}</textarea>
+                                    <p class="text-xs text-gray-400 mt-1">Satu email per baris</p>
+                                </div>
+
+                                <!-- Sound Notifications -->
+                                <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                                    <div>
+                                        <h4 class="text-sm font-medium text-gray-700">Notifikasi Suara</h4>
+                                        <p class="text-xs text-gray-500">Bunyikan suara saat alert baru</p>
+                                    </div>
+                                    <label class="relative inline-flex items-center cursor-pointer">
+                                        <input type="checkbox" id="soundEnabled" {{ $notificationConfig['alert_sound_enabled'] ? 'checked' : '' }} class="sr-only peer">
+                                        <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-emerald-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-600"></div>
+                                    </label>
+                                </div>
+
+                                <!-- Auto Acknowledge -->
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Auto-Acknowledge Setelah (Jam)</label>
+                                    <input type="number" id="autoAcknowledgeHours" value="{{ $notificationConfig['auto_acknowledge_hours'] }}" min="1" max="168"
+                                        class="w-full rounded-lg border-gray-300 text-sm focus:ring-emerald-500 focus:border-emerald-500">
+                                    <p class="text-xs text-gray-400 mt-1">Alert akan otomatis di-acknowledge setelah waktu tertentu</p>
+                                </div>
+
+                                <button type="submit" class="w-full px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition mt-4">
+                                    Simpan Pengaturan Notifikasi
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Alert Detail Modal -->
+    <div id="alertDetailModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center">
+        <div class="bg-white rounded-2xl shadow-xl max-w-lg w-full mx-4 overflow-hidden">
+            <div class="p-6 border-b border-gray-100">
+                <div class="flex items-center justify-between">
+                    <h3 class="text-lg font-semibold text-gray-900">Detail Alert</h3>
+                    <button onclick="closeAlertModal()" class="p-2 hover:bg-gray-100 rounded-lg transition">
+                        <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            <div class="p-6" id="alertDetailContent">
+                <!-- Alert details will be loaded here -->
+            </div>
+            <div class="p-6 bg-gray-50 border-t border-gray-100 flex space-x-3">
+                <button onclick="acknowledgeFromModal()" id="modalAckBtn" class="flex-1 px-4 py-2 bg-emerald-600 text-white text-sm font-medium rounded-lg hover:bg-emerald-700 transition">
+                    Acknowledge
+                </button>
+                <button onclick="resolveFromModal()" id="modalResolveBtn" class="flex-1 px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition">
+                    Resolve
+                </button>
+                <button onclick="closeAlertModal()" class="px-4 py-2 bg-gray-200 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-300 transition">
+                    Tutup
+                </button>
+            </div>
+        </div>
+    </div>
+
+    @push('scripts')
+    <script>
+        // Global variables
+        let currentAlertId = null;
+        let alertsData = [];
+        let currentPage = 1;
+        let historyPage = 1;
+        let alertsByMachineChart = null;
+        let alertsBySeverityChart = null;
+
+        // Tab switching
+        function switchTab(tabName) {
+            // Hide all tab contents
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            // Remove active state from all tabs
+            document.querySelectorAll('.tab-btn').forEach(el => {
+                el.classList.remove('border-emerald-500', 'text-emerald-600', 'bg-emerald-50/50');
+                el.classList.add('border-transparent', 'text-gray-500');
+            });
+
+            // Show selected tab content
+            document.getElementById('content-' + tabName).classList.remove('hidden');
+            // Add active state to selected tab
+            const activeTab = document.getElementById('tab-' + tabName);
+            activeTab.classList.add('border-emerald-500', 'text-emerald-600', 'bg-emerald-50/50');
+            activeTab.classList.remove('border-transparent', 'text-gray-500');
+
+            // Load data for specific tabs
+            if (tabName === 'alerts') loadAlerts();
+            if (tabName === 'history') loadHistory();
+            if (tabName === 'overview') loadStats();
+        }
+
+        // Load statistics
+        async function loadStats() {
+            try {
+                const response = await fetch('/api/alert-management/stats');
+                const data = await response.json();
+
+                if (data.success) {
+                    const stats = data.stats;
+                    document.getElementById('statToday').textContent = stats.today;
+                    document.getElementById('statDanger').textContent = stats.by_severity.danger;
+                    document.getElementById('statCritical').textContent = stats.by_severity.critical;
+                    document.getElementById('statWarning').textContent = stats.by_severity.warning;
+                    document.getElementById('statAcknowledged').textContent = stats.acknowledged;
+                    document.getElementById('statUnacknowledged').textContent = stats.unacknowledged;
+
+                    // Update header indicator
+                    document.getElementById('activeAlertCount').textContent = stats.last_24h + ' Alert Aktif';
+
+                    // Update charts
+                    updateCharts(stats);
+
+                    // Load recent alerts
+                    loadRecentAlerts();
+                }
+            } catch (error) {
+                console.error('Error loading stats:', error);
+            }
+        }
+
+        // Update charts
+        function updateCharts(stats) {
+            // Alerts by Machine Chart
+            const machineCtx = document.getElementById('alertsByMachineChart');
+            if (alertsByMachineChart) alertsByMachineChart.destroy();
+
+            alertsByMachineChart = new Chart(machineCtx, {
+                type: 'bar',
+                data: {
+                    labels: stats.by_machine.map(m => m.name),
+                    datasets: [{
+                        label: 'Jumlah Alert',
+                        data: stats.by_machine.map(m => m.alert_count),
+                        backgroundColor: 'rgba(16, 185, 129, 0.7)',
+                        borderColor: 'rgba(16, 185, 129, 1)',
+                        borderWidth: 1,
+                        borderRadius: 6,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    resizeDelay: 0,
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        y: { beginAtZero: true }
+                    }
+                }
+            });
+
+            // Alerts by Severity Chart
+            const severityCtx = document.getElementById('alertsBySeverityChart');
+            if (alertsBySeverityChart) alertsBySeverityChart.destroy();
+
+            alertsBySeverityChart = new Chart(severityCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Bahaya', 'Kritis', 'Peringatan'],
+                    datasets: [{
+                        data: [stats.by_severity.danger, stats.by_severity.critical, stats.by_severity.warning],
+                        backgroundColor: ['#ef4444', '#f97316', '#eab308'],
+                        borderWidth: 0,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    resizeDelay: 0,
+                    plugins: {
+                        legend: { position: 'bottom' }
+                    }
+                }
+            });
+        }
+
+        // Load recent alerts for overview
+        async function loadRecentAlerts() {
+            try {
+                const response = await fetch('/api/alert-management/alerts?per_page=5');
+                const data = await response.json();
+
+                if (data.success && data.data.data.length > 0) {
+                    const container = document.getElementById('recentAlertsList');
+                    container.innerHTML = data.data.data.map(alert => `
+                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition cursor-pointer" onclick="showAlertDetail(${alert.id})">
+                            <div class="flex items-center space-x-3">
+                                <div class="p-2 rounded-lg ${getSeverityBgClass(alert.severity)}">
+                                    ${getSeverityIcon(alert.severity)}
+                                </div>
+                                <div>
+                                    <p class="text-sm font-medium text-gray-900">${alert.machine_name}</p>
+                                    <p class="text-xs text-gray-500">RMS: ${alert.rms} mm/s • ${alert.time_ago}</p>
+                                </div>
+                            </div>
+                            <span class="px-2 py-1 text-xs font-medium rounded-full ${getSeverityClass(alert.severity)}">
+                                ${alert.severity_label}
+                            </span>
+                        </div>
+                    `).join('');
+                } else {
+                    document.getElementById('recentAlertsList').innerHTML = `
+                        <div class="text-center py-8 text-gray-400">
+                            <svg class="w-12 h-12 mx-auto mb-3 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                            <p>Tidak ada alert aktif</p>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                console.error('Error loading recent alerts:', error);
+            }
+        }
+
+        // Load alerts list
+        async function loadAlerts(page = 1) {
+            currentPage = page;
+            const params = new URLSearchParams({
+                page: page,
+                per_page: 15,
+                machine_id: document.getElementById('filterMachine').value,
+                severity: document.getElementById('filterSeverity').value,
+                date_from: document.getElementById('filterDateFrom').value,
+                date_to: document.getElementById('filterDateTo').value,
+            });
+
+            try {
+                const response = await fetch('/api/alert-management/alerts?' + params);
+                const data = await response.json();
+
+                if (data.success) {
+                    alertsData = data.data.data;
+                    renderAlertsTable(alertsData);
+                    renderPagination(data.data);
+                }
+            } catch (error) {
+                console.error('Error loading alerts:', error);
+            }
+        }
+
+        // Render alerts table
+        function renderAlertsTable(alerts) {
+            const tbody = document.getElementById('alertsTableBody');
+
+            if (alerts.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="9" class="px-4 py-8 text-center text-gray-400">
+                            Tidak ada alert ditemukan
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            tbody.innerHTML = alerts.map(alert => `
+                <tr class="hover:bg-gray-50">
+                    <td class="px-4 py-3">
+                        <input type="checkbox" class="alert-checkbox rounded border-gray-300 text-emerald-600 focus:ring-emerald-500" value="${alert.id}">
+                    </td>
+                    <td class="px-4 py-3 text-sm text-gray-900">#${alert.id}</td>
+                    <td class="px-4 py-3">
+                        <div class="text-sm font-medium text-gray-900">${alert.machine_name}</div>
+                    </td>
+                    <td class="px-4 py-3 text-sm text-gray-500">${alert.location}</td>
+                    <td class="px-4 py-3 text-sm font-mono font-medium text-gray-900">${alert.rms}</td>
+                    <td class="px-4 py-3">
+                        <span class="px-2 py-1 text-xs font-medium rounded-full ${getSeverityClass(alert.severity)}">
+                            ${alert.severity_label}
+                        </span>
+                    </td>
+                    <td class="px-4 py-3 text-sm text-gray-500">${alert.time_ago}</td>
+                    <td class="px-4 py-3">
+                        ${alert.acknowledged
+                            ? '<span class="px-2 py-1 text-xs font-medium rounded-full bg-green-100 text-green-800">Acknowledged</span>'
+                            : '<span class="px-2 py-1 text-xs font-medium rounded-full bg-red-100 text-red-800">Pending</span>'
+                        }
+                    </td>
+                    <td class="px-4 py-3">
+                        <div class="flex space-x-2">
+                            <button onclick="showAlertDetail(${alert.id})" class="p-1.5 text-gray-400 hover:text-emerald-600 hover:bg-emerald-50 rounded-lg transition">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                                </svg>
+                            </button>
+                            ${!alert.acknowledged ? `
+                                <button onclick="acknowledgeAlert(${alert.id})" class="p-1.5 text-gray-400 hover:text-green-600 hover:bg-green-50 rounded-lg transition">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                                    </svg>
+                                </button>
+                            ` : ''}
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        // Render pagination
+        function renderPagination(paginationData) {
+            document.getElementById('paginationInfo').textContent =
+                `Menampilkan ${paginationData.from || 0} - ${paginationData.to || 0} dari ${paginationData.total} alert`;
+
+            const controls = document.getElementById('paginationControls');
+            let html = '';
+
+            if (paginationData.prev_page_url) {
+                html += `<button onclick="loadAlerts(${paginationData.current_page - 1})" class="px-3 py-1 text-sm bg-gray-100 hover:bg-gray-200 rounded-lg transition">Prev</button>`;
+            }
+
+            html += `<span class="px-3 py-1 text-sm bg-emerald-100 text-emerald-700 rounded-lg">${paginationData.current_page}</span>`;
+
+            if (paginationData.next_page_url) {
+                html += `<button onclick="loadAlerts(${paginationData.current_page + 1})" class="px-3 py-1 text-sm bg-gray-100 hover:bg-gray-200 rounded-lg transition">Next</button>`;
+            }
+
+            controls.innerHTML = html;
+        }
+
+        // Load history
+        async function loadHistory(page = 1) {
+            historyPage = page;
+            const params = new URLSearchParams({
+                page: page,
+                per_page: 20,
+                machine_id: document.getElementById('historyFilterMachine').value,
+                date_from: document.getElementById('historyDateFrom').value,
+                date_to: document.getElementById('historyDateTo').value,
+            });
+
+            try {
+                const response = await fetch('/api/alert-management/history?' + params);
+                const data = await response.json();
+
+                if (data.success) {
+                    renderHistoryTable(data.data.data);
+                    renderHistoryPagination(data.data);
+                }
+            } catch (error) {
+                console.error('Error loading history:', error);
+            }
+        }
+
+        // Render history table
+        function renderHistoryTable(history) {
+            const tbody = document.getElementById('historyTableBody');
+
+            if (history.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="8" class="px-4 py-8 text-center text-gray-400">
+                            Tidak ada riwayat ditemukan
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            tbody.innerHTML = history.map(item => `
+                <tr class="hover:bg-gray-50">
+                    <td class="px-4 py-3 text-sm text-gray-900">#${item.id}</td>
+                    <td class="px-4 py-3 text-sm font-medium text-gray-900">${item.machine_name}</td>
+                    <td class="px-4 py-3 text-sm text-gray-500">${item.location}</td>
+                    <td class="px-4 py-3 text-sm font-mono font-medium text-gray-900">${item.rms}</td>
+                    <td class="px-4 py-3">
+                        <span class="px-2 py-1 text-xs font-medium rounded-full ${getSeverityClass(item.severity)}">
+                            ${item.severity_label}
+                        </span>
+                    </td>
+                    <td class="px-4 py-3 text-sm text-gray-500">${item.timestamp}</td>
+                    <td class="px-4 py-3 text-sm text-gray-500">${item.acknowledged_by || '-'}</td>
+                    <td class="px-4 py-3 text-sm text-gray-500">${item.acknowledged_at || '-'}</td>
+                </tr>
+            `).join('');
+        }
+
+        // Render history pagination
+        function renderHistoryPagination(paginationData) {
+            document.getElementById('historyPaginationInfo').textContent =
+                `Menampilkan ${paginationData.from || 0} - ${paginationData.to || 0} dari ${paginationData.total} riwayat`;
+
+            const controls = document.getElementById('historyPaginationControls');
+            let html = '';
+
+            if (paginationData.prev_page_url) {
+                html += `<button onclick="loadHistory(${paginationData.current_page - 1})" class="px-3 py-1 text-sm bg-gray-100 hover:bg-gray-200 rounded-lg transition">Prev</button>`;
+            }
+
+            html += `<span class="px-3 py-1 text-sm bg-emerald-100 text-emerald-700 rounded-lg">${paginationData.current_page}</span>`;
+
+            if (paginationData.next_page_url) {
+                html += `<button onclick="loadHistory(${paginationData.current_page + 1})" class="px-3 py-1 text-sm bg-gray-100 hover:bg-gray-200 rounded-lg transition">Next</button>`;
+            }
+
+            controls.innerHTML = html;
+        }
+
+        // Show alert detail modal
+        async function showAlertDetail(alertId) {
+            currentAlertId = alertId;
+            const alert = alertsData.find(a => a.id === alertId);
+
+            if (!alert) return;
+
+            const content = document.getElementById('alertDetailContent');
+            content.innerHTML = `
+                <div class="space-y-4">
+                    <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                        <span class="text-sm text-gray-500">Severity</span>
+                        <span class="px-3 py-1 text-sm font-medium rounded-full ${getSeverityClass(alert.severity)}">
+                            ${alert.severity_label}
+                        </span>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="p-4 bg-gray-50 rounded-lg">
+                            <p class="text-xs text-gray-500 mb-1">Mesin</p>
+                            <p class="text-sm font-medium text-gray-900">${alert.machine_name}</p>
+                        </div>
+                        <div class="p-4 bg-gray-50 rounded-lg">
+                            <p class="text-xs text-gray-500 mb-1">Lokasi</p>
+                            <p class="text-sm font-medium text-gray-900">${alert.location}</p>
+                        </div>
+                        <div class="p-4 bg-gray-50 rounded-lg">
+                            <p class="text-xs text-gray-500 mb-1">RMS Velocity</p>
+                            <p class="text-sm font-medium text-gray-900">${alert.rms} mm/s</p>
+                        </div>
+                        <div class="p-4 bg-gray-50 rounded-lg">
+                            <p class="text-xs text-gray-500 mb-1">Peak Amplitude</p>
+                            <p class="text-sm font-medium text-gray-900">${alert.peak_amp} mm/s</p>
+                        </div>
+                        <div class="p-4 bg-gray-50 rounded-lg">
+                            <p class="text-xs text-gray-500 mb-1">Dominant Frequency</p>
+                            <p class="text-sm font-medium text-gray-900">${alert.dominant_freq_hz} Hz</p>
+                        </div>
+                        <div class="p-4 bg-gray-50 rounded-lg">
+                            <p class="text-xs text-gray-500 mb-1">Waktu Terjadi</p>
+                            <p class="text-sm font-medium text-gray-900">${alert.timestamp}</p>
+                        </div>
+                    </div>
+                    <div class="p-4 bg-gray-50 rounded-lg">
+                        <p class="text-xs text-gray-500 mb-1">Catatan</p>
+                        <textarea id="alertNotes" rows="2" class="w-full mt-2 rounded-lg border-gray-300 text-sm focus:ring-emerald-500 focus:border-emerald-500" placeholder="Tambahkan catatan...">${alert.notes || ''}</textarea>
+                    </div>
+                </div>
+            `;
+
+            // Update modal buttons based on status
+            document.getElementById('modalAckBtn').style.display = alert.acknowledged ? 'none' : 'block';
+            document.getElementById('modalResolveBtn').style.display = alert.resolved ? 'none' : 'block';
+
+            document.getElementById('alertDetailModal').classList.remove('hidden');
+        }
+
+        // Close modal
+        function closeAlertModal() {
+            document.getElementById('alertDetailModal').classList.add('hidden');
+            currentAlertId = null;
+        }
+
+        // Acknowledge alert
+        async function acknowledgeAlert(alertId) {
+            try {
+                const response = await fetch(`/api/alert-management/alerts/${alertId}/acknowledge`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                    }
+                });
+
+                const data = await response.json();
+                if (data.success) {
+                    showToast('Alert berhasil di-acknowledge', 'success');
+                    loadAlerts(currentPage);
+                    loadStats();
+                }
+            } catch (error) {
+                console.error('Error acknowledging alert:', error);
+                showToast('Gagal acknowledge alert', 'error');
+            }
+        }
+
+        // Acknowledge from modal
+        async function acknowledgeFromModal() {
+            if (!currentAlertId) return;
+
+            const notes = document.getElementById('alertNotes')?.value || '';
+
+            try {
+                const response = await fetch(`/api/alert-management/alerts/${currentAlertId}/acknowledge`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                    },
+                    body: JSON.stringify({ notes })
+                });
+
+                const data = await response.json();
+                if (data.success) {
+                    showToast('Alert berhasil di-acknowledge', 'success');
+                    closeAlertModal();
+                    loadAlerts(currentPage);
+                    loadStats();
+                }
+            } catch (error) {
+                console.error('Error acknowledging alert:', error);
+                showToast('Gagal acknowledge alert', 'error');
+            }
+        }
+
+        // Resolve from modal
+        async function resolveFromModal() {
+            if (!currentAlertId) return;
+
+            const notes = document.getElementById('alertNotes')?.value || '';
+
+            try {
+                const response = await fetch(`/api/alert-management/alerts/${currentAlertId}/resolve`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                    },
+                    body: JSON.stringify({ resolution_notes: notes })
+                });
+
+                const data = await response.json();
+                if (data.success) {
+                    showToast('Alert berhasil di-resolve', 'success');
+                    closeAlertModal();
+                    loadAlerts(currentPage);
+                    loadStats();
+                }
+            } catch (error) {
+                console.error('Error resolving alert:', error);
+                showToast('Gagal resolve alert', 'error');
+            }
+        }
+
+        // Bulk acknowledge
+        async function bulkAcknowledge() {
+            const checkboxes = document.querySelectorAll('.alert-checkbox:checked');
+            const ids = Array.from(checkboxes).map(cb => parseInt(cb.value));
+
+            if (ids.length === 0) {
+                showToast('Pilih alert terlebih dahulu', 'warning');
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/alert-management/alerts/bulk-acknowledge', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                    },
+                    body: JSON.stringify({ ids })
+                });
+
+                const data = await response.json();
+                if (data.success) {
+                    showToast(data.message, 'success');
+                    loadAlerts(currentPage);
+                    loadStats();
+                }
+            } catch (error) {
+                console.error('Error bulk acknowledging:', error);
+                showToast('Gagal acknowledge alerts', 'error');
+            }
+        }
+
+        // Toggle select all
+        function toggleSelectAll() {
+            const selectAll = document.getElementById('selectAll').checked;
+            document.querySelectorAll('.alert-checkbox').forEach(cb => cb.checked = selectAll);
+        }
+
+        // Save thresholds
+        async function saveThresholds(e) {
+            e.preventDefault();
+
+            const data = {
+                warning: parseFloat(document.getElementById('thresholdWarning').value),
+                critical: parseFloat(document.getElementById('thresholdCritical').value),
+                danger: parseFloat(document.getElementById('thresholdDanger').value),
+            };
+
+            try {
+                const response = await fetch('/api/alert-management/thresholds', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await response.json();
+                if (result.success) {
+                    showToast('Konfigurasi threshold berhasil disimpan', 'success');
+                    // Update threshold displays
+                    document.getElementById('warningThreshold').textContent = data.warning;
+                    document.getElementById('criticalThreshold').textContent = data.critical;
+                    document.getElementById('dangerThreshold').textContent = data.danger;
+                } else {
+                    showToast(result.message, 'error');
+                }
+            } catch (error) {
+                console.error('Error saving thresholds:', error);
+                showToast('Gagal menyimpan konfigurasi', 'error');
+            }
+        }
+
+        // Save notifications
+        async function saveNotifications(e) {
+            e.preventDefault();
+
+            const data = {
+                email_enabled: document.getElementById('emailEnabled').checked,
+                email_recipients: document.getElementById('emailRecipients').value,
+                alert_sound_enabled: document.getElementById('soundEnabled').checked,
+                auto_acknowledge_hours: parseInt(document.getElementById('autoAcknowledgeHours').value),
+            };
+
+            try {
+                const response = await fetch('/api/alert-management/notifications', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await response.json();
+                if (result.success) {
+                    showToast('Pengaturan notifikasi berhasil disimpan', 'success');
+                } else {
+                    showToast(result.message, 'error');
+                }
+            } catch (error) {
+                console.error('Error saving notifications:', error);
+                showToast('Gagal menyimpan pengaturan', 'error');
+            }
+        }
+
+        // Export alerts
+        function exportAlerts() {
+            const params = new URLSearchParams({
+                machine_id: document.getElementById('filterMachine')?.value || '',
+                date_from: document.getElementById('filterDateFrom')?.value || '',
+                date_to: document.getElementById('filterDateTo')?.value || '',
+            });
+            window.location.href = '/api/alert-management/export?' + params;
+        }
+
+        // Helper functions
+        function getSeverityClass(severity) {
+            const classes = {
+                'danger': 'bg-red-100 text-red-800',
+                'critical': 'bg-orange-100 text-orange-800',
+                'warning': 'bg-yellow-100 text-yellow-800',
+                'normal': 'bg-green-100 text-green-800'
+            };
+            return classes[severity] || classes['normal'];
+        }
+
+        function getSeverityBgClass(severity) {
+            const classes = {
+                'danger': 'bg-red-100',
+                'critical': 'bg-orange-100',
+                'warning': 'bg-yellow-100',
+                'normal': 'bg-green-100'
+            };
+            return classes[severity] || classes['normal'];
+        }
+
+        function getSeverityIcon(severity) {
+            if (severity === 'danger' || severity === 'critical') {
+                return `<svg class="w-5 h-5 text-${severity === 'danger' ? 'red' : 'orange'}-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                </svg>`;
+            }
+            return `<svg class="w-5 h-5 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>`;
+        }
+
+        function showToast(message, type = 'info') {
+            const toast = document.createElement('div');
+            toast.className = `fixed bottom-4 right-4 px-6 py-3 rounded-lg shadow-lg text-white z-50 transition-opacity duration-300 ${
+                type === 'success' ? 'bg-green-600' :
+                type === 'error' ? 'bg-red-600' :
+                type === 'warning' ? 'bg-yellow-600' : 'bg-blue-600'
+            }`;
+            toast.textContent = message;
+            document.body.appendChild(toast);
+
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        // Toggle email recipients visibility
+        document.getElementById('emailEnabled')?.addEventListener('change', function() {
+            document.getElementById('emailRecipientsContainer').classList.toggle('hidden', !this.checked);
+        });
+
+        // Update current time
+        function updateTime() {
+            const now = new Date();
+            const formatted = now.toLocaleDateString('id-ID', {
+                day: '2-digit',
+                month: 'short',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
+            });
+            document.getElementById('currentTime').textContent = formatted;
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            loadStats();
+            setInterval(updateTime, 1000);
+            setInterval(loadStats, 30000); // Refresh stats every 30 seconds
+        });
+    </script>
+    @endpush
+</x-app-layout>

@@ -5,6 +5,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\Api\DashboardApiController;
 use App\Http\Controllers\Api\AlertController;
 use App\Http\Controllers\Api\FFTController;
+use App\Http\Controllers\AlertManagementController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -40,6 +41,11 @@ Route::get('/analisis', [\App\Http\Controllers\AnalisisController::class, 'index
     ->middleware(['auth', 'verified'])
     ->name('analisis');
 
+// Alert Management Routes
+Route::get('/alert-management', [AlertManagementController::class, 'index'])
+    ->middleware(['auth', 'verified'])
+    ->name('alert-management');
+
 // Route untuk trigger proses FFT otomatis (bisa dipanggil dari browser/postman)
 Route::post('/proses-fft/{analysisResultId}', [\App\Http\Controllers\AnalisisController::class, 'prosesFFT'])
     ->middleware(['auth', 'verified']);
@@ -63,11 +69,22 @@ Route::middleware('auth')->group(function () {
     Route::get('/api/fft/history', [FFTController::class, 'getFFTHistory']);
     Route::get('/api/fft/spectrum', [FFTController::class, 'getFFTSpectrum']);
 
-    // Alert API routes
+    // Alert API routes (existing)
     Route::get('/api/alerts', [AlertController::class, 'getActiveAlerts']);
     Route::post('/api/alerts/{id}/acknowledge', [AlertController::class, 'acknowledgeAlert']);
     Route::post('/api/alerts/machine/{machineId}/dismiss', [AlertController::class, 'dismissMachineAlerts']);
     Route::get('/api/alerts/stats', [AlertController::class, 'getAlertStats']);
+
+    // Alert Management API routes
+    Route::get('/api/alert-management/alerts', [AlertManagementController::class, 'getAlerts']);
+    Route::get('/api/alert-management/stats', [AlertManagementController::class, 'getStats']);
+    Route::post('/api/alert-management/alerts/{id}/acknowledge', [AlertManagementController::class, 'acknowledgeAlert']);
+    Route::post('/api/alert-management/alerts/{id}/resolve', [AlertManagementController::class, 'resolveAlert']);
+    Route::post('/api/alert-management/alerts/bulk-acknowledge', [AlertManagementController::class, 'bulkAcknowledge']);
+    Route::post('/api/alert-management/thresholds', [AlertManagementController::class, 'updateThresholds']);
+    Route::post('/api/alert-management/notifications', [AlertManagementController::class, 'updateNotifications']);
+    Route::get('/api/alert-management/history', [AlertManagementController::class, 'getHistory']);
+    Route::get('/api/alert-management/export', [AlertManagementController::class, 'exportAlerts']);
 });
 
 Route::middleware('auth')->group(function () {

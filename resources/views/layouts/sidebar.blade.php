@@ -94,36 +94,27 @@
                 <div class="w-8 h-px bg-gray-200"></div>
             </div>
 
-            <!-- Anomali -->
-            <a href="#"
-                class="flex items-center px-4 py-2.5 rounded-lg text-gray-600 font-medium hover:bg-gray-50 hover:text-gray-900 transition duration-200 group"
-                :class="sidebarOpen ? 'space-x-3' : 'justify-center px-2'"
-                :title="sidebarOpen ? '' : 'Anomali'">
+            <!-- Manajemen Alert -->
+            <a href="{{ route('alert-management') }}" class="flex items-center px-4 py-2.5 rounded-lg font-medium transition duration-200
+               @if(request()->routeIs('alert-management'))
+                   text-gray-900
+               @else
+                   text-gray-600 hover:bg-gray-50 hover:text-gray-900
+               @endif"
+               :class="sidebarOpen ? 'space-x-3' : 'justify-center px-2'"
+               @if(request()->routeIs('alert-management'))
+                style="background: linear-gradient(to right, rgba(49, 105, 78, 0.35), rgba(39, 86, 64, 0.35)); color: #163527;"
+            @endif
+            :title="sidebarOpen ? '' : 'Manajemen Alert'">
                 <div class="relative">
-                    <svg class="w-5 h-5 flex-shrink-0 group-hover:text-red-600 transition" fill="none"
-                        stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M12 8v4m0 4v2m0-10a4 4 0 110 8 4 4 0 010-8z" />
-                    </svg>
-                    <span class="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full animate-pulse"></span>
-                </div>
-                <span class="text-sm" x-show="sidebarOpen" x-transition>Anomali</span>
-            </a>
-
-            <!-- Peringatan -->
-            <a href="#"
-                class="flex items-center px-4 py-2.5 rounded-lg text-gray-600 font-medium hover:bg-gray-50 hover:text-gray-900 transition duration-200 group"
-                :class="sidebarOpen ? 'space-x-3' : 'justify-center px-2'"
-                :title="sidebarOpen ? '' : 'Peringatan'">
-                <div class="relative">
-                    <svg class="w-5 h-5 flex-shrink-0 group-hover:text-yellow-600 transition" fill="none"
+                    <svg class="w-5 h-5 flex-shrink-0" fill="none"
                         stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
                     </svg>
                     <span class="absolute -top-1 -right-1 w-2 h-2 bg-yellow-400 rounded-full animate-pulse"></span>
                 </div>
-                <span class="text-sm" x-show="sidebarOpen" x-transition>Peringatan</span>
+                <span class="text-sm" x-show="sidebarOpen" x-transition>Manajemen Alert</span>
             </a>
 
             <!-- Menu Section Title -->
