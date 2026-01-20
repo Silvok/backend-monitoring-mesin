@@ -17,10 +17,10 @@ class AlertManagementController extends Controller
         $machines = Machine::all();
 
         // Get threshold config from cache or default
+        // ISO 10816-3 Thresholds (mm/s) for Medium Machines (Class II)
         $thresholdConfig = Cache::get('alert_threshold_config', [
             'warning' => 2.8,  // ISO 10816-3 Zone B
-            'critical' => 7.1, // ISO 10816-3 Zone C
-            'danger' => 11.2,  // ISO 10816-3 Zone D
+            'critical' => 7.1, // ISO 10816-3 Zone C/D
         ]);
 
         // Get notification config
@@ -28,7 +28,7 @@ class AlertManagementController extends Controller
             'email_enabled' => false,
             'email_recipients' => '',
             'auto_acknowledge_hours' => 24,
-            'alert_sound_enabled' => true,
+            'alert_sound_enabled' => false,
         ]);
 
         return view('pages.alert-management', compact('machines', 'thresholdConfig', 'notificationConfig'));
@@ -54,16 +54,11 @@ class AlertManagementController extends Controller
                 $thresholds = Cache::get('alert_threshold_config', [
                     'warning' => 2.8,
                     'critical' => 7.1,
-                    'danger' => 11.2,
                 ]);
 
                 switch ($request->severity) {
-                    case 'danger':
-                        $query->where('rms', '>=', $thresholds['danger']);
-                        break;
                     case 'critical':
-                        $query->where('rms', '>=', $thresholds['critical'])
-                              ->where('rms', '<', $thresholds['danger']);
+                        $query->where('rms', '>=', $thresholds['critical']);
                         break;
                     case 'warning':
                         $query->where('rms', '>=', $thresholds['warning'])
@@ -90,7 +85,6 @@ class AlertManagementController extends Controller
             $thresholds = Cache::get('alert_threshold_config', [
                 'warning' => 2.8,
                 'critical' => 7.1,
-                'danger' => 11.2,
             ]);
 
             $alerts->getCollection()->transform(function ($alert) use ($thresholds) {
@@ -137,7 +131,6 @@ class AlertManagementController extends Controller
             $thresholds = Cache::get('alert_threshold_config', [
                 'warning' => 2.8,
                 'critical' => 7.1,
-                'danger' => 11.2,
             ]);
 
             $baseQuery = AnalysisResult::whereIn('condition_status', ['ANOMALY', 'WARNING', 'CRITICAL', 'DANGER']);
@@ -151,16 +144,10 @@ class AlertManagementController extends Controller
             // Last 7 days
             $last7days = (clone $baseQuery)->where('created_at', '>=', now()->subDays(7))->count();
 
-            // By severity (last 24h)
-            $dangerCount = AnalysisResult::whereIn('condition_status', ['ANOMALY', 'WARNING', 'CRITICAL', 'DANGER'])
-                ->where('created_at', '>=', now()->subHours(24))
-                ->where('rms', '>=', $thresholds['danger'])
-                ->count();
-
+            // By severity (last 24h) - 2 levels only
             $criticalCount = AnalysisResult::whereIn('condition_status', ['ANOMALY', 'WARNING', 'CRITICAL', 'DANGER'])
                 ->where('created_at', '>=', now()->subHours(24))
                 ->where('rms', '>=', $thresholds['critical'])
-                ->where('rms', '<', $thresholds['danger'])
                 ->count();
 
             $warningCount = AnalysisResult::whereIn('condition_status', ['ANOMALY', 'WARNING', 'CRITICAL', 'DANGER'])
@@ -196,7 +183,6 @@ class AlertManagementController extends Controller
                     'last_24h' => $last24h,
                     'last_7_days' => $last7days,
                     'by_severity' => [
-                        'danger' => $dangerCount,
                         'critical' => $criticalCount,
                         'warning' => $warningCount,
                     ],
@@ -308,15 +294,13 @@ class AlertManagementController extends Controller
             $validated = $request->validate([
                 'warning' => 'required|numeric|min:0',
                 'critical' => 'required|numeric|min:0',
-                'danger' => 'required|numeric|min:0',
             ]);
 
             // Validate that thresholds are in ascending order
-            if ($validated['warning'] >= $validated['critical'] ||
-                $validated['critical'] >= $validated['danger']) {
+            if ($validated['warning'] >= $validated['critical']) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Thresholds must be in ascending order: Warning < Critical < Danger',
+                    'message' => 'Thresholds must be in ascending order: Warning < Critical',
                 ], 422);
             }
 
@@ -491,9 +475,7 @@ class AlertManagementController extends Controller
      */
     private function getSeverityLevel($rms, $thresholds)
     {
-        if ($rms >= $thresholds['danger']) {
-            return 'danger';
-        } elseif ($rms >= $thresholds['critical']) {
+        if ($rms >= $thresholds['critical']) {
             return 'critical';
         } elseif ($rms >= $thresholds['warning']) {
             return 'warning';
@@ -506,10 +488,8 @@ class AlertManagementController extends Controller
      */
     private function getSeverityLabel($rms, $thresholds)
     {
-        if ($rms >= $thresholds['danger']) {
+        if ($rms >= $thresholds['critical']) {
             return 'Bahaya';
-        } elseif ($rms >= $thresholds['critical']) {
-            return 'Kritis';
         } elseif ($rms >= $thresholds['warning']) {
             return 'Peringatan';
         }

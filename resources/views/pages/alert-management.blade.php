@@ -75,7 +75,7 @@
             <!-- Tab Content: Overview -->
             <div id="content-overview" class="tab-content">
                 <!-- Statistics Cards -->
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
                     <!-- Total Alerts Today -->
                     <div class="bg-white rounded-xl border border-gray-100 shadow-sm p-6">
                         <div class="flex items-center justify-between">
@@ -92,32 +92,16 @@
                         <p class="text-xs text-gray-400 mt-2">Sejak pukul 00:00</p>
                     </div>
 
-                    <!-- Danger Alerts -->
+                    <!-- Critical Alerts (Bahaya) -->
                     <div class="bg-white rounded-xl border border-gray-100 shadow-sm p-6">
                         <div class="flex items-center justify-between">
                             <div>
                                 <p class="text-sm font-medium text-gray-500">Alert Bahaya</p>
-                                <p class="text-3xl font-bold text-red-600" id="statDanger">-</p>
+                                <p class="text-3xl font-bold text-red-600" id="statCritical">-</p>
                             </div>
                             <div class="p-3 bg-red-50 rounded-xl">
                                 <svg class="w-8 h-8 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
-                                </svg>
-                            </div>
-                        </div>
-                        <p class="text-xs text-gray-400 mt-2">RMS ≥ <span id="dangerThreshold">11.2</span> mm/s</p>
-                    </div>
-
-                    <!-- Critical Alerts -->
-                    <div class="bg-white rounded-xl border border-gray-100 shadow-sm p-6">
-                        <div class="flex items-center justify-between">
-                            <div>
-                                <p class="text-sm font-medium text-gray-500">Alert Kritis</p>
-                                <p class="text-3xl font-bold text-orange-600" id="statCritical">-</p>
-                            </div>
-                            <div class="p-3 bg-orange-50 rounded-xl">
-                                <svg class="w-8 h-8 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
                                 </svg>
                             </div>
                         </div>
@@ -216,8 +200,8 @@
             <div id="content-alerts" class="tab-content hidden">
                 <!-- Filters -->
                 <div class="bg-white rounded-xl border border-gray-100 shadow-sm p-6 mb-6">
-                    <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
-                        <div>
+                    <div class="flex flex-wrap items-end gap-4">
+                        <div class="flex-1 min-w-[150px]">
                             <label class="block text-sm font-medium text-gray-700 mb-1">Mesin</label>
                             <select id="filterMachine" onchange="loadAlerts()" class="w-full rounded-lg border-gray-300 text-sm focus:ring-emerald-500 focus:border-emerald-500">
                                 <option value="">Semua Mesin</option>
@@ -226,24 +210,23 @@
                                 @endforeach
                             </select>
                         </div>
-                        <div>
+                        <div class="flex-1 min-w-[150px]">
                             <label class="block text-sm font-medium text-gray-700 mb-1">Severity</label>
                             <select id="filterSeverity" onchange="loadAlerts()" class="w-full rounded-lg border-gray-300 text-sm focus:ring-emerald-500 focus:border-emerald-500">
                                 <option value="">Semua Level</option>
-                                <option value="danger">Bahaya</option>
-                                <option value="critical">Kritis</option>
+                                <option value="critical">Bahaya</option>
                                 <option value="warning">Peringatan</option>
                             </select>
                         </div>
-                        <div>
+                        <div class="flex-1 min-w-[150px]">
                             <label class="block text-sm font-medium text-gray-700 mb-1">Dari Tanggal</label>
                             <input type="date" id="filterDateFrom" onchange="loadAlerts()" class="w-full rounded-lg border-gray-300 text-sm focus:ring-emerald-500 focus:border-emerald-500">
                         </div>
-                        <div>
+                        <div class="flex-1 min-w-[150px]">
                             <label class="block text-sm font-medium text-gray-700 mb-1">Sampai Tanggal</label>
                             <input type="date" id="filterDateTo" onchange="loadAlerts()" class="w-full rounded-lg border-gray-300 text-sm focus:ring-emerald-500 focus:border-emerald-500">
                         </div>
-                        <div class="flex items-end">
+                        <div class="flex-1 min-w-[180px]">
                             <button onclick="bulkAcknowledge()" class="w-full px-4 py-2 bg-emerald-600 text-white text-sm font-medium rounded-lg hover:bg-emerald-700 transition">
                                 Acknowledge Terpilih
                             </button>
@@ -294,8 +277,8 @@
             <div id="content-history" class="tab-content hidden">
                 <!-- History Filters -->
                 <div class="bg-white rounded-xl border border-gray-100 shadow-sm p-6 mb-6">
-                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-                        <div>
+                    <div class="flex flex-wrap items-end gap-4">
+                        <div class="flex-1 min-w-[150px]">
                             <label class="block text-sm font-medium text-gray-700 mb-1">Mesin</label>
                             <select id="historyFilterMachine" onchange="loadHistory()" class="w-full rounded-lg border-gray-300 text-sm focus:ring-emerald-500 focus:border-emerald-500">
                                 <option value="">Semua Mesin</option>
@@ -304,15 +287,15 @@
                                 @endforeach
                             </select>
                         </div>
-                        <div>
+                        <div class="flex-1 min-w-[150px]">
                             <label class="block text-sm font-medium text-gray-700 mb-1">Dari Tanggal</label>
                             <input type="date" id="historyDateFrom" onchange="loadHistory()" class="w-full rounded-lg border-gray-300 text-sm focus:ring-emerald-500 focus:border-emerald-500">
                         </div>
-                        <div>
+                        <div class="flex-1 min-w-[150px]">
                             <label class="block text-sm font-medium text-gray-700 mb-1">Sampai Tanggal</label>
                             <input type="date" id="historyDateTo" onchange="loadHistory()" class="w-full rounded-lg border-gray-300 text-sm focus:ring-emerald-500 focus:border-emerald-500">
                         </div>
-                        <div class="flex items-end">
+                        <div class="flex-1 min-w-[120px]">
                             <button onclick="loadHistory()" class="w-full px-4 py-2 bg-gray-100 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-200 transition">
                                 <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
@@ -378,49 +361,37 @@
 
                         <form id="thresholdForm" onsubmit="saveThresholds(event)">
                             <div class="space-y-4">
-                                <!-- Warning Threshold -->
-                                <div>
-                                    <label class="flex items-center justify-between text-sm font-medium text-gray-700 mb-1">
-                                        <span class="flex items-center">
-                                            <span class="w-3 h-3 rounded-full bg-yellow-400 mr-2"></span>
-                                            Threshold Peringatan (Zone B)
-                                        </span>
-                                        <span class="text-xs text-gray-400">mm/s</span>
-                                    </label>
-                                    <input type="number" step="0.1" id="thresholdWarning" value="{{ $thresholdConfig['warning'] }}"
-                                        class="w-full rounded-lg border-gray-300 text-sm focus:ring-emerald-500 focus:border-emerald-500" required>
-                                    <p class="text-xs text-gray-400 mt-1">ISO 10816-3 default: 2.8 mm/s</p>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <!-- Warning Threshold -->
+                                    <div>
+                                        <label class="flex items-center justify-between text-sm font-medium text-gray-700 mb-1">
+                                            <span class="flex items-center">
+                                                <span class="w-3 h-3 rounded-full bg-yellow-400 mr-2"></span>
+                                                Threshold Peringatan (Zone B)
+                                            </span>
+                                            <span class="text-xs text-gray-400">mm/s</span>
+                                        </label>
+                                        <input type="number" step="0.1" id="thresholdWarning" value="{{ $thresholdConfig['warning'] }}"
+                                            class="w-full rounded-lg border-gray-300 text-sm focus:ring-emerald-500 focus:border-emerald-500" required>
+                                        <p class="text-xs text-gray-400 mt-1">ISO 10816-3 default: 2.8 mm/s</p>
+                                    </div>
+
+                                    <!-- Critical Threshold (Bahaya) -->
+                                    <div>
+                                        <label class="flex items-center justify-between text-sm font-medium text-gray-700 mb-1">
+                                            <span class="flex items-center">
+                                                <span class="w-3 h-3 rounded-full bg-red-500 mr-2"></span>
+                                                Threshold Bahaya (Zone C/D)
+                                            </span>
+                                            <span class="text-xs text-gray-400">mm/s</span>
+                                        </label>
+                                        <input type="number" step="0.1" id="thresholdCritical" value="{{ $thresholdConfig['critical'] }}"
+                                            class="w-full rounded-lg border-gray-300 text-sm focus:ring-emerald-500 focus:border-emerald-500" required>
+                                        <p class="text-xs text-gray-400 mt-1">ISO 10816-3 default: 7.1 mm/s</p>
+                                    </div>
                                 </div>
 
-                                <!-- Critical Threshold -->
-                                <div>
-                                    <label class="flex items-center justify-between text-sm font-medium text-gray-700 mb-1">
-                                        <span class="flex items-center">
-                                            <span class="w-3 h-3 rounded-full bg-orange-400 mr-2"></span>
-                                            Threshold Kritis (Zone C)
-                                        </span>
-                                        <span class="text-xs text-gray-400">mm/s</span>
-                                    </label>
-                                    <input type="number" step="0.1" id="thresholdCritical" value="{{ $thresholdConfig['critical'] }}"
-                                        class="w-full rounded-lg border-gray-300 text-sm focus:ring-emerald-500 focus:border-emerald-500" required>
-                                    <p class="text-xs text-gray-400 mt-1">ISO 10816-3 default: 7.1 mm/s</p>
-                                </div>
-
-                                <!-- Danger Threshold -->
-                                <div>
-                                    <label class="flex items-center justify-between text-sm font-medium text-gray-700 mb-1">
-                                        <span class="flex items-center">
-                                            <span class="w-3 h-3 rounded-full bg-red-500 mr-2"></span>
-                                            Threshold Bahaya (Zone D)
-                                        </span>
-                                        <span class="text-xs text-gray-400">mm/s</span>
-                                    </label>
-                                    <input type="number" step="0.1" id="thresholdDanger" value="{{ $thresholdConfig['danger'] }}"
-                                        class="w-full rounded-lg border-gray-300 text-sm focus:ring-emerald-500 focus:border-emerald-500" required>
-                                    <p class="text-xs text-gray-400 mt-1">ISO 10816-3 default: 11.2 mm/s</p>
-                                </div>
-
-                                <button type="submit" class="w-full px-4 py-2 bg-emerald-600 text-white text-sm font-medium rounded-lg hover:bg-emerald-700 transition mt-4">
+                                <button type="submit" class="w-full px-4 py-2 bg-emerald-600 text-white text-sm font-medium rounded-lg hover:bg-emerald-700 transition">
                                     Simpan Konfigurasi Threshold
                                 </button>
                             </div>
@@ -428,35 +399,30 @@
 
                         <!-- ISO 10816-3 Reference -->
                         <div class="mt-6 p-4 bg-gray-50 rounded-lg">
-                            <h4 class="text-sm font-semibold text-gray-700 mb-2">Referensi ISO 10816-3</h4>
+                            <h4 class="text-sm font-semibold text-gray-700 mb-2">Referensi ISO 10816-3 (Simplified)</h4>
                             <table class="w-full text-xs">
                                 <thead>
                                     <tr class="text-gray-500">
-                                        <th class="text-left py-1">Zone</th>
+                                        <th class="text-left py-1">Level</th>
                                         <th class="text-left py-1">RMS (mm/s)</th>
                                         <th class="text-left py-1">Kondisi</th>
                                     </tr>
                                 </thead>
                                 <tbody class="text-gray-600">
                                     <tr>
-                                        <td class="py-1"><span class="w-2 h-2 inline-block rounded-full bg-green-400 mr-1"></span>A</td>
-                                        <td>0 - 2.8</td>
-                                        <td>Normal</td>
+                                        <td class="py-1"><span class="w-2 h-2 inline-block rounded-full bg-green-400 mr-1"></span>Normal</td>
+                                        <td>< 2.8</td>
+                                        <td>Aman / Good</td>
                                     </tr>
                                     <tr>
-                                        <td class="py-1"><span class="w-2 h-2 inline-block rounded-full bg-yellow-400 mr-1"></span>B</td>
+                                        <td class="py-1"><span class="w-2 h-2 inline-block rounded-full bg-yellow-400 mr-1"></span>Warning</td>
                                         <td>2.8 - 7.1</td>
-                                        <td>Acceptable</td>
+                                        <td>Peringatan / Acceptable</td>
                                     </tr>
                                     <tr>
-                                        <td class="py-1"><span class="w-2 h-2 inline-block rounded-full bg-orange-400 mr-1"></span>C</td>
-                                        <td>7.1 - 11.2</td>
-                                        <td>Unsatisfactory</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="py-1"><span class="w-2 h-2 inline-block rounded-full bg-red-500 mr-1"></span>D</td>
-                                        <td>> 11.2</td>
-                                        <td>Unacceptable</td>
+                                        <td class="py-1"><span class="w-2 h-2 inline-block rounded-full bg-red-500 mr-1"></span>Critical</td>
+                                        <td>≥ 7.1</td>
+                                        <td>Bahaya / Unsatisfactory</td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -464,63 +430,66 @@
                     </div>
 
                     <!-- Notification Settings -->
-                    <div class="bg-white rounded-xl border border-gray-100 shadow-sm p-6">
-                        <div class="flex items-center space-x-3 mb-6">
-                            <div class="p-2 bg-blue-50 rounded-lg">
-                                <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div class="bg-white rounded-xl border border-gray-100 shadow-sm p-4">
+                        <div class="flex items-center space-x-2 mb-4">
+                            <div class="p-1.5 bg-blue-50 rounded-lg">
+                                <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
                                 </svg>
                             </div>
-                            <div>
-                                <h3 class="text-lg font-semibold text-gray-900">Pengaturan Notifikasi</h3>
-                                <p class="text-sm text-gray-500">Konfigurasi pemberitahuan alert</p>
-                            </div>
+                            <h3 class="text-base font-semibold text-gray-900">Pengaturan Notifikasi</h3>
                         </div>
 
                         <form id="notificationForm" onsubmit="saveNotifications(event)">
-                            <div class="space-y-4">
-                                <!-- Email Notifications -->
-                                <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
-                                    <div>
-                                        <h4 class="text-sm font-medium text-gray-700">Notifikasi Email</h4>
-                                        <p class="text-xs text-gray-500">Kirim alert via email</p>
+                            <div class="space-y-3">
+                                <!-- Toggle Options Row -->
+                                <div class="grid grid-cols-2 gap-3">
+                                    <!-- Email Notifications -->
+                                    <div class="flex items-center justify-between p-2.5 bg-gray-50 rounded-lg">
+                                        <div>
+                                            <h4 class="text-xs font-medium text-gray-700">Notifikasi Email</h4>
+                                        </div>
+                                        <button type="button" id="emailToggle" onclick="toggleSwitch('email')"
+                                            class="relative inline-flex h-5 w-9 items-center rounded-full transition-all duration-300"
+                                            style="background-color: {{ $notificationConfig['email_enabled'] ? '#059669' : '#d1d5db' }}">
+                                            <span id="emailKnob" class="inline-block h-4 w-4 rounded-full bg-white shadow-md transition-all duration-300"
+                                                style="transform: translateX({{ $notificationConfig['email_enabled'] ? '18px' : '2px' }})"></span>
+                                        </button>
+                                        <input type="hidden" id="emailEnabled" value="{{ $notificationConfig['email_enabled'] ? '1' : '0' }}">
                                     </div>
-                                    <label class="relative inline-flex items-center cursor-pointer">
-                                        <input type="checkbox" id="emailEnabled" {{ $notificationConfig['email_enabled'] ? 'checked' : '' }} class="sr-only peer">
-                                        <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-emerald-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-600"></div>
-                                    </label>
+
+                                    <!-- Sound Notifications -->
+                                    <div class="flex items-center justify-between p-2.5 bg-gray-50 rounded-lg">
+                                        <div>
+                                            <h4 class="text-xs font-medium text-gray-700">Notifikasi Suara</h4>
+                                        </div>
+                                        <button type="button" id="soundToggle" onclick="toggleSwitch('sound')"
+                                            class="relative inline-flex h-5 w-9 items-center rounded-full transition-all duration-300"
+                                            style="background-color: {{ $notificationConfig['alert_sound_enabled'] ? '#059669' : '#d1d5db' }}">
+                                            <span id="soundKnob" class="inline-block h-4 w-4 rounded-full bg-white shadow-md transition-all duration-300"
+                                                style="transform: translateX({{ $notificationConfig['alert_sound_enabled'] ? '18px' : '2px' }})"></span>
+                                        </button>
+                                        <input type="hidden" id="soundEnabled" value="{{ $notificationConfig['alert_sound_enabled'] ? '1' : '0' }}">
+                                    </div>
                                 </div>
 
                                 <!-- Email Recipients -->
                                 <div id="emailRecipientsContainer" class="{{ $notificationConfig['email_enabled'] ? '' : 'hidden' }}">
-                                    <label class="block text-sm font-medium text-gray-700 mb-1">Penerima Email</label>
-                                    <textarea id="emailRecipients" rows="3" placeholder="email1@example.com&#10;email2@example.com"
-                                        class="w-full rounded-lg border-gray-300 text-sm focus:ring-emerald-500 focus:border-emerald-500">{{ $notificationConfig['email_recipients'] }}</textarea>
-                                    <p class="text-xs text-gray-400 mt-1">Satu email per baris</p>
-                                </div>
-
-                                <!-- Sound Notifications -->
-                                <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
-                                    <div>
-                                        <h4 class="text-sm font-medium text-gray-700">Notifikasi Suara</h4>
-                                        <p class="text-xs text-gray-500">Bunyikan suara saat alert baru</p>
-                                    </div>
-                                    <label class="relative inline-flex items-center cursor-pointer">
-                                        <input type="checkbox" id="soundEnabled" {{ $notificationConfig['alert_sound_enabled'] ? 'checked' : '' }} class="sr-only peer">
-                                        <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-emerald-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-600"></div>
-                                    </label>
+                                    <label class="block text-xs font-medium text-gray-700 mb-1">Penerima Email</label>
+                                    <textarea id="emailRecipients" rows="2" placeholder="email1@example.com&#10;email2@example.com"
+                                        class="w-full rounded-lg border-gray-300 text-xs focus:ring-emerald-500 focus:border-emerald-500">{{ $notificationConfig['email_recipients'] }}</textarea>
                                 </div>
 
                                 <!-- Auto Acknowledge -->
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-1">Auto-Acknowledge Setelah (Jam)</label>
+                                <div class="flex items-center gap-3">
+                                    <label class="text-xs font-medium text-gray-700 whitespace-nowrap">Auto-Acknowledge</label>
                                     <input type="number" id="autoAcknowledgeHours" value="{{ $notificationConfig['auto_acknowledge_hours'] }}" min="1" max="168"
-                                        class="w-full rounded-lg border-gray-300 text-sm focus:ring-emerald-500 focus:border-emerald-500">
-                                    <p class="text-xs text-gray-400 mt-1">Alert akan otomatis di-acknowledge setelah waktu tertentu</p>
+                                        class="w-20 rounded-lg border-gray-300 text-xs focus:ring-emerald-500 focus:border-emerald-500">
+                                    <span class="text-xs text-gray-500">jam</span>
                                 </div>
 
-                                <button type="submit" class="w-full px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition mt-4">
-                                    Simpan Pengaturan Notifikasi
+                                <button type="submit" class="w-full px-3 py-2 bg-blue-600 text-white text-xs font-medium rounded-lg hover:bg-blue-700 transition">
+                                    Simpan Pengaturan
                                 </button>
                             </div>
                         </form>
@@ -602,7 +571,6 @@
                 if (data.success) {
                     const stats = data.stats;
                     document.getElementById('statToday').textContent = stats.today;
-                    document.getElementById('statDanger').textContent = stats.by_severity.danger;
                     document.getElementById('statCritical').textContent = stats.by_severity.critical;
                     document.getElementById('statWarning').textContent = stats.by_severity.warning;
                     document.getElementById('statAcknowledged').textContent = stats.acknowledged;
@@ -661,10 +629,10 @@
             alertsBySeverityChart = new Chart(severityCtx, {
                 type: 'doughnut',
                 data: {
-                    labels: ['Bahaya', 'Kritis', 'Peringatan'],
+                    labels: ['Bahaya', 'Peringatan'],
                     datasets: [{
-                        data: [stats.by_severity.danger, stats.by_severity.critical, stats.by_severity.warning],
-                        backgroundColor: ['#ef4444', '#f97316', '#eab308'],
+                        data: [stats.by_severity.critical, stats.by_severity.warning],
+                        backgroundColor: ['#ef4444', '#eab308'],
                         borderWidth: 0,
                     }]
                 },
@@ -1090,7 +1058,6 @@
             const data = {
                 warning: parseFloat(document.getElementById('thresholdWarning').value),
                 critical: parseFloat(document.getElementById('thresholdCritical').value),
-                danger: parseFloat(document.getElementById('thresholdDanger').value),
             };
 
             try {
@@ -1109,7 +1076,6 @@
                     // Update threshold displays
                     document.getElementById('warningThreshold').textContent = data.warning;
                     document.getElementById('criticalThreshold').textContent = data.critical;
-                    document.getElementById('dangerThreshold').textContent = data.danger;
                 } else {
                     showToast(result.message, 'error');
                 }
@@ -1119,14 +1085,40 @@
             }
         }
 
+        // Toggle switch function
+        function toggleSwitch(type) {
+            const toggle = document.getElementById(type + 'Toggle');
+            const knob = document.getElementById(type + 'Knob');
+            const input = document.getElementById(type + 'Enabled');
+
+            const isEnabled = input.value === '1';
+
+            if (isEnabled) {
+                // Turn off
+                toggle.style.backgroundColor = '#d1d5db'; // gray-300
+                knob.style.transform = 'translateX(2px)';
+                input.value = '0';
+            } else {
+                // Turn on
+                toggle.style.backgroundColor = '#059669'; // emerald-600
+                knob.style.transform = 'translateX(18px)';
+                input.value = '1';
+            }
+
+            // Toggle email recipients visibility
+            if (type === 'email') {
+                document.getElementById('emailRecipientsContainer').classList.toggle('hidden', input.value === '0');
+            }
+        }
+
         // Save notifications
         async function saveNotifications(e) {
             e.preventDefault();
 
             const data = {
-                email_enabled: document.getElementById('emailEnabled').checked,
+                email_enabled: document.getElementById('emailEnabled').value === '1',
                 email_recipients: document.getElementById('emailRecipients').value,
-                alert_sound_enabled: document.getElementById('soundEnabled').checked,
+                alert_sound_enabled: document.getElementById('soundEnabled').value === '1',
                 auto_acknowledge_hours: parseInt(document.getElementById('autoAcknowledgeHours').value),
             };
 
@@ -1165,8 +1157,7 @@
         // Helper functions
         function getSeverityClass(severity) {
             const classes = {
-                'danger': 'bg-red-100 text-red-800',
-                'critical': 'bg-orange-100 text-orange-800',
+                'critical': 'bg-red-100 text-red-800',
                 'warning': 'bg-yellow-100 text-yellow-800',
                 'normal': 'bg-green-100 text-green-800'
             };
@@ -1175,8 +1166,7 @@
 
         function getSeverityBgClass(severity) {
             const classes = {
-                'danger': 'bg-red-100',
-                'critical': 'bg-orange-100',
+                'critical': 'bg-red-100',
                 'warning': 'bg-yellow-100',
                 'normal': 'bg-green-100'
             };
@@ -1184,8 +1174,8 @@
         }
 
         function getSeverityIcon(severity) {
-            if (severity === 'danger' || severity === 'critical') {
-                return `<svg class="w-5 h-5 text-${severity === 'danger' ? 'red' : 'orange'}-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            if (severity === 'critical') {
+                return `<svg class="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
                 </svg>`;
             }
@@ -1209,11 +1199,6 @@
                 setTimeout(() => toast.remove(), 300);
             }, 3000);
         }
-
-        // Toggle email recipients visibility
-        document.getElementById('emailEnabled')?.addEventListener('change', function() {
-            document.getElementById('emailRecipientsContainer').classList.toggle('hidden', !this.checked);
-        });
 
         // Update current time
         function updateTime() {
