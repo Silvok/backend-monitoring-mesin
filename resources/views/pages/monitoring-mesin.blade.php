@@ -992,21 +992,35 @@
                                 label: 'Amplitude',
                                 data: [],
                                 borderColor: '#3b82f6',
-                                backgroundColor: 'rgba(59, 130, 246, 0.1)',
-                                borderWidth: 2,
+                                backgroundColor: 'rgba(59, 130, 246, 0.2)',
+                                borderWidth: 2.5,
                                 tension: 0.1,
                                 fill: true,
-                                pointRadius: 0,
-                                pointHoverRadius: 5,
-                                pointBackgroundColor: '#2563eb'
+                                pointRadius: 1,
+                                pointHoverRadius: 6,
+                                pointBackgroundColor: '#2563eb',
+                                pointBorderColor: '#fff',
+                                pointBorderWidth: 1
                             }]
                         },
                         options: {
                             responsive: true,
                             maintainAspectRatio: false,
+                            interaction: {
+                                intersect: false,
+                                mode: 'index',
+                            },
                             plugins: {
                                 legend: { display: false },
                                 tooltip: {
+                                    backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                                    titleColor: '#1f2937',
+                                    bodyColor: '#4b5563',
+                                    borderColor: '#e5e7eb',
+                                    borderWidth: 1,
+                                    padding: 12,
+                                    bodyFont: { size: 12, weight: '500' },
+                                    titleFont: { size: 13, weight: '700' },
                                     callbacks: {
                                         title: (items) => `Frekuensi: ${items[0].label} Hz`,
                                         label: (item) => `Amplitudo: ${item.parsed.y.toFixed(4)}`
@@ -1019,17 +1033,93 @@
                                         pinch: { enabled: true },
                                         mode: 'x',
                                     }
+                                },
+                                annotation: {
+                                    annotations: {
+                                        lowBandLabel: {
+                                            type: 'label',
+                                            xValue: 50,
+                                            yValue: 0.8,
+                                            content: ['Low Freq', '0-100 Hz'],
+                                            backgroundColor: 'rgba(96, 165, 250, 0.15)',
+                                            color: '#3b82f6',
+                                            font: { size: 9, weight: 'bold' },
+                                            padding: 4
+                                        },
+                                        midBandLabel: {
+                                            type: 'label',
+                                            xValue: 300,
+                                            yValue: 0.8,
+                                            content: ['Mid Freq', '100-500 Hz'],
+                                            backgroundColor: 'rgba(52, 211, 153, 0.15)',
+                                            color: '#10b981',
+                                            font: { size: 9, weight: 'bold' },
+                                            padding: 4
+                                        },
+                                        highBandLabel: {
+                                            type: 'label',
+                                            xValue: 750,
+                                            yValue: 0.8,
+                                            content: ['High Freq', '500+ Hz'],
+                                            backgroundColor: 'rgba(251, 146, 60, 0.15)',
+                                            color: '#f97316',
+                                            font: { size: 9, weight: 'bold' },
+                                            padding: 4
+                                        },
+                                        lowMidLine: {
+                                            type: 'line',
+                                            xMin: 100,
+                                            xMax: 100,
+                                            borderColor: 'rgba(52, 211, 153, 0.5)',
+                                            borderWidth: 1,
+                                            borderDash: [4, 4]
+                                        },
+                                        midHighLine: {
+                                            type: 'line',
+                                            xMin: 500,
+                                            xMax: 500,
+                                            borderColor: 'rgba(251, 146, 60, 0.5)',
+                                            borderWidth: 1,
+                                            borderDash: [4, 4]
+                                        }
+                                    }
                                 }
                             },
                             scales: {
                                 x: {
-                                    title: { display: true, text: 'Frequency (Hz)', font: { weight: 'bold', size: 10 } },
-                                    ticks: { font: { size: 9 } }
+                                    title: {
+                                        display: true,
+                                        text: 'Frequency (Hz)',
+                                        font: { weight: 'bold', size: 11 },
+                                        color: '#3b82f6'
+                                    },
+                                    grid: {
+                                        color: 'rgba(59, 130, 246, 0.08)',
+                                        drawBorder: false
+                                    },
+                                    ticks: {
+                                        font: { size: 10 },
+                                        color: '#6b7280'
+                                    }
                                 },
                                 y: {
                                     beginAtZero: true,
-                                    title: { display: true, text: 'Amplitude', font: { weight: 'bold', size: 10 } },
-                                    ticks: { font: { size: 9 } }
+                                    suggestedMax: 1,
+                                    title: {
+                                        display: true,
+                                        text: 'Amplitude',
+                                        font: { weight: 'bold', size: 11 },
+                                        color: '#3b82f6'
+                                    },
+                                    grid: {
+                                        color: 'rgba(59, 130, 246, 0.08)',
+                                        drawBorder: false
+                                    },
+                                    ticks: {
+                                        font: { size: 10 },
+                                        color: '#6b7280',
+                                        stepSize: 0.2
+                                    }
                                 }
                             }
                         },
@@ -1047,9 +1137,9 @@
                                     }
                                 }
                                 ctx.save();
-                                drawBand(0, 100, 'rgba(96, 165, 250, 0.03)');   // Low
-                                drawBand(100, 500, 'rgba(52, 211, 153, 0.03)'); // Mid
-                                drawBand(500, 2000, 'rgba(251, 146, 60, 0.03)'); // High
+                                drawBand(0, 100, 'rgba(96, 165, 250, 0.08)');   // Low - more visible
+                                drawBand(100, 500, 'rgba(52, 211, 153, 0.08)'); // Mid - more visible
+                                drawBand(500, 2000, 'rgba(251, 146, 60, 0.08)'); // High - more visible
                                 ctx.restore();
                             }
                         }]
