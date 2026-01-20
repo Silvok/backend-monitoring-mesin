@@ -227,8 +227,12 @@
                             <input type="date" id="filterDateTo" onchange="loadAlerts()" class="w-full rounded-lg border-gray-300 text-sm focus:ring-emerald-500 focus:border-emerald-500">
                         </div>
                         <div class="flex-1 min-w-[180px]">
-                            <button onclick="bulkAcknowledge()" class="w-full px-4 py-2 bg-emerald-600 text-white text-sm font-medium rounded-lg hover:bg-emerald-700 transition">
-                                Acknowledge Terpilih
+                            <label class="block text-sm font-medium text-gray-700 mb-1">&nbsp;</label>
+                            <button type="button" onclick="bulkAcknowledge()" class="w-full px-4 py-2 bg-emerald-600 text-white text-sm font-medium rounded-lg hover:bg-emerald-700 transition flex items-center justify-center space-x-2">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                                </svg>
+                                <span>Acknowledge Terpilih</span>
                             </button>
                         </div>
                     </div>
@@ -296,11 +300,12 @@
                             <input type="date" id="historyDateTo" onchange="loadHistory()" class="w-full rounded-lg border-gray-300 text-sm focus:ring-emerald-500 focus:border-emerald-500">
                         </div>
                         <div class="flex-1 min-w-[120px]">
-                            <button onclick="loadHistory()" class="w-full px-4 py-2 bg-gray-100 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-200 transition">
-                                <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <label class="block text-sm font-medium text-gray-700 mb-1">&nbsp;</label>
+                            <button type="button" onclick="loadHistory()" class="w-full px-4 py-2 bg-emerald-600 text-white text-sm font-medium rounded-lg hover:bg-emerald-700 transition flex items-center justify-center space-x-2">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
                                 </svg>
-                                Refresh
+                                <span>Refresh</span>
                             </button>
                         </div>
                     </div>
@@ -446,79 +451,119 @@
                     </div>
 
                     <!-- Notification Settings -->
-                    <div class="bg-white rounded-xl border border-gray-100 shadow-sm p-6">
-                        <div class="flex items-center space-x-3 mb-6">
-                            <div class="p-2 bg-blue-50 rounded-lg">
-                                <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
-                                </svg>
+                    <div style="border-radius: 16px !important;" class="bg-white shadow-sm border border-gray-100 p-6">
+                        <div class="flex items-center justify-between mb-6">
+                            <div class="flex items-center space-x-3">
+                                <div class="p-2.5 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl shadow-sm">
+                                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h3 class="text-lg font-bold text-gray-900 tracking-tight">Pengaturan Notifikasi</h3>
+                                    <p class="text-[12px] text-gray-500 font-medium">Konfigurasi alert dan notifikasi sistem</p>
+                                </div>
                             </div>
-                            <div>
-                                <h3 class="text-lg font-semibold text-gray-900">Pengaturan Notifikasi</h3>
-                                <p class="text-sm text-gray-500">Konfigurasi alert dan notifikasi</p>
-                            </div>
+                            <span class="px-3 py-1 bg-blue-50 text-blue-600 text-xs font-bold rounded-full border border-blue-100">CONFIG</span>
                         </div>
 
                         <form id="notificationForm" onsubmit="saveNotifications(event)">
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                                 <!-- Toggle Options -->
                                 <div class="space-y-4">
                                     <!-- Email Notifications -->
-                                    <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
-                                        <div>
-                                            <h4 class="text-sm font-medium text-gray-700">Notifikasi Email</h4>
-                                            <p class="text-xs text-gray-500">Kirim alert ke email</p>
+                                    <div class="flex items-center justify-between p-4 bg-gradient-to-r from-gray-50 to-gray-100/50 rounded-xl border border-gray-100 hover:shadow-sm transition-all">
+                                        <div class="flex items-center space-x-3">
+                                            <div class="p-2 bg-white rounded-lg shadow-sm border border-gray-100">
+                                                <svg class="w-4 h-4 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                                                </svg>
+                                            </div>
+                                            <div>
+                                                <h4 class="text-sm font-semibold text-gray-800">Notifikasi Email</h4>
+                                                <p class="text-xs text-gray-400">Kirim alert ke email terdaftar</p>
+                                            </div>
                                         </div>
                                         <button type="button" id="emailToggle" onclick="toggleSwitch('email')"
-                                            class="relative inline-flex h-6 w-11 items-center rounded-full transition-all duration-300"
+                                            class="relative inline-flex h-7 w-12 items-center rounded-full transition-all duration-300 shadow-inner"
                                             style="background-color: {{ $notificationConfig['email_enabled'] ? '#059669' : '#d1d5db' }}">
                                             <span id="emailKnob" class="inline-block h-5 w-5 rounded-full bg-white shadow-md transition-all duration-300"
-                                                style="transform: translateX({{ $notificationConfig['email_enabled'] ? '22px' : '2px' }})"></span>
+                                                style="transform: translateX({{ $notificationConfig['email_enabled'] ? '24px' : '4px' }})"></span>
                                         </button>
                                         <input type="hidden" id="emailEnabled" value="{{ $notificationConfig['email_enabled'] ? '1' : '0' }}">
                                     </div>
 
                                     <!-- Sound Notifications -->
-                                    <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
-                                        <div>
-                                            <h4 class="text-sm font-medium text-gray-700">Notifikasi Suara</h4>
-                                            <p class="text-xs text-gray-500">Bunyi saat alert muncul</p>
+                                    <div class="flex items-center justify-between p-4 bg-gradient-to-r from-gray-50 to-gray-100/50 rounded-xl border border-gray-100 hover:shadow-sm transition-all">
+                                        <div class="flex items-center space-x-3">
+                                            <div class="p-2 bg-white rounded-lg shadow-sm border border-gray-100">
+                                                <svg class="w-4 h-4 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"/>
+                                                </svg>
+                                            </div>
+                                            <div>
+                                                <h4 class="text-sm font-semibold text-gray-800">Notifikasi Suara</h4>
+                                                <p class="text-xs text-gray-400">Bunyi alarm saat alert muncul</p>
+                                            </div>
                                         </div>
                                         <button type="button" id="soundToggle" onclick="toggleSwitch('sound')"
-                                            class="relative inline-flex h-6 w-11 items-center rounded-full transition-all duration-300"
+                                            class="relative inline-flex h-7 w-12 items-center rounded-full transition-all duration-300 shadow-inner"
                                             style="background-color: {{ $notificationConfig['alert_sound_enabled'] ? '#059669' : '#d1d5db' }}">
                                             <span id="soundKnob" class="inline-block h-5 w-5 rounded-full bg-white shadow-md transition-all duration-300"
-                                                style="transform: translateX({{ $notificationConfig['alert_sound_enabled'] ? '22px' : '2px' }})"></span>
+                                                style="transform: translateX({{ $notificationConfig['alert_sound_enabled'] ? '24px' : '4px' }})"></span>
                                         </button>
                                         <input type="hidden" id="soundEnabled" value="{{ $notificationConfig['alert_sound_enabled'] ? '1' : '0' }}">
                                     </div>
 
                                     <!-- Auto Acknowledge -->
-                                    <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
-                                        <div>
-                                            <h4 class="text-sm font-medium text-gray-700">Auto-Acknowledge</h4>
-                                            <p class="text-xs text-gray-500">Otomatis acknowledge setelah</p>
+                                    <div class="flex items-center justify-between p-4 bg-gradient-to-r from-gray-50 to-gray-100/50 rounded-xl border border-gray-100 hover:shadow-sm transition-all">
+                                        <div class="flex items-center space-x-3">
+                                            <div class="p-2 bg-white rounded-lg shadow-sm border border-gray-100">
+                                                <svg class="w-4 h-4 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                                </svg>
+                                            </div>
+                                            <div>
+                                                <h4 class="text-sm font-semibold text-gray-800">Auto-Acknowledge</h4>
+                                                <p class="text-xs text-gray-400">Otomatis acknowledge setelah waktu tertentu</p>
+                                            </div>
                                         </div>
                                         <div class="flex items-center gap-2">
                                             <input type="number" id="autoAcknowledgeHours" value="{{ $notificationConfig['auto_acknowledge_hours'] }}" min="1" max="168"
-                                                class="w-16 rounded-lg border-gray-300 text-sm focus:ring-emerald-500 focus:border-emerald-500">
-                                            <span class="text-sm text-gray-500">jam</span>
+                                                class="w-16 rounded-lg border-gray-200 text-sm font-semibold text-center focus:ring-emerald-500 focus:border-emerald-500 shadow-sm">
+                                            <span class="text-xs font-medium text-gray-500 bg-gray-100 px-2 py-1 rounded">jam</span>
                                         </div>
                                     </div>
                                 </div>
 
                                 <!-- Email Recipients -->
                                 <div id="emailRecipientsContainer" class="{{ $notificationConfig['email_enabled'] ? '' : 'hidden' }}">
-                                    <label class="block text-sm font-medium text-gray-700 mb-2">Penerima Email</label>
-                                    <textarea id="emailRecipients" rows="4" placeholder="email1@example.com&#10;email2@example.com"
-                                        class="w-full rounded-lg border-gray-300 text-sm focus:ring-emerald-500 focus:border-emerald-500">{{ $notificationConfig['email_recipients'] }}</textarea>
-                                    <p class="text-xs text-gray-400 mt-1">Satu email per baris</p>
+                                    <div class="bg-gradient-to-br from-blue-50/50 to-indigo-50/50 rounded-xl p-5 border border-blue-100/50 h-full">
+                                        <div class="flex items-center space-x-2 mb-3">
+                                            <svg class="w-4 h-4 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
+                                            </svg>
+                                            <label class="text-sm font-bold text-gray-700">Daftar Penerima Email</label>
+                                        </div>
+                                        <textarea id="emailRecipients" rows="5" placeholder="contoh@email.com&#10;admin@perusahaan.com&#10;teknisi@domain.com"
+                                            class="w-full rounded-xl border-gray-200 text-sm focus:ring-blue-500 focus:border-blue-500 shadow-sm placeholder-gray-300 resize-none">{{ $notificationConfig['email_recipients'] }}</textarea>
+                                        <div class="flex items-center space-x-1 mt-2">
+                                            <svg class="w-3 h-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                            </svg>
+                                            <p class="text-[10px] text-gray-400 font-medium">Masukkan satu alamat email per baris</p>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
 
-                            <div class="mt-6">
-                                <button type="submit" class="px-6 py-2.5 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition">
-                                    Simpan Pengaturan Notifikasi
+                            <div class="mt-6 pt-4 border-t border-gray-100 flex items-center justify-between">
+                                <p class="text-xs text-gray-400">Perubahan akan berlaku segera setelah disimpan</p>
+                                <button type="submit" class="px-5 py-2.5 bg-gradient-to-r from-blue-600 to-blue-700 text-white text-sm font-semibold rounded-xl hover:from-blue-700 hover:to-blue-800 transition-all shadow-sm hover:shadow-md flex items-center space-x-2">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                                    </svg>
+                                    <span>Simpan Pengaturan</span>
                                 </button>
                             </div>
                         </form>
@@ -1329,27 +1374,45 @@
 
         // Toggle switch function
         function toggleSwitch(type) {
+            console.log('toggleSwitch called with type:', type);
+
             const toggle = document.getElementById(type + 'Toggle');
             const knob = document.getElementById(type + 'Knob');
             const input = document.getElementById(type + 'Enabled');
 
+            console.log('Elements found:', { toggle, knob, input });
+            console.log('Current input value:', input ? input.value : 'not found');
+
+            if (!toggle || !knob || !input) {
+                console.error('Missing elements for toggle:', type);
+                return;
+            }
+
             const isEnabled = input.value === '1';
+            console.log('isEnabled:', isEnabled);
 
             if (isEnabled) {
                 // Turn off
+                console.log('Turning OFF');
                 toggle.style.backgroundColor = '#d1d5db'; // gray-300
-                knob.style.transform = 'translateX(2px)';
+                knob.style.transform = 'translateX(4px)';
                 input.value = '0';
             } else {
                 // Turn on
+                console.log('Turning ON');
                 toggle.style.backgroundColor = '#059669'; // emerald-600
-                knob.style.transform = 'translateX(22px)';
+                knob.style.transform = 'translateX(24px)';
                 input.value = '1';
             }
 
+            console.log('New input value:', input.value);
+
             // Toggle email recipients visibility
             if (type === 'email') {
-                document.getElementById('emailRecipientsContainer').classList.toggle('hidden', input.value === '0');
+                const container = document.getElementById('emailRecipientsContainer');
+                if (container) {
+                    container.classList.toggle('hidden', input.value === '0');
+                }
             }
         }
 
