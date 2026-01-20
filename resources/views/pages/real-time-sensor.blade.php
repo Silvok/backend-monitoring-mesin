@@ -659,21 +659,42 @@
             selectedMachineId = this.value;
 
             if (selectedMachineId) {
+                // Get selected option data for instant display
+                const selectedOption = this.options[this.selectedIndex];
+                const machineName = selectedOption.text.split(' (')[0];
+                const machineLocation = selectedOption.dataset.location || '-';
+                const machineStatus = selectedOption.dataset.status || 'LOADING';
+
                 // Reset statistics
                 resetStatistics();
 
-                // Show all sections
+                // Show all sections IMMEDIATELY with loading state
                 document.getElementById('machineStatusCard').classList.remove('hidden');
                 document.getElementById('quickStatsSection').classList.remove('hidden');
                 document.getElementById('sensorValuesSection').classList.remove('hidden');
                 document.getElementById('chartSection').classList.remove('hidden');
                 document.getElementById('liveFeedSection').classList.remove('hidden');
 
-                // Load data
+                // Set instant placeholder data from dropdown
+                document.getElementById('machineName').textContent = machineName;
+                document.getElementById('machineLocation').textContent = `Lokasi: ${machineLocation}`;
+                document.getElementById('rmsValue').innerHTML = '<span class="animate-pulse">Loading...</span>';
+                document.getElementById('peakValue').innerHTML = '<span class="animate-pulse">Loading...</span>';
+                document.getElementById('freqValue').innerHTML = '<span class="animate-pulse">Loading...</span>';
+                document.getElementById('lastCheck').textContent = 'Memuat...';
+
+                // Set loading state for status badge
+                document.getElementById('statusBadge').className = 'px-4 py-2 rounded-full text-sm font-bold bg-gray-200 text-gray-700 animate-pulse';
+                document.getElementById('statusBadge').textContent = 'MEMUAT...';
+                document.getElementById('statusBar').className = 'h-2 bg-gray-400 animate-pulse';
+
+                // Initialize chart first (non-blocking)
+                initializeChart();
+
+                // Load data asynchronously
                 loadMachineData(selectedMachineId);
                 startAutoUpdate();
                 connectWebSocket(selectedMachineId);
-                initializeChart();
                 startChartUpdate();
             } else {
                 stopAutoUpdate();

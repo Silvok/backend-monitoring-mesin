@@ -169,46 +169,37 @@ class DashboardApiController extends Controller
     }
 
     /**
-     * Get sensor data for a specific machine
+     * Get sensor data for a specific machine (optimized for speed)
      */
     public function getMachineSensorData($id)
     {
         try {
             $machine = Machine::with('latestAnalysis')->findOrFail($id);
 
-            // Today's window
-            $todayStart = now()->startOfDay();
-            $todayEnd = now();
+            // Get latest analysis first (fastest response)
+            $latestAnalysis = $machine->latestAnalysis;
 
-            // Aggregate today's readings and analysis summary
-            $totalReadingsToday = RawSample::where('machine_id', $id)
-                ->whereBetween('created_at', [$todayStart, $todayEnd])
-                ->count();
+            // Use per-machine threshold from database
+            $warningThreshold = (float) ($machine->threshold_warning ?? 1.8);
+            $criticalThreshold = (float) ($machine->threshold_critical ?? 4.5);
 
-            $anomalyStatuses = ['ANOMALY', 'WARNING', 'FAULT', 'CRITICAL'];
+            // Determine status based on per-machine threshold
+            $rmsValue = $latestAnalysis ? round($latestAnalysis->rms, 4) : 0;
+            if ($latestAnalysis) {
+                if ($rmsValue < $warningThreshold) {
+                    $status = 'NORMAL';
+                } elseif ($rmsValue < $criticalThreshold) {
+                    $status = 'WASPADA';
+                } else {
+                    $status = 'ANOMALI';
+                }
+            } else {
+                $status = 'UNKNOWN';
+            }
 
-            $todayAnalysisQuery = AnalysisResult::where('machine_id', $id)
-                ->whereBetween('created_at', [$todayStart, $todayEnd]);
-
-            $totalAnalysisToday = (clone $todayAnalysisQuery)->count();
-            $normalCountToday = (clone $todayAnalysisQuery)->where('condition_status', 'NORMAL')->count();
-            $anomalyCountToday = (clone $todayAnalysisQuery)->whereIn('condition_status', $anomalyStatuses)->count();
-
-            $lastAnomaly = AnalysisResult::where('machine_id', $id)
-                ->whereIn('condition_status', $anomalyStatuses)
-                ->orderBy('created_at', 'desc')
-                ->first();
-
-            $uptimePercent = $totalAnalysisToday > 0
-                ? round(($normalCountToday / $totalAnalysisToday) * 100, 1)
-                : 0.0;
-
-            $normalPercent = $totalAnalysisToday > 0
-                ? round(($normalCountToday / $totalAnalysisToday) * 100, 1)
-                : 0.0;
-
-            // Get latest 20 sensor readings
+            // Get latest 20 sensor readings (optimized - select only needed columns)
             $sensorData = RawSample::where('machine_id', $id)
+                ->select('id', 'ax_g', 'ay_g', 'az_g', 'temperature_c', 'created_at')
                 ->latest()
                 ->limit(20)
                 ->get()
@@ -224,26 +215,41 @@ class DashboardApiController extends Controller
                     ];
                 });
 
-            // Get latest analysis
-            $latestAnalysis = $machine->latestAnalysis;
+            // Today's window for summary (run async-style, less critical)
+            $todayStart = now()->startOfDay();
+            $todayEnd = now();
 
-            // Use per-machine threshold from database
-            $warningThreshold = (float) ($machine->threshold_warning ?? 1.8);
-            $criticalThreshold = (float) ($machine->threshold_critical ?? 4.5);
+            // Use more efficient single query with conditional counts
+            $summaryStats = AnalysisResult::where('machine_id', $id)
+                ->whereBetween('created_at', [$todayStart, $todayEnd])
+                ->selectRaw('
+                    COUNT(*) as total_analysis,
+                    SUM(CASE WHEN condition_status = "NORMAL" THEN 1 ELSE 0 END) as normal_count,
+                    SUM(CASE WHEN condition_status IN ("ANOMALY", "WARNING", "FAULT", "CRITICAL") THEN 1 ELSE 0 END) as anomaly_count
+                ')
+                ->first();
 
-            // Tentukan status berdasarkan per-machine threshold
-            $rmsValue = $latestAnalysis ? round($latestAnalysis->rms, 4) : 0;
-            if ($latestAnalysis) {
-                if ($rmsValue < $warningThreshold) {
-                    $status = 'NORMAL';      // Zone A: Good
-                } elseif ($rmsValue < $criticalThreshold) {
-                    $status = 'WASPADA';     // Zone B: Acceptable
-                } else {
-                    $status = 'ANOMALI';     // Zone C/D: Unsatisfactory/Danger
-                }
-            } else {
-                $status = 'UNKNOWN';
-            }
+            $totalAnalysisToday = $summaryStats->total_analysis ?? 0;
+            $normalCountToday = $summaryStats->normal_count ?? 0;
+            $anomalyCountToday = $summaryStats->anomaly_count ?? 0;
+
+            // Count readings (simple count, fast)
+            $totalReadingsToday = RawSample::where('machine_id', $id)
+                ->whereBetween('created_at', [$todayStart, $todayEnd])
+                ->count();
+
+            $uptimePercent = $totalAnalysisToday > 0
+                ? round(($normalCountToday / $totalAnalysisToday) * 100, 1)
+                : 0.0;
+
+            $normalPercent = $uptimePercent;
+
+            // Last anomaly (only if needed)
+            $lastAnomaly = AnalysisResult::where('machine_id', $id)
+                ->whereIn('condition_status', ['ANOMALY', 'WARNING', 'FAULT', 'CRITICAL'])
+                ->orderBy('created_at', 'desc')
+                ->select('created_at')
+                ->first();
 
             return response()->json([
                 'success' => true,
