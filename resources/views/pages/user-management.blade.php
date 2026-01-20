@@ -1,27 +1,51 @@
-<x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-bold text-xl text-emerald-900">Manajemen User</h2>
-    </x-slot>
-    <div class="max-w-2xl mx-auto mt-8">
-        <div class="space-y-2">
-            @foreach($users as $user)
-                <div class="flex items-center space-x-2 hover:bg-white/10 px-3 py-2 rounded-full text-white font-semibold transition duration-200 {{ $user->email === 'admin@example.com' ? 'bg-emerald-600' : 'bg-emerald-400' }}">
-                    <div class="w-8 h-8 bg-gradient-to-br from-yellow-400 to-yellow-500 rounded-full flex items-center justify-center font-bold text-xs shadow-lg">
-                        {{ strtoupper(substr($user->name, 0, 1)) }}
-                    </div>
-                    <div class="flex-1">
-                        <div class="text-sm font-bold">{{ $user->name }}</div>
-                        <div class="text-xs">{{ $user->email }}</div>
-                    </div>
-                    @if($user->email === 'admin@example.com')
-                        <span class="px-2 py-1 text-xs rounded bg-white text-emerald-700 font-bold">Admin</span>
-                    @else
-                        <span class="px-2 py-1 text-xs rounded bg-white text-gray-700">User</span>
-                        <button class="ml-2 px-2 py-1 text-xs bg-red-500 text-white rounded">Hapus</button>
-                    @endif
-                </div>
-            @endforeach
+@extends('layouts.app')
+
+
+@section('title', 'Manajemen User')
+
+@section('header')
+    <div class="flex items-center justify-between">
+        <div class="flex items-center space-x-8">
+            <h2 class="font-bold text-xl text-emerald-900">
+                Manajemen User
+            </h2>
+            <!-- Bisa tambahkan indikator di sini jika perlu -->
         </div>
     </div>
-</x-app-layout>
-<!-- Halaman ini telah dihapus. -->
+@endsection
+
+@section('content')
+<div class="container mx-auto px-4 py-8">
+    <div class="flex items-center justify-between mb-6">
+        <h1 class="text-2xl font-bold text-gray-800">Manajemen User</h1>
+        <button class="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold px-4 py-2 rounded-lg shadow transition-all" id="btn-add-user">
+            + Tambah User
+        </button>
+    </div>
+    <div class="bg-white rounded-xl shadow p-6">
+        <table class="min-w-full divide-y divide-gray-200">
+            <thead>
+                <tr>
+                    <th class="px-4 py-2 text-left text-xs font-bold text-gray-500 uppercase">Nama</th>
+                    <th class="px-4 py-2 text-left text-xs font-bold text-gray-500 uppercase">Email</th>
+                    <th class="px-4 py-2 text-left text-xs font-bold text-gray-500 uppercase">Role</th>
+                    <th class="px-4 py-2 text-center text-xs font-bold text-gray-500 uppercase">Aksi</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach($users as $user)
+                <tr>
+                    <td class="px-4 py-2 text-gray-800">{{ $user->name }}</td>
+                    <td class="px-4 py-2 text-gray-600">{{ $user->email }}</td>
+                    <td class="px-4 py-2 text-gray-600">{{ $user->role ?? '-' }}</td>
+                    <td class="px-4 py-2 text-center">
+                        <button class="text-blue-500 hover:underline font-semibold mr-2">Edit</button>
+                        <button class="text-red-500 hover:underline font-semibold">Hapus</button>
+                    </td>
+                </tr>
+                @endforeach
+            </tbody>
+        </table>
+    </div>
+</div>
+@endsection

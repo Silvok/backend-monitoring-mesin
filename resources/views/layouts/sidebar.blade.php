@@ -140,6 +140,18 @@
             </a>
 
             <!-- User Management -->
+            <a href="{{ route('user-management') }}"
+                class="flex items-center px-4 py-2.5 rounded-lg text-gray-600 font-medium hover:bg-emerald-50 hover:text-emerald-900 transition duration-200"
+                :class="sidebarOpen ? 'space-x-3' : 'justify-center px-2'"
+                @if(request()->routeIs('user-management'))
+                    style="background: linear-gradient(to right, rgba(16, 185, 129, 0.15), rgba(5, 150, 105, 0.15)); color: #065f46;"
+                @endif
+                :title="sidebarOpen ? '' : 'Manajemen User'">
+                <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a4 4 0 00-3-3.87M9 20h6M3 20h5v-2a4 4 0 013-3.87M16 3.13a4 4 0 010 7.75M8 3.13a4 4 0 000 7.75" />
+                </svg>
+                <span class="text-sm" x-show="sidebarOpen" x-transition>Manajemen User</span>
+            </a>
 
         </nav>
     </div>

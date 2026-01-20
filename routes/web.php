@@ -1,4 +1,9 @@
+
 <?php
+
+// User Management Page
+use App\Http\Controllers\UserManagementController;
+Route::get('/user-management', [UserManagementController::class, 'index'])->name('user-management');
 
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\DashboardController;
