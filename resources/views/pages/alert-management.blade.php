@@ -28,6 +28,41 @@
                 <div class="text-sm text-gray-600 bg-gray-50 px-3 py-1.5 rounded-lg border border-gray-200">
                     <span class="font-semibold" id="currentTime">{{ now()->format('d M Y, H:i:s') }}</span>
                 </div>
+                <!-- Profile Dropdown -->
+                <div class="relative ml-2" x-data="{ dropdownOpen: false }">
+                    <div x-show="dropdownOpen" @click.outside="dropdownOpen = false" x-transition
+                         class="absolute right-0 mt-2 w-56 bg-white rounded-xl shadow-2xl py-2 z-50 border border-gray-100">
+                        <!-- User Info -->
+                        <div class="px-4 py-3 border-b border-gray-100">
+                            <p class="text-sm font-semibold text-gray-900">{{ Auth::user()->name }}</p>
+                            <p class="text-xs text-gray-500">{{ Auth::user()->email }}</p>
+                        </div>
+                        <!-- Menu Items -->
+                        <a href="{{ route('profile.edit') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-emerald-50 transition duration-150 flex items-center space-x-2">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                            </svg>
+                            <span>Profile</span>
+                        </a>
+                        <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-emerald-50 transition duration-150 flex items-center space-x-2">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.26 2.632 1.732-.44.9.023 2.031.816 2.556 1.158.786 1.158 2.706 0 3.492-.793.525-1.256 1.656-.816 2.556.678 1.472-1.089 2.672-2.632 1.732a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.26-2.632-1.732.44-.9-.023-2.031-.816-2.556-1.158-.786-1.158-2.706 0-3.492.793-.525 1.256-1.656.816-2.556-.678-1.472 1.089-2.672 2.632-1.732a1.724 1.724 0 002.573-1.066z"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                            </svg>
+                            <span>Pengaturan</span>
+                        </a>
+                        <!-- Logout -->
+                        <form method="POST" action="{{ route('logout') }}" class="border-t border-gray-100 pt-2">
+                            @csrf
+                            <button type="submit" class="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition duration-150 flex items-center space-x-2">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+                                </svg>
+                                <span>Keluar</span>
+                            </button>
+                        </form>
+                    </div>
+                </div>
             </div>
         </div>
     </x-slot>
