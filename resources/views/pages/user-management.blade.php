@@ -33,12 +33,16 @@
 		<!-- Notifikasi -->
 		<div id="toast-container"></div>
 
-		<!-- Header and Search/Add Bar (exactly as image) -->
-		<div class="flex items-center justify-between mb-8 w-full">
+		<!-- Header and Search Bar (side by side) -->
+		<div class="flex items-center justify-between mb-8 w-full gap-4">
 			<h3 class="text-base font-semibold text-black">User Management</h3>
-
+			<form class="flex items-center gap-2" method="GET" action="">
+				<input id="userSearchInput" type="text" name="search" placeholder="Search users..." class="w-44 bg-gray-100 border border-gray-200 rounded-lg focus:ring-emerald-200 focus:border-emerald-400 text-gray-700 placeholder-gray-400 text-sm outline-none h-10 px-4 transition" autocomplete="off" />
+				<button type="submit" class="flex items-center justify-center h-8 w-8 rounded-full bg-emerald-500 hover:bg-emerald-600 text-white transition p-0">
+					<svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 104.5 4.5a7.5 7.5 0 0012.15 12.15z" /></svg>
+				</button>
+			</form>
 		</div>
-		<!-- Filter & Sort Modern Minimalist Card -->
 		<div class="bg-white/80 rounded-xl border border-gray-100 p-4 mb-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4 shadow-sm">
 			<div class="flex items-center gap-3">
 				<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-funnel w-5 h-5 text-emerald-400"><path d="M10 20a1 1 0 0 0 .553.895l2 1A1 1 0 0 0 14 21v-7a2 2 0 0 1 .517-1.341L21.74 4.67A1 1 0 0 0 21 3H3a1 1 0 0 0-.742 1.67l7.225 7.989A2 2 0 0 1 10 14z"></path></svg>
@@ -114,7 +118,9 @@
 							</tr>
 						@empty
 							<tr>
-								<td colspan="6" class="text-center py-8 text-gray-400">Belum ada user terdaftar</td>
+								<td colspan="6" class="text-center py-8 text-gray-400">
+									Tidak ada user ditemukan
+								</td>
 							</tr>
 						@endforelse
 					</tbody>
@@ -191,11 +197,40 @@
 			</div>
 		</div>
 	</div>
-	@push('scripts')
-		<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-		<script>
-		// Modal logic
-		function openUserModal(isEdit = false, user = null) {
+		@push('scripts')
+			<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+			<script>
+			// Live search user
+			// document.addEventListener('DOMContentLoaded', function() {
+			//     const searchInput = document.getElementById('userSearchInput');
+			//     let searchTimeout = null;
+			//     searchInput.addEventListener('input', function() {
+			//         clearTimeout(searchTimeout);
+			//         const query = this.value.trim();
+			//         if (query.length === 0) {
+			//             window.location.reload(); // Reset to all users if empty
+			//             return;
+			//         }
+			//         if (query.length < 1) return; // Only search after 1+ chars
+			//         searchTimeout = setTimeout(() => {
+			//             fetch(`/user-management?search=${encodeURIComponent(query)}`)
+			//                 .then(res => res.text())
+			//                 .then(html => {
+			//                     // Replace only the user table
+			//                     const parser = new DOMParser();
+			//                     const doc = parser.parseFromString(html, 'text/html');
+			//                     const newTable = doc.querySelector('.relative.overflow-x-auto');
+			//                     const oldTable = document.querySelector('.relative.overflow-x-auto');
+			//                     if (newTable && oldTable) {
+			//                         oldTable.innerHTML = newTable.innerHTML;
+			//                     }
+			//                 });
+			//         }, 250);
+			//     });
+			// });
+
+			// Modal logic
+			function openUserModal(isEdit = false, user = null) {
 			document.getElementById('userModal').classList.remove('hidden');
 			document.getElementById('userForm').reset();
 			document.getElementById('userId').value = '';
