@@ -95,28 +95,66 @@
 				<table class="min-w-full divide-y divide-gray-200">
 					<thead class="bg-gray-50">
 						<tr>
-							<th class="px-6 py-3 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Nama</th>
-							<th class="px-6 py-3 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Email</th>
+							<th class="px-6 py-3 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Profile</th>
+							<th class="px-6 py-3 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Full Name</th>
+							<th class="px-6 py-3 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Email Address</th>
+							<th class="px-6 py-3 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Phone Number</th>
 							<th class="px-6 py-3 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Role</th>
-							<!-- Status column header removed because 'status' field does not exist in users table -->
-							<th class="px-6 py-3 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Tanggal Dibuat</th>
-							<th class="px-6 py-3 text-center text-xs font-bold text-gray-600 uppercase tracking-wider">Aksi</th>
+							<th class="px-6 py-3 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Status</th>
+							<th class="px-6 py-3 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Last Login</th>
+							<th class="px-6 py-3 text-center text-xs font-bold text-gray-600 uppercase tracking-wider">Action</th>
 						</tr>
 					</thead>
 					<tbody class="bg-white divide-y divide-gray-100">
 						@forelse($users as $user)
 							<tr class="hover:bg-emerald-50/40 transition">
+								<!-- Profile (avatar) -->
+								<td class="px-6 py-4 whitespace-nowrap">
+									<div class="flex items-center">
+										<span class="inline-block h-10 w-10 rounded-full overflow-hidden bg-gray-200">
+											@if(isset($user->profile_photo_url))
+												<img src="{{ $user->profile_photo_url }}" alt="{{ $user->name }}" class="h-10 w-10 object-cover">
+											@else
+												<svg class="h-10 w-10 text-gray-400" fill="currentColor" viewBox="0 0 24 24">
+													<path d="M24 24H0c0-6.627 5.373-12 12-12s12 5.373 12 12z"/>
+													<circle cx="12" cy="8" r="4"/>
+												</svg>
+											@endif
+										</span>
+									</div>
+								</td>
+								<!-- Full Name -->
 								<td class="px-6 py-4 whitespace-nowrap font-semibold text-gray-900">{{ $user->name }}</td>
+								<!-- Email Address -->
 								<td class="px-6 py-4 whitespace-nowrap text-gray-700">{{ $user->email }}</td>
+								<!-- Phone Number -->
+								<td class="px-6 py-4 whitespace-nowrap text-gray-700">{{ $user->phone ?? '-' }}</td>
+								<!-- Role -->
 								<td class="px-6 py-4 whitespace-nowrap capitalize">
 									<span class="inline-block px-2 py-1 text-xs rounded bg-emerald-100 text-emerald-700 font-semibold">{{ $user->role ?? '-' }}</span>
 								</td>
-						<!-- Status column removed because 'status' field does not exist in users table -->
-								<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $user->created_at->format('d M Y') }}</td>
+								<!-- Status -->
+								<td class="px-6 py-4 whitespace-nowrap">
+									<span class="px-2 py-1 text-xs font-semibold rounded-full {{ ($user->status ?? true) ? 'bg-emerald-100 text-emerald-700' : 'bg-gray-200 text-gray-500' }}">
+										{{ ($user->status ?? true) ? 'Active' : 'Inactive' }}
+									</span>
+								</td>
+								<!-- Last Login -->
+								<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $user->last_login_at ? \Carbon\Carbon::parse($user->last_login_at)->format('d M Y, H:i') : '-' }}</td>
+								<!-- Action -->
 								<td class="px-6 py-4 whitespace-nowrap text-center">
-									<button onclick="editUser({{ $user->id }})" class="text-emerald-600 hover:bg-emerald-100 hover:text-emerald-800 font-semibold mr-2 px-3 py-1 rounded transition">Edit</button>
-									<button onclick="confirmDeleteUser({{ $user->id }})" class="text-red-600 hover:bg-red-100 hover:text-red-800 font-semibold mr-2 px-3 py-1 rounded transition">Hapus</button>
-									<button onclick="confirmResetPassword({{ $user->id }})" class="text-yellow-600 hover:bg-yellow-100 hover:text-yellow-800 font-semibold px-3 py-1 rounded transition">Reset Password</button>
+									<button onclick="editUser({{ $user->id }})" class="inline-flex items-center justify-center mr-2 p-2 rounded-full text-emerald-600 hover:bg-emerald-100 hover:text-emerald-800 transition" title="Edit">
+										<!-- Pencil Icon -->
+										<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+											<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16.862 3.487a2.25 2.25 0 113.182 3.182L7.5 19.213l-4 1 1-4 12.362-12.726z" />
+										</svg>
+									</button>
+									<button onclick="confirmDeleteUser({{ $user->id }})" class="inline-flex items-center justify-center p-2 rounded-full text-red-600 hover:bg-red-100 hover:text-red-800 transition" title="Hapus">
+										<!-- Trash Icon -->
+										<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+											<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 7h12M9 7V4a1 1 0 011-1h4a1 1 0 011 1v3m2 0v12a2 2 0 01-2 2H8a2 2 0 01-2-2V7h12z" />
+										</svg>
+									</button>
 								</td>
 							</tr>
 						@empty
