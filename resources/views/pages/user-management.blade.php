@@ -38,8 +38,12 @@
 			<h3 class="text-base font-semibold text-black">User Management</h3>
 			<form class="flex items-center gap-2" method="GET" action="">
 				<input id="userSearchInput" type="text" name="search" placeholder="Search users..." class="w-44 bg-gray-100 border border-gray-200 rounded-lg focus:ring-emerald-200 focus:border-emerald-400 text-gray-700 placeholder-gray-400 text-sm outline-none h-10 px-4 transition" autocomplete="off" />
-				<button type="submit" class="flex items-center justify-center h-8 w-8 rounded-full bg-emerald-500 hover:bg-emerald-600 text-white transition p-0">
+				<button type="submit" class="flex items-center justify-center h-8 w-8 rounded-full bg-emerald-500 hover:bg-emerald-600 text-white transition p-0" title="Cari">
 					<svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 104.5 4.5a7.5 7.5 0 0012.15 12.15z" /></svg>
+				</button>
+				<button type="button" class="ml-2 flex items-center gap-2 px-4 h-10 rounded-lg bg-emerald-500 hover:bg-emerald-600 text-white text-sm font-medium transition shadow-sm" id="addUserBtn">
+					<svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>
+					Tambah User
 				</button>
 			</form>
 		</div>
@@ -89,7 +93,7 @@
 							<th class="px-6 py-3 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Nama</th>
 							<th class="px-6 py-3 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Email</th>
 							<th class="px-6 py-3 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Role</th>
-							<th class="px-6 py-3 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Status</th>
+							<!-- Status column header removed because 'status' field does not exist in users table -->
 							<th class="px-6 py-3 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Tanggal Dibuat</th>
 							<th class="px-6 py-3 text-center text-xs font-bold text-gray-600 uppercase tracking-wider">Aksi</th>
 						</tr>
@@ -102,13 +106,7 @@
 								<td class="px-6 py-4 whitespace-nowrap capitalize">
 									<span class="inline-block px-2 py-1 text-xs rounded bg-emerald-100 text-emerald-700 font-semibold">{{ $user->role ?? '-' }}</span>
 								</td>
-								<td class="px-6 py-4 whitespace-nowrap">
-									@if($user->status ?? true)
-										<span class="px-2 py-1 text-xs font-semibold rounded-full bg-emerald-100 text-emerald-700">Aktif</span>
-									@else
-										<span class="px-2 py-1 text-xs font-semibold rounded-full bg-gray-200 text-gray-500">Nonaktif</span>
-									@endif
-								</td>
+						<!-- Status column removed because 'status' field does not exist in users table -->
 								<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $user->created_at->format('d M Y') }}</td>
 								<td class="px-6 py-4 whitespace-nowrap text-center">
 									<button onclick="editUser({{ $user->id }})" class="text-emerald-600 hover:bg-emerald-100 hover:text-emerald-800 font-semibold mr-2 px-3 py-1 rounded transition">Edit</button>
