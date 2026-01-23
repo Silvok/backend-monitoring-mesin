@@ -125,6 +125,7 @@
                 <div class="w-8 h-px bg-gray-200"></div>
             </div>
 
+
             <!-- Konfigurasi -->
             <a href="#"
                 class="flex items-center px-4 py-2.5 rounded-lg text-gray-600 font-medium hover:bg-gray-50 hover:text-gray-900 transition duration-200"
@@ -139,7 +140,7 @@
                 <span class="text-sm" x-show="sidebarOpen" x-transition>Pengaturan</span>
             </a>
 
-            <!-- User Management -->
+            <!-- User Management (Manajemen User) -->
             <a href="{{ route('user-management') }}"
                 class="flex items-center px-4 py-2.5 rounded-lg text-gray-600 font-medium hover:bg-emerald-50 hover:text-emerald-900 transition duration-200"
                 :class="sidebarOpen ? 'space-x-3' : 'justify-center px-2'"

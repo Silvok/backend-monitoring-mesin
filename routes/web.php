@@ -1,5 +1,7 @@
-
 <?php
+
+// API endpoint for user detail (for edit modal)
+Route::get('/api/users/{id}', [App\Http\Controllers\UserManagementController::class, 'show'])->name('api.users.show');
 
 // User Management Page
 use App\Http\Controllers\UserManagementController;

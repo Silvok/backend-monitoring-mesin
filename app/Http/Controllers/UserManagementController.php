@@ -43,8 +43,10 @@ class UserManagementController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email,' . $user->id,
             'role' => 'required|string',
-            'status' => 'required|boolean',
+            'status' => 'required',
         ]);
+        // Cast status to boolean
+        $validated['status'] = $validated['status'] == '1' ? 1 : 0;
         if ($request->filled('password')) {
             $validated['password'] = bcrypt($request->password);
         }
@@ -65,5 +67,11 @@ class UserManagementController extends Controller
         $user->password = bcrypt('12345678');
         $user->save();
         return response()->json(['success' => true, 'message' => 'Password berhasil direset ke default']);
+    }
+    // Show user detail for AJAX edit
+    public function show($id)
+    {
+        $user = User::findOrFail($id);
+        return response()->json($user);
     }
 }

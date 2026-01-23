@@ -170,7 +170,7 @@
 		</div>
 
 		<!-- Modal Tambah/Edit User -->
-		<div id="userModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-30 hidden">
+		<div id="userModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/10 transition-all duration-200 backdrop-blur-sm supports-backdrop-blur hidden" style="backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);">
 			<div class="bg-white rounded-lg shadow-lg w-full max-w-md p-6 relative">
 				<h4 class="text-lg font-bold mb-4" id="userModalTitle">Tambah User</h4>
 				<form id="userForm">
@@ -206,16 +206,11 @@
 						<button type="submit" class="px-4 py-2 bg-emerald-600 text-white rounded hover:bg-emerald-700">Simpan</button>
 					</div>
 				</form>
-				<button onclick="closeUserModal()" class="absolute top-2 right-2 text-gray-400 hover:text-gray-600">
-					<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-					</svg>
-				</button>
 			</div>
 		</div>
 
 		<!-- Modal Konfirmasi Hapus User -->
-		<div id="deleteUserModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-30 hidden">
+		<div id="deleteUserModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/10 transition-all duration-200 backdrop-blur-sm supports-backdrop-blur hidden" style="backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);">
 			<div class="bg-white rounded-lg shadow-lg w-full max-w-sm p-6 relative">
 				<h4 class="text-lg font-bold mb-4">Konfirmasi Hapus User</h4>
 				<p>Apakah Anda yakin ingin menghapus user ini?</p>
@@ -227,7 +222,7 @@
 		</div>
 
 		<!-- Modal Konfirmasi Reset Password -->
-		<div id="resetPasswordModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-30 hidden">
+		<div id="resetPasswordModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/10 transition-all duration-200 backdrop-blur-sm supports-backdrop-blur hidden" style="backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);">
 			<div class="bg-white rounded-lg shadow-lg w-full max-w-sm p-6 relative">
 				<h4 class="text-lg font-bold mb-4">Reset Password User</h4>
 				<p>Reset password user ke default (misal: 12345678)?</p>
