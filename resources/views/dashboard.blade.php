@@ -195,7 +195,7 @@
                             </svg>
                             Trend Analisis RMS Value (24 Jam)
                         </h3>
-                        <p class="text-sm text-gray-600 mt-2">📊 Root Mean Square dari akselerasi vibrasi 3-axis (AX, AY, AZ) | Indikator utama kondisi mesin</p>
+                        <p class="text-sm text-gray-600 mt-2">📊 Root Mean Square kecepatan getaran (hasil konversi dari akselerasi 3-axis) | Indikator utama kondisi mesin</p>
                     </div>
                     <div class="flex space-x-3">
                         <div class="bg-blue-50 px-4 py-2 rounded-lg border border-blue-200">

@@ -369,7 +369,7 @@
                         labels: trendChartData.labels || [],
                         datasets: [
                             {
-                                label: 'RMS Rata-rata (g)',
+                                label: 'RMS Rata-rata (mm/s)',
                                 data: trendChartData.avg_values || [],
                                 borderColor: '#10b981',
                                 backgroundColor: 'rgba(16, 185, 129, 0.1)',
@@ -381,7 +381,7 @@
                                 pointBackgroundColor: '#10b981',
                             },
                             {
-                                label: 'RMS Maksimum (g)',
+                                label: 'RMS Maksimum (mm/s)',
                                 data: trendChartData.max_values || [],
                                 borderColor: '#f87171',
                                 backgroundColor: 'rgba(248, 113, 113, 0.05)',
@@ -435,7 +435,7 @@
                                 },
                                 title: {
                                     display: true,
-                                    text: 'RMS (g)',
+                                    text: 'RMS (mm/s)',
                                     font: { size: 12 }
                                 }
                             }

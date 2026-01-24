@@ -409,7 +409,7 @@ class DashboardController extends Controller
         $reasons = [];
 
         if ($machineStatus != 'NORMAL') {
-            $reasons[] = "RMS ({$currentRMS} g) > batas " . strtolower($machineStatus);
+            $reasons[] = "RMS ({$currentRMS} mm/s) > batas " . strtolower($machineStatus);
         }
         if ($trendAnalysis['is_significant'] && $trendAnalysis['change_percent'] > 0) {
             $reasons[] = "tren naik {$trendAnalysis['change_percent']}%";

@@ -295,7 +295,7 @@
                                     <div class="flex items-start justify-between mb-4">
                                         <div class="flex-1">
                                             <h4 class="font-bold text-lg text-gray-900 mb-1">${machine.name}</h4>
-                                            <p class="text-xs text-gray-500">${machine.location || 'Location N/A'}</p>
+                                            <p class="text-xs text-gray-500">${machine.location || 'Motor 2 PH 20'}</p>
                                         </div>
                                         <div class="flex items-center justify-center w-10 h-10 rounded-lg ${iconBgClass} flex-shrink-0">
                                             ${statusIcon}

@@ -117,7 +117,7 @@ class AlertController extends Controller
 
             $critical = AnalysisResult::where('condition_status', 'ANOMALY')
                 ->where('created_at', '>=', now()->subDay())
-                ->where('rms', '>=', 1.8)
+                ->where('rms', '>=', 4.5)
                 ->count();
 
             $acknowledged = collect(range(1, 1000))
@@ -147,9 +147,12 @@ class AlertController extends Controller
      */
     private function calculateSeverity($analysis)
     {
-        if ($analysis->rms >= 1.8) {
+        $warningThreshold = (float) ($analysis->machine->threshold_warning ?? 1.8);
+        $criticalThreshold = (float) ($analysis->machine->threshold_critical ?? 4.5);
+
+        if ($analysis->rms >= $criticalThreshold) {
             return 'critical';
-        } elseif ($analysis->rms >= 0.7) {
+        } elseif ($analysis->rms >= $warningThreshold) {
             return 'high';
         }
         return 'low';

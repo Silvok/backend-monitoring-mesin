@@ -7,6 +7,13 @@
         </svg>
         Grafik RMS Value Trend
     </h3>
+    <div class="flex items-center justify-between mb-3">
+        <label class="flex items-center gap-2 text-xs text-gray-600">
+            <input id="rmsScaleToggle" type="checkbox" class="rounded border-gray-300 text-emerald-600 focus:ring-emerald-500" checked>
+            Auto-zoom Y
+        </label>
+        <span class="text-[11px] text-gray-400">Full scale: 0-11.2 mm/s</span>
+    </div>
     <div class="relative h-80">
         <canvas id="rmsChart" data-chart="{{ json_encode($rmsChartData ?? []) }}"></canvas>
     </div>
@@ -32,13 +39,25 @@
         const ctx = document.getElementById('rmsChart').getContext('2d');
         let chartType = 'line';
         const chartTypeSelect = document.getElementById('chartType');
+        const scaleToggle = document.getElementById('rmsScaleToggle');
         let chartInstance = null;
+        let useAutoScale = true;
 
         function renderChart(type) {
             if (chartInstance) chartInstance.destroy();
             // Highlight anomaly/critical/fault points
             const statusArr = chartData.statuses || [];
             const highlightStatuses = ['ANOMALY', 'FAULT', 'CRITICAL', 'WARNING'];
+            const values = chartData.values || [];
+            let yMin = 0;
+            let yMax = 0;
+            if (values.length) {
+                const minVal = Math.min(...values);
+                const maxVal = Math.max(...values);
+                const pad = Math.max(0.05, (maxVal - minVal) * 0.2);
+                yMin = Math.max(0, minVal - pad);
+                yMax = maxVal + pad;
+            }
             // Untuk bar: array warna background, untuk line: array warna point
             const barColors = (chartData.values || []).map((_, i) => {
                 if (highlightStatuses.includes((statusArr[i] || '').toUpperCase())) {
@@ -62,20 +81,24 @@
                             data: chartData.values || [],
                             borderColor: '#059669',
                             backgroundColor: type === 'bar' ? barColors : 'rgba(5, 150, 105, 0.1)',
-                            borderWidth: 2,
+                            borderWidth: 3,
                             fill: type === 'line',
-                            tension: type === 'line' ? 0.4 : undefined,
+                            tension: type === 'line' ? 0.2 : undefined,
                             pointBackgroundColor: type === 'line' ? pointColors : undefined,
                             pointBorderColor: '#fff',
                             pointBorderWidth: 2,
-                            pointRadius: 4,
-                            pointHoverRadius: 6
+                            pointRadius: 5,
+                            pointHoverRadius: 7
                         }
                     ]
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
+                    interaction: {
+                        mode: 'index',
+                        intersect: false
+                    },
                     plugins: {
                         legend: {
                             display: true,
@@ -106,9 +129,31 @@
                     scales: {
                         y: {
                             beginAtZero: true,
+                            min: useAutoScale ? undefined : 0,
+                            max: useAutoScale ? undefined : 11.2,
+                            suggestedMin: useAutoScale ? yMin : undefined,
+                            suggestedMax: useAutoScale ? yMax : undefined,
+                            grid: {
+                                color: '#d1d5db'
+                            },
+                            ticks: {
+                                color: '#374151',
+                                font: { size: 12, weight: '600' }
+                            },
                             title: {
                                 display: true,
                                 text: 'RMS Value (mm/s)'
+                            }
+                        },
+                        x: {
+                            grid: {
+                                color: '#e5e7eb'
+                            },
+                            ticks: {
+                                color: '#6b7280',
+                                maxRotation: 0,
+                                autoSkip: true,
+                                maxTicksLimit: 10
                             }
                         }
                     }
@@ -117,6 +162,13 @@
         }
 
         renderChart(chartType);
+
+        if (scaleToggle) {
+            scaleToggle.addEventListener('change', function () {
+                useAutoScale = scaleToggle.checked;
+                renderChart(chartType);
+            });
+        }
 
         if (chartTypeSelect) {
             chartTypeSelect.addEventListener('change', function (e) {

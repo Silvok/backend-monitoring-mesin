@@ -527,7 +527,7 @@
                 data: {
                     labels: comparativeData.machine_names,
                     datasets: [{
-                        label: 'Average RMS (G)',
+                        label: 'Average RMS (mm/s)',
                         data: comparativeData.avg_rms,
                         backgroundColor: 'rgba(34, 197, 94, 0.7)',
                         borderColor: 'rgba(34, 197, 94, 1)',
@@ -822,7 +822,7 @@
                 data: {
                     labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4', 'Week 5', 'Week 6', 'Week 7', 'Week 8'],
                     datasets: [{
-                        label: 'RMS Value (G)',
+                        label: 'RMS Value (mm/s)',
                         data: [0.45, 0.48, 0.52, 0.56, 0.61, 0.68, 0.75, 0.82],
                         borderColor: 'rgba(249, 115, 22, 1)',
                         backgroundColor: 'rgba(249, 115, 22, 0.1)',
@@ -858,7 +858,7 @@
                 <div class="space-y-3">
                     <div class="bg-white rounded-lg p-4 border-l-4 border-orange-500">
                         <p class="text-xs text-gray-500 font-semibold">Degradation Rate</p>
-                        <p class="text-2xl font-bold text-orange-600">0.045 G/Week</p>
+                        <p class="text-2xl font-bold text-orange-600">0.045 mm/s/Week</p>
                     </div>
                     <div class="bg-white rounded-lg p-4 border-l-4 border-yellow-500">
                         <p class="text-xs text-gray-500 font-semibold">Estimated RUL (Remaining Useful Life)</p>
@@ -866,7 +866,7 @@
                     </div>
                     <div class="bg-white rounded-lg p-4 border-l-4 border-red-500">
                         <p class="text-xs text-gray-500 font-semibold">Critical Threshold</p>
-                        <p class="text-2xl font-bold text-red-600">1.2 G</p>
+                        <p class="text-2xl font-bold text-red-600">1.2 mm/s</p>
                     </div>
                 </div>
             `;

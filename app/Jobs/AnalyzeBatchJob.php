@@ -47,7 +47,7 @@ class AnalyzeBatchJob implements ShouldQueue
             }
 
             $selectCols = [];
-            foreach (['ax_g', 'ay_g', 'az_g', 'value', 'machine_id'] as $col) {
+            foreach (['t_ms', 'ax_g', 'ay_g', 'az_g', 'value', 'machine_id'] as $col) {
                 if (array_key_exists($col, $rawSampleColumns)) {
                     $selectCols[] = $col;
                 }
@@ -59,6 +59,9 @@ class AnalyzeBatchJob implements ShouldQueue
                 return;
             }
 
+            if (array_key_exists('t_ms', $rawSampleColumns)) {
+                $query->orderBy('t_ms');
+            }
             $samples = $query->select($selectCols)->get();
             if ($samples->isEmpty()) {
                 \Log::warning('AnalyzeBatchJob skipped: empty samples', [
@@ -68,18 +71,30 @@ class AnalyzeBatchJob implements ShouldQueue
             }
 
             $values = [];
+            $axValues = [];
+            $ayValues = [];
+            $azValues = [];
+            $timeValues = [];
             $hasAxis = array_key_exists('ax_g', $rawSampleColumns)
                 || array_key_exists('ay_g', $rawSampleColumns)
                 || array_key_exists('az_g', $rawSampleColumns);
 
             foreach ($samples as $row) {
+                $timeValues[] = $row->t_ms ?? null;
                 if ($hasAxis) {
                     $ax = isset($row->ax_g) ? (float) $row->ax_g : 0.0;
                     $ay = isset($row->ay_g) ? (float) $row->ay_g : 0.0;
                     $az = isset($row->az_g) ? (float) $row->az_g : 0.0;
                     $values[] = sqrt(($ax * $ax) + ($ay * $ay) + ($az * $az));
+                    $axValues[] = $ax;
+                    $ayValues[] = $ay;
+                    $azValues[] = $az;
                 } elseif (isset($row->value)) {
-                    $values[] = (float) $row->value;
+                    $value = (float) $row->value;
+                    $values[] = $value;
+                    $axValues[] = $value;
+                    $ayValues[] = 0.0;
+                    $azValues[] = 0.0;
                 }
             }
 
@@ -102,16 +117,95 @@ class AnalyzeBatchJob implements ShouldQueue
                     $peak = $abs;
                 }
             }
-            $rms = sqrt($squareSum / $count);
+            $rmsG = sqrt($squareSum / $count);
             $variance = 0.0;
             foreach ($values as $v) {
                 $variance += pow($v - $mean, 2);
             }
             $std = sqrt($variance / $count);
 
+            $velocityRmsMmS = null;
+            $velocityPeakMmS = null;
+            $velocityMeanMmS = null;
+            $velocityStdMmS = null;
+            $fsHz = null;
+            $defaultFsHz = (float) env('SAMPLE_RATE_HZ', 1000);
+            $defaultDt = $defaultFsHz > 0 ? (1 / $defaultFsHz) : null;
+            $dtSamples = [];
+            for ($i = 1; $i < $count; $i++) {
+                if ($timeValues[$i] !== null && $timeValues[$i - 1] !== null) {
+                    $dtMs = $timeValues[$i] - $timeValues[$i - 1];
+                    if ($dtMs > 0) {
+                        $dtSamples[$i] = $dtMs / 1000;
+                    }
+                }
+            }
+            $avgDt = !empty($dtSamples) ? (array_sum($dtSamples) / count($dtSamples)) : $defaultDt;
+            if ($avgDt !== null && $avgDt > 0) {
+                $fsHz = 1 / $avgDt;
+                $axMean = array_sum($axValues) / $count;
+                $ayMean = array_sum($ayValues) / $count;
+                $azMean = array_sum($azValues) / $count;
+                $gToMs2 = 9.80665;
+                $vx = 0.0;
+                $vy = 0.0;
+                $vz = 0.0;
+                $velocityMagnitudes = [0.0];
+                $prevAx = ($axValues[0] - $axMean) * $gToMs2;
+                $prevAy = ($ayValues[0] - $ayMean) * $gToMs2;
+                $prevAz = ($azValues[0] - $azMean) * $gToMs2;
+
+                for ($i = 1; $i < $count; $i++) {
+                    $dt = $dtSamples[$i] ?? $avgDt;
+                    if ($dt <= 0) {
+                        continue;
+                    }
+                    $ax = ($axValues[$i] - $axMean) * $gToMs2;
+                    $ay = ($ayValues[$i] - $ayMean) * $gToMs2;
+                    $az = ($azValues[$i] - $azMean) * $gToMs2;
+
+                    $vx += 0.5 * ($prevAx + $ax) * $dt;
+                    $vy += 0.5 * ($prevAy + $ay) * $dt;
+                    $vz += 0.5 * ($prevAz + $az) * $dt;
+
+                    $velocityMagnitudes[] = sqrt(($vx * $vx) + ($vy * $vy) + ($vz * $vz));
+
+                    $prevAx = $ax;
+                    $prevAy = $ay;
+                    $prevAz = $az;
+                }
+
+                $velocityCount = count($velocityMagnitudes);
+                $velocitySum = array_sum($velocityMagnitudes);
+                $velocityMean = $velocitySum / $velocityCount;
+                $velocitySquareSum = 0.0;
+                $velocityPeak = 0.0;
+                foreach ($velocityMagnitudes as $velocity) {
+                    $velocitySquareSum += ($velocity * $velocity);
+                    if ($velocity > $velocityPeak) {
+                        $velocityPeak = $velocity;
+                    }
+                }
+                $velocityRms = sqrt($velocitySquareSum / $velocityCount);
+                $velocityVariance = 0.0;
+                foreach ($velocityMagnitudes as $velocity) {
+                    $velocityVariance += pow($velocity - $velocityMean, 2);
+                }
+                $velocityStd = sqrt($velocityVariance / $velocityCount);
+
+                $velocityRmsMmS = $velocityRms * 1000;
+                $velocityPeakMmS = $velocityPeak * 1000;
+                $velocityMeanMmS = $velocityMean * 1000;
+                $velocityStdMmS = $velocityStd * 1000;
+            } else {
+                \Log::warning('AnalyzeBatchJob: missing sample timing, velocity RMS fallback to acceleration', [
+                    'batch_id' => $this->batchId ?? null,
+                ]);
+            }
+
             $machineId = $samples->first()->machine_id ?? null;
-            $warningThreshold = 0.7;
-            $criticalThreshold = 1.8;
+            $warningThreshold = 1.8;
+            $criticalThreshold = 4.5;
             if ($machineId) {
                 $machine = Machine::find($machineId);
                 if ($machine) {
@@ -121,9 +215,10 @@ class AnalyzeBatchJob implements ShouldQueue
             }
 
             $conditionStatus = 'NORMAL';
-            if ($rms >= $criticalThreshold) {
+            $rmsForStatus = $velocityRmsMmS ?? $rmsG;
+            if ($rmsForStatus >= $criticalThreshold) {
                 $conditionStatus = 'CRITICAL';
-            } elseif ($rms >= $warningThreshold) {
+            } elseif ($rmsForStatus >= $warningThreshold) {
                 $conditionStatus = 'WARNING';
             }
 
@@ -131,10 +226,13 @@ class AnalyzeBatchJob implements ShouldQueue
                 'machine_id' => $machineId,
                 'batch_id' => $this->batchId,
                 'raw_batch_id' => $this->batchId,
-                'rms' => $rms,
-                'peak_amp' => $peak,
-                'mean' => $mean,
-                'std' => $std,
+                'rms' => $velocityRmsMmS ?? $rmsG,
+                'rms_g' => $rmsG,
+                'peak_amp' => $velocityPeakMmS ?? $peak,
+                'mean' => $velocityMeanMmS ?? $mean,
+                'std' => $velocityStdMmS ?? $std,
+                'fs_hz' => $fsHz,
+                'n' => $count,
                 'status' => 'done',
                 'condition_status' => $conditionStatus,
                 'name' => 'Analysis ' . now()->format('Ymd_His'),
