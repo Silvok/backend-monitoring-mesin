@@ -60,7 +60,6 @@
     @push('scripts')
         <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js" defer></script>
         <script>
-            let rmsChart;
             let refreshInterval;
             let isRefreshing = false;
             let isInitialized = false;
@@ -87,54 +86,10 @@
                 startClock();
                 initAlertSound();
 
-                // Initialize chart after a small delay to not block rendering
-                requestAnimationFrame(() => {
-                    initializeChart();
-                });
-
                 // Start auto refresh for subsequent updates
                 startAutoRefresh();
                 subscribeToRealTimeUpdates();
             });
-
-            function initializeChart() {
-                const ctx = document.getElementById('rmsChart');
-                if (!ctx) return;
-
-                const chartData = @json($rmsChartData);
-
-                rmsChart = new Chart(ctx.getContext('2d'), {
-                    type: 'line',
-                    data: {
-                        labels: chartData.labels,
-                        datasets: [{
-                            label: 'RMS Value',
-                            data: chartData.values,
-                            borderColor: '#059669',
-                            backgroundColor: 'rgba(5, 150, 105, 0.1)',
-                            borderWidth: 2,
-                            fill: true,
-                            tension: 0.4,
-                            pointRadius: 2,
-                            pointHoverRadius: 4
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        animation: { duration: 0 }, // Disable animation for faster render
-                        plugins: {
-                            legend: { display: true, position: 'top' }
-                        },
-                        scales: {
-                            y: {
-                                beginAtZero: true,
-                                title: { display: true, text: 'RMS Value (mm/s)' }
-                            }
-                        }
-                    }
-                });
-            }
 
             function updateLiveIndicator(anomalyCount) {
                 const panel = document.getElementById('alertPanel');

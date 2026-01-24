@@ -121,10 +121,11 @@ class DashboardController extends Controller
 
             // RMS chart data
             $rmsData = AnalysisResult::where('created_at', '>=', now()->subHours(24))
-                ->orderBy('created_at', 'asc')
+                ->orderBy('created_at', 'desc')
                 ->select('rms', 'created_at')
                 ->limit(100) // Limit data points for faster rendering
                 ->get()
+                ->sortBy('created_at')
                 ->map(fn($item) => [
                     'time' => $item->created_at->format('H:i'),
                     'value' => round($item->rms, 4)
