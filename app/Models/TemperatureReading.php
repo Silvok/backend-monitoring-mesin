@@ -10,6 +10,7 @@ class TemperatureReading extends Model
     protected $fillable = [
         'machine_id',
         'recorded_at',
+        'value',
         'temperature_c',
         'vibration',
         'pressure',
@@ -17,6 +18,7 @@ class TemperatureReading extends Model
 
     protected $casts = [
         'recorded_at' => 'datetime',
+        'value' => 'float',
         'temperature_c' => 'float',
         'vibration' => 'float',
         'pressure' => 'float',
