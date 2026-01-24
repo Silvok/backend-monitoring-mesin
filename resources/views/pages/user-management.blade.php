@@ -46,7 +46,7 @@
 						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
 					</svg>
 				</a>
-				<button type="button" class="ml-2 flex items-center gap-2 px-4 h-10 rounded-lg bg-emerald-500 hover:bg-emerald-600 text-white text-sm font-medium transition shadow-sm" id="addUserBtn">
+				<button type="button" class="ml-2 flex items-center gap-2 px-4 h-10 rounded-lg bg-emerald-500 hover:bg-emerald-600 text-white text-sm font-medium transition shadow-sm" id="addUserBtn" onclick="openUserModal(false)">
 					<svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>
 					Tambah User
 				</button>
@@ -59,7 +59,7 @@
 				<select class="border border-gray-200 rounded-md px-3 py-2 text-sm text-gray-700 focus:ring-2 focus:ring-emerald-200 focus:border-emerald-400 bg-white transition" style="min-width:120px;">
 					<option>All Roles</option>
 					<option>Admin</option>
-					<option>Operator</option>
+					<option>Teknisi</option>
 				</select>
 				<select class="border border-gray-200 rounded-md px-3 py-2 text-sm text-gray-700 focus:ring-2 focus:ring-yellow-200 focus:border-yellow-400 bg-white transition" style="min-width:120px;">
 					<option>All Status</option>
@@ -131,7 +131,14 @@
 								<td class="px-6 py-4 whitespace-nowrap text-gray-700">{{ $user->phone ?? '-' }}</td>
 								<!-- Role -->
 								<td class="px-6 py-4 whitespace-nowrap capitalize">
-									<span class="inline-block px-2 py-1 text-xs rounded bg-emerald-100 text-emerald-700 font-semibold">{{ $user->role ?? '-' }}</span>
+									@php
+										$roleLabel = match ($user->role ?? null) {
+											'operator' => 'Teknisi',
+											'admin' => 'Admin',
+											default => $user->role ?? '-',
+										};
+									@endphp
+									<span class="inline-block px-2 py-1 text-xs rounded bg-emerald-100 text-emerald-700 font-semibold">{{ $roleLabel }}</span>
 								</td>
 								<!-- Status -->
 								<td class="px-6 py-4 whitespace-nowrap">
@@ -191,7 +198,7 @@
 						<label class="block text-sm font-medium mb-1">Role</label>
 						<select id="userRole" name="role" class="w-full border rounded px-3 py-2">
 							<option value="admin">Admin</option>
-							<option value="operator">Operator</option>
+							<option value="teknisi">Teknisi</option>
 						</select>
 					</div>
 					<div class="mb-3">
@@ -309,6 +316,15 @@
 			setTimeout(() => toast.remove(), 3000);
 		}
 
+		document.addEventListener('DOMContentLoaded', function() {
+			const addUserBtn = document.getElementById('addUserBtn');
+			if (addUserBtn) {
+				addUserBtn.addEventListener('click', function() {
+					openUserModal(false);
+				});
+			}
+		});
+
 		// Submit form (add/edit)
 		document.getElementById('userForm').onsubmit = async function(e) {
 			e.preventDefault();
@@ -403,4 +419,3 @@
 		</script>
 	@endpush
 </x-app-layout>
-
