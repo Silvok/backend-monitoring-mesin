@@ -129,6 +129,9 @@ class AnalyzeBatchJob implements ShouldQueue
             $velocityMeanMmS = null;
             $velocityStdMmS = null;
             $fsHz = null;
+            $dominantFreqHz = null;
+            $fftFrequencies = [];
+            $fftAmplitudes = [];
             $defaultFsHz = (float) env('SAMPLE_RATE_HZ', 1000);
             $defaultDt = $defaultFsHz > 0 ? (1 / $defaultFsHz) : null;
             $dtSamples = [];
@@ -197,6 +200,36 @@ class AnalyzeBatchJob implements ShouldQueue
                 $velocityPeakMmS = $velocityPeak * 1000;
                 $velocityMeanMmS = $velocityMean * 1000;
                 $velocityStdMmS = $velocityStd * 1000;
+
+                // Simple DFT for dominant frequency (acceleration domain, in g)
+                $signal = array_map(function ($val) use ($mean) {
+                    return $val - $mean;
+                }, $values);
+                $half = (int) floor($count / 2);
+                for ($k = 0; $k <= $half; $k++) {
+                    $real = 0.0;
+                    $imag = 0.0;
+                    for ($nIdx = 0; $nIdx < $count; $nIdx++) {
+                        $angle = 2 * M_PI * $k * $nIdx / $count;
+                        $real += $signal[$nIdx] * cos($angle);
+                        $imag -= $signal[$nIdx] * sin($angle);
+                    }
+                    $amp = sqrt(($real * $real) + ($imag * $imag)) / $count;
+                    $freq = ($k * $fsHz) / $count;
+                    $fftFrequencies[] = round($freq, 4);
+                    $fftAmplitudes[] = round($amp, 6);
+                }
+                if (count($fftAmplitudes) > 1) {
+                    $maxIdx = 1;
+                    $maxAmp = $fftAmplitudes[1];
+                    for ($i = 2; $i < count($fftAmplitudes); $i++) {
+                        if ($fftAmplitudes[$i] > $maxAmp) {
+                            $maxAmp = $fftAmplitudes[$i];
+                            $maxIdx = $i;
+                        }
+                    }
+                    $dominantFreqHz = $fftFrequencies[$maxIdx] ?? null;
+                }
             } else {
                 \Log::warning('AnalyzeBatchJob: missing sample timing, velocity RMS fallback to acceleration', [
                     'batch_id' => $this->batchId ?? null,
@@ -233,6 +266,7 @@ class AnalyzeBatchJob implements ShouldQueue
                 'std' => $velocityStdMmS ?? $std,
                 'fs_hz' => $fsHz,
                 'n' => $count,
+                'dominant_freq_hz' => $dominantFreqHz,
                 'status' => 'done',
                 'condition_status' => $conditionStatus,
                 'name' => 'Analysis ' . now()->format('Ymd_His'),
@@ -243,7 +277,16 @@ class AnalyzeBatchJob implements ShouldQueue
             $analysisData = array_intersect_key($analysisData, $analysisColumns);
 
             if (!empty($analysisData)) {
-                DB::table('analysis_results')->insert($analysisData);
+                $analysisId = DB::table('analysis_results')->insertGetId($analysisData);
+                if ($analysisId && Schema::hasTable('fft_results') && !empty($fftFrequencies) && !empty($fftAmplitudes)) {
+                    DB::table('fft_results')->insert([
+                        'analysis_result_id' => $analysisId,
+                        'frequencies' => json_encode($fftFrequencies),
+                        'amplitudes' => json_encode($fftAmplitudes),
+                        'created_at' => now(),
+                        'updated_at' => now(),
+                    ]);
+                }
             }
         } catch (\Throwable $e) {
             \Log::error('AnalyzeBatchJob FAILED', [

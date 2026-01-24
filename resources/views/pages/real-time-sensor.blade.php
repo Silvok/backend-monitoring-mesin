@@ -37,7 +37,7 @@
                             <option value="{{ $machine->id }}"
                                 data-status="{{ $machine->latestAnalysis?->condition_status ?? 'TIDAK DIKETAHUI' }}"
                                 data-location="{{ $machine->location }}">
-                                {{ $machine->name }} ({{ $machine->location }})
+                                {{ $machine->name }}@if($machine->location) ({{ $machine->location }})@endif
                             </option>
                         @endforeach
                     </select>
