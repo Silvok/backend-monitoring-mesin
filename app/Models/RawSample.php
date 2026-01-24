@@ -8,13 +8,17 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class RawSample extends Model
 {
     protected $fillable = [
-        'batch_id',
+        'raw_batch_id',
         'machine_id',
+        'batch_id',
         't_ms',
         'ax_g',
         'ay_g',
         'az_g',
+        'value',
         'temperature_c',
+        'sample_time',
+        'captured_at',
     ];
 
     protected $casts = [

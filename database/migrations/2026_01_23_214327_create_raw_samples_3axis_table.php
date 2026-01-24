@@ -13,25 +13,22 @@ return new class extends Migration
 
             $table->unsignedBigInteger('machine_id');
 
-            // pengelompokan per batch (pakai ISO time dari ESP)
+            // ID batch (biar semua 256 sampel nyambung ke 1 batch)
             $table->string('batch_id', 50);
 
-            // waktu sample dalam millisecond
+            // waktu sample dalam millisecond (sesuai data ESP)
             $table->unsignedInteger('t_ms')->nullable();
 
-            // nilai getaran 3 sumbu
-            $table->float('ax_g', 10, 6)->nullable();
-            $table->float('ay_g', 10, 6)->nullable();
-            $table->float('az_g', 10, 6)->nullable();
+            // getaran 3 sumbu (float/double aman)
+            $table->double('ax_g')->nullable();
+            $table->double('ay_g')->nullable();
+            $table->double('az_g')->nullable();
 
             $table->timestamps();
 
-            // index biar query cepat
+            // index supaya query cepat
             $table->index(['machine_id', 'batch_id']);
             $table->index(['machine_id', 't_ms']);
-
-            // optional foreign key kalau tabel machines ada
-            // $table->foreign('machine_id')->references('id')->on('machines')->onDelete('cascade');
         });
     }
 
