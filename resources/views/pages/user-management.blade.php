@@ -52,6 +52,40 @@
 				</button>
 			</form>
 		</div>
+		<div class="mb-4">
+			<div class="rounded-xl border border-gray-100 bg-white/90 px-3 py-2 shadow-sm">
+				<div class="flex flex-row flex-wrap sm:flex-nowrap justify-between items-center gap-2">
+					<div class="text-center flex-1 min-w-[90px]">
+						<p class="text-[10px] font-bold text-emerald-700 uppercase tracking-widest">Total</p>
+						<p class="text-lg font-black text-gray-900 mt-0.5">{{ $summary['total'] ?? 0 }}</p>
+					</div>
+					<div class="text-center flex-1 min-w-[90px]">
+						<p class="text-[10px] font-bold text-blue-700 uppercase tracking-widest">Teknisi</p>
+						<p class="text-lg font-black text-gray-900 mt-0.5">{{ $summary['teknisi'] ?? 0 }}</p>
+					</div>
+					<div class="text-center flex-1 min-w-[90px]">
+						<p class="text-[10px] font-bold text-amber-700 uppercase tracking-widest">Admin</p>
+						<p class="text-lg font-black text-gray-900 mt-0.5">{{ $summary['admin'] ?? 0 }}</p>
+					</div>
+					<div class="text-center flex-1 min-w-[90px]">
+						<p class="text-[10px] font-bold text-teal-700 uppercase tracking-widest">Aktif</p>
+						<p class="text-lg font-black text-gray-900 mt-0.5">{{ $summary['aktif'] ?? 0 }}</p>
+					</div>
+					<div class="text-center flex-1 min-w-[90px]">
+						<p class="text-[10px] font-bold text-rose-700 uppercase tracking-widest">Nonaktif</p>
+						<p class="text-lg font-black text-gray-900 mt-0.5">{{ $summary['nonaktif'] ?? 0 }}</p>
+					</div>
+					<div class="text-center flex-1 min-w-[110px]">
+						<p class="text-[10px] font-bold text-sky-700 uppercase tracking-widest">Login Hari Ini</p>
+						<p class="text-lg font-black text-gray-900 mt-0.5">{{ $summary['login_today'] ?? 0 }}</p>
+					</div>
+					<div class="text-center flex-1 min-w-[120px]">
+						<p class="text-[10px] font-bold text-purple-700 uppercase tracking-widest">Login Minggu Ini</p>
+						<p class="text-lg font-black text-gray-900 mt-0.5">{{ $summary['login_week'] ?? 0 }}</p>
+					</div>
+				</div>
+			</div>
+		</div>
 		<div class="bg-white/80 rounded-xl border border-gray-100 p-4 mb-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4 shadow-sm">
 			<div class="flex items-center gap-3">
 				<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-funnel w-5 h-5 text-emerald-400"><path d="M10 20a1 1 0 0 0 .553.895l2 1A1 1 0 0 0 14 21v-7a2 2 0 0 1 .517-1.341L21.74 4.67A1 1 0 0 0 21 3H3a1 1 0 0 0-.742 1.67l7.225 7.989A2 2 0 0 1 10 14z"></path></svg>

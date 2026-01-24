@@ -20,7 +20,12 @@ class UserManagementController extends Controller
                         });
         }
         $users = $query->get();
-        return view('pages.user-management', compact('users'));
+        $summary = [
+            'total' => User::count(),
+            'admin' => User::where('role', 'admin')->count(),
+            'teknisi' => User::whereIn('role', ['teknisi', 'operator'])->count(),
+        ];
+        return view('pages.user-management', compact('users', 'summary'));
     }
     public function store(Request $request)
     {
