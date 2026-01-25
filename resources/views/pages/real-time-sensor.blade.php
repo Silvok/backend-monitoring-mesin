@@ -3,7 +3,7 @@
         <div class="flex items-center justify-between">
             <div class="flex items-center space-x-8">
                 <h2 class="font-bold text-xl text-emerald-900">
-                    Pemantauan Sensor Real-Time
+                    {{ __('messages.app.realtime_title') }}
                 </h2>
                 <!-- Live Status Indicator -->
                 <div class="flex items-center space-x-2 px-3 py-1.5 bg-emerald-50 rounded-full border border-emerald-200">
@@ -11,7 +11,7 @@
                         <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
                         <span class="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
                     </div>
-                    <span class="text-xs font-semibold text-emerald-700">Langsung</span>
+                    <span class="text-xs font-semibold text-emerald-700">{{ __('messages.app.live') }}</span>
                 </div>
             </div>
             <div class="flex items-center space-x-3">

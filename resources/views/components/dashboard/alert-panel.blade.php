@@ -7,7 +7,7 @@
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                 </svg>
                 <h3 class="text-lg sm:text-xl font-bold text-white">
-                    Alert Panel - Anomali Terdeteksi
+                    {{ __('messages.dashboard.alert_panel') }}
                 </h3>
                 <span id="alertCount" class="bg-white text-red-600 px-3 py-1 rounded-full text-sm font-bold">0</span>
             </div>
@@ -19,7 +19,7 @@
                     <span id="soundText">On</span>
                 </button>
                 <button onclick="dismissAllAlerts()" class="bg-white/20 hover:bg-white/30 text-white px-3 py-1.5 rounded-lg text-sm font-medium transition">
-                    Dismiss All
+                    {{ __('messages.dashboard.dismiss_all') }}
                 </button>
                 <button onclick="toggleAlertPanel()" class="bg-white/20 hover:bg-white/30 text-white p-1.5 rounded-lg transition">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -33,18 +33,18 @@
     <!-- Alert Filters -->
     <div class="bg-gray-50 px-4 sm:px-6 py-3 border-b border-gray-200">
         <div class="flex flex-wrap items-center gap-2 sm:gap-4">
-            <span class="text-sm font-semibold text-gray-700">Filter:</span>
+            <span class="text-sm font-semibold text-gray-700">{{ __('messages.dashboard.filter') }}:</span>
             <button onclick="filterAlerts('all')" class="alert-filter-btn active px-3 py-1 rounded-lg text-sm font-medium transition">
-                All
+                {{ __('messages.dashboard.filter_all') }}
             </button>
             <button onclick="filterAlerts('critical')" class="alert-filter-btn px-3 py-1 rounded-lg text-sm font-medium transition">
-                Critical
+                {{ __('messages.dashboard.filter_critical') }}
             </button>
             <button onclick="filterAlerts('high')" class="alert-filter-btn px-3 py-1 rounded-lg text-sm font-medium transition">
-                High
+                {{ __('messages.dashboard.filter_high') }}
             </button>
             <button onclick="filterAlerts('unacknowledged')" class="alert-filter-btn px-3 py-1 rounded-lg text-sm font-medium transition">
-                Unacknowledged
+                {{ __('messages.dashboard.filter_unack') }}
             </button>
         </div>
     </div>
@@ -56,7 +56,7 @@
             <svg class="w-12 h-12 mx-auto mb-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
-            <p>Loading alerts...</p>
+            <p>{{ __('messages.dashboard.loading_alerts') }}</p>
         </div>
     </div>
 </div>

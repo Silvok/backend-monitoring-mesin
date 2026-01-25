@@ -37,20 +37,20 @@
                                         d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
                                 </svg>
                                 <div>
-                                    <p class="text-sm font-semibold text-gray-900">Notifikasi</p>
-                                    <p class="text-[11px] text-gray-500">Update terbaru kondisi mesin</p>
+                                    <p class="text-sm font-semibold text-gray-900">{{ __('messages.notifications.title') }}</p>
+                                    <p class="text-[11px] text-gray-500">{{ __('messages.notifications.subtitle') }}</p>
                                 </div>
                             </div>
                             <div class="flex items-center gap-2">
                                 <span id="notifUnreadPill" class="text-[10px] font-bold px-2 py-1 rounded-full bg-gray-900 text-white hidden"></span>
                                 <button id="notifReadAll" class="text-[10px] font-semibold px-2.5 py-1 rounded-full border border-gray-200 text-gray-700 hover:bg-gray-50">
-                                    Tandai semua
+                                    {{ __('messages.notifications.mark_all') }}
                                 </button>
                             </div>
                         </div>
                     </div>
                     <div id="notifList" class="max-h-64 overflow-y-auto bg-gray-50/70">
-                        <div class="px-4 py-6 text-center text-sm text-gray-500">Memuat notifikasi...</div>
+                        <div class="px-4 py-6 text-center text-sm text-gray-500">{{ __('messages.notifications.loading') }}</div>
                     </div>
                 </div>
 
@@ -91,7 +91,7 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                             </svg>
-                            <span>Profile</span>
+                            <span>{{ __('messages.app.profile') }}</span>
                         </a>
 
                         <a href="#"
@@ -102,7 +102,7 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                             </svg>
-                            <span>Pengaturan</span>
+                            <span>{{ __('messages.app.settings') }}</span>
                         </a>
 
                         <!-- Logout -->
@@ -114,7 +114,7 @@
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                         d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
                                 </svg>
-                                <span>Keluar</span>
+                                <span>{{ __('messages.app.logout') }}</span>
                             </button>
                         </form>
                     </div>
@@ -142,27 +142,26 @@
         <div class="px-4 pt-2 pb-3 space-y-1">
             <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')"
                 class="text-white hover:bg-white/10 hover:text-white">
-                {{ __('Dashboard') }}
+                {{ __('messages.app.dashboard') }}
             </x-responsive-nav-link>
 
             <x-responsive-nav-link :href="route('real-time-sensor')" :active="request()->routeIs('real-time-sensor')"
                 class="text-white hover:bg-white/10 hover:text-white">
-                {{ __('Real-time Sensor') }}
+                {{ __('messages.app.realtime') }}
             </x-responsive-nav-link>
 
             <x-responsive-nav-link :href="route('monitoring-mesin')" :active="request()->routeIs('monitoring-mesin')"
                 class="text-white hover:bg-white/10 hover:text-white">
-                {{ __('Monitoring Mesin') }}
+                {{ __('messages.app.monitoring_machine') }}
             </x-responsive-nav-link>
 
             <x-responsive-nav-link :href="route('analisis')" :active="request()->routeIs('analisis')"
                 class="text-white hover:bg-white/10 hover:text-white">
-                {{ __('Analisis') }}
+                {{ __('messages.app.analysis') }}
             </x-responsive-nav-link>
 
             <div class="pt-2 pb-1 border-t border-emerald-800/50 mt-2">
-                <div class="px-4 text-xs font-semibold text-emerald-200/50 uppercase tracking-wider mb-2">Alerts &
-                    Settings</div>
+                <div class="px-4 text-xs font-semibold text-emerald-200/50 uppercase tracking-wider mb-2">{{ __('messages.app.alerts_settings') }}</div>
                 <a href="#"
                     class="block pl-3 pr-4 py-2 border-l-4 border-transparent text-base font-medium text-emerald-100 hover:text-white hover:bg-emerald-800/50 hover:border-emerald-300 transition duration-150 ease-in-out">
                     Anomali
@@ -187,7 +186,7 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                     </svg>
-                    <span>Profile</span>
+                    <span>{{ __('messages.app.profile') }}</span>
                 </a>
                 <form method="POST" action="{{ route('logout') }}">
                     @csrf
@@ -197,7 +196,7 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
                         </svg>
-                        <span>Keluar</span>
+                        <span>{{ __('messages.app.logout') }}</span>
                     </button>
                 </form>
             </div>
@@ -226,18 +225,24 @@
             menu.style.right = 'auto';
         }
 
+        const notifText = {
+            unread: @json(__('messages.notifications.unread')),
+            empty: @json(__('messages.notifications.empty')),
+            error: @json(__('messages.notifications.error')),
+        };
+
         function renderNotifications(data) {
             const items = data.items || [];
             const unread = data.unread_count || 0;
             badge.textContent = unread > 99 ? '99+' : String(unread);
             badge.classList.toggle('hidden', unread === 0);
             if (unreadPill) {
-                unreadPill.textContent = `${unread} unread`;
+                unreadPill.textContent = `${unread} ${notifText.unread}`;
                 unreadPill.classList.toggle('hidden', unread === 0);
             }
 
             if (!items.length) {
-                list.innerHTML = '<div class="px-4 py-6 text-center text-sm text-gray-500">Belum ada notifikasi</div>';
+                list.innerHTML = `<div class="px-4 py-6 text-center text-sm text-gray-500">${notifText.empty}</div>`;
                 return;
             }
 
@@ -286,7 +291,7 @@
                 .then(r => r.json())
                 .then(renderNotifications)
                 .catch(() => {
-                    list.innerHTML = '<div class="px-4 py-6 text-center text-sm text-gray-500">Gagal memuat notifikasi</div>';
+                    list.innerHTML = `<div class="px-4 py-6 text-center text-sm text-gray-500">${notifText.error}</div>`;
                 });
         }
 

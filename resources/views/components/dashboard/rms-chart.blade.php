@@ -5,14 +5,14 @@
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                 d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
         </svg>
-        Grafik RMS Value Trend
+        {{ __('messages.dashboard.rms_trend') }}
     </h3>
     <div class="flex items-center justify-between mb-3">
         <label class="flex items-center gap-2 text-xs text-gray-600">
             <input id="rmsScaleToggle" type="checkbox" class="rounded border-gray-300 text-emerald-600 focus:ring-emerald-500" checked>
-            Auto-zoom Y
+            {{ __('messages.dashboard.auto_zoom') }}
         </label>
-        <span class="text-[11px] text-gray-400">Full scale: 0-11.2 mm/s</span>
+        <span class="text-[11px] text-gray-400">{{ __('messages.dashboard.full_scale') }}</span>
     </div>
     <div class="relative h-64 sm:h-80">
         <canvas id="rmsChart" data-chart="{{ json_encode($rmsChartData ?? []) }}"></canvas>
@@ -20,7 +20,7 @@
     <div class="flex mt-4 justify-end">
         <div class="relative">
             <button id="downloadBtn" type="button"
-                class="p-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg shadow text-xs" aria-label="Download chart">
+                class="p-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg shadow text-xs" aria-label="{{ __('messages.dashboard.download') }}">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                         d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M7 10l5 5m0 0l5-5m-5 5V4" />
@@ -117,17 +117,17 @@
                                 title: function (context) {
                                     const idx = context[0].dataIndex;
                                     let waktu = chartData.full_times && chartData.full_times[idx] ? chartData.full_times[idx] : context[0].label;
-                                    return 'Waktu: ' + waktu;
+                                    return '{{ __('messages.dashboard.time') }}: ' + waktu;
                                 },
                                 label: function (context) {
                                     const idx = context.dataIndex;
                                     let rms = context.parsed.y;
-                                    let label = 'RMS: ' + rms + ' mm/s';
+                                    let label = '{{ __('messages.dashboard.rms_label') }}: ' + rms + ' mm/s';
                                     if (chartData.machines && chartData.machines[idx]) {
-                                        label += ' | Mesin: ' + chartData.machines[idx];
+                                        label += ' | {{ __('messages.dashboard.machine') }}: ' + chartData.machines[idx];
                                     }
                                     if (chartData.statuses && chartData.statuses[idx]) {
-                                        label += ' | Status: ' + chartData.statuses[idx];
+                                        label += ' | {{ __('messages.dashboard.status') }}: ' + chartData.statuses[idx];
                                     }
                                     return label;
                                 }

@@ -10,8 +10,8 @@
             </div>
             <span class="text-2xl sm:text-3xl font-bold" id="totalMachines">{{ $totalMachines }}</span>
         </div>
-        <h3 class="text-base sm:text-lg font-semibold">Total Mesin</h3>
-        <p class="text-xs sm:text-sm mt-1" style="color: rgba(255,255,255,0.8);">Mesin terpantau</p>
+        <h3 class="text-base sm:text-lg font-semibold">{{ __('messages.dashboard.metrics_total_machines') }}</h3>
+        <p class="text-xs sm:text-sm mt-1" style="color: rgba(255,255,255,0.8);">{{ __('messages.dashboard.metrics_machines_monitored') }}</p>
     </div>
 
     <!-- Total Samples -->
@@ -24,8 +24,8 @@
             </div>
             <span class="text-2xl sm:text-3xl font-bold">{{ number_format($totalSamples) }}</span>
         </div>
-        <h3 class="text-base sm:text-lg font-semibold">Data Sensor</h3>
-        <p class="text-xs sm:text-sm mt-1" style="color: rgba(255,255,255,0.8);">Total sample data</p>
+        <h3 class="text-base sm:text-lg font-semibold">{{ __('messages.dashboard.metrics_sensor_data') }}</h3>
+        <p class="text-xs sm:text-sm mt-1" style="color: rgba(255,255,255,0.8);">{{ __('messages.dashboard.metrics_total_samples') }}</p>
     </div>
 
     <!-- Total Analysis -->
@@ -38,8 +38,8 @@
             </div>
             <span class="text-2xl sm:text-3xl font-bold">{{ number_format($totalAnalysis) }}</span>
         </div>
-        <h3 class="text-base sm:text-lg font-semibold text-white">Analisis</h3>
-        <p class="text-xs sm:text-sm mt-1" style="color: rgba(255,255,255,0.85);">Total hasil analisis</p>
+        <h3 class="text-base sm:text-lg font-semibold text-white">{{ __('messages.dashboard.metrics_analysis') }}</h3>
+        <p class="text-xs sm:text-sm mt-1" style="color: rgba(255,255,255,0.85);">{{ __('messages.dashboard.metrics_total_analysis') }}</p>
     </div>
 
     <!-- Status Anomali -->
@@ -52,7 +52,7 @@
             </div>
             <span class="text-2xl sm:text-3xl font-bold">{{ $anomalyCount }}</span>
         </div>
-        <h3 class="text-base sm:text-lg font-semibold">Anomali Terdeteksi</h3>
-        <p class="text-xs sm:text-sm mt-1" style="color: rgba(255,255,255,0.8);">Dari {{ $normalCount }} kondisi normal</p>
+        <h3 class="text-base sm:text-lg font-semibold">{{ __('messages.dashboard.metrics_anomalies') }}</h3>
+        <p class="text-xs sm:text-sm mt-1" style="color: rgba(255,255,255,0.8);">{{ __('messages.dashboard.metrics_normal', ['count' => $normalCount]) }}</p>
     </div>
 </div>

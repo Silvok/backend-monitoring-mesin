@@ -7,7 +7,7 @@
         <div class="flex items-center justify-between">
             <div class="flex items-center space-x-8">
                 <h2 class="font-bold text-xl text-emerald-900">
-                    Manajemen Alert
+                    {{ __('messages.app.alert_management') }}
                 </h2>
                 <!-- Active Alerts Indicator -->
                 <div id="alertIndicator" class="flex items-center space-x-2 px-3 py-1.5 bg-yellow-50 rounded-full border border-yellow-200">
@@ -15,7 +15,7 @@
                         <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-yellow-400 opacity-75"></span>
                         <span class="relative inline-flex rounded-full h-3 w-3 bg-yellow-500"></span>
                     </div>
-                    <span class="text-xs font-semibold text-yellow-700" id="activeAlertCount">Loading...</span>
+                    <span class="text-xs font-semibold text-yellow-700" id="activeAlertCount">{{ __('messages.app.loading') }}</span>
                 </div>
             </div>
             <div class="flex items-center space-x-3">

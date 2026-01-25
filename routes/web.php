@@ -19,6 +19,8 @@ use App\Http\Controllers\Api\AlertController;
 use App\Http\Controllers\Api\FFTController;
 use App\Http\Controllers\AlertManagementController;
 use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\SettingsController;
+use App\Http\Controllers\ParameterMonitoringController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -40,6 +42,14 @@ Route::get('/data-grafik', [DashboardController::class, 'dataGrafik'])
 Route::get('/monitoring-mesin', [\App\Http\Controllers\MonitoringController::class, 'index'])
     ->middleware(['auth', 'verified'])
     ->name('monitoring-mesin');
+
+Route::get('/parameter-monitoring', [ParameterMonitoringController::class, 'index'])
+    ->middleware(['auth', 'verified'])
+    ->name('parameter-monitoring');
+
+Route::get('/pengaturan', [SettingsController::class, 'index'])
+    ->middleware(['auth', 'verified'])
+    ->name('settings');
 
 Route::get('/api/monitoring/data', [\App\Http\Controllers\MonitoringController::class, 'getMonitoringData'])
     ->middleware(['auth']);

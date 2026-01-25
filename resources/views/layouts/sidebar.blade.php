@@ -31,17 +31,17 @@
                @if(request()->routeIs('dashboard'))
                 style="background: linear-gradient(to right, rgba(49, 105, 78, 0.35), rgba(39, 86, 64, 0.35)); color: #163527;"
             @endif
-            :title="sidebarOpen ? '' : 'Dashboard'">
+            :title="sidebarOpen ? '' : '{{ __('messages.app.dashboard') }}'">
                 <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                         d="M3 12l2-3m0 0l7-4 7 4M5 9v10a1 1 0 001 1h12a1 1 0 001-1V9M9 21h6" />
                 </svg>
-                <span class="text-sm" x-show="sidebarOpen" x-transition>Dashboard</span>
+                <span class="text-sm" x-show="sidebarOpen" x-transition>{{ __('messages.app.dashboard') }}</span>
             </a>
 
             <!-- Menu Section Title -->
             <div class="pt-4 pb-2" x-show="sidebarOpen" x-transition>
-                <h3 class="px-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">Monitoring</h3>
+                <h3 class="px-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">{{ __('messages.app.monitoring') }}</h3>
             </div>
             <div class="pt-4 pb-2 flex justify-center" x-show="!sidebarOpen">
                 <div class="w-8 h-px bg-gray-200"></div>
@@ -58,12 +58,12 @@
                @if(request()->routeIs('real-time-sensor'))
                 style="background: linear-gradient(to right, rgba(49, 105, 78, 0.35), rgba(39, 86, 64, 0.35)); color: #163527;"
             @endif
-            :title="sidebarOpen ? '' : 'Real-time Sensor'">
+            :title="sidebarOpen ? '' : '{{ __('messages.app.realtime') }}'">
                 <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                         d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z" />
                 </svg>
-                <span class="text-sm" x-show="sidebarOpen" x-transition>Real-time Sensor</span>
+                <span class="text-sm" x-show="sidebarOpen" x-transition>{{ __('messages.app.realtime') }}</span>
             </a>
 
             <!-- Monitoring Mesin -->
@@ -77,18 +77,37 @@
                @if(request()->routeIs('monitoring-mesin'))
                 style="background: linear-gradient(to right, rgba(49, 105, 78, 0.35), rgba(39, 86, 64, 0.35)); color: #163527;"
             @endif
-            :title="sidebarOpen ? '' : 'Monitoring Mesin'">
+            :title="sidebarOpen ? '' : '{{ __('messages.app.monitoring_machine') }}'">
                 <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                         d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
                 </svg>
-                <span class="text-sm" x-show="sidebarOpen" x-transition>Monitoring Mesin</span>
+                <span class="text-sm" x-show="sidebarOpen" x-transition>{{ __('messages.app.monitoring_machine') }}</span>
+            </a>
+
+            <!-- Parameter Monitoring -->
+            <a href="{{ route('parameter-monitoring') }}" class="flex items-center px-4 py-2.5 rounded-lg font-medium transition duration-200
+               @if(request()->routeIs('parameter-monitoring'))
+                   text-gray-900
+               @else
+                   text-gray-600 hover:bg-gray-50 hover:text-gray-900
+               @endif"
+               :class="sidebarOpen ? 'space-x-3' : 'justify-center px-2'"
+               @if(request()->routeIs('parameter-monitoring'))
+                style="background: linear-gradient(to right, rgba(49, 105, 78, 0.35), rgba(39, 86, 64, 0.35)); color: #163527;"
+            @endif
+            :title="sidebarOpen ? '' : '{{ __('messages.app.parameter_monitoring') }}'">
+                <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M11 3v18m0 0l-3-3m3 3l3-3M4 7h7m-7 5h7m-7 5h7" />
+                </svg>
+                <span class="text-sm" x-show="sidebarOpen" x-transition>{{ __('messages.app.parameter_monitoring') }}</span>
             </a>
 
 
             <!-- Menu Section Title -->
             <div class="pt-4 pb-2" x-show="sidebarOpen" x-transition>
-                <h3 class="px-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">Alerts</h3>
+                <h3 class="px-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">{{ __('messages.app.alerts') }}</h3>
             </div>
             <div class="pt-4 pb-2 flex justify-center" x-show="!sidebarOpen">
                 <div class="w-8 h-px bg-gray-200"></div>
@@ -105,7 +124,7 @@
                @if(request()->routeIs('alert-management'))
                 style="background: linear-gradient(to right, rgba(49, 105, 78, 0.35), rgba(39, 86, 64, 0.35)); color: #163527;"
             @endif
-            :title="sidebarOpen ? '' : 'Manajemen Alert'">
+            :title="sidebarOpen ? '' : '{{ __('messages.app.alert_management') }}'">
                 <div class="relative">
                     <svg class="w-5 h-5 flex-shrink-0" fill="none"
                         stroke="currentColor" viewBox="0 0 24 24">
@@ -114,12 +133,12 @@
                     </svg>
                     <span class="absolute -top-1 -right-1 w-2 h-2 bg-yellow-400 rounded-full animate-pulse"></span>
                 </div>
-                <span class="text-sm" x-show="sidebarOpen" x-transition>Manajemen Alert</span>
+                <span class="text-sm" x-show="sidebarOpen" x-transition>{{ __('messages.app.alert_management') }}</span>
             </a>
 
             <!-- Menu Section Title -->
             <div class="pt-4 pb-2" x-show="sidebarOpen" x-transition>
-                <h3 class="px-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">Pengaturan</h3>
+                <h3 class="px-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">{{ __('messages.app.settings') }}</h3>
             </div>
             <div class="pt-4 pb-2 flex justify-center" x-show="!sidebarOpen">
                 <div class="w-8 h-px bg-gray-200"></div>
@@ -127,17 +146,20 @@
 
 
             <!-- Konfigurasi -->
-            <a href="#"
+            <a href="{{ route('settings') }}"
                 class="flex items-center px-4 py-2.5 rounded-lg text-gray-600 font-medium hover:bg-gray-50 hover:text-gray-900 transition duration-200"
                 :class="sidebarOpen ? 'space-x-3' : 'justify-center px-2'"
-                :title="sidebarOpen ? '' : 'Pengaturan'">
+                @if(request()->routeIs('settings'))
+                    style="background: linear-gradient(to right, rgba(49, 105, 78, 0.35), rgba(39, 86, 64, 0.35)); color: #163527;"
+                @endif
+            :title="sidebarOpen ? '' : '{{ __('messages.app.settings') }}'">
                 <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                         d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.26 2.632 1.732-.44.9.023 2.031.816 2.556 1.158.786 1.158 2.706 0 3.492-.793.525-1.256 1.656-.816 2.556.678 1.472-1.089 2.672-2.632 1.732a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.26-2.632-1.732.44-.9-.023-2.031-.816-2.556-1.158-.786-1.158-2.706 0-3.492.793-.525 1.256-1.656.816-2.556-.678-1.472 1.089-2.672 2.632-1.732a1.724 1.724 0 002.573-1.066z" />
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                         d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                 </svg>
-                <span class="text-sm" x-show="sidebarOpen" x-transition>Pengaturan</span>
+                <span class="text-sm" x-show="sidebarOpen" x-transition>{{ __('messages.app.settings') }}</span>
             </a>
 
             <!-- User Management (Manajemen User) -->
@@ -147,11 +169,11 @@
                 @if(request()->routeIs('user-management'))
                     style="background: linear-gradient(to right, rgba(16, 185, 129, 0.15), rgba(5, 150, 105, 0.15)); color: #065f46;"
                 @endif
-                :title="sidebarOpen ? '' : 'Manajemen User'">
+                :title="sidebarOpen ? '' : '{{ __('messages.app.user_management') }}'">
                 <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a4 4 0 00-3-3.87M9 20h6M3 20h5v-2a4 4 0 013-3.87M16 3.13a4 4 0 010 7.75M8 3.13a4 4 0 000 7.75" />
                 </svg>
-                <span class="text-sm" x-show="sidebarOpen" x-transition>Manajemen User</span>
+                <span class="text-sm" x-show="sidebarOpen" x-transition>{{ __('messages.app.user_management') }}</span>
             </a>
 
         </nav>

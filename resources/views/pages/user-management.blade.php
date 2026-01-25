@@ -10,7 +10,7 @@
 		<div class="flex items-center justify-between">
 			<div class="flex items-center space-x-8">
 				<h2 class="font-bold text-xl text-emerald-900">
-					Manajemen User
+					{{ __('messages.users.title') }}
 				</h2>
 				<!-- Live Status Indicator -->
 				<div class="flex items-center space-x-2 px-3 py-1.5 bg-emerald-50 rounded-full border border-emerald-200">
@@ -53,7 +53,7 @@
 		</div>
 		<div class="flex justify-end mb-6">
 			<form class="flex items-center gap-2" method="GET" action="">
-				<input id="userSearchInput" type="text" name="search" placeholder="Search users..." class="w-44 bg-gray-100 border border-gray-200 rounded-lg focus:ring-emerald-200 focus:border-emerald-400 text-gray-700 placeholder-gray-400 text-sm outline-none h-10 px-4 transition" autocomplete="off" />
+				<input id="userSearchInput" type="text" name="search" placeholder="{{ __('messages.users.search_placeholder') }}" class="w-44 bg-gray-100 border border-gray-200 rounded-lg focus:ring-emerald-200 focus:border-emerald-400 text-gray-700 placeholder-gray-400 text-sm outline-none h-10 px-4 transition" autocomplete="off" />
 				<button type="submit" class="flex items-center justify-center h-8 w-8 rounded-full bg-emerald-500 hover:bg-emerald-600 text-white transition p-0" title="Cari">
 					<svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 104.5 4.5a7.5 7.5 0 0012.15 12.15z" /></svg>
 				</button>
@@ -64,23 +64,23 @@
 				</a>
 				<button type="button" class="ml-2 flex items-center gap-2 px-4 h-10 rounded-lg bg-emerald-500 hover:bg-emerald-600 text-white text-sm font-medium transition shadow-sm" id="addUserBtn" onclick="openUserModal(false)">
 					<svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>
-					Tambah User
+					{{ __('messages.users.add') }}
 				</button>
 			</form>
 		</div>
 		<div class="bg-white/80 rounded-xl border border-gray-100 p-4 mb-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4 shadow-sm">
 			<div class="flex items-center gap-3">
 				<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-funnel w-5 h-5 text-emerald-400"><path d="M10 20a1 1 0 0 0 .553.895l2 1A1 1 0 0 0 14 21v-7a2 2 0 0 1 .517-1.341L21.74 4.67A1 1 0 0 0 21 3H3a1 1 0 0 0-.742 1.67l7.225 7.989A2 2 0 0 1 10 14z"></path></svg>
-				<span class="text-sm font-medium text-gray-700">Filters:</span>
+				<span class="text-sm font-medium text-gray-700">{{ __('messages.users.filters') }}:</span>
 				<select class="border border-gray-200 rounded-md px-3 py-2 text-sm text-gray-700 focus:ring-2 focus:ring-emerald-200 focus:border-emerald-400 bg-white transition" style="min-width:120px;">
-					<option>All Roles</option>
+					<option>{{ __('messages.users.all_roles') }}</option>
 					<option>Admin</option>
 					<option>Teknisi</option>
 				</select>
 				<select class="border border-gray-200 rounded-md px-3 py-2 text-sm text-gray-700 focus:ring-2 focus:ring-yellow-200 focus:border-yellow-400 bg-white transition" style="min-width:120px;">
-					<option>All Status</option>
-					<option>Aktif</option>
-					<option>Nonaktif</option>
+					<option>{{ __('messages.users.all_status') }}</option>
+					<option>{{ __('messages.users.active') }}</option>
+					<option>{{ __('messages.users.inactive') }}</option>
 				</select>
 			</div>
 			<div class="flex items-center gap-3">
@@ -105,20 +105,20 @@
 								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.121 17.804A13.937 13.937 0 0112 15c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0z" />
 							</svg>
 						</div>
-						<h3 class="font-bold text-gray-900 text-lg">Tabel User</h3>
+						<h3 class="font-bold text-gray-900 text-lg">{{ __('messages.users.table_title') }}</h3>
 					</div>
 				</div>
 				<table class="min-w-full divide-y divide-gray-200">
 					<thead class="bg-gray-50">
 						<tr>
-							<th class="px-6 py-3 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Profile</th>
-							<th class="px-6 py-3 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Full Name</th>
-							<th class="px-6 py-3 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Email Address</th>
-							<th class="px-6 py-3 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Phone Number</th>
-							<th class="px-6 py-3 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Role</th>
-							<th class="px-6 py-3 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Status</th>
-							<th class="px-6 py-3 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Last Login</th>
-							<th class="px-6 py-3 text-center text-xs font-bold text-gray-600 uppercase tracking-wider">Action</th>
+							<th class="px-6 py-3 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">{{ __('messages.users.profile') }}</th>
+							<th class="px-6 py-3 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">{{ __('messages.users.full_name') }}</th>
+							<th class="px-6 py-3 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">{{ __('messages.users.email') }}</th>
+							<th class="px-6 py-3 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">{{ __('messages.users.phone') }}</th>
+							<th class="px-6 py-3 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">{{ __('messages.users.role') }}</th>
+							<th class="px-6 py-3 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">{{ __('messages.users.status') }}</th>
+							<th class="px-6 py-3 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">{{ __('messages.users.last_login') }}</th>
+							<th class="px-6 py-3 text-center text-xs font-bold text-gray-600 uppercase tracking-wider">{{ __('messages.users.action') }}</th>
 						</tr>
 					</thead>
 					<tbody class="bg-white divide-y divide-gray-100">
@@ -195,7 +195,7 @@
 		<!-- Modal Tambah/Edit User -->
 		<div id="userModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/10 transition-all duration-200 backdrop-blur-sm supports-backdrop-blur hidden" style="backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);">
 			<div class="bg-white rounded-lg shadow-lg w-full max-w-md p-6 relative">
-				<h4 class="text-lg font-bold mb-4" id="userModalTitle">Tambah User</h4>
+				<h4 class="text-lg font-bold mb-4" id="userModalTitle">{{ __('messages.users.add') }}</h4>
 				<form id="userForm">
 					<input type="hidden" id="userId" name="user_id">
 					<div class="mb-3">
@@ -289,14 +289,19 @@
 			// });
 
 			// Modal logic
+			const userModalLabels = {
+				add: @json(__('messages.users.add')),
+				edit: @json(__('messages.users.title')),
+			};
+
 			function openUserModal(isEdit = false, user = null) {
 			document.getElementById('userModal').classList.remove('hidden');
 			document.getElementById('userForm').reset();
 			document.getElementById('userId').value = '';
 			document.getElementById('passwordField').classList.remove('hidden');
-			document.getElementById('userModalTitle').textContent = 'Tambah User';
+			document.getElementById('userModalTitle').textContent = userModalLabels.add;
 			if (isEdit && user) {
-				document.getElementById('userModalTitle').textContent = 'Edit User';
+				document.getElementById('userModalTitle').textContent = userModalLabels.edit;
 				document.getElementById('userId').value = user.id;
 				document.getElementById('userName').value = user.name;
 				document.getElementById('userEmail').value = user.email;

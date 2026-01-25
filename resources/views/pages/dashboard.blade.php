@@ -3,7 +3,7 @@
         <div class="flex items-center justify-between">
             <div class="flex items-center space-x-8">
                 <h2 class="font-bold text-xl text-emerald-900">
-                    Dashboard Monitoring Mesin
+                    {{ __('messages.app.dashboard_title') }}
                 </h2>
                 <!-- Live Status Indicator -->
                 <div
@@ -13,7 +13,7 @@
                             class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
                         <span class="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
                     </div>
-                    <span class="text-xs font-semibold text-emerald-700">Langsung</span>
+                    <span class="text-xs font-semibold text-emerald-700">{{ __('messages.app.live') }}</span>
                 </div>
             </div>
             <div class="flex items-center space-x-3">
@@ -26,7 +26,7 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
                     </svg>
-                    <span>Refresh</span>
+                    <span>{{ __('messages.app.refresh') }}</span>
                 </button>
             </div>
         </div>
@@ -218,7 +218,7 @@
                 }
 
                 if (!machines || machines.length === 0) {
-                    grid.innerHTML = '<div class="col-span-3 text-center text-gray-500">Tidak ada data mesin</div>';
+                    grid.innerHTML = `<div class="col-span-3 text-center text-gray-500">{{ __('messages.dashboard.no_machine_data') }}</div>`;
                     return;
                 }
 
@@ -267,23 +267,23 @@
                                     <!-- RMS Value with Progress Bar -->
                                     <div class="mb-4">
                                         <div class="flex items-center justify-between mb-2">
-                                            <span class="text-sm font-semibold text-gray-700">RMS Value</span>
+                                            <span class="text-sm font-semibold text-gray-700">{{ __('messages.dashboard.rms_value') }}</span>
                                             <span class="text-lg font-bold text-gray-900">${rmsValue.toFixed(3)}</span>
                                         </div>
                                         <div class="w-full bg-gray-300 rounded-full h-2.5 overflow-hidden">
                                             <div class="h-full ${progressClass} rounded-full transition-all duration-300" style="width: ${rmsPercent}%"></div>
                                         </div>
-                                        <p class="text-xs text-gray-500 mt-1">Normal: 0 - 1.8 mm/s | Waspada: 1.8 - 4.5 mm/s | Bahaya: > 4.5 mm/s</p>
+                                        <p class="text-xs text-gray-500 mt-1">{{ __('messages.dashboard.normal_range') }} | {{ __('messages.dashboard.warning_range') }} | {{ __('messages.dashboard.danger_range') }}</p>
                                     </div>
 
                                     <!-- Metrics Grid -->
                                     <div class="grid grid-cols-2 gap-3 mb-4">
                                         <div class="bg-gray-50 rounded-lg p-3 border border-gray-100 hover:bg-emerald-50 transition">
-                                            <p class="text-xs text-gray-600 font-medium">Peak Amplitude</p>
+                                            <p class="text-xs text-gray-600 font-medium">{{ __('messages.dashboard.peak_amplitude') }}</p>
                                             <p class="text-lg font-bold text-gray-900">${(machine.peak_amp || 0).toFixed(2)}</p>
                                         </div>
                                         <div class="bg-gray-50 rounded-lg p-3 border border-gray-100 hover:bg-emerald-50 transition">
-                                            <p class="text-xs text-gray-600 font-medium">Frequency</p>
+                                            <p class="text-xs text-gray-600 font-medium">{{ __('messages.dashboard.frequency') }}</p>
                                             <p class="text-lg font-bold text-gray-900">${(machine.dominant_freq || 0).toFixed(0)} Hz</p>
                                         </div>
                                     </div>
@@ -291,7 +291,7 @@
                                     <!-- Last Check Info -->
                                     <div class="pt-3 border-t border-gray-200">
                                         <p class="text-xs text-gray-600">
-                                            <span class="font-semibold text-emerald-600">Last Check:</span> ${machine.last_check || 'No data'}
+                                            <span class="font-semibold text-emerald-600">{{ __('messages.dashboard.last_check') }}:</span> ${machine.last_check || '{{ __('messages.dashboard.no_data') }}'}
                                         </p>
                                     </div>
                                 </div>
@@ -334,7 +334,7 @@
                                 <svg class="w-12 h-12 mx-auto mb-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                                 </svg>
-                                <p>Semua mesin dalam kondisi normal</p>
+                                <p>{{ __('messages.dashboard.all_normal') }}</p>
                             </div>
                         `;
                     return;
