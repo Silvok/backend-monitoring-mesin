@@ -7,7 +7,7 @@
         </svg>
         Grafik RMS Value Trend
     </h3>
-    <div class="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between mb-3">
+    <div class="flex items-center justify-between mb-3">
         <label class="flex items-center gap-2 text-xs text-gray-600">
             <input id="rmsScaleToggle" type="checkbox" class="rounded border-gray-300 text-emerald-600 focus:ring-emerald-500" checked>
             Auto-zoom Y
@@ -18,9 +18,14 @@
         <canvas id="rmsChart" data-chart="{{ json_encode($rmsChartData ?? []) }}"></canvas>
     </div>
     <div class="flex mt-4 justify-end">
-        <div class="relative w-full sm:w-auto">
+        <div class="relative">
             <button id="downloadBtn" type="button"
-                class="w-full sm:w-auto px-4 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-lg shadow text-sm">Download</button>
+                class="p-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg shadow text-xs" aria-label="Download chart">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M7 10l5 5m0 0l5-5m-5 5V4" />
+                </svg>
+            </button>
             <div id="downloadMenu"
                 class="absolute right-0 mt-2 w-32 bg-white border border-gray-200 rounded-lg shadow-lg z-10 hidden">
                 <button type="button"
@@ -53,10 +58,13 @@
             let yMax = 0;
             if (values.length) {
                 const minVal = Math.min(...values);
-                const maxVal = Math.max(...values);
-                const pad = Math.max(0.05, (maxVal - minVal) * 0.2);
+                const sorted = [...values].sort((a, b) => a - b);
+                const p95Index = Math.max(0, Math.floor(0.95 * (sorted.length - 1)));
+                const p95Val = sorted[p95Index];
+                const autoMax = Math.max(p95Val, minVal);
+                const pad = Math.max(0.05, (autoMax - minVal) * 0.2);
                 yMin = Math.max(0, minVal - pad);
-                yMax = maxVal + pad;
+                yMax = autoMax + pad;
             }
             // Untuk bar: array warna background, untuk line: array warna point
             const barColors = (chartData.values || []).map((_, i) => {

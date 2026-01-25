@@ -254,6 +254,7 @@
                         ? 'bg-yellow-100 text-yellow-700'
                         : 'bg-emerald-100 text-emerald-700';
                 const rowClass = item.is_read ? 'bg-white' : 'bg-emerald-50/50';
+                const statusDotClass = item.is_read ? 'bg-gray-300' : 'bg-emerald-500';
                 return `
                     <button data-id="${item.id}" class="notif-item w-full text-left px-4 py-3 border-b border-gray-100 hover:bg-emerald-50 ${rowClass}">
                         <div class="flex items-start gap-3">
@@ -266,7 +267,10 @@
                             <div class="flex-1">
                                 <div class="flex items-center justify-between gap-2">
                                     <p class="text-sm font-semibold text-gray-900">${item.title}</p>
-                                    <span class="text-[10px] px-2 py-0.5 rounded-full ${badgeClass}">${severity}</span>
+                                    <div class="flex items-center gap-2">
+                                        <span class="text-[10px] px-2 py-0.5 rounded-full ${badgeClass}">${severity}</span>
+                                        <span class="w-2 h-2 rounded-full ${statusDotClass}"></span>
+                                    </div>
                                 </div>
                                 <p class="text-xs text-gray-600 mt-1">${item.message || ''}</p>
                                 <p class="text-[11px] text-gray-400 mt-2">${item.time_ago}</p>
