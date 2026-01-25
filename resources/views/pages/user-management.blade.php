@@ -33,9 +33,25 @@
 		<!-- Notifikasi -->
 		<div id="toast-container"></div>
 
-		<!-- Header and Search Bar (side by side) -->
-		<div class="flex items-center justify-between mb-8 w-full gap-4">
-			<h3 class="text-base font-semibold text-black">User Management</h3>
+		<div class="mb-4">
+			<div class="rounded-xl border border-gray-100 bg-white/90 px-3 py-2 shadow-lg">
+				<div class="flex flex-row flex-wrap sm:flex-nowrap justify-between items-center gap-2">
+					<div class="text-center flex-1 min-w-[90px]">
+						<p class="text-[10px] font-bold text-emerald-700 uppercase tracking-widest">Total</p>
+						<p class="text-lg font-black text-gray-900 mt-0.5">{{ $summary['total'] ?? 0 }}</p>
+					</div>
+					<div class="text-center flex-1 min-w-[90px]">
+						<p class="text-[10px] font-bold text-blue-700 uppercase tracking-widest">Teknisi</p>
+						<p class="text-lg font-black text-gray-900 mt-0.5">{{ $summary['teknisi'] ?? 0 }}</p>
+					</div>
+					<div class="text-center flex-1 min-w-[90px]">
+						<p class="text-[10px] font-bold text-amber-700 uppercase tracking-widest">Admin</p>
+						<p class="text-lg font-black text-gray-900 mt-0.5">{{ $summary['admin'] ?? 0 }}</p>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="flex justify-end mb-6">
 			<form class="flex items-center gap-2" method="GET" action="">
 				<input id="userSearchInput" type="text" name="search" placeholder="Search users..." class="w-44 bg-gray-100 border border-gray-200 rounded-lg focus:ring-emerald-200 focus:border-emerald-400 text-gray-700 placeholder-gray-400 text-sm outline-none h-10 px-4 transition" autocomplete="off" />
 				<button type="submit" class="flex items-center justify-center h-8 w-8 rounded-full bg-emerald-500 hover:bg-emerald-600 text-white transition p-0" title="Cari">
@@ -51,40 +67,6 @@
 					Tambah User
 				</button>
 			</form>
-		</div>
-		<div class="mb-4">
-			<div class="rounded-xl border border-gray-100 bg-white/90 px-3 py-2 shadow-sm">
-				<div class="flex flex-row flex-wrap sm:flex-nowrap justify-between items-center gap-2">
-					<div class="text-center flex-1 min-w-[90px]">
-						<p class="text-[10px] font-bold text-emerald-700 uppercase tracking-widest">Total</p>
-						<p class="text-lg font-black text-gray-900 mt-0.5">{{ $summary['total'] ?? 0 }}</p>
-					</div>
-					<div class="text-center flex-1 min-w-[90px]">
-						<p class="text-[10px] font-bold text-blue-700 uppercase tracking-widest">Teknisi</p>
-						<p class="text-lg font-black text-gray-900 mt-0.5">{{ $summary['teknisi'] ?? 0 }}</p>
-					</div>
-					<div class="text-center flex-1 min-w-[90px]">
-						<p class="text-[10px] font-bold text-amber-700 uppercase tracking-widest">Admin</p>
-						<p class="text-lg font-black text-gray-900 mt-0.5">{{ $summary['admin'] ?? 0 }}</p>
-					</div>
-					<div class="text-center flex-1 min-w-[90px]">
-						<p class="text-[10px] font-bold text-teal-700 uppercase tracking-widest">Aktif</p>
-						<p class="text-lg font-black text-gray-900 mt-0.5">{{ $summary['aktif'] ?? 0 }}</p>
-					</div>
-					<div class="text-center flex-1 min-w-[90px]">
-						<p class="text-[10px] font-bold text-rose-700 uppercase tracking-widest">Nonaktif</p>
-						<p class="text-lg font-black text-gray-900 mt-0.5">{{ $summary['nonaktif'] ?? 0 }}</p>
-					</div>
-					<div class="text-center flex-1 min-w-[110px]">
-						<p class="text-[10px] font-bold text-sky-700 uppercase tracking-widest">Login Hari Ini</p>
-						<p class="text-lg font-black text-gray-900 mt-0.5">{{ $summary['login_today'] ?? 0 }}</p>
-					</div>
-					<div class="text-center flex-1 min-w-[120px]">
-						<p class="text-[10px] font-bold text-purple-700 uppercase tracking-widest">Login Minggu Ini</p>
-						<p class="text-lg font-black text-gray-900 mt-0.5">{{ $summary['login_week'] ?? 0 }}</p>
-					</div>
-				</div>
-			</div>
 		</div>
 		<div class="bg-white/80 rounded-xl border border-gray-100 p-4 mb-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4 shadow-sm">
 			<div class="flex items-center gap-3">
