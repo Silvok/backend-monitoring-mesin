@@ -1,8 +1,8 @@
 <x-app-layout>
     <x-slot name="header">
-        <div class="flex flex-wrap items-center justify-between gap-4">
-            <div class="flex items-center space-x-4 sm:space-x-8">
-                <h2 class="font-bold text-lg sm:text-xl text-emerald-900 leading-tight">
+        <div class="flex items-center justify-between">
+            <div class="flex items-center space-x-8">
+                <h2 class="font-bold text-xl text-emerald-900">
                     Dashboard Monitoring Mesin
                 </h2>
                 <!-- Live Status Indicator -->
@@ -13,12 +13,12 @@
                             class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
                         <span class="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
                     </div>
-                    <span class="text-xs font-semibold text-emerald-700">Live</span>
+                    <span class="text-xs font-semibold text-emerald-700">Langsung</span>
                 </div>
             </div>
             <div class="flex items-center space-x-3">
                 <div class="text-sm text-gray-600 bg-gray-50 px-3 py-1.5 rounded-lg border border-gray-200">
-                    <span class="font-semibold" id="currentTime">{{ now()->locale('id')->translatedFormat('l, d M Y, H:i') }}</span>
+                    <span class="font-semibold" id="currentTime">{{ now()->locale('id')->translatedFormat('d M Y, H:i:s') }}</span>
                 </div>
                 <button onclick="refreshDashboard()"
                     class="px-4 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-medium rounded-lg transition flex items-center space-x-2 shadow-sm">

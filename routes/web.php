@@ -18,6 +18,7 @@ use App\Http\Controllers\Api\DashboardApiController;
 use App\Http\Controllers\Api\AlertController;
 use App\Http\Controllers\Api\FFTController;
 use App\Http\Controllers\AlertManagementController;
+use App\Http\Controllers\NotificationController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -64,6 +65,10 @@ Route::post('/proses-fft/{analysisResultId}', [\App\Http\Controllers\AnalisisCon
 
 // API Routes for real-time updates
 Route::middleware('auth')->group(function () {
+    Route::get('/notifications', [NotificationController::class, 'index']);
+    Route::post('/notifications/{id}/read', [NotificationController::class, 'markRead']);
+    Route::post('/notifications/read-all', [NotificationController::class, 'markAllRead']);
+
     Route::get('/api/dashboard-data', [DashboardApiController::class, 'getDashboardData']);
     Route::get('/api/machine-status', [DashboardApiController::class, 'getMachineStatus']);
     Route::get('/api/top-machines-by-risk', [DashboardApiController::class, 'getTopMachinesByRisk']);

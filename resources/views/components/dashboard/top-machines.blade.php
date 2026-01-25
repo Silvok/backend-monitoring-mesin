@@ -1,7 +1,7 @@
 <!-- Top Machines by Risk -->
-<div class="bg-white rounded-xl shadow-lg p-6 mb-8">
-    <h3 class="text-xl font-bold text-emerald-900 mb-4 flex items-center">
-        <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+<div class="bg-white rounded-xl shadow-lg p-4 sm:p-6 mb-8">
+    <h3 class="text-lg sm:text-xl font-bold text-emerald-900 mb-4 flex items-center">
+        <svg class="w-5 h-5 sm:w-6 sm:h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
         </svg>
         Ranking Mesin Berisiko (Perlu Maintenance)

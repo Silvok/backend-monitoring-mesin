@@ -1,26 +1,26 @@
 <!-- RMS Value Chart -->
-<div class="bg-white rounded-xl shadow-lg p-6 mb-8">
-    <h3 class="text-xl font-bold text-emerald-900 mb-6 flex items-center">
-        <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+<div class="bg-white rounded-xl shadow-lg p-4 sm:p-6 mb-8">
+    <h3 class="text-lg sm:text-xl font-bold text-emerald-900 mb-4 sm:mb-6 flex items-center">
+        <svg class="w-5 h-5 sm:w-6 sm:h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                 d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
         </svg>
         Grafik RMS Value Trend
     </h3>
-    <div class="flex items-center justify-between mb-3">
+    <div class="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between mb-3">
         <label class="flex items-center gap-2 text-xs text-gray-600">
             <input id="rmsScaleToggle" type="checkbox" class="rounded border-gray-300 text-emerald-600 focus:ring-emerald-500" checked>
             Auto-zoom Y
         </label>
         <span class="text-[11px] text-gray-400">Full scale: 0-11.2 mm/s</span>
     </div>
-    <div class="relative h-80">
+    <div class="relative h-64 sm:h-80">
         <canvas id="rmsChart" data-chart="{{ json_encode($rmsChartData ?? []) }}"></canvas>
     </div>
     <div class="flex mt-4 justify-end">
-        <div class="relative">
+        <div class="relative w-full sm:w-auto">
             <button id="downloadBtn" type="button"
-                class="px-4 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-lg shadow text-sm">Download</button>
+                class="w-full sm:w-auto px-4 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-lg shadow text-sm">Download</button>
             <div id="downloadMenu"
                 class="absolute right-0 mt-2 w-32 bg-white border border-gray-200 rounded-lg shadow-lg z-10 hidden">
                 <button type="button"

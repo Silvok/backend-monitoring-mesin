@@ -9,6 +9,7 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use App\Models\Machine;
+use App\Models\User;
 
 class AnalyzeBatchJob implements ShouldQueue
 {
@@ -239,6 +240,7 @@ class AnalyzeBatchJob implements ShouldQueue
             $machineId = $samples->first()->machine_id ?? null;
             $warningThreshold = 1.8;
             $criticalThreshold = 4.5;
+            $machine = null;
             if ($machineId) {
                 $machine = Machine::find($machineId);
                 if ($machine) {
@@ -286,6 +288,33 @@ class AnalyzeBatchJob implements ShouldQueue
                         'created_at' => now(),
                         'updated_at' => now(),
                     ]);
+                }
+                if ($analysisId && Schema::hasTable('notifications') && in_array($conditionStatus, ['WARNING', 'CRITICAL'], true)) {
+                    $machineName = $machine->name ?? 'Mesin';
+                    $title = "Alert {$conditionStatus}: {$machineName}";
+                    $rmsLabel = $rmsForStatus !== null ? number_format($rmsForStatus, 3) . ' mm/s' : '-';
+                    $message = "RMS {$rmsLabel} melebihi ambang {$conditionStatus}.";
+                    $payload = [
+                        'analysis_id' => $analysisId,
+                        'rms' => $rmsForStatus,
+                        'status' => $conditionStatus,
+                    ];
+                    $now = now();
+                    $users = User::query()->select('id')->get();
+                    foreach ($users as $user) {
+                        DB::table('notifications')->insert([
+                            'user_id' => $user->id,
+                            'machine_id' => $machineId,
+                            'type' => 'ALERT',
+                            'severity' => $conditionStatus,
+                            'title' => $title,
+                            'message' => $message,
+                            'payload' => json_encode($payload),
+                            'is_read' => false,
+                            'created_at' => $now,
+                            'updated_at' => $now,
+                        ]);
+                    }
                 }
             }
         } catch (\Throwable $e) {

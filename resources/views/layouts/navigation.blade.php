@@ -20,14 +20,39 @@
 
             <!-- Right Side Menu -->
             <div class="hidden sm:flex items-center space-x-4 absolute right-0 pr-8">
-                <!-- Notification Bell (Future) -->
-                <button class="relative text-white hover:bg-white/10 p-2 rounded-lg transition duration-200">
+                <!-- Notification Bell -->
+                <button id="notifBtn" type="button" class="relative text-white hover:bg-white/10 p-2 rounded-lg transition duration-200">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
                     </svg>
-                    <span class="absolute top-1 right-1 w-2 h-2 bg-yellow-400 rounded-full"></span>
+                    <span id="notifBadge" class="absolute -top-1 -right-1 min-w-[18px] px-1.5 py-0.5 text-[10px] font-bold bg-red-500 text-white rounded-full hidden"></span>
                 </button>
+                <div id="notifMenu" class="fixed top-24 w-72 max-w-[calc(100vw-2rem)] max-h-[calc(100vh-6rem)] -translate-x-1/2 bg-white rounded-2xl shadow-2xl border border-gray-100 hidden z-50 overflow-hidden">
+                    <div class="px-4 py-3 border-b border-gray-100">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-2">
+                                <svg class="w-5 h-5 text-emerald-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+                                </svg>
+                                <div>
+                                    <p class="text-sm font-semibold text-gray-900">Notifikasi</p>
+                                    <p class="text-[11px] text-gray-500">Update terbaru kondisi mesin</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <span id="notifUnreadPill" class="text-[10px] font-bold px-2 py-1 rounded-full bg-gray-900 text-white hidden"></span>
+                                <button id="notifReadAll" class="text-[10px] font-semibold px-2.5 py-1 rounded-full border border-gray-200 text-gray-700 hover:bg-gray-50">
+                                    Tandai semua
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="notifList" class="max-h-64 overflow-y-auto bg-gray-50/70">
+                        <div class="px-4 py-6 text-center text-sm text-gray-500">Memuat notifikasi...</div>
+                    </div>
+                </div>
 
                 <!-- User Dropdown -->
                 <div x-data="{ dropdownOpen: false }" class="relative">
@@ -179,3 +204,134 @@
         </div>
     </div>
 </nav>
+
+@push('scripts')
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const btn = document.getElementById('notifBtn');
+        const menu = document.getElementById('notifMenu');
+        const list = document.getElementById('notifList');
+        const badge = document.getElementById('notifBadge');
+        const markAll = document.getElementById('notifReadAll');
+        const unreadPill = document.getElementById('notifUnreadPill');
+
+        if (!btn || !menu || !list || !badge || !markAll) {
+            return;
+        }
+
+        function positionMenu() {
+            const rect = btn.getBoundingClientRect();
+            menu.style.top = `${rect.bottom + 24}px`;
+            menu.style.left = `${rect.left + (rect.width / 2)}px`;
+            menu.style.right = 'auto';
+        }
+
+        function renderNotifications(data) {
+            const items = data.items || [];
+            const unread = data.unread_count || 0;
+            badge.textContent = unread > 99 ? '99+' : String(unread);
+            badge.classList.toggle('hidden', unread === 0);
+            if (unreadPill) {
+                unreadPill.textContent = `${unread} unread`;
+                unreadPill.classList.toggle('hidden', unread === 0);
+            }
+
+            if (!items.length) {
+                list.innerHTML = '<div class="px-4 py-6 text-center text-sm text-gray-500">Belum ada notifikasi</div>';
+                return;
+            }
+
+            list.innerHTML = items.map(item => {
+                const severity = (item.severity || 'INFO').toUpperCase();
+                const iconClass = severity === 'CRITICAL'
+                    ? 'text-red-600 border-red-200 bg-red-50'
+                    : severity === 'WARNING'
+                        ? 'text-yellow-600 border-yellow-200 bg-yellow-50'
+                        : 'text-emerald-600 border-emerald-200 bg-emerald-50';
+                const badgeClass = severity === 'CRITICAL'
+                    ? 'bg-red-100 text-red-700'
+                    : severity === 'WARNING'
+                        ? 'bg-yellow-100 text-yellow-700'
+                        : 'bg-emerald-100 text-emerald-700';
+                const rowClass = item.is_read ? 'bg-white' : 'bg-emerald-50/50';
+                return `
+                    <button data-id="${item.id}" class="notif-item w-full text-left px-4 py-3 border-b border-gray-100 hover:bg-emerald-50 ${rowClass}">
+                        <div class="flex items-start gap-3">
+                            <div class="w-8 h-8 rounded-full border ${iconClass} flex items-center justify-center flex-shrink-0">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M13 16h-1v-4h-1m1-4h.01M12 18a6 6 0 100-12 6 6 0 000 12z" />
+                                </svg>
+                            </div>
+                            <div class="flex-1">
+                                <div class="flex items-center justify-between gap-2">
+                                    <p class="text-sm font-semibold text-gray-900">${item.title}</p>
+                                    <span class="text-[10px] px-2 py-0.5 rounded-full ${badgeClass}">${severity}</span>
+                                </div>
+                                <p class="text-xs text-gray-600 mt-1">${item.message || ''}</p>
+                                <p class="text-[11px] text-gray-400 mt-2">${item.time_ago}</p>
+                            </div>
+                        </div>
+                    </button>
+                `;
+            }).join('');
+        }
+
+        function loadNotifications() {
+            fetch('/notifications')
+                .then(r => r.json())
+                .then(renderNotifications)
+                .catch(() => {
+                    list.innerHTML = '<div class="px-4 py-6 text-center text-sm text-gray-500">Gagal memuat notifikasi</div>';
+                });
+        }
+
+        btn.addEventListener('click', function (e) {
+            e.stopPropagation();
+            menu.classList.toggle('hidden');
+            if (!menu.classList.contains('hidden')) {
+                positionMenu();
+                loadNotifications();
+            }
+        });
+
+        document.addEventListener('click', function (e) {
+            if (!menu.contains(e.target) && !btn.contains(e.target)) {
+                menu.classList.add('hidden');
+            }
+        });
+
+        list.addEventListener('click', function (e) {
+            const item = e.target.closest('.notif-item');
+            if (!item) return;
+            const id = item.getAttribute('data-id');
+            fetch(`/notifications/${id}/read`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                }
+            }).then(() => {
+                window.location.href = '/alert-management';
+            });
+        });
+
+        markAll.addEventListener('click', function () {
+            fetch('/notifications/read-all', {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                }
+            }).then(() => loadNotifications());
+        });
+
+        window.addEventListener('resize', function () {
+            if (!menu.classList.contains('hidden')) {
+                positionMenu();
+            }
+        });
+
+        loadNotifications();
+        setInterval(loadNotifications, 30000);
+    });
+</script>
+@endpush
