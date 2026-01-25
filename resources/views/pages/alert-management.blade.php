@@ -812,8 +812,8 @@
                     datasets: [{
                         label: 'Jumlah Alert',
                         data: stats.by_machine.map(m => m.alert_count),
-                        backgroundColor: 'rgba(16, 185, 129, 0.7)',
-                        borderColor: 'rgba(16, 185, 129, 1)',
+                        backgroundColor: 'rgba(6, 95, 70, 1)',
+                        borderColor: 'rgba(6, 95, 70, 1)',
                         borderWidth: 1,
                         borderRadius: 6,
                     }]
