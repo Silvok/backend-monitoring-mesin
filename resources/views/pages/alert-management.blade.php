@@ -95,14 +95,16 @@
                             </svg>
                             Riwayat
                         </button>
-                        <button onclick="switchTab('settings')" id="tab-settings"
-                            class="tab-btn px-6 py-4 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300">
-                            <svg class="w-5 h-5 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-                            </svg>
-                            Pengaturan
-                        </button>
+                        @if(Auth::user()->role === 'admin')
+                            <button onclick="switchTab('settings')" id="tab-settings"
+                                class="tab-btn px-6 py-4 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300">
+                                <svg class="w-5 h-5 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                </svg>
+                                Pengaturan
+                            </button>
+                        @endif
                     </nav>
                 </div>
             </div>
@@ -383,7 +385,8 @@
             </div>
 
             <!-- Tab Content: Settings -->
-            <div id="content-settings" class="tab-content hidden">
+            @if(Auth::user()->role === 'admin')
+                <div id="content-settings" class="tab-content hidden">
                 <div class="grid grid-cols-1 gap-6">
                     <!-- Per-Machine Threshold Configuration -->
                     <div class="bg-white rounded-xl border border-gray-100 shadow-sm p-6">
@@ -604,7 +607,8 @@
                         </form>
                     </div>
                 </div>
-            </div>
+                </div>
+            @endif
 
             <!-- Machine Threshold Edit Modal -->
             <div id="thresholdModal" class="fixed inset-0 z-50 hidden overflow-y-auto">
@@ -747,9 +751,16 @@
             });
 
             // Show selected tab content
-            document.getElementById('content-' + tabName).classList.remove('hidden');
+            const content = document.getElementById('content-' + tabName);
+            if (!content) {
+                return;
+            }
+            content.classList.remove('hidden');
             // Add active state to selected tab
             const activeTab = document.getElementById('tab-' + tabName);
+            if (!activeTab) {
+                return;
+            }
             activeTab.classList.add('border-emerald-500', 'text-emerald-600', 'bg-emerald-50/50');
             activeTab.classList.remove('border-transparent', 'text-gray-500');
 

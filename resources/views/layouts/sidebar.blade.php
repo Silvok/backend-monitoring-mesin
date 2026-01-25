@@ -136,45 +136,46 @@
                 <span class="text-sm" x-show="sidebarOpen" x-transition>{{ __('messages.app.alert_management') }}</span>
             </a>
 
-            <!-- Menu Section Title -->
-            <div class="pt-4 pb-2" x-show="sidebarOpen" x-transition>
-                <h3 class="px-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">{{ __('messages.app.settings') }}</h3>
-            </div>
-            <div class="pt-4 pb-2 flex justify-center" x-show="!sidebarOpen">
-                <div class="w-8 h-px bg-gray-200"></div>
-            </div>
+            @if(Auth::user()->role === 'admin')
+                <!-- Menu Section Title -->
+                <div class="pt-4 pb-2" x-show="sidebarOpen" x-transition>
+                    <h3 class="px-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">{{ __('messages.app.settings') }}</h3>
+                </div>
+                <div class="pt-4 pb-2 flex justify-center" x-show="!sidebarOpen">
+                    <div class="w-8 h-px bg-gray-200"></div>
+                </div>
 
+                <!-- Konfigurasi -->
+                <a href="{{ route('settings') }}"
+                    class="flex items-center px-4 py-2.5 rounded-lg text-gray-600 font-medium hover:bg-gray-50 hover:text-gray-900 transition duration-200"
+                    :class="sidebarOpen ? 'space-x-3' : 'justify-center px-2'"
+                    @if(request()->routeIs('settings'))
+                        style="background: linear-gradient(to right, rgba(49, 105, 78, 0.35), rgba(39, 86, 64, 0.35)); color: #163527;"
+                    @endif
+                :title="sidebarOpen ? '' : '{{ __('messages.app.settings') }}'">
+                    <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.26 2.632 1.732-.44.9.023 2.031.816 2.556 1.158.786 1.158 2.706 0 3.492-.793.525-1.256 1.656-.816 2.556.678 1.472-1.089 2.672-2.632 1.732a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.26-2.632-1.732.44-.9-.023-2.031-.816-2.556-1.158-.786-1.158-2.706 0-3.492.793-.525 1.256-1.656.816-2.556-.678-1.472 1.089-2.672 2.632-1.732a1.724 1.724 0 002.573-1.066z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                    </svg>
+                    <span class="text-sm" x-show="sidebarOpen" x-transition>{{ __('messages.app.settings') }}</span>
+                </a>
 
-            <!-- Konfigurasi -->
-            <a href="{{ route('settings') }}"
-                class="flex items-center px-4 py-2.5 rounded-lg text-gray-600 font-medium hover:bg-gray-50 hover:text-gray-900 transition duration-200"
-                :class="sidebarOpen ? 'space-x-3' : 'justify-center px-2'"
-                @if(request()->routeIs('settings'))
-                    style="background: linear-gradient(to right, rgba(49, 105, 78, 0.35), rgba(39, 86, 64, 0.35)); color: #163527;"
-                @endif
-            :title="sidebarOpen ? '' : '{{ __('messages.app.settings') }}'">
-                <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.26 2.632 1.732-.44.9.023 2.031.816 2.556 1.158.786 1.158 2.706 0 3.492-.793.525-1.256 1.656-.816 2.556.678 1.472-1.089 2.672-2.632 1.732a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.26-2.632-1.732.44-.9-.023-2.031-.816-2.556-1.158-.786-1.158-2.706 0-3.492.793-.525 1.256-1.656.816-2.556-.678-1.472 1.089-2.672 2.632-1.732a1.724 1.724 0 002.573-1.066z" />
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                </svg>
-                <span class="text-sm" x-show="sidebarOpen" x-transition>{{ __('messages.app.settings') }}</span>
-            </a>
-
-            <!-- User Management (Manajemen User) -->
-            <a href="{{ route('user-management') }}"
-                class="flex items-center px-4 py-2.5 rounded-lg text-gray-600 font-medium hover:bg-emerald-50 hover:text-emerald-900 transition duration-200"
-                :class="sidebarOpen ? 'space-x-3' : 'justify-center px-2'"
-                @if(request()->routeIs('user-management'))
-                    style="background: linear-gradient(to right, rgba(16, 185, 129, 0.15), rgba(5, 150, 105, 0.15)); color: #065f46;"
-                @endif
-                :title="sidebarOpen ? '' : '{{ __('messages.app.user_management') }}'">
-                <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a4 4 0 00-3-3.87M9 20h6M3 20h5v-2a4 4 0 013-3.87M16 3.13a4 4 0 010 7.75M8 3.13a4 4 0 000 7.75" />
-                </svg>
-                <span class="text-sm" x-show="sidebarOpen" x-transition>{{ __('messages.app.user_management') }}</span>
-            </a>
+                <!-- User Management (Manajemen User) -->
+                <a href="{{ route('user-management') }}"
+                    class="flex items-center px-4 py-2.5 rounded-lg text-gray-600 font-medium hover:bg-emerald-50 hover:text-emerald-900 transition duration-200"
+                    :class="sidebarOpen ? 'space-x-3' : 'justify-center px-2'"
+                    @if(request()->routeIs('user-management'))
+                        style="background: linear-gradient(to right, rgba(16, 185, 129, 0.15), rgba(5, 150, 105, 0.15)); color: #065f46;"
+                    @endif
+                    :title="sidebarOpen ? '' : '{{ __('messages.app.user_management') }}'">
+                    <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a4 4 0 00-3-3.87M9 20h6M3 20h5v-2a4 4 0 013-3.87M16 3.13a4 4 0 010 7.75M8 3.13a4 4 0 000 7.75" />
+                    </svg>
+                    <span class="text-sm" x-show="sidebarOpen" x-transition>{{ __('messages.app.user_management') }}</span>
+                </a>
+            @endif
 
         </nav>
     </div>

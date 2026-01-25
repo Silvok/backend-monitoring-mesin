@@ -1,16 +1,18 @@
 <?php
 
 // API endpoint for user detail (for edit modal)
-Route::get('/api/users/{id}', [App\Http\Controllers\UserManagementController::class, 'show'])->name('api.users.show');
+Route::get('/api/users/{id}', [App\Http\Controllers\UserManagementController::class, 'show'])
+    ->middleware(['auth', 'verified', 'role:admin'])
+    ->name('api.users.show');
 
 // User Management Page
 use App\Http\Controllers\UserManagementController;
 
-Route::get('/user-management', [UserManagementController::class, 'index'])->name('user-management');
-Route::post('/user-management', [UserManagementController::class, 'store'])->name('user-management.store');
-Route::put('/user-management/{id}', [UserManagementController::class, 'update'])->name('user-management.update');
-Route::delete('/user-management/{id}', [UserManagementController::class, 'destroy'])->name('user-management.destroy');
-Route::post('/user-management/{id}/reset-password', [UserManagementController::class, 'resetPassword'])->name('user-management.reset-password');
+Route::get('/user-management', [UserManagementController::class, 'index'])->middleware(['auth', 'verified', 'role:admin'])->name('user-management');
+Route::post('/user-management', [UserManagementController::class, 'store'])->middleware(['auth', 'verified', 'role:admin'])->name('user-management.store');
+Route::put('/user-management/{id}', [UserManagementController::class, 'update'])->middleware(['auth', 'verified', 'role:admin'])->name('user-management.update');
+Route::delete('/user-management/{id}', [UserManagementController::class, 'destroy'])->middleware(['auth', 'verified', 'role:admin'])->name('user-management.destroy');
+Route::post('/user-management/{id}/reset-password', [UserManagementController::class, 'resetPassword'])->middleware(['auth', 'verified', 'role:admin'])->name('user-management.reset-password');
 
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\DashboardController;
@@ -28,27 +30,27 @@ Route::get('/', function () {
 });
 
 Route::get('/dashboard', [DashboardController::class, 'index'])
-    ->middleware(['auth', 'verified'])
+    ->middleware(['auth', 'verified', 'role:admin,teknisi'])
     ->name('dashboard');
 
 Route::get('/real-time-sensor', [DashboardController::class, 'realTimeSensor'])
-    ->middleware(['auth', 'verified'])
+    ->middleware(['auth', 'verified', 'role:admin,teknisi'])
     ->name('real-time-sensor');
 
 Route::get('/data-grafik', [DashboardController::class, 'dataGrafik'])
-    ->middleware(['auth', 'verified'])
+    ->middleware(['auth', 'verified', 'role:admin,teknisi'])
     ->name('data-grafik');
 
 Route::get('/monitoring-mesin', [\App\Http\Controllers\MonitoringController::class, 'index'])
-    ->middleware(['auth', 'verified'])
+    ->middleware(['auth', 'verified', 'role:admin,teknisi'])
     ->name('monitoring-mesin');
 
 Route::get('/parameter-monitoring', [ParameterMonitoringController::class, 'index'])
-    ->middleware(['auth', 'verified'])
+    ->middleware(['auth', 'verified', 'role:admin,teknisi'])
     ->name('parameter-monitoring');
 
 Route::get('/pengaturan', [SettingsController::class, 'index'])
-    ->middleware(['auth', 'verified'])
+    ->middleware(['auth', 'verified', 'role:admin'])
     ->name('settings');
 
 Route::get('/api/monitoring/data', [\App\Http\Controllers\MonitoringController::class, 'getMonitoringData'])
@@ -61,12 +63,12 @@ Route::get('/api/monitoring/trend-analysis', [\App\Http\Controllers\MonitoringCo
     ->middleware(['auth']);
 
 Route::get('/analisis', [\App\Http\Controllers\AnalisisController::class, 'index'])
-    ->middleware(['auth', 'verified'])
+    ->middleware(['auth', 'verified', 'role:admin,teknisi'])
     ->name('analisis');
 
 // Alert Management Routes
 Route::get('/alert-management', [AlertManagementController::class, 'index'])
-    ->middleware(['auth', 'verified'])
+    ->middleware(['auth', 'verified', 'role:admin,teknisi'])
     ->name('alert-management');
 
 // Route untuk trigger proses FFT otomatis (bisa dipanggil dari browser/postman)
@@ -75,48 +77,48 @@ Route::post('/proses-fft/{analysisResultId}', [\App\Http\Controllers\AnalisisCon
 
 // API Routes for real-time updates
 Route::middleware('auth')->group(function () {
-    Route::get('/notifications', [NotificationController::class, 'index']);
-    Route::post('/notifications/{id}/read', [NotificationController::class, 'markRead']);
-    Route::post('/notifications/read-all', [NotificationController::class, 'markAllRead']);
+    Route::get('/notifications', [NotificationController::class, 'index'])->middleware('role:admin,teknisi');
+    Route::post('/notifications/{id}/read', [NotificationController::class, 'markRead'])->middleware('role:admin,teknisi');
+    Route::post('/notifications/read-all', [NotificationController::class, 'markAllRead'])->middleware('role:admin,teknisi');
 
-    Route::get('/api/dashboard-data', [DashboardApiController::class, 'getDashboardData']);
-    Route::get('/api/machine-status', [DashboardApiController::class, 'getMachineStatus']);
-    Route::get('/api/top-machines-by-risk', [DashboardApiController::class, 'getTopMachinesByRisk']);
-    Route::get('/api/machine/{id}/sensor-data', [DashboardApiController::class, 'getMachineSensorData']);
-    Route::get('/api/machine/{id}/historical-data', [DashboardApiController::class, 'getHistoricalData']);
-    Route::get('/api/machine/{id}/historical-trend', [DashboardApiController::class, 'getHistoricalTrend']);
-    Route::get('/api/machine/{id}/alerts', [DashboardController::class, 'getMachineAlerts']);
-    Route::post('/api/analysis', [DashboardApiController::class, 'getAnalysisData']);
+    Route::get('/api/dashboard-data', [DashboardApiController::class, 'getDashboardData'])->middleware('role:admin,teknisi');
+    Route::get('/api/machine-status', [DashboardApiController::class, 'getMachineStatus'])->middleware('role:admin,teknisi');
+    Route::get('/api/top-machines-by-risk', [DashboardApiController::class, 'getTopMachinesByRisk'])->middleware('role:admin,teknisi');
+    Route::get('/api/machine/{id}/sensor-data', [DashboardApiController::class, 'getMachineSensorData'])->middleware('role:admin,teknisi');
+    Route::get('/api/machine/{id}/historical-data', [DashboardApiController::class, 'getHistoricalData'])->middleware('role:admin,teknisi');
+    Route::get('/api/machine/{id}/historical-trend', [DashboardApiController::class, 'getHistoricalTrend'])->middleware('role:admin,teknisi');
+    Route::get('/api/machine/{id}/alerts', [DashboardController::class, 'getMachineAlerts'])->middleware('role:admin,teknisi');
+    Route::post('/api/analysis', [DashboardApiController::class, 'getAnalysisData'])->middleware('role:admin,teknisi');
 
     // FFT API route
-    Route::post('/api/fft-result', [DashboardController::class, 'storeFFT']);
+    Route::post('/api/fft-result', [DashboardController::class, 'storeFFT'])->middleware('role:admin');
 
     // FFT Spectrum API routes
-    Route::get('/api/fft/latest', [FFTController::class, 'getLatestFFT']);
-    Route::get('/api/fft/history', [FFTController::class, 'getFFTHistory']);
-    Route::get('/api/fft/spectrum', [FFTController::class, 'getFFTSpectrum']);
+    Route::get('/api/fft/latest', [FFTController::class, 'getLatestFFT'])->middleware('role:admin,teknisi');
+    Route::get('/api/fft/history', [FFTController::class, 'getFFTHistory'])->middleware('role:admin,teknisi');
+    Route::get('/api/fft/spectrum', [FFTController::class, 'getFFTSpectrum'])->middleware('role:admin,teknisi');
 
     // Alert API routes (existing)
-    Route::get('/api/alerts', [AlertController::class, 'getActiveAlerts']);
-    Route::post('/api/alerts/{id}/acknowledge', [AlertController::class, 'acknowledgeAlert']);
-    Route::post('/api/alerts/machine/{machineId}/dismiss', [AlertController::class, 'dismissMachineAlerts']);
-    Route::get('/api/alerts/stats', [AlertController::class, 'getAlertStats']);
+    Route::get('/api/alerts', [AlertController::class, 'getActiveAlerts'])->middleware('role:admin,teknisi');
+    Route::post('/api/alerts/{id}/acknowledge', [AlertController::class, 'acknowledgeAlert'])->middleware('role:admin,teknisi');
+    Route::post('/api/alerts/machine/{machineId}/dismiss', [AlertController::class, 'dismissMachineAlerts'])->middleware('role:admin');
+    Route::get('/api/alerts/stats', [AlertController::class, 'getAlertStats'])->middleware('role:admin,teknisi');
 
     // Alert Management API routes
-    Route::get('/api/alert-management/alerts', [AlertManagementController::class, 'getAlerts']);
-    Route::get('/api/alert-management/stats', [AlertManagementController::class, 'getStats']);
-    Route::post('/api/alert-management/alerts/{id}/acknowledge', [AlertManagementController::class, 'acknowledgeAlert']);
-    Route::post('/api/alert-management/alerts/{id}/resolve', [AlertManagementController::class, 'resolveAlert']);
-    Route::post('/api/alert-management/alerts/bulk-acknowledge', [AlertManagementController::class, 'bulkAcknowledge']);
-    Route::post('/api/alert-management/thresholds', [AlertManagementController::class, 'updateThresholds']);
-    Route::post('/api/alert-management/notifications', [AlertManagementController::class, 'updateNotifications']);
-    Route::get('/api/alert-management/history', [AlertManagementController::class, 'getHistory']);
-    Route::get('/api/alert-management/export', [AlertManagementController::class, 'exportAlerts']);
+    Route::get('/api/alert-management/alerts', [AlertManagementController::class, 'getAlerts'])->middleware('role:admin,teknisi');
+    Route::get('/api/alert-management/stats', [AlertManagementController::class, 'getStats'])->middleware('role:admin,teknisi');
+    Route::post('/api/alert-management/alerts/{id}/acknowledge', [AlertManagementController::class, 'acknowledgeAlert'])->middleware('role:admin,teknisi');
+    Route::post('/api/alert-management/alerts/{id}/resolve', [AlertManagementController::class, 'resolveAlert'])->middleware('role:admin');
+    Route::post('/api/alert-management/alerts/bulk-acknowledge', [AlertManagementController::class, 'bulkAcknowledge'])->middleware('role:admin');
+    Route::post('/api/alert-management/thresholds', [AlertManagementController::class, 'updateThresholds'])->middleware('role:admin');
+    Route::post('/api/alert-management/notifications', [AlertManagementController::class, 'updateNotifications'])->middleware('role:admin');
+    Route::get('/api/alert-management/history', [AlertManagementController::class, 'getHistory'])->middleware('role:admin,teknisi');
+    Route::get('/api/alert-management/export', [AlertManagementController::class, 'exportAlerts'])->middleware('role:admin');
 
     // Per-machine threshold API routes
-    Route::get('/api/alert-management/machine-thresholds', [AlertManagementController::class, 'getAllMachineThresholds']);
-    Route::get('/api/alert-management/machine-thresholds/{machineId}', [AlertManagementController::class, 'getMachineThresholds']);
-    Route::post('/api/alert-management/apply-iso-preset', [AlertManagementController::class, 'applyIsoPreset']);
+    Route::get('/api/alert-management/machine-thresholds', [AlertManagementController::class, 'getAllMachineThresholds'])->middleware('role:admin');
+    Route::get('/api/alert-management/machine-thresholds/{machineId}', [AlertManagementController::class, 'getMachineThresholds'])->middleware('role:admin');
+    Route::post('/api/alert-management/apply-iso-preset', [AlertManagementController::class, 'applyIsoPreset'])->middleware('role:admin');
 });
 
 Route::middleware('auth')->group(function () {
