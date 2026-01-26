@@ -79,6 +79,7 @@ Route::post('/proses-fft/{analysisResultId}', [\App\Http\Controllers\AnalisisCon
 Route::middleware('auth')->group(function () {
     Route::get('/notifications', [NotificationController::class, 'index'])->middleware('role:admin,teknisi');
     Route::post('/notifications/{id}/read', [NotificationController::class, 'markRead'])->middleware('role:admin,teknisi');
+    Route::delete('/notifications/{id}', [NotificationController::class, 'destroy'])->middleware('role:admin,teknisi');
     Route::post('/notifications/read-all', [NotificationController::class, 'markAllRead'])->middleware('role:admin,teknisi');
 
     Route::get('/api/dashboard-data', [DashboardApiController::class, 'getDashboardData'])->middleware('role:admin,teknisi');

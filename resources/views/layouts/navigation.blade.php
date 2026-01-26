@@ -320,7 +320,18 @@
                     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
                 }
             }).then(() => {
-                window.location.href = '/alert-management';
+                fetch(`/notifications/${id}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                    }
+                }).finally(() => {
+                    item.remove();
+                    if (!list.querySelector('.notif-item')) {
+                        list.innerHTML = `<div class="px-4 py-6 text-center text-sm text-gray-500">${notifText.empty}</div>`;
+                    }
+                    window.location.href = '/alert-management';
+                });
             });
         });
 
