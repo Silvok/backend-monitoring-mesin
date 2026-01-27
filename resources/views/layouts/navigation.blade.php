@@ -106,17 +106,16 @@
                         </a>
 
                         <!-- Logout -->
-                        <form method="POST" action="{{ route('logout') }}" class="border-t border-gray-100 pt-2">
-                            @csrf
-                            <button type="submit"
-                                class="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition duration-150 flex items-center space-x-2">
+                        <div class="border-t border-gray-100 pt-2">
+                            <a href="{{ route('logout') }}"
+                                class="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition duration-150 flex items-center space-x-2">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                         d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
                                 </svg>
                                 <span>{{ __('messages.app.logout') }}</span>
-                            </button>
-                        </form>
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -188,17 +187,14 @@
                     </svg>
                     <span>{{ __('messages.app.profile') }}</span>
                 </a>
-                <form method="POST" action="{{ route('logout') }}">
-                    @csrf
-                    <button type="submit"
-                        class="w-full text-left px-4 py-2 rounded text-red-300 hover:bg-white/10 transition flex items-center space-x-2">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-                        </svg>
-                        <span>{{ __('messages.app.logout') }}</span>
-                    </button>
-                </form>
+                <a href="{{ route('logout') }}"
+                    class="block w-full text-left px-4 py-2 rounded text-red-300 hover:bg-white/10 transition flex items-center space-x-2">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                    </svg>
+                    <span>{{ __('messages.app.logout') }}</span>
+                </a>
             </div>
         </div>
     </div>

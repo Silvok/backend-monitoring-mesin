@@ -31,6 +31,12 @@ class AuthenticatedSessionController extends Controller
             'last_login_at' => now(),
         ])->save();
 
+        $intended = $request->session()->get('url.intended');
+        if ($intended && (str_contains($intended, '/notifications') || str_contains($intended, '/api/'))) {
+            $request->session()->forget('url.intended');
+            return redirect()->route('dashboard');
+        }
+
         return redirect()->intended(route('dashboard', absolute: false));
     }
 
