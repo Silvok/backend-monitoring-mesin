@@ -60,8 +60,8 @@ class DashboardApiController extends Controller
                         $rmsValue = $latest ? $latest->rms : 0;
 
                         // Use per-machine threshold from database
-                        $warningThreshold = (float) ($machine->threshold_warning ?? 1.8);
-                        $criticalThreshold = (float) ($machine->threshold_critical ?? 4.5);
+                        $warningThreshold = (float) ($machine->threshold_warning ?? 2.8);
+                        $criticalThreshold = (float) ($machine->threshold_critical ?? 7.1);
 
                         // Calculate status based on per-machine thresholds
                         $status = 'UNKNOWN';
@@ -129,8 +129,8 @@ class DashboardApiController extends Controller
                 return $query->map(function($analysis) {
                     // Use per-machine threshold from database
                     $machine = $analysis->machine;
-                    $warningThreshold = (float) ($machine->threshold_warning ?? 1.8);
-                    $criticalThreshold = (float) ($machine->threshold_critical ?? 4.5);
+                    $warningThreshold = (float) ($machine->threshold_warning ?? 2.8);
+                    $criticalThreshold = (float) ($machine->threshold_critical ?? 7.1);
 
                     $severity = 'low';
                     if ($analysis->rms >= $criticalThreshold) {
@@ -180,8 +180,8 @@ class DashboardApiController extends Controller
             $latestAnalysis = $machine->latestAnalysis;
 
             // Use per-machine threshold from database
-            $warningThreshold = (float) ($machine->threshold_warning ?? 1.8);
-            $criticalThreshold = (float) ($machine->threshold_critical ?? 4.5);
+            $warningThreshold = (float) ($machine->threshold_warning ?? 2.8);
+            $criticalThreshold = (float) ($machine->threshold_critical ?? 7.1);
 
             // Determine status based on per-machine threshold
             $rmsValue = $latestAnalysis ? round($latestAnalysis->rms, 4) : 0;

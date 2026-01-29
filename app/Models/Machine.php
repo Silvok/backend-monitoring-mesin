@@ -30,8 +30,8 @@ class Machine extends Model
     public function getThresholdConfig(): array
     {
         return [
-            'warning' => (float) ($this->threshold_warning ?? 1.8),
-            'critical' => (float) ($this->threshold_critical ?? 4.5),
+            'warning' => (float) ($this->threshold_warning ?? 2.8),
+            'critical' => (float) ($this->threshold_critical ?? 7.1),
         ];
     }
 

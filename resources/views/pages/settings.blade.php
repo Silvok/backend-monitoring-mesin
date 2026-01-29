@@ -172,11 +172,11 @@
                                         <select id="machineSelect" class="mt-2 w-full rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-700 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500">
                                             @foreach($machines as $machine)
                                                 <option value="{{ $machine->id }}"
-                                                    data-warning="{{ $machine->threshold_warning ?? 1.8 }}"
-                                                    data-critical="{{ $machine->threshold_critical ?? 4.5 }}"
+                                                    data-warning="{{ $machine->threshold_warning ?? 2.8 }}"
+                                                    data-critical="{{ $machine->threshold_critical ?? 7.1 }}"
                                                     data-hp="{{ $machine->motor_power_hp ?? '' }}"
                                                     data-rpm="{{ $machine->motor_rpm ?? '' }}"
-                                                    data-iso="{{ $machine->iso_class ?? 'Class I' }}">
+                                                    data-iso="{{ $machine->iso_class ?? 'Class II' }}">
                                                     {{ $machine->name }}
                                                 </option>
                                             @endforeach
@@ -228,11 +228,11 @@
                                     </div>
                                     <div class="p-3 rounded-xl border border-gray-100 bg-white">
                                         <p class="text-xs font-semibold text-gray-500 uppercase tracking-widest">{{ __('messages.settings.default_warning') }}</p>
-                                        <p class="mt-2 text-sm text-gray-700">1.8 mm/s</p>
+                                        <p class="mt-2 text-sm text-gray-700">2.8 mm/s</p>
                                     </div>
                                     <div class="p-3 rounded-xl border border-gray-100 bg-white">
                                         <p class="text-xs font-semibold text-gray-500 uppercase tracking-widest">{{ __('messages.settings.default_critical') }}</p>
-                                        <p class="mt-2 text-sm text-gray-700">4.5 mm/s</p>
+                                        <p class="mt-2 text-sm text-gray-700">7.1 mm/s</p>
                                     </div>
                                 </div>
                             </div>
@@ -368,11 +368,11 @@
                 if (!machineSelect) return;
                 const option = machineSelect.options[machineSelect.selectedIndex];
                 if (!option) return;
-                warningInput.value = option.getAttribute('data-warning') || 1.8;
-                criticalInput.value = option.getAttribute('data-critical') || 4.5;
+                warningInput.value = option.getAttribute('data-warning') || 2.8;
+                criticalInput.value = option.getAttribute('data-critical') || 7.1;
                 hpInput.value = option.getAttribute('data-hp') || '';
                 rpmInput.value = option.getAttribute('data-rpm') || '';
-                isoSelect.value = option.getAttribute('data-iso') || 'Class I';
+                isoSelect.value = option.getAttribute('data-iso') || 'Class II';
             }
 
             if (machineSelect) {

@@ -142,7 +142,7 @@
                                 </svg>
                             </div>
                         </div>
-                        <p class="text-xs text-gray-400 mt-2">RMS ≥ <span id="criticalThreshold">4.5</span> mm/s</p>
+                        <p class="text-xs text-gray-400 mt-2">RMS ≥ <span id="criticalThreshold">7.1</span> mm/s</p>
                     </div>
 
                     <!-- Warning Alerts -->
@@ -158,7 +158,7 @@
                                 </svg>
                             </div>
                         </div>
-                        <p class="text-xs text-gray-400 mt-2">RMS ≥ <span id="warningThreshold">1.8</span> mm/s</p>
+                        <p class="text-xs text-gray-400 mt-2">RMS ≥ <span id="warningThreshold">2.8</span> mm/s</p>
                     </div>
                 </div>
 
@@ -678,7 +678,7 @@
                                 <div class="p-3 bg-blue-50 rounded-lg">
                                     <p class="text-xs text-blue-700">
                                         <strong>Tip:</strong> Pilih preset ISO sesuai daya motor. Untuk Westfalia CA 505-01-12:
-                                        <br>• Motor Scroll (20 HP) → Class I
+                                        <br>• Motor Scroll (20 HP) → Class II
                                         <br>• Motor Bowl (120 HP) → Class II
                                     </p>
                                 </div>
@@ -1312,7 +1312,7 @@
                     </td>
                     <td class="py-3 px-4 text-center">
                         <span class="px-2 py-1 text-xs font-medium rounded-full ${getIsoClassColor(machine.iso_class)}">
-                            ${machine.iso_class || 'Class I'}
+                            ${machine.iso_class || 'Class II'}
                         </span>
                     </td>
                     <td class="py-3 px-4 text-center">
@@ -1322,7 +1322,7 @@
                         <span class="font-mono text-red-600 font-semibold">${machine.threshold_critical}</span>
                     </td>
                     <td class="py-3 px-4 text-center">
-                        <button onclick="openThresholdModal(${machine.id}, '${machine.name}', ${machine.threshold_warning}, ${machine.threshold_critical}, '${machine.iso_class || 'Class I'}', ${machine.motor_power_hp || 'null'}, ${machine.motor_rpm || 'null'})"
+                        <button onclick="openThresholdModal(${machine.id}, '${machine.name}', ${machine.threshold_warning}, ${machine.threshold_critical}, '${machine.iso_class || 'Class II'}', ${machine.motor_power_hp || 'null'}, ${machine.motor_rpm || 'null'})"
                             class="px-3 py-1.5 text-xs font-medium text-emerald-600 bg-emerald-50 rounded-lg hover:bg-emerald-100 transition">
                             <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
@@ -1342,7 +1342,7 @@
                 'Class III': 'bg-yellow-100 text-yellow-700',
                 'Class IV': 'bg-red-100 text-red-700'
             };
-            return colors[isoClass] || colors['Class I'];
+            return colors[isoClass] || colors['Class II'];
         }
 
         // Open threshold modal
@@ -1351,7 +1351,7 @@
             document.getElementById('modalMachineName').textContent = 'Edit Threshold - ' + machineName;
             document.getElementById('modalWarning').value = warning;
             document.getElementById('modalCritical').value = critical;
-            document.getElementById('modalIsoClass').value = isoClass || 'Class I';
+            document.getElementById('modalIsoClass').value = isoClass || 'Class II';
             document.getElementById('modalMotorPower').value = motorPower || '';
             document.getElementById('modalMotorRpm').value = motorRpm || '';
 

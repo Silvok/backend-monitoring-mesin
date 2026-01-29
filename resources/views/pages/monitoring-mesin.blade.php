@@ -207,15 +207,15 @@
                                 <div class="flex flex-wrap items-center justify-center gap-4 text-xs">
                                     <div class="flex items-center gap-1.5">
                                         <div class="w-3 h-3 rounded-full bg-emerald-500"></div>
-                                        <span class="text-gray-600">Normal (0-1.8 mm/s)</span>
+                                        <span class="text-gray-600">Normal (0-2.8 mm/s)</span>
                                     </div>
                                     <div class="flex items-center gap-1.5">
                                         <div class="w-6 h-0.5 bg-yellow-500" style="border-top: 2px dashed #eab308;"></div>
-                                        <span class="text-gray-600">Warning (1.8 mm/s)</span>
+                                        <span class="text-gray-600">Warning (2.8 mm/s)</span>
                                     </div>
                                     <div class="flex items-center gap-1.5">
                                         <div class="w-6 h-0.5 bg-red-500" style="border-top: 2px dashed #ef4444;"></div>
-                                        <span class="text-gray-600">Critical (4.5 mm/s)</span>
+                                        <span class="text-gray-600">Critical (7.1 mm/s)</span>
                                     </div>
                                     <div class="flex items-center gap-1.5">
                                         <div class="w-6 h-0.5" style="border-top: 2px dashed #ef4444;"></div>
@@ -889,14 +889,14 @@
                                     annotations: {
                                         warningLine: {
                                             type: 'line',
-                                            yMin: 1.8,
-                                            yMax: 1.8,
+                                            yMin: 2.8,
+                                            yMax: 2.8,
                                             borderColor: 'rgba(234, 179, 8, 0.7)',
                                             borderWidth: 2,
                                             borderDash: [6, 4],
                                             label: {
                                                 display: true,
-                                                content: 'Warning (1.8)',
+                                                content: 'Warning (2.8)',
                                                 position: 'end',
                                                 backgroundColor: 'rgba(234, 179, 8, 0.8)',
                                                 color: '#fff',
@@ -906,14 +906,14 @@
                                         },
                                         criticalLine: {
                                             type: 'line',
-                                            yMin: 4.5,
-                                            yMax: 4.5,
+                                            yMin: 7.1,
+                                            yMax: 7.1,
                                             borderColor: 'rgba(239, 68, 68, 0.7)',
                                             borderWidth: 2,
                                             borderDash: [6, 4],
                                             label: {
                                                 display: true,
-                                                content: 'Critical (4.5)',
+                                                content: 'Critical (7.1)',
                                                 position: 'end',
                                                 backgroundColor: 'rgba(239, 68, 68, 0.8)',
                                                 color: '#fff',

@@ -8,9 +8,9 @@ return new class extends Migration {
         // Update condition_status for all existing records based on RMS threshold
         DB::table('analysis_results')->where('rms', '<', 0.7)
             ->update(['condition_status' => 'NORMAL']);
-        DB::table('analysis_results')->where('rms', '>=', 0.7)->where('rms', '<', 1.8)
+        DB::table('analysis_results')->where('rms', '>=', 0.7)->where('rms', '<', 2.8)
             ->update(['condition_status' => 'WARNING']);
-        DB::table('analysis_results')->where('rms', '>=', 1.8)
+        DB::table('analysis_results')->where('rms', '>=', 2.8)
             ->update(['condition_status' => 'ANOMALY']);
     }
 

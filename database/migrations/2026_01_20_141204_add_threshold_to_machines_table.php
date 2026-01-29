@@ -12,15 +12,15 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('machines', function (Blueprint $table) {
-            $table->decimal('threshold_warning', 5, 2)->default(1.8)->after('location')
+            $table->decimal('threshold_warning', 5, 2)->default(2.8)->after('location')
                 ->comment('Warning threshold in mm/s (ISO 10816-3)');
-            $table->decimal('threshold_critical', 5, 2)->default(4.5)->after('threshold_warning')
+            $table->decimal('threshold_critical', 5, 2)->default(7.1)->after('threshold_warning')
                 ->comment('Critical threshold in mm/s (ISO 10816-3)');
             $table->decimal('motor_power_hp', 8, 2)->nullable()->after('threshold_critical')
                 ->comment('Motor power in HP');
             $table->integer('motor_rpm')->nullable()->after('motor_power_hp')
                 ->comment('Motor RPM');
-            $table->string('iso_class', 20)->default('Class I')->after('motor_rpm')
+            $table->string('iso_class', 20)->default('Class II')->after('motor_rpm')
                 ->comment('ISO 10816-3 Class (I, II, III, IV)');
         });
     }
