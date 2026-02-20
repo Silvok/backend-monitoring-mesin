@@ -360,8 +360,9 @@
                                     <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">RMS (mm/s)</th>
                                     <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Severity</th>
                                     <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Terjadi</th>
-                                    <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Diakui Oleh</th>
-                                    <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Waktu Akui</th>
+                                    <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Diselesaikan Oleh</th>
+                                    <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Status</th>
+                                    <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Waktu Selesai</th>
                                 </tr>
                             </thead>
                             <tbody class="bg-white divide-y divide-gray-200" id="historyTableBody">
@@ -921,6 +922,20 @@
             }
         }
 
+        function formatAlertTimestamp(timestamp) {
+            if (!timestamp) return '-';
+            const iso = timestamp.includes('T') ? timestamp : timestamp.replace(' ', 'T');
+            const date = new Date(iso);
+            if (Number.isNaN(date.getTime())) return timestamp;
+            return date.toLocaleString('id-ID', {
+                day: '2-digit',
+                month: 'short',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+
         // Render alerts table
         function renderAlertsTable(alerts) {
             const tbody = document.getElementById('alertsTableBody');
@@ -952,7 +967,7 @@
                             ${alert.severity_label}
                         </span>
                     </td>
-                    <td class="px-4 py-3 text-sm text-gray-500">${alert.time_ago}</td>
+                    <td class="px-4 py-3 text-sm text-gray-500">${formatAlertTimestamp(alert.timestamp)}</td>
                     <td class="px-4 py-3">
                         ${alert.acknowledged
                             ? '<span class="px-2 py-1 text-xs font-medium rounded-full bg-green-100 text-green-800">Acknowledged</span>'
@@ -968,7 +983,7 @@
                                 </svg>
                             </button>
                             ${!alert.acknowledged ? `
-                                <button onclick="acknowledgeAlert(${alert.id})" class="p-1.5 text-gray-400 hover:text-green-600 hover:bg-green-50 rounded-lg transition">
+                                <button onclick="openAcknowledgeModal(${alert.id})" class="p-1.5 text-gray-400 hover:text-green-600 hover:bg-green-50 rounded-lg transition">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
                                     </svg>
@@ -1052,8 +1067,14 @@
                         </span>
                     </td>
                     <td class="px-4 py-3 text-sm text-gray-500">${item.timestamp}</td>
-                    <td class="px-4 py-3 text-sm text-gray-500">${item.acknowledged_by || '-'}</td>
-                    <td class="px-4 py-3 text-sm text-gray-500">${item.acknowledged_at || '-'}</td>
+                    <td class="px-4 py-3 text-sm text-gray-500">${item.resolved_by || item.acknowledged_by || '-'}</td>
+                    <td class="px-4 py-3">
+                        ${item.resolved
+                            ? '<span class="px-2 py-1 text-xs font-medium rounded-full bg-emerald-100 text-emerald-800">Selesai</span>'
+                            : '<span class="px-2 py-1 text-xs font-medium rounded-full bg-amber-100 text-amber-800">Perlu Tindakan</span>'
+                        }
+                    </td>
+                    <td class="px-4 py-3 text-sm text-gray-500">${item.resolved_at || '-'}</td>
                 </tr>
             `).join('');
         }
@@ -1122,8 +1143,9 @@
                         </div>
                     </div>
                     <div class="p-4 bg-gray-50 rounded-lg">
-                        <p class="text-xs text-gray-500 mb-1">Catatan</p>
-                        <textarea id="alertNotes" rows="2" class="w-full mt-2 rounded-lg border-gray-300 text-sm focus:ring-emerald-500 focus:border-emerald-500" placeholder="Tambahkan catatan...">${alert.notes || ''}</textarea>
+                        <p class="text-xs text-gray-500 mb-1">Catatan teknisi (opsional)</p>
+                        <textarea id="alertNotes" rows="2" class="w-full mt-2 rounded-lg border-gray-300 text-sm focus:ring-emerald-500 focus:border-emerald-500" placeholder="Contoh: cek bearing, tighten belt, reset sensor...">${alert.notes || ''}</textarea>
+                        <p class="text-xs text-gray-500 mt-1">Catatan ini disimpan saat alert di-acknowledge.</p>
                     </div>
                 </div>
             `;
@@ -1133,6 +1155,15 @@
             document.getElementById('modalResolveBtn').style.display = alert.resolved ? 'none' : 'block';
 
             document.getElementById('alertDetailModal').classList.remove('hidden');
+        }
+
+        // Open modal for acknowledge with optional notes
+        function openAcknowledgeModal(alertId) {
+            showAlertDetail(alertId);
+            setTimeout(() => {
+                const notes = document.getElementById('alertNotes');
+                if (notes) notes.focus();
+            }, 50);
         }
 
         // Close modal
@@ -1214,6 +1245,7 @@
                     showToast('Alert berhasil di-resolve', 'success');
                     closeAlertModal();
                     loadAlerts(currentPage);
+                    loadHistory(historyPage);
                     loadStats();
                 }
             } catch (error) {

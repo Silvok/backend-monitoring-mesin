@@ -3,7 +3,7 @@
         <div class="flex items-center justify-between">
             <div class="flex items-center space-x-8">
                 <h2 class="font-bold text-xl text-emerald-900">
-                    {{ __('messages.app.realtime_title') }}
+                    Monitoring &amp; Analisis Mesin
                 </h2>
                 <!-- Live Status Indicator -->
                 <div class="flex items-center space-x-2 px-3 py-1.5 bg-emerald-50 rounded-full border border-emerald-200">
@@ -11,7 +11,7 @@
                         <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
                         <span class="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
                     </div>
-                    <span class="text-xs font-semibold text-emerald-700">{{ __('messages.app.live') }}</span>
+                    <span class="text-xs font-semibold text-emerald-700">Terhubung</span>
                 </div>
             </div>
             <div class="flex items-center space-x-3">
@@ -27,28 +27,31 @@
 
             <!-- Machine Selector -->
             <div class="mb-6">
-                <div class="bg-white rounded-xl shadow-md p-6">
-                    <label for="machineSelector" class="block text-sm font-bold text-gray-900 mb-3">
-                        🔧 Pilih Mesin untuk Dipantau
+                <div class="bg-white/90 backdrop-blur rounded-2xl shadow-sm border border-slate-200 p-6">
+                    <label for="machineSelector" class="block text-xs font-semibold text-slate-600 uppercase tracking-wide mb-2">
+                        Pilih Mesin
                     </label>
-                    <select id="machineSelector" class="w-full md:w-1/2 px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-gray-900 font-medium">
-                        <option value="">-- Pilih Mesin --</option>
-                        @foreach($machines as $machine)
-                            <option value="{{ $machine->id }}"
-                                data-status="{{ $machine->latestAnalysis?->condition_status ?? 'TIDAK DIKETAHUI' }}"
-                                data-location="{{ $machine->location }}">
-                                {{ $machine->name }}@if($machine->location) ({{ $machine->location }})@endif
-                            </option>
-                        @endforeach
-                    </select>
+                    <div class="flex flex-col md:flex-row md:items-center gap-3">
+                        <select id="machineSelector" class="w-full md:w-1/2 px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-slate-900 font-semibold bg-white">
+                            <option value="">-- Pilih Mesin --</option>
+                            @foreach($machines as $machine)
+                                <option value="{{ $machine->id }}"
+                                    data-status="{{ $machine->latestAnalysis?->condition_status ?? 'TIDAK DIKETAHUI' }}"
+                                    data-location="{{ $machine->location }}">
+                                    {{ $machine->name }}@if($machine->location) ({{ $machine->location }})@endif
+                                </option>
+                            @endforeach
+                        </select>
+                        <p class="text-xs text-slate-500">Pilih mesin untuk mulai streaming data sensor.</p>
+                    </div>
                 </div>
             </div>
 
             <!-- Machine Status Card -->
             <div id="machineStatusCard" class="mb-6 hidden">
-                <div class="bg-white rounded-xl shadow-lg border-2 border-gray-200 overflow-hidden">
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
                     <!-- Status Bar -->
-                    <div id="statusBar" class="h-2 bg-gray-400"></div>
+                    <div id="statusBar" class="h-1.5 bg-gray-300"></div>
 
                     <div class="p-6">
                         <div class="flex items-start justify-between mb-6">
@@ -57,10 +60,10 @@
                                 <p id="machineLocation" class="text-sm text-gray-600">Lokasi: -</p>
                             </div>
                             <div class="flex items-center space-x-3">
-                                <span id="statusBadge" class="px-4 py-2 rounded-full text-sm font-bold bg-gray-200 text-gray-700">
+                                <span id="statusBadge" class="px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wide bg-gray-200 text-gray-700">
                                     TIDAK DIKETAHUI
                                 </span>
-                                <div id="statusIcon" class="w-12 h-12 rounded-lg bg-gray-200 flex items-center justify-center">
+                                <div id="statusIcon" class="w-11 h-11 rounded-xl bg-gray-100 flex items-center justify-center border border-gray-200">
                                     <svg class="w-6 h-6 text-gray-600" fill="currentColor" viewBox="0 0 20 20">
                                         <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
                                     </svg>
@@ -70,17 +73,17 @@
 
                         <!-- Metrics Grid -->
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-                            <div class="bg-gradient-to-br from-emerald-50 to-emerald-100 rounded-lg p-4 border border-emerald-200">
-                                <p class="text-xs font-semibold text-emerald-700 mb-1">RMS VALUE</p>
-                                <p id="rmsValue" class="text-2xl font-bold text-gray-900">0.0000</p>
+                            <div class="bg-white rounded-xl p-4 border border-slate-200 shadow-sm">
+                                <p class="text-[11px] font-semibold text-slate-500 mb-2 uppercase tracking-wide">RMS Value</p>
+                                <p id="rmsValue" class="text-2xl font-extrabold text-slate-900">0.0000</p>
                             </div>
-                            <div class="bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg p-4 border border-blue-200">
-                                <p class="text-xs font-semibold text-blue-700 mb-1">PEAK AMPLITUDE</p>
-                                <p id="peakValue" class="text-2xl font-bold text-gray-900">0.0000</p>
+                            <div class="bg-white rounded-xl p-4 border border-slate-200 shadow-sm">
+                                <p class="text-[11px] font-semibold text-slate-500 mb-2 uppercase tracking-wide">Peak Amplitude</p>
+                                <p id="peakValue" class="text-2xl font-extrabold text-slate-900">0.0000</p>
                             </div>
-                            <div class="bg-gradient-to-br from-purple-50 to-purple-100 rounded-lg p-4 border border-purple-200">
-                                <p class="text-xs font-semibold text-purple-700 mb-1">FREQUENCY</p>
-                                <p id="freqValue" class="text-2xl font-bold text-gray-900">0 Hz</p>
+                            <div class="bg-white rounded-xl p-4 border border-slate-200 shadow-sm">
+                                <p class="text-[11px] font-semibold text-slate-500 mb-2 uppercase tracking-wide">Frequency</p>
+                                <p id="freqValue" class="text-2xl font-extrabold text-slate-900">0 Hz</p>
                             </div>
                         </div>
 
@@ -95,10 +98,10 @@
 
             <!-- Quick Stats Cards - Simplified & Modern -->
             <div id="quickStatsSection" class="mb-6 hidden">
-                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
                     <div class="flex items-center justify-between mb-4">
-                        <h3 class="text-sm font-semibold text-gray-700">Ringkasan Hari Ini</h3>
-                        <div class="flex items-center space-x-1 text-xs text-gray-500">
+                        <h3 class="text-sm font-semibold text-slate-700">Ringkasan Hari Ini</h3>
+                        <div class="flex items-center space-x-1 text-xs text-slate-500">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                             </svg>
@@ -108,41 +111,41 @@
 
                     <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
                         <!-- Total Readings -->
-                        <div class="text-center">
-                            <div class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-blue-50 mb-3">
+                        <div class="text-center rounded-xl border border-slate-200 bg-slate-50/80 p-4">
+                            <div class="inline-flex items-center justify-center w-11 h-11 rounded-full bg-blue-50 mb-3">
                                 <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
                                 </svg>
                             </div>
-                            <p id="statReadings" class="text-3xl font-bold text-gray-900 mb-1">0</p>
-                            <p class="text-xs text-gray-500 font-medium">Pembacaan</p>
+                            <p id="statReadings" class="text-3xl font-extrabold text-slate-900 mb-1">0</p>
+                            <p class="text-xs text-slate-500 font-medium">Pembacaan</p>
                         </div>
 
                         <!-- Uptime -->
-                        <div class="text-center">
-                            <div class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-emerald-50 mb-3">
+                        <div class="text-center rounded-xl border border-slate-200 bg-slate-50/80 p-4">
+                            <div class="inline-flex items-center justify-center w-11 h-11 rounded-full bg-emerald-50 mb-3">
                                 <svg class="w-6 h-6 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                                 </svg>
                             </div>
-                            <p id="statUptime" class="text-3xl font-bold text-emerald-600 mb-1">--%</p>
-                            <p class="text-xs text-gray-500 font-medium">Waktu Aktif</p>
+                            <p id="statUptime" class="text-3xl font-extrabold text-emerald-600 mb-1">--%</p>
+                            <p class="text-xs text-slate-500 font-medium">Waktu Aktif</p>
                         </div>
 
                         <!-- Normal State -->
-                        <div class="text-center">
-                            <div class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-purple-50 mb-3">
+                        <div class="text-center rounded-xl border border-slate-200 bg-slate-50/80 p-4">
+                            <div class="inline-flex items-center justify-center w-11 h-11 rounded-full bg-indigo-50 mb-3">
                                 <svg class="w-6 h-6 text-purple-600" fill="currentColor" viewBox="0 0 20 20">
                                     <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
                                 </svg>
                             </div>
-                            <p id="statNormalTime" class="text-3xl font-bold text-purple-600 mb-1">--%</p>
-                            <p class="text-xs text-gray-500 font-medium">Normal</p>
+                            <p id="statNormalTime" class="text-3xl font-extrabold text-indigo-600 mb-1">--%</p>
+                            <p class="text-xs text-slate-500 font-medium">Normal</p>
                         </div>
 
                         <!-- Last Anomaly -->
-                        <div class="text-center">
-                            <div class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-orange-50 mb-3">
+                        <div class="text-center rounded-xl border border-slate-200 bg-slate-50/80 p-4">
+                            <div class="inline-flex items-center justify-center w-11 h-11 rounded-full bg-orange-50 mb-3">
                                 <svg class="w-6 h-6 text-orange-600" fill="currentColor" viewBox="0 0 20 20">
                                     <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
                                 </svg>
@@ -156,11 +159,11 @@
 
             <!-- Real-time Sensor Values -->
             <div id="sensorValuesSection" class="mb-6 hidden">
-                <div class="bg-white rounded-xl shadow-md overflow-hidden">
-                    <div class="px-6 py-4 border-b border-gray-200 bg-gradient-to-r from-emerald-50 to-blue-50">
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-200/70 overflow-hidden">
+                    <div class="px-6 py-4 border-b border-slate-200 bg-slate-50">
                         <div class="flex items-center justify-between">
                             <h3 class="text-lg font-bold text-gray-900">Nilai Sensor Real-Time</h3>
-                            <div class="flex items-center space-x-2 px-3 py-1 bg-white rounded-full border border-emerald-300 shadow-sm">
+                            <div class="flex items-center space-x-2 px-3 py-1 bg-white rounded-full border border-emerald-200 shadow-sm">
                                 <div class="relative flex h-2 w-2">
                                     <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
                                     <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
@@ -177,14 +180,14 @@
                             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                                 <!-- AX Card -->
                                 <div class="relative">
-                                    <div id="axCard" class="bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl p-6 border-2 border-gray-300 transition-all duration-300">
+                                    <div id="axCard" class="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm transition-all duration-300">
                                         <div class="flex items-start justify-between mb-4">
                                             <div>
                                                 <p class="text-xs font-bold text-gray-600 mb-1">SUMBU X</p>
                                                 <p id="axValue" class="text-4xl font-bold text-gray-900">0.0000</p>
                                                 <p class="text-xs text-gray-500 mt-1">G</p>
                                             </div>
-                                            <div id="axIcon" class="w-12 h-12 rounded-lg bg-gray-200 flex items-center justify-center">
+                                            <div id="axIcon" class="w-12 h-12 rounded-xl bg-slate-100 flex items-center justify-center border border-slate-200">
                                                 <svg class="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
                                                 </svg>
@@ -201,14 +204,14 @@
 
                                 <!-- AY Card -->
                                 <div class="relative">
-                                    <div id="ayCard" class="bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl p-6 border-2 border-gray-300 transition-all duration-300">
+                                    <div id="ayCard" class="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm transition-all duration-300">
                                         <div class="flex items-start justify-between mb-4">
                                             <div>
                                                 <p class="text-xs font-bold text-gray-600 mb-1">SUMBU Y</p>
                                                 <p id="ayValue" class="text-4xl font-bold text-gray-900">0.0000</p>
                                                 <p class="text-xs text-gray-500 mt-1">G</p>
                                             </div>
-                                            <div id="ayIcon" class="w-12 h-12 rounded-lg bg-gray-200 flex items-center justify-center">
+                                            <div id="ayIcon" class="w-12 h-12 rounded-xl bg-slate-100 flex items-center justify-center border border-slate-200">
                                                 <svg class="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
                                                 </svg>
@@ -225,14 +228,14 @@
 
                                 <!-- AZ Card -->
                                 <div class="relative">
-                                    <div id="azCard" class="bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl p-6 border-2 border-gray-300 transition-all duration-300">
+                                    <div id="azCard" class="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm transition-all duration-300">
                                         <div class="flex items-start justify-between mb-4">
                                             <div>
                                                 <p class="text-xs font-bold text-gray-600 mb-1">SUMBU Z</p>
                                                 <p id="azValue" class="text-4xl font-bold text-gray-900">0.0000</p>
                                                 <p class="text-xs text-gray-500 mt-1">G</p>
                                             </div>
-                                            <div id="azIcon" class="w-12 h-12 rounded-lg bg-gray-200 flex items-center justify-center">
+                                            <div id="azIcon" class="w-12 h-12 rounded-xl bg-slate-100 flex items-center justify-center border border-slate-200">
                                                 <svg class="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
                                                 </svg>
@@ -252,10 +255,10 @@
                         <!-- Temperature Display -->
                         <div>
                             <h4 class="text-sm font-bold text-gray-700 mb-4 uppercase tracking-wide">Suhu</h4>
-                            <div class="bg-gradient-to-br from-orange-50 to-red-50 rounded-xl p-6 border-2 border-orange-200">
+                            <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm">
                                 <div class="flex items-center justify-between">
                                     <div class="flex items-center space-x-4">
-                                        <div id="tempIcon" class="w-16 h-16 rounded-xl bg-orange-100 flex items-center justify-center">
+                                        <div id="tempIcon" class="w-16 h-16 rounded-2xl bg-orange-50 flex items-center justify-center border border-orange-100">
                                             <svg class="w-8 h-8 text-orange-600" fill="currentColor" viewBox="0 0 20 20">
                                                 <path fill-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" clip-rule="evenodd"></path>
                                             </svg>
@@ -467,13 +470,15 @@
     <script>
         let selectedMachineId = null;
         let updateInterval = null;
-        let wsConnection = null;
+        let echoChannel = null;
         let multiAxisChart = null;
         let chartUpdateInterval = null;
         let timeWindow = 300; // seconds (5 minutes default)
         let chartMode = 'live'; // 'live' or 'historical'
         let latestSampleTimestamp = null; // to auto-pick date for historical
         let latestSummary = null; // hydrated from backend for Today's Summary
+        let liveFeedData = [];
+        let echoEnabled = false;
 
         // Chart data storage
         const chartData = {
@@ -686,6 +691,8 @@
                         document.getElementById('chartSection').classList.remove('hidden');
                         document.getElementById('liveFeedSection').classList.remove('hidden');
 
+                        liveFeedData = Array.isArray(data.sensor_data) ? data.sensor_data : [];
+
                         // Update real-time sensor values from latest data
                         if (data.sensor_data && data.sensor_data.length > 0) {
                             const latest = data.sensor_data[0];
@@ -699,7 +706,7 @@
                             updateSensorValues(sensorValues);
 
                             // Update live feed table
-                            updateLiveFeed(data.sensor_data);
+                            updateLiveFeed(liveFeedData);
 
                             // Add to chart
                             addChartDataPoint(sensorValues.ax, sensorValues.ay, sensorValues.az);
@@ -809,6 +816,15 @@
             }
         }
 
+        function appendLiveFeed(sample) {
+            if (!sample) return;
+            liveFeedData.unshift(sample);
+            if (liveFeedData.length > 20) {
+                liveFeedData = liveFeedData.slice(0, 20);
+            }
+            updateLiveFeed(liveFeedData);
+        }
+
         function startAutoUpdate() {
             stopAutoUpdate();
             updateInterval = setInterval(() => {
@@ -825,56 +841,80 @@
             }
         }
 
-        // WebSocket Connection
+        // Real-time updates via Laravel Echo
         function connectWebSocket(machineId) {
             disconnectWebSocket();
 
-            try {
-                wsConnection = new WebSocket('ws://localhost:8080/app/{{ config("app.reverb_app_key") }}?protocol=7&client=js&version=8.4.0-rc2&flash=false');
-
-                wsConnection.onopen = function() {
-                    console.log('WebSocket connected for machine:', machineId);
-
-                    // Subscribe to machine channel
-                    const subscribeMsg = JSON.stringify({
-                        event: 'pusher:subscribe',
-                        data: {
-                            auth: '',
-                            channel: `machine.${machineId}`
-                        }
-                    });
-                    wsConnection.send(subscribeMsg);
-                };
-
-                wsConnection.onmessage = function(event) {
-                    try {
-                        const data = JSON.parse(event.data);
-
-                        if (data.event === 'sensor.update') {
-                            const sensorData = JSON.parse(data.data);
-                            updateSensorValues(sensorData);
-                        }
-                    } catch (e) {
-                        console.error('Error parsing WebSocket message:', e);
-                    }
-                };
-
-                wsConnection.onerror = function(error) {
-                    console.error('WebSocket error:', error);
-                };
-
-                wsConnection.onclose = function() {
-                    console.log('WebSocket disconnected');
-                };
-            } catch (error) {
-                console.error('Error connecting WebSocket:', error);
+            if (!window.Echo) {
+                console.warn('Echo not available. Falling back to polling only.');
+                echoEnabled = false;
+                return;
             }
+
+            echoEnabled = true;
+            stopAutoUpdate();
+
+            echoChannel = window.Echo.channel(`machine.${machineId}`);
+            echoChannel.listen('.sensor.updated', (payload) => {
+                if (!payload) return;
+
+                const sensorValues = {
+                    ax: parseFloat(payload.ax ?? 0),
+                    ay: parseFloat(payload.ay ?? 0),
+                    az: parseFloat(payload.az ?? 0),
+                    temperature: payload.temperature !== null && payload.temperature !== undefined
+                        ? parseFloat(payload.temperature)
+                        : 25
+                };
+
+                updateSensorValues(sensorValues);
+                addChartDataPoint(sensorValues.ax, sensorValues.ay, sensorValues.az);
+                updateStatistics(sensorValues);
+                const isAnomaly = [sensorValues.ax, sensorValues.ay, sensorValues.az]
+                    .some((v) => Math.abs(v) >= THRESHOLDS.acceleration.warning);
+                if (isAnomaly) {
+                    statistics.anomalyCount++;
+                    statistics.lastAnomaly = new Date();
+                } else {
+                    statistics.normalCount++;
+                }
+                updateQuickStats();
+
+                const sample = {
+                    timestamp: payload.timestamp || new Date().toISOString(),
+                    acceleration_x: sensorValues.ax,
+                    acceleration_y: sensorValues.ay,
+                    acceleration_z: sensorValues.az,
+                    temperature: sensorValues.temperature
+                };
+                appendLiveFeed(sample);
+            });
+
+            echoChannel.listen('.analysis.updated', (payload) => {
+                if (!payload) return;
+                const machine = {
+                    name: payload.machine_name,
+                    location: payload.location,
+                    status: payload.status,
+                    rms: parseFloat(payload.rms ?? 0),
+                    peak_amp: parseFloat(payload.peak_amp ?? 0),
+                    dominant_freq: parseFloat(payload.dominant_freq ?? 0),
+                    last_check: payload.last_check || '-'
+                };
+                updateMachineStatus(machine);
+            });
         }
 
         function disconnectWebSocket() {
-            if (wsConnection) {
-                wsConnection.close();
-                wsConnection = null;
+            if (window.Echo && selectedMachineId) {
+                window.Echo.leave(`machine.${selectedMachineId}`);
+            }
+            echoChannel = null;
+            if (echoEnabled) {
+                echoEnabled = false;
+                if (selectedMachineId) {
+                    startAutoUpdate();
+                }
             }
         }
 
@@ -1215,6 +1255,7 @@
 
             // Only start if in live mode
             if (chartMode !== 'live') return;
+            if (window.Echo) return;
 
             // Update chart every 1 second with new data
             chartUpdateInterval = setInterval(() => {

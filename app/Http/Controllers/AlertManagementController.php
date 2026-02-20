@@ -115,11 +115,19 @@ class AlertManagementController extends Controller
                     'acknowledged_by' => Cache::get("alert_ack_by_{$alert->id}"),
                     'resolved' => Cache::get("alert_resolved_{$alert->id}", false),
                     'resolved_at' => Cache::get("alert_resolved_time_{$alert->id}"),
+                    'resolved_by' => Cache::get("alert_resolved_by_{$alert->id}"),
                     'notes' => Cache::get("alert_notes_{$alert->id}", ''),
                     'threshold_warning' => $thresholds['warning'],
                     'threshold_critical' => $thresholds['critical'],
                 ];
             });
+
+            // Remove resolved alerts from active list
+            $alerts->setCollection(
+                $alerts->getCollection()
+                    ->filter(fn($alert) => empty($alert['resolved']))
+                    ->values()
+            );
 
             // Filter by severity after transformation
             if ($request->filled('severity')) {
@@ -538,11 +546,19 @@ class AlertManagementController extends Controller
                     'acknowledged_by' => Cache::get("alert_ack_by_{$alert->id}"),
                     'resolved' => Cache::get("alert_resolved_{$alert->id}", false),
                     'resolved_at' => Cache::get("alert_resolved_time_{$alert->id}"),
+                    'resolved_by' => Cache::get("alert_resolved_by_{$alert->id}"),
                     'resolution_notes' => Cache::get("alert_resolution_notes_{$alert->id}", ''),
                     'threshold_warning' => $thresholds['warning'],
                     'threshold_critical' => $thresholds['critical'],
                 ];
             });
+
+            // Show acknowledged or resolved alerts in history
+            $alerts->setCollection(
+                $alerts->getCollection()
+                    ->filter(fn($alert) => !empty($alert['resolved']) || !empty($alert['acknowledged']))
+                    ->values()
+            );
 
             return response()->json([
                 'success' => true,

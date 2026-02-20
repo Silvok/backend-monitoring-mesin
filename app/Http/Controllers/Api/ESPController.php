@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Schema;
 
 use App\Models\TemperatureReading;
 use App\Models\Machine;
+use App\Events\SensorUpdated;
 
 class ESPController extends Controller
 {
@@ -142,6 +143,32 @@ class ESPController extends Controller
 
                 if (!empty($rows)) {
                     DB::table('raw_samples')->insert($rows);
+
+                    if ($machineId) {
+                        $lastRow = end($rows);
+                        $timestampRaw = $lastRow['sample_time'] ?? $capturedAt ?? now();
+                        if ($timestampRaw instanceof \Carbon\CarbonInterface) {
+                            $timestamp = $timestampRaw->toIso8601String();
+                        } else {
+                            $timestamp = \Carbon\Carbon::parse($timestampRaw)->toIso8601String();
+                        }
+
+                        $ax = array_key_exists('ax_g', $lastRow) ? (float) $lastRow['ax_g'] : null;
+                        $ay = array_key_exists('ay_g', $lastRow) ? (float) $lastRow['ay_g'] : null;
+                        $az = array_key_exists('az_g', $lastRow) ? (float) $lastRow['az_g'] : null;
+                        $temp = array_key_exists('temperature_c', $lastRow)
+                            ? (float) $lastRow['temperature_c']
+                            : ($temperatureC !== null ? (float) $temperatureC : null);
+
+                        broadcast(new SensorUpdated(
+                            (int) $machineId,
+                            $ax,
+                            $ay,
+                            $az,
+                            $temp,
+                            $timestamp
+                        ));
+                    }
                 }
             }
 

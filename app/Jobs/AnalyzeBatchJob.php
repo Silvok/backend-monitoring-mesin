@@ -8,8 +8,10 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\Cache;
 use App\Models\Machine;
 use App\Models\User;
+use App\Events\AnalysisUpdated;
 
 class AnalyzeBatchJob implements ShouldQueue
 {
@@ -151,32 +153,81 @@ class AnalyzeBatchJob implements ShouldQueue
                 $ayMean = array_sum($ayValues) / $count;
                 $azMean = array_sum($azValues) / $count;
                 $gToMs2 = 9.80665;
-                $vx = 0.0;
-                $vy = 0.0;
-                $vz = 0.0;
-                $velocityMagnitudes = [0.0];
-                $prevAx = ($axValues[0] - $axMean) * $gToMs2;
-                $prevAy = ($ayValues[0] - $ayMean) * $gToMs2;
-                $prevAz = ($azValues[0] - $azMean) * $gToMs2;
 
-                for ($i = 1; $i < $count; $i++) {
-                    $dt = $dtSamples[$i] ?? $avgDt;
-                    if ($dt <= 0) {
-                        continue;
+                // Band-pass 10–500 Hz (ISO-style). Limited by Nyquist.
+                $bandLowHz = 10.0;
+                $bandHighHz = min(500.0, $fsHz / 2);
+
+                // Prepare acceleration signals (m/s^2), mean-removed.
+                $axSignal = [];
+                $aySignal = [];
+                $azSignal = [];
+                for ($i = 0; $i < $count; $i++) {
+                    $axSignal[] = ($axValues[$i] - $axMean) * $gToMs2;
+                    $aySignal[] = ($ayValues[$i] - $ayMean) * $gToMs2;
+                    $azSignal[] = ($azValues[$i] - $azMean) * $gToMs2;
+                }
+
+                // Simple DFT/IDFT (N is small: ~256). Uses full spectrum so negative freqs handled.
+                $dft = function (array $signal) use ($count) {
+                    $real = array_fill(0, $count, 0.0);
+                    $imag = array_fill(0, $count, 0.0);
+                    for ($k = 0; $k < $count; $k++) {
+                        $sumReal = 0.0;
+                        $sumImag = 0.0;
+                        for ($n = 0; $n < $count; $n++) {
+                            $angle = -2 * M_PI * $k * $n / $count;
+                            $cos = cos($angle);
+                            $sin = sin($angle);
+                            $sumReal += $signal[$n] * $cos;
+                            $sumImag += $signal[$n] * $sin;
+                        }
+                        $real[$k] = $sumReal;
+                        $imag[$k] = $sumImag;
                     }
-                    $ax = ($axValues[$i] - $axMean) * $gToMs2;
-                    $ay = ($ayValues[$i] - $ayMean) * $gToMs2;
-                    $az = ($azValues[$i] - $azMean) * $gToMs2;
+                    return [$real, $imag];
+                };
+                $idft = function (array $real, array $imag) use ($count) {
+                    $signal = array_fill(0, $count, 0.0);
+                    for ($n = 0; $n < $count; $n++) {
+                        $sum = 0.0;
+                        for ($k = 0; $k < $count; $k++) {
+                            $angle = 2 * M_PI * $k * $n / $count;
+                            $sum += $real[$k] * cos($angle) - $imag[$k] * sin($angle);
+                        }
+                        $signal[$n] = $sum / $count;
+                    }
+                    return $signal;
+                };
 
-                    $vx += 0.5 * ($prevAx + $ax) * $dt;
-                    $vy += 0.5 * ($prevAy + $ay) * $dt;
-                    $vz += 0.5 * ($prevAz + $az) * $dt;
+                $toVelocity = function (array $signal) use ($dft, $idft, $count, $fsHz, $bandLowHz, $bandHighHz) {
+                    [$real, $imag] = $dft($signal);
+                    $vReal = array_fill(0, $count, 0.0);
+                    $vImag = array_fill(0, $count, 0.0);
+                    for ($k = 0; $k < $count; $k++) {
+                        // Map index to frequency (Hz), including negative frequencies.
+                        $freq = ($k <= $count / 2)
+                            ? ($k * $fsHz / $count)
+                            : (($k - $count) * $fsHz / $count);
+                        $absFreq = abs($freq);
+                        if ($absFreq < $bandLowHz || $absFreq > $bandHighHz || $freq == 0.0) {
+                            continue;
+                        }
+                        $omega = 2 * M_PI * $freq;
+                        // V = A / (j*omega) => real = imag/omega, imag = -real/omega
+                        $vReal[$k] = $imag[$k] / $omega;
+                        $vImag[$k] = -$real[$k] / $omega;
+                    }
+                    return $idft($vReal, $vImag);
+                };
 
-                    $velocityMagnitudes[] = sqrt(($vx * $vx) + ($vy * $vy) + ($vz * $vz));
+                $vx = $toVelocity($axSignal);
+                $vy = $toVelocity($aySignal);
+                $vz = $toVelocity($azSignal);
 
-                    $prevAx = $ax;
-                    $prevAy = $ay;
-                    $prevAz = $az;
+                $velocityMagnitudes = [];
+                for ($i = 0; $i < $count; $i++) {
+                    $velocityMagnitudes[] = sqrt(($vx[$i] * $vx[$i]) + ($vy[$i] * $vy[$i]) + ($vz[$i] * $vz[$i]));
                 }
 
                 $velocityCount = count($velocityMagnitudes);
@@ -316,7 +367,26 @@ class AnalyzeBatchJob implements ShouldQueue
                         ]);
                     }
                 }
+
+                if ($analysisId && $machine) {
+                    broadcast(new AnalysisUpdated(
+                        (int) $machine->id,
+                        (string) $machine->name,
+                        $machine->location,
+                        (string) $conditionStatus,
+                        $analysisData['rms'] ?? null,
+                        $analysisData['peak_amp'] ?? null,
+                        $analysisData['dominant_freq_hz'] ?? null,
+                        now()->format('l, d-m-Y H:i')
+                    ));
+                }
             }
+
+            // Invalidate dashboard caches to show latest RMS/status
+            Cache::forget('dashboard_all_data');
+            Cache::forget('api_dashboard_data');
+            Cache::forget('api_machine_status');
+            Cache::forget('api_top_machines_risk');
         } catch (\Throwable $e) {
             \Log::error('AnalyzeBatchJob FAILED', [
                 'batch_id' => $this->batchId ?? null,
