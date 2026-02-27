@@ -136,7 +136,7 @@
                 <span class="text-sm" x-show="sidebarOpen" x-transition>{{ __('messages.app.alert_management') }}</span>
             </a>
 
-            @if(Auth::user()->role === 'admin')
+            @if(in_array(Auth::user()->role, ['admin', 'super_admin'], true))
                 <!-- Menu Section Title -->
                 <div class="pt-4 pb-2" x-show="sidebarOpen" x-transition>
                     <h3 class="px-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">{{ __('messages.app.settings') }}</h3>
@@ -175,6 +175,22 @@
                     </svg>
                     <span class="text-sm" x-show="sidebarOpen" x-transition>{{ __('messages.app.user_management') }}</span>
                 </a>
+
+                @if(Auth::user()->role === 'super_admin')
+                    <!-- Role Management -->
+                    <a href="{{ route('role-management') }}"
+                        class="flex items-center px-4 py-2.5 rounded-lg text-gray-600 font-medium hover:bg-emerald-50 hover:text-emerald-900 transition duration-200"
+                        :class="sidebarOpen ? 'space-x-3' : 'justify-center px-2'"
+                        @if(request()->routeIs('role-management'))
+                            style="background: linear-gradient(to right, rgba(16, 185, 129, 0.15), rgba(5, 150, 105, 0.15)); color: #065f46;"
+                        @endif
+                        :title="sidebarOpen ? '' : 'Role Management'">
+                        <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m-6-8h6M4 6h16M4 10h16M4 14h16M4 18h16" />
+                        </svg>
+                        <span class="text-sm" x-show="sidebarOpen" x-transition>Role Management</span>
+                    </a>
+                @endif
             @endif
 
         </nav>

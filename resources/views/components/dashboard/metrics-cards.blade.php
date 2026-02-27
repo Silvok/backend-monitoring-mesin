@@ -1,5 +1,5 @@
 <!-- Metrics Cards -->
-<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-8">
+<div class="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6 mb-8">
     <!-- Total Mesin -->
     <div class="rounded-xl shadow-lg p-4 sm:p-6 text-white" style="background: linear-gradient(to bottom right, #185519, #118B50);">
         <div class="flex items-center justify-between mb-3 sm:mb-4">

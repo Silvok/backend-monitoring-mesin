@@ -325,6 +325,112 @@
                                 </ul>
                             </div>
                         </div>
+
+                        <div class="mt-4 rounded-2xl border border-gray-100 bg-white shadow-sm">
+                            <div class="px-4 py-3 border-b border-gray-100">
+                                <h3 class="text-base font-bold text-gray-900">Role & Hak Akses</h3>
+                                <p class="text-xs text-gray-500">Ringkasan hak akses per role sesuai kebijakan sistem.</p>
+                            </div>
+                            <div class="overflow-x-auto">
+                                <table class="min-w-full text-sm">
+                                    <thead class="bg-emerald-700 text-white">
+                                        <tr>
+                                            <th class="px-4 py-3 text-left font-semibold">Role</th>
+                                            <th class="px-4 py-3 text-left font-semibold">Permissions</th>
+                                            <th class="px-4 py-3 text-left font-semibold">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="divide-y divide-gray-100">
+                                        <tr class="bg-white">
+                                            <td class="px-4 py-4">
+                                                <div class="font-semibold text-gray-900">Super Admin</div>
+                                                <div class="text-xs text-gray-500">super_admin</div>
+                                            </td>
+                                            <td class="px-4 py-4">
+                                                <div class="flex flex-wrap gap-2">
+                                                    <span class="px-3 py-1 rounded-full bg-blue-100 text-blue-700 text-xs font-semibold">Dashboard</span>
+                                                    <span class="px-3 py-1 rounded-full bg-blue-100 text-blue-700 text-xs font-semibold">Alert & Acknowledge</span>
+                                                    <span class="px-3 py-1 rounded-full bg-blue-100 text-blue-700 text-xs font-semibold">Histori & Tabel</span>
+                                                    <span class="px-3 py-1 rounded-full bg-blue-100 text-blue-700 text-xs font-semibold">Export</span>
+                                                    <span class="px-3 py-1 rounded-full bg-blue-100 text-blue-700 text-xs font-semibold">Manajemen User</span>
+                                                    <span class="px-3 py-1 rounded-full bg-blue-100 text-blue-700 text-xs font-semibold">Konfigurasi Sistem</span>
+                                                </div>
+                                            </td>
+                                            <td class="px-4 py-4">
+                                                <span class="inline-flex items-center gap-2 px-3 py-1 rounded-lg bg-gray-100 text-gray-600 text-xs font-semibold">
+                                                    <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 11c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM5 21h14a2 2 0 002-2v-1a4 4 0 00-4-4H7a4 4 0 00-4 4v1a2 2 0 002 2z" />
+                                                    </svg>
+                                                    Protected Role
+                                                </span>
+                                            </td>
+                                        </tr>
+                                        <tr class="bg-white">
+                                            <td class="px-4 py-4">
+                                                <div class="font-semibold text-gray-900">Admin</div>
+                                                <div class="text-xs text-gray-500">admin</div>
+                                            </td>
+                                            <td class="px-4 py-4">
+                                                <div class="flex flex-wrap gap-2">
+                                                    <span class="px-3 py-1 rounded-full bg-blue-100 text-blue-700 text-xs font-semibold">Dashboard</span>
+                                                    <span class="px-3 py-1 rounded-full bg-blue-100 text-blue-700 text-xs font-semibold">Alert & Acknowledge</span>
+                                                    <span class="px-3 py-1 rounded-full bg-blue-100 text-blue-700 text-xs font-semibold">Histori & Tabel</span>
+                                                    <span class="px-3 py-1 rounded-full bg-blue-100 text-blue-700 text-xs font-semibold">Export</span>
+                                                    <span class="px-3 py-1 rounded-full bg-blue-100 text-blue-700 text-xs font-semibold">Manajemen User (Terbatas)</span>
+                                                </div>
+                                            </td>
+                                            <td class="px-4 py-4">
+                                                <div class="flex items-center gap-3 text-emerald-600 text-sm">
+                                                    <span class="inline-flex items-center gap-1">
+                                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5h2m-1-1v2m-6 4h12M5 12h14M7 16h10" />
+                                                        </svg>
+                                                        Edit
+                                                    </span>
+                                                    <span class="inline-flex items-center gap-1 text-red-500">
+                                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 7h12M9 7V4h6v3m-7 4v7m4-7v7m4-7v7M5 7h14l-1 14H6L5 7z" />
+                                                        </svg>
+                                                        Delete
+                                                    </span>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr class="bg-white">
+                                            <td class="px-4 py-4">
+                                                <div class="font-semibold text-gray-900">Koordinator</div>
+                                                <div class="text-xs text-gray-500">koordinator</div>
+                                            </td>
+                                            <td class="px-4 py-4">
+                                                <div class="flex flex-wrap gap-2">
+                                                    <span class="px-3 py-1 rounded-full bg-blue-100 text-blue-700 text-xs font-semibold">Dashboard</span>
+                                                    <span class="px-3 py-1 rounded-full bg-blue-100 text-blue-700 text-xs font-semibold">Grafik Real-time</span>
+                                                    <span class="px-3 py-1 rounded-full bg-blue-100 text-blue-700 text-xs font-semibold">Histori (Lihat)</span>
+                                                    <span class="px-3 py-1 rounded-full bg-blue-100 text-blue-700 text-xs font-semibold">Alert (Lihat)</span>
+                                                    <span class="px-3 py-1 rounded-full bg-blue-100 text-blue-700 text-xs font-semibold">Acknowledge</span>
+                                                </div>
+                                            </td>
+                                            <td class="px-4 py-4">
+                                                <div class="flex items-center gap-3 text-emerald-600 text-sm">
+                                                    <span class="inline-flex items-center gap-1">
+                                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5h2m-1-1v2m-6 4h12M5 12h14M7 16h10" />
+                                                        </svg>
+                                                        Edit
+                                                    </span>
+                                                    <span class="inline-flex items-center gap-1 text-red-500">
+                                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 7h12M9 7V4h6v3m-7 4v7m4-7v7m4-7v7M5 7h14l-1 14H6L5 7z" />
+                                                        </svg>
+                                                        Delete
+                                                    </span>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

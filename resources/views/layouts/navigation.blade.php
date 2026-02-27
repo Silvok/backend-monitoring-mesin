@@ -7,13 +7,16 @@
                 <!-- Logo & Brand -->
                 <div class="flex items-center">
                     <a href="{{ route('dashboard') }}" class="flex items-center space-x-2 hover:opacity-90 transition">
-                        <div class="w-14 h-14 sm:w-16 sm:h-16 flex-shrink-0">
+                        <div class="w-16 h-16 sm:w-20 sm:h-20 flex-shrink-0">
                             <img src="{{ asset('images/unnamed.png') }}" alt="PreMaint Logo"
                                 class="w-full h-full object-contain">
                         </div>
-                        <span
-                            class="text-white font-black text-2xl sm:text-3xl"
-                            style="font-weight: 900;">PreMaint</span>
+                        <div class="leading-tight">
+                            <span
+                                class="text-white font-black text-2xl sm:text-3xl block"
+                                style="font-weight: 900;">PreMaint</span>
+                            <span class="text-emerald-100 text-base sm:text-lg font-semibold block">Prediktif Maintenance</span>
+                        </div>
                     </a>
                 </div>
             </div>
