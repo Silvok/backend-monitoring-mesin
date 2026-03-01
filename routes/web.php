@@ -90,9 +90,6 @@ Route::get('/api/monitoring/trend', [\App\Http\Controllers\MonitoringController:
 Route::get('/api/monitoring/trend-analysis', [\App\Http\Controllers\MonitoringController::class, 'getTrendAnalysis'])
     ->middleware(['auth']);
 
-Route::get('/analisis', [\App\Http\Controllers\AnalisisController::class, 'index'])
-    ->middleware(['auth', 'verified', 'permission:analysis.view'])
-    ->name('analisis');
 
 // Alert Management Routes
 Route::get('/alert-management', [AlertManagementController::class, 'index'])

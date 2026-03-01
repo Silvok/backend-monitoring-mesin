@@ -157,11 +157,6 @@
                 {{ __('messages.app.monitoring_machine') }}
             </x-responsive-nav-link>
 
-            <x-responsive-nav-link :href="route('analisis')" :active="request()->routeIs('analisis')"
-                class="text-white hover:bg-white/10 hover:text-white">
-                {{ __('messages.app.analysis') }}
-            </x-responsive-nav-link>
-
             <div class="pt-2 pb-1 border-t border-emerald-800/50 mt-2">
                 <div class="px-4 text-xs font-semibold text-emerald-200/50 uppercase tracking-wider mb-2">{{ __('messages.app.alerts_settings') }}</div>
                 <a href="#"

@@ -104,6 +104,14 @@
                 <span class="text-sm" x-show="sidebarOpen" x-transition>{{ __('messages.app.parameter_monitoring') }}</span>
             </a>
 
+            <!-- Menu Section Title -->
+            <div class="pt-4 pb-2" x-show="sidebarOpen" x-transition>
+                <h3 class="px-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">Analisis &amp; Laporan</h3>
+            </div>
+            <div class="pt-4 pb-2 flex justify-center" x-show="!sidebarOpen">
+                <div class="w-8 h-px bg-gray-200"></div>
+            </div>
+
             <!-- Laporan Bulanan -->
             <a href="{{ route('monthly-report') }}" class="flex items-center px-4 py-2.5 rounded-lg font-medium transition duration-200
                @if(request()->routeIs('monthly-report'))
