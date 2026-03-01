@@ -172,8 +172,8 @@
                                         <select id="machineSelect" class="mt-2 w-full rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-700 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500">
                                             @foreach($machines as $machine)
                                                 <option value="{{ $machine->id }}"
-                                                    data-warning="{{ $machine->threshold_warning ?? 2.8 }}"
-                                                    data-critical="{{ $machine->threshold_critical ?? 7.1 }}"
+                                                    data-warning="{{ $machine->threshold_warning ?? 21.84 }}"
+                                                    data-critical="{{ $machine->threshold_critical ?? 25.11 }}"
                                                     data-hp="{{ $machine->motor_power_hp ?? '' }}"
                                                     data-rpm="{{ $machine->motor_rpm ?? '' }}"
                                                     data-iso="{{ $machine->iso_class ?? 'Class II' }}">
@@ -201,7 +201,7 @@
                                         </div>
                                     </div>
                                     <div>
-                                        <label class="text-xs font-semibold text-gray-500 uppercase tracking-widest">{{ __('messages.settings.iso_class') }}</label>
+                                        <label class="text-xs font-semibold text-gray-500 uppercase tracking-widest">Kategori Mesin</label>
                                         <select id="machineIso" class="mt-2 w-full rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-700 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500">
                                             <option value="Class I">Class I</option>
                                             <option value="Class II">Class II</option>
@@ -228,11 +228,11 @@
                                     </div>
                                     <div class="p-3 rounded-xl border border-gray-100 bg-white">
                                         <p class="text-xs font-semibold text-gray-500 uppercase tracking-widest">{{ __('messages.settings.default_warning') }}</p>
-                                        <p class="mt-2 text-sm text-gray-700">2.8 mm/s</p>
+                                        <p class="mt-2 text-sm text-gray-700">21.84 mm/s</p>
                                     </div>
                                     <div class="p-3 rounded-xl border border-gray-100 bg-white">
                                         <p class="text-xs font-semibold text-gray-500 uppercase tracking-widest">{{ __('messages.settings.default_critical') }}</p>
-                                        <p class="mt-2 text-sm text-gray-700">7.1 mm/s</p>
+                                        <p class="mt-2 text-sm text-gray-700">25.11 mm/s</p>
                                     </div>
                                 </div>
                             </div>
@@ -267,6 +267,23 @@
                                         <p class="text-xs font-semibold text-gray-500 uppercase tracking-widest">{{ __('messages.settings.queue_driver') }}</p>
                                         <p class="mt-2 text-lg font-bold text-gray-900">{{ strtoupper($queueDriver) }}</p>
                                     </div>
+                                </div>
+                                <div class="mt-4 p-3 rounded-xl border border-gray-100 bg-white">
+                                    <p class="text-xs font-semibold text-gray-500 uppercase tracking-widest">Interval Simpan Data</p>
+                                    <div class="mt-2 flex flex-wrap items-center gap-3">
+                                        <select id="samplingIntervalSelect" class="rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-700 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500">
+                                            @foreach([1, 5, 10] as $opt)
+                                                <option value="{{ $opt }}" @if($samplingIntervalMinutes == $opt) selected @endif>
+                                                    {{ $opt }} menit
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                        <button id="saveSamplingInterval" type="button" class="px-3 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold shadow">
+                                            Simpan
+                                        </button>
+                                        <span id="samplingIntervalMsg" class="text-xs text-gray-500"></span>
+                                    </div>
+                                    <p class="mt-2 text-xs text-gray-500">Hanya 1 data ringkasan per interval disimpan ke database.</p>
                                 </div>
                             </div>
                             <div class="rounded-xl border border-gray-100 bg-gray-50 p-4">
@@ -450,6 +467,9 @@
             const isoSelect = document.getElementById('machineIso');
             const form = document.getElementById('machineThresholdForm');
             const msg = document.getElementById('thresholdMessage');
+            const samplingSelect = document.getElementById('samplingIntervalSelect');
+            const samplingSaveBtn = document.getElementById('saveSamplingInterval');
+            const samplingMsg = document.getElementById('samplingIntervalMsg');
 
             function switchTab(tabId) {
                 tabs.forEach(tab => {
@@ -474,8 +494,8 @@
                 if (!machineSelect) return;
                 const option = machineSelect.options[machineSelect.selectedIndex];
                 if (!option) return;
-                warningInput.value = option.getAttribute('data-warning') || 2.8;
-                criticalInput.value = option.getAttribute('data-critical') || 7.1;
+                warningInput.value = option.getAttribute('data-warning') || 21.84;
+                criticalInput.value = option.getAttribute('data-critical') || 25.11;
                 hpInput.value = option.getAttribute('data-hp') || '';
                 rpmInput.value = option.getAttribute('data-rpm') || '';
                 isoSelect.value = option.getAttribute('data-iso') || 'Class II';
@@ -526,6 +546,36 @@
                         .catch(() => {
                             msg.textContent = 'Gagal menyimpan.';
                             msg.className = 'text-xs text-red-600';
+                        });
+                });
+            }
+
+            if (samplingSaveBtn && samplingSelect) {
+                samplingSaveBtn.addEventListener('click', function () {
+                    samplingMsg.textContent = 'Menyimpan...';
+                    fetch('/api/settings/sampling-interval', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                        },
+                        body: JSON.stringify({
+                            sampling_interval_minutes: parseInt(samplingSelect.value, 10)
+                        })
+                    })
+                        .then(res => res.json())
+                        .then(data => {
+                            if (data.success) {
+                                samplingMsg.textContent = 'Tersimpan.';
+                                samplingMsg.className = 'text-xs text-emerald-600';
+                            } else {
+                                samplingMsg.textContent = data.message || 'Gagal menyimpan.';
+                                samplingMsg.className = 'text-xs text-red-600';
+                            }
+                        })
+                        .catch(() => {
+                            samplingMsg.textContent = 'Gagal menyimpan.';
+                            samplingMsg.className = 'text-xs text-red-600';
                         });
                 });
             }

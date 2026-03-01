@@ -142,7 +142,7 @@
                                 </svg>
                             </div>
                         </div>
-                        <p class="text-xs text-gray-400 mt-2">RMS ≥ <span id="criticalThreshold">7.1</span> mm/s</p>
+                        <p class="text-xs text-gray-400 mt-2">RMS ≥ <span id="criticalThreshold">25.11</span> mm/s</p>
                     </div>
 
                     <!-- Warning Alerts -->
@@ -158,7 +158,7 @@
                                 </svg>
                             </div>
                         </div>
-                        <p class="text-xs text-gray-400 mt-2">RMS ≥ <span id="warningThreshold">2.8</span> mm/s</p>
+                        <p class="text-xs text-gray-400 mt-2">RMS ≥ <span id="warningThreshold">21.84</span> mm/s</p>
                     </div>
                 </div>
 
@@ -400,7 +400,7 @@
                                 </div>
                                 <div>
                                     <h3 class="text-lg font-semibold text-gray-900">Konfigurasi Threshold Per-Mesin</h3>
-                                    <p class="text-sm text-gray-500">Berdasarkan standar ISO 10816-3</p>
+                                    <p class="text-sm text-gray-500">Berdasarkan data historis</p>
                                 </div>
                             </div>
                             <button onclick="loadMachineThresholds()" class="px-3 py-1.5 text-sm text-emerald-600 hover:bg-emerald-50 rounded-lg transition">
@@ -419,7 +419,7 @@
                                         <th class="text-left py-3 px-4 font-semibold text-gray-700">Mesin</th>
                                         <th class="text-left py-3 px-4 font-semibold text-gray-700">Lokasi</th>
                                         <th class="text-center py-3 px-4 font-semibold text-gray-700">Daya Motor</th>
-                                        <th class="text-center py-3 px-4 font-semibold text-gray-700">ISO Class</th>
+                                        <th class="text-center py-3 px-4 font-semibold text-gray-700">Kelas Mesin</th>
                                         <th class="text-center py-3 px-4 font-semibold text-gray-700">
                                             <span class="inline-flex items-center">
                                                 <span class="w-2.5 h-2.5 rounded-full bg-yellow-400 mr-1.5"></span>
@@ -449,40 +449,40 @@
                             </table>
                         </div>
 
-                        <!-- ISO 10816-3 Reference -->
+                        <!-- Threshold Reference -->
                         <div class="mt-6 p-4 bg-gray-50 rounded-lg">
-                            <h4 class="text-sm font-semibold text-gray-700 mb-3">Referensi ISO 10816-3 Threshold</h4>
+                            <h4 class="text-sm font-semibold text-gray-700 mb-3">Referensi Threshold</h4>
                             <div class="grid grid-cols-1 md:grid-cols-4 gap-3 text-xs">
                                 <div class="p-3 bg-white rounded-lg border border-gray-200">
                                     <div class="font-semibold text-gray-700 mb-1">Class I</div>
                                     <div class="text-gray-500 mb-2">Motor ≤ 15 kW (20 HP)</div>
                                     <div class="space-y-1">
-                                        <div class="flex justify-between"><span class="text-yellow-600">Warning:</span> <span>1.8 mm/s</span></div>
-                                        <div class="flex justify-between"><span class="text-red-600">Critical:</span> <span>4.5 mm/s</span></div>
+                                        <div class="flex justify-between"><span class="text-yellow-600">Warning:</span> <span>21.84 mm/s</span></div>
+                                        <div class="flex justify-between"><span class="text-red-600">Critical:</span> <span>25.11 mm/s</span></div>
                                     </div>
                                 </div>
                                 <div class="p-3 bg-white rounded-lg border border-gray-200">
                                     <div class="font-semibold text-gray-700 mb-1">Class II</div>
                                     <div class="text-gray-500 mb-2">Motor 15-75 kW (20-100 HP)</div>
                                     <div class="space-y-1">
-                                        <div class="flex justify-between"><span class="text-yellow-600">Warning:</span> <span>2.8 mm/s</span></div>
-                                        <div class="flex justify-between"><span class="text-red-600">Critical:</span> <span>7.1 mm/s</span></div>
+                                        <div class="flex justify-between"><span class="text-yellow-600">Warning:</span> <span>21.84 mm/s</span></div>
+                                        <div class="flex justify-between"><span class="text-red-600">Critical:</span> <span>25.11 mm/s</span></div>
                                     </div>
                                 </div>
                                 <div class="p-3 bg-white rounded-lg border border-gray-200">
                                     <div class="font-semibold text-gray-700 mb-1">Class III</div>
                                     <div class="text-gray-500 mb-2">Motor 75-300 kW (100-400 HP)</div>
                                     <div class="space-y-1">
-                                        <div class="flex justify-between"><span class="text-yellow-600">Warning:</span> <span>4.5 mm/s</span></div>
-                                        <div class="flex justify-between"><span class="text-red-600">Critical:</span> <span>11.2 mm/s</span></div>
+                                        <div class="flex justify-between"><span class="text-yellow-600">Warning:</span> <span>21.84 mm/s</span></div>
+                                        <div class="flex justify-between"><span class="text-red-600">Critical:</span> <span>25.11 mm/s</span></div>
                                     </div>
                                 </div>
                                 <div class="p-3 bg-white rounded-lg border border-gray-200">
                                     <div class="font-semibold text-gray-700 mb-1">Class IV</div>
                                     <div class="text-gray-500 mb-2">Turbines, Rigid Foundation</div>
                                     <div class="space-y-1">
-                                        <div class="flex justify-between"><span class="text-yellow-600">Warning:</span> <span>7.1 mm/s</span></div>
-                                        <div class="flex justify-between"><span class="text-red-600">Critical:</span> <span>18.0 mm/s</span></div>
+                                        <div class="flex justify-between"><span class="text-yellow-600">Warning:</span> <span>21.84 mm/s</span></div>
+                                        <div class="flex justify-between"><span class="text-red-600">Critical:</span> <span>25.11 mm/s</span></div>
                                     </div>
                                 </div>
                             </div>
@@ -629,15 +629,15 @@
                         <form id="machineThresholdForm" onsubmit="saveMachineThreshold(event)">
                             <input type="hidden" id="modalMachineId">
                             <div class="px-6 py-4 space-y-4">
-                                <!-- ISO Class Preset -->
+                                <!-- Preset Threshold -->
                                 <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-2">Preset ISO 10816-3</label>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Preset Threshold</label>
                                     <select id="modalIsoClass" onchange="applyIsoPreset()"
                                         class="w-full rounded-lg border-gray-300 text-sm focus:ring-emerald-500 focus:border-emerald-500">
-                                        <option value="Class I">Class I - Motor ≤ 15 kW (1.8 / 4.5)</option>
-                                        <option value="Class II">Class II - Motor 15-75 kW (2.8 / 7.1)</option>
-                                        <option value="Class III">Class III - Motor 75-300 kW (4.5 / 11.2)</option>
-                                        <option value="Class IV">Class IV - Turbines (7.1 / 18.0)</option>
+                                        <option value="Class I">Class I - Motor ≤ 15 kW (21.84 / 25.11)</option>
+                                        <option value="Class II">Class II - Motor 15-75 kW (21.84 / 25.11)</option>
+                                        <option value="Class III">Class III - Motor 75-300 kW (21.84 / 25.11)</option>
+                                        <option value="Class IV">Class IV - Turbines (21.84 / 25.11)</option>
                                     </select>
                                 </div>
 
@@ -678,7 +678,7 @@
                                 <!-- Info Note -->
                                 <div class="p-3 bg-blue-50 rounded-lg">
                                     <p class="text-xs text-blue-700">
-                                        <strong>Tip:</strong> Pilih preset ISO sesuai daya motor. Untuk Westfalia CA 505-01-12:
+                                        <strong>Tip:</strong> Pilih preset sesuai daya motor. Untuk Westfalia CA 505-01-12:
                                         <br>• Motor Scroll (20 HP) → Class II
                                         <br>• Motor Bowl (120 HP) → Class II
                                     </p>
@@ -1292,12 +1292,12 @@
             document.querySelectorAll('.alert-checkbox').forEach(cb => cb.checked = selectAll);
         }
 
-        // ISO Threshold presets
+        // Threshold presets
         const isoPresets = {
-            'Class I': { warning: 1.8, critical: 4.5 },
-            'Class II': { warning: 2.8, critical: 7.1 },
-            'Class III': { warning: 4.5, critical: 11.2 },
-            'Class IV': { warning: 7.1, critical: 18.0 }
+            'Class I': { warning: 21.84, critical: 25.11 },
+            'Class II': { warning: 21.84, critical: 25.11 },
+            'Class III': { warning: 21.84, critical: 25.11 },
+            'Class IV': { warning: 21.84, critical: 25.11 }
         };
 
         // Load machine thresholds
@@ -1366,7 +1366,7 @@
             `).join('');
         }
 
-        // Get ISO class badge color
+        // Get class badge color
         function getIsoClassColor(isoClass) {
             const colors = {
                 'Class I': 'bg-blue-100 text-blue-700',
@@ -1395,7 +1395,7 @@
             document.getElementById('thresholdModal').classList.add('hidden');
         }
 
-        // Apply ISO preset when dropdown changes
+        // Apply preset when dropdown changes
         function applyIsoPreset() {
             const isoClass = document.getElementById('modalIsoClass').value;
             const preset = isoPresets[isoClass];

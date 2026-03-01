@@ -284,7 +284,7 @@ class FFTController extends Controller
     }
 
     /**
-     * Analyze frequency bands (ISO 10816 based)
+     * Analyze frequency bands (data-driven)
      */
     private function analyzeBands(array $frequencies, array $amplitudes): array
     {

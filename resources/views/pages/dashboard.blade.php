@@ -225,7 +225,7 @@
                 grid.innerHTML = machines.map((machine, index) => {
                     const isNormal = machine.status === 'NORMAL';
                     const rmsValue = machine.rms || 0;
-                    // ISO 10816-3: max scale 11.2 mm/s for visualization
+                    // Max scale for visualization
                     const rmsPercent = Math.min((rmsValue / 11.2) * 100, 100);
                     const statusIcon = isNormal
                         ? '<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>'
@@ -236,8 +236,8 @@
                     const statusBgClass = isNormal ? 'bg-emerald-100 text-emerald-800' : 'bg-red-100 text-red-800';
                     const statusText = isNormal ? '✓ NORMAL' : '⚠ ANOMALI';
                     const iconBgClass = isNormal ? 'bg-emerald-100 text-emerald-600' : 'bg-red-100 text-red-600';
-                    // ISO 10816-3 Thresholds Class II: < 2.8 (green), 2.8-7.1 (yellow), > 7.1 (red)
-                    const progressClass = rmsValue <= 2.8 ? 'bg-emerald-500' : rmsValue <= 7.1 ? 'bg-yellow-500' : 'bg-red-500';
+                    // Thresholds: < 21.84 (green), 21.84-25.11 (yellow), > 25.11 (red)
+                    const progressClass = rmsValue <= 21.84 ? 'bg-emerald-500' : rmsValue <= 25.11 ? 'bg-yellow-500' : 'bg-red-500';
 
                     return `
                             <div class="group relative bg-white rounded-xl border border-gray-200 shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden">

@@ -279,7 +279,7 @@
                         </div>
                         <div>
                             <h3 class="text-lg font-bold text-gray-800">Status Kondisi Mesin</h3>
-                            <p class="text-sm text-gray-500">Berdasarkan ISO 10816-3</p>
+                            <p class="text-sm text-gray-500">Berdasarkan data historis</p>
                         </div>
                     </div>
                 </div>
@@ -305,16 +305,16 @@
                         </div>
                     </div>
 
-                    {{-- Threshold Bar - ISO 10816-3 Class I (mm/s) --}}
+                    {{-- Threshold Bar (mm/s) --}}
                     <div class="mb-4">
                         <div class="flex justify-between text-xs text-gray-500 mb-2">
                             <span>0 mm/s</span>
-                            <span>2.8 mm/s (Warning)</span>
-                            <span>7.1 mm/s (Critical)</span>
+                            <span>21.84 mm/s (Warning)</span>
+                            <span>25.11 mm/s (Critical)</span>
                             <span>11.2+ mm/s</span>
                         </div>
                         <div class="relative h-6 bg-gray-200 rounded-full overflow-hidden">
-                            {{-- Gradient zones based on ISO 10816-3 --}}
+                            {{-- Gradient zones based on thresholds --}}
                             <div class="absolute inset-0 flex">
                                 <div class="h-full bg-gradient-to-r from-emerald-400 to-emerald-500" style="width: 25%"></div>
                                 <div class="h-full bg-gradient-to-r from-amber-400 to-amber-500" style="width: 38%"></div>

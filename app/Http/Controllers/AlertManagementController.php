@@ -10,13 +10,13 @@ use Illuminate\Support\Facades\Cache;
 class AlertManagementController extends Controller
 {
     /**
-     * Default ISO 10816-3 thresholds by class
+     * Default threshold presets by class
      */
-    private const ISO_THRESHOLDS = [
-        'Class I' => ['warning' => 1.8, 'critical' => 4.5],   // Motors ≤15 kW
-        'Class II' => ['warning' => 2.8, 'critical' => 7.1],  // Motors 15-75 kW
-        'Class III' => ['warning' => 4.5, 'critical' => 11.2], // Large motors 75-300 kW
-        'Class IV' => ['warning' => 7.1, 'critical' => 18.0],  // Turbines, rigid foundation
+    private const THRESHOLD_PRESETS = [
+        'Class I' => ['warning' => 21.84, 'critical' => 25.11],
+        'Class II' => ['warning' => 21.84, 'critical' => 25.11],
+        'Class III' => ['warning' => 21.84, 'critical' => 25.11],
+        'Class IV' => ['warning' => 21.84, 'critical' => 25.11],
     ];
 
     /**
@@ -43,8 +43,8 @@ class AlertManagementController extends Controller
     private function getMachineThreshold(Machine $machine): array
     {
         return [
-            'warning' => (float) ($machine->threshold_warning ?? 2.8),
-            'critical' => (float) ($machine->threshold_critical ?? 7.1),
+            'warning' => (float) ($machine->threshold_warning ?? 21.84),
+            'critical' => (float) ($machine->threshold_critical ?? 25.11),
         ];
     }
 
@@ -53,7 +53,7 @@ class AlertManagementController extends Controller
      */
     private function getDefaultThreshold(): array
     {
-        return self::ISO_THRESHOLDS['Class II'];
+        return self::THRESHOLD_PRESETS['Class II'];
     }
 
     /**
@@ -198,8 +198,8 @@ class AlertManagementController extends Controller
                     'name' => $machine->name,
                     'location' => $machine->location,
                     'alert_count' => $machine->alert_count,
-                    'threshold_warning' => (float) ($machine->threshold_warning ?? 2.8),
-                    'threshold_critical' => (float) ($machine->threshold_critical ?? 7.1),
+                    'threshold_warning' => (float) ($machine->threshold_warning ?? 21.84),
+                    'threshold_critical' => (float) ($machine->threshold_critical ?? 25.11),
                     'iso_class' => $machine->iso_class ?? 'Class II',
                     'motor_power_hp' => $machine->motor_power_hp,
                 ];
@@ -385,13 +385,13 @@ class AlertManagementController extends Controller
                 'config' => [
                     'machine_id' => $machine->id,
                     'machine_name' => $machine->name,
-                    'warning' => (float) ($machine->threshold_warning ?? 2.8),
-                    'critical' => (float) ($machine->threshold_critical ?? 7.1),
+                    'warning' => (float) ($machine->threshold_warning ?? 21.84),
+                    'critical' => (float) ($machine->threshold_critical ?? 25.11),
                     'motor_power_hp' => $machine->motor_power_hp,
                     'motor_rpm' => $machine->motor_rpm,
                     'iso_class' => $machine->iso_class ?? 'Class II',
                 ],
-                'iso_reference' => self::ISO_THRESHOLDS,
+                'threshold_reference' => self::THRESHOLD_PRESETS,
             ]);
         } catch (\Exception $e) {
             return response()->json([
@@ -402,7 +402,7 @@ class AlertManagementController extends Controller
     }
 
     /**
-     * Apply ISO class preset to a machine
+     * Apply class preset to a machine
      */
     public function applyIsoPreset(Request $request)
     {
@@ -413,7 +413,7 @@ class AlertManagementController extends Controller
             ]);
 
             $machine = Machine::findOrFail($validated['machine_id']);
-            $preset = self::ISO_THRESHOLDS[$validated['iso_class']];
+            $preset = self::THRESHOLD_PRESETS[$validated['iso_class']];
 
             $machine->update([
                 'threshold_warning' => $preset['warning'],
@@ -423,7 +423,7 @@ class AlertManagementController extends Controller
 
             return response()->json([
                 'success' => true,
-                'message' => "Applied {$validated['iso_class']} preset to {$machine->name}",
+                'message' => "Applied preset {$validated['iso_class']} to {$machine->name}",
                 'config' => [
                     'machine_id' => $machine->id,
                     'machine_name' => $machine->name,
@@ -435,7 +435,7 @@ class AlertManagementController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Error applying ISO preset: ' . $e->getMessage(),
+                'message' => 'Error applying preset: ' . $e->getMessage(),
             ], 500);
         }
     }
@@ -451,8 +451,8 @@ class AlertManagementController extends Controller
                     'id' => $machine->id,
                     'name' => $machine->name,
                     'location' => $machine->location,
-                    'threshold_warning' => (float) ($machine->threshold_warning ?? 2.8),
-                    'threshold_critical' => (float) ($machine->threshold_critical ?? 7.1),
+                    'threshold_warning' => (float) ($machine->threshold_warning ?? 21.84),
+                    'threshold_critical' => (float) ($machine->threshold_critical ?? 25.11),
                     'motor_power_hp' => $machine->motor_power_hp,
                     'motor_rpm' => $machine->motor_rpm,
                     'iso_class' => $machine->iso_class ?? 'Class II',
@@ -462,7 +462,7 @@ class AlertManagementController extends Controller
             return response()->json([
                 'success' => true,
                 'machines' => $machines,
-                'iso_reference' => self::ISO_THRESHOLDS,
+                'threshold_reference' => self::THRESHOLD_PRESETS,
             ]);
         } catch (\Exception $e) {
             return response()->json([

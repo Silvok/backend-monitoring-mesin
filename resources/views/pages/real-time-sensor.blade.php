@@ -286,19 +286,19 @@
 
                         <!-- Legend -->
                         <div class="mt-6 p-4 bg-gray-50 rounded-lg border border-gray-200">
-                            <p class="text-xs font-bold text-gray-700 mb-2">Indikator Status (ISO 10816-3 Class II):</p>
+                            <p class="text-xs font-bold text-gray-700 mb-2">Indikator Status:</p>
                             <div class="flex flex-wrap gap-4">
                                 <div class="flex items-center space-x-2">
                                     <div class="w-3 h-3 rounded-full bg-emerald-500"></div>
-                                    <span class="text-xs text-gray-600">Normal (0-2.8 mm/s / 0-60°C)</span>
+                                    <span class="text-xs text-gray-600">Normal (0-21.84 mm/s / 0-60°C)</span>
                                 </div>
                                 <div class="flex items-center space-x-2">
                                     <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
-                                    <span class="text-xs text-gray-600">Waspada (2.8-7.1 mm/s / 60-80°C)</span>
+                                    <span class="text-xs text-gray-600">Waspada (21.84-25.11 mm/s / 60-80°C)</span>
                                 </div>
                                 <div class="flex items-center space-x-2">
                                     <div class="w-3 h-3 rounded-full bg-red-500"></div>
-                                    <span class="text-xs text-gray-600">Bahaya (>7.1 mm/s / >80°C)</span>
+                                    <span class="text-xs text-gray-600">Bahaya (>25.11 mm/s / >80°C)</span>
                                 </div>
                             </div>
                         </div>

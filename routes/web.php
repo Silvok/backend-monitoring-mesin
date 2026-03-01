@@ -57,6 +57,18 @@ Route::get('/data-grafik', [DashboardController::class, 'dataGrafik'])
     ->middleware(['auth', 'verified', 'permission:reports.view'])
     ->name('data-grafik');
 
+Route::get('/laporan-bulanan', [\App\Http\Controllers\MonthlyReportController::class, 'index'])
+    ->middleware(['auth', 'verified', 'permission:reports.view'])
+    ->name('monthly-report');
+
+Route::get('/laporan-bulanan/export', [\App\Http\Controllers\MonthlyReportController::class, 'exportCsv'])
+    ->middleware(['auth', 'verified', 'permission:reports.view'])
+    ->name('monthly-report.export');
+
+Route::post('/laporan-bulanan/pdf', [\App\Http\Controllers\MonthlyReportController::class, 'exportPdf'])
+    ->middleware(['auth', 'verified', 'permission:reports.view'])
+    ->name('monthly-report.pdf');
+
 Route::get('/monitoring-mesin', [\App\Http\Controllers\MonitoringController::class, 'index'])
     ->middleware(['auth', 'verified', 'permission:monitoring.view'])
     ->name('monitoring-mesin');
@@ -106,6 +118,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/api/machine/{id}/historical-trend', [DashboardApiController::class, 'getHistoricalTrend'])->middleware('permission:monitoring.view');
     Route::get('/api/machine/{id}/alerts', [DashboardController::class, 'getMachineAlerts'])->middleware('permission:alerts.view');
     Route::post('/api/analysis', [DashboardApiController::class, 'getAnalysisData'])->middleware('permission:analysis.view');
+
+    // Settings API routes
+    Route::post('/api/settings/sampling-interval', [SettingsController::class, 'updateSamplingInterval'])->middleware('permission:settings.update');
 
     // FFT API route
     Route::post('/api/fft-result', [DashboardController::class, 'storeFFT'])->middleware('permission:fft.store');

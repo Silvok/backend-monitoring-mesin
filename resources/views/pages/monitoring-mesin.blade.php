@@ -207,15 +207,15 @@
                                 <div class="flex flex-wrap items-center justify-center gap-4 text-xs">
                                     <div class="flex items-center gap-1.5">
                                         <div class="w-3 h-3 rounded-full bg-emerald-500"></div>
-                                        <span class="text-gray-600">Normal (0-2.8 mm/s)</span>
+                                        <span class="text-gray-600">Normal (0-21.84 mm/s)</span>
                                     </div>
                                     <div class="flex items-center gap-1.5">
                                         <div class="w-6 h-0.5 bg-yellow-500" style="border-top: 2px dashed #eab308;"></div>
-                                        <span class="text-gray-600">Warning (2.8 mm/s)</span>
+                                        <span class="text-gray-600">Warning (21.84 mm/s)</span>
                                     </div>
                                     <div class="flex items-center gap-1.5">
                                         <div class="w-6 h-0.5 bg-red-500" style="border-top: 2px dashed #ef4444;"></div>
-                                        <span class="text-gray-600">Critical (7.1 mm/s)</span>
+                                        <span class="text-gray-600">Critical (25.11 mm/s)</span>
                                     </div>
                                     <div class="flex items-center gap-1.5">
                                         <div class="w-6 h-0.5" style="border-top: 2px dashed #ef4444;"></div>
@@ -458,8 +458,8 @@
                                 <div class="mt-4 flex items-center space-x-1.5 opacity-50">
                                     <div id="iso-dot" class="w-1.5 h-1.5 rounded-full bg-gray-300"></div>
                                     <span
-                                        class="text-[9px] font-bold text-gray-400 uppercase tracking-widest leading-none">ISO
-                                        10816-3 Thresholds</span>
+                                        class="text-[9px] font-bold text-gray-400 uppercase tracking-widest leading-none">REF
+                                        Threshold</span>
                                 </div>
                             </div>
                         </div>
@@ -655,7 +655,7 @@
                                         </p>
                                         <div class="mt-2 pt-2 border-t border-emerald-200/70 w-full">
                                             <p class="text-[10px] text-emerald-500">
-                                                <span class="font-semibold">Referensi:</span> ISO 10816-3 & Analisis Spektrum FFT
+                                                <span class="font-semibold">Referensi:</span> Data Historis & Analisis Spektrum FFT
                                             </p>
                                         </div>
                                     </div>
@@ -889,14 +889,14 @@
                                     annotations: {
                                         warningLine: {
                                             type: 'line',
-                                            yMin: 2.8,
-                                            yMax: 2.8,
+                                            yMin: 21.84,
+                                            yMax: 21.84,
                                             borderColor: 'rgba(234, 179, 8, 0.7)',
                                             borderWidth: 2,
                                             borderDash: [6, 4],
                                             label: {
                                                 display: true,
-                                                content: 'Warning (2.8)',
+                                                content: 'Warning (21.84)',
                                                 position: 'end',
                                                 backgroundColor: 'rgba(234, 179, 8, 0.8)',
                                                 color: '#fff',
@@ -906,14 +906,14 @@
                                         },
                                         criticalLine: {
                                             type: 'line',
-                                            yMin: 7.1,
-                                            yMax: 7.1,
+                                            yMin: 25.11,
+                                            yMax: 25.11,
                                             borderColor: 'rgba(239, 68, 68, 0.7)',
                                             borderWidth: 2,
                                             borderDash: [6, 4],
                                             label: {
                                                 display: true,
-                                                content: 'Critical (7.1)',
+                                                content: 'Critical (25.11)',
                                                 position: 'end',
                                                 backgroundColor: 'rgba(239, 68, 68, 0.8)',
                                                 color: '#fff',
@@ -1529,25 +1529,25 @@
                     document.getElementById('analysis-rms-avg').textContent = avgValue.toFixed(3);
                     document.getElementById('analysis-rms-max').textContent = maxValue.toFixed(3);
 
-                    // Determine Status (ISO 10816-3 Thresholds for Medium Machines)
+                    // Determine Status (threshold data historis)
                     let status = "NORMAL";
                     let interpretation = "";
                     let colorClass = "emerald";
                     let iconPath = "M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"; // Checkmark
 
-                    if (currentValue >= 7.1) {
+                    if (currentValue >= 25.11) {
                         status = "DANGER";
                         interpretation = `Nilai RMS sebesar ${currentValue.toFixed(2)} mm/s berada pada kategori Danger. Sangat tinggi, segera lakukan inspeksi mendalam!`;
                         colorClass = "red";
                         iconPath = "M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"; // Warning Triangle
-                    } else if (currentValue >= 2.8) {
+                    } else if (currentValue >= 21.84) {
                         status = "WARNING";
                         interpretation = `Nilai RMS sebesar ${currentValue.toFixed(2)} mm/s berada pada kategori Warning. Terdeteksi peningkatan getaran yang tidak wajar.`;
                         colorClass = "orange";
                         iconPath = "M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"; // Exclamation
                     } else {
                         status = "NORMAL";
-                        interpretation = `Nilai RMS sebesar ${currentValue.toFixed(2)} mm/s dalam kondisi Normal (ISO 10816-3). Kondisi mesin stabil.`;
+                        interpretation = `Nilai RMS sebesar ${currentValue.toFixed(2)} mm/s dalam kondisi Normal. Kondisi mesin stabil.`;
                         colorClass = "emerald";
                         iconPath = "M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z";
                     }
