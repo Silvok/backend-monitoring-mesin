@@ -100,7 +100,7 @@
 
             <!-- Quick Stats Cards - Simplified & Modern -->
             <div id="quickStatsSection" class="hidden">
-                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-4 sm:p-6 xl:p-7 w-full min-w-0">
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-4 sm:p-5 xl:p-6 w-full min-w-0">
                     <div class="w-full flex flex-wrap items-center justify-between gap-2 mb-4">
                         <h3 class="text-sm font-semibold text-slate-700 text-left">Ringkasan Hari Ini</h3>
                         <div class="flex items-center gap-1 text-xs text-slate-500 sm:ml-auto">
@@ -111,50 +111,52 @@
                         </div>
                     </div>
 
-                    <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-3 sm:gap-5 xl:gap-6">
+                    <div class="-mx-1 px-1 overflow-x-auto sm:overflow-visible">
+                    <div class="grid grid-flow-col auto-cols-[minmax(150px,1fr)] sm:grid-flow-row sm:grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3">
                         <!-- Total Readings -->
-                        <div class="text-center rounded-xl border border-slate-200 bg-slate-50/80 p-3 sm:p-4">
-                            <div class="inline-flex items-center justify-center w-11 h-11 rounded-full bg-blue-50 mb-3">
-                                <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <div class="text-center rounded-xl border border-slate-200 bg-slate-50/80 p-2.5 sm:p-3">
+                            <div class="inline-flex items-center justify-center w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-blue-50 mb-2">
+                                <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
                                 </svg>
                             </div>
-                            <p id="statReadings" class="text-2xl sm:text-3xl font-extrabold text-slate-900 mb-1">0</p>
-                            <p class="text-xs text-slate-500 font-medium">Pembacaan</p>
+                            <p id="statReadings" class="text-xl sm:text-2xl font-extrabold text-slate-900 mb-1">0</p>
+                            <p class="text-[11px] text-slate-500 font-medium">Pembacaan</p>
                         </div>
 
                         <!-- Uptime -->
-                        <div class="text-center rounded-xl border border-slate-200 bg-slate-50/80 p-3 sm:p-4">
-                            <div class="inline-flex items-center justify-center w-11 h-11 rounded-full bg-emerald-50 mb-3">
-                                <svg class="w-6 h-6 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <div class="text-center rounded-xl border border-slate-200 bg-slate-50/80 p-2.5 sm:p-3">
+                            <div class="inline-flex items-center justify-center w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-emerald-50 mb-2">
+                                <svg class="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                                 </svg>
                             </div>
-                            <p id="statUptime" class="text-2xl sm:text-3xl font-extrabold text-emerald-600 mb-1">--%</p>
-                            <p class="text-xs text-slate-500 font-medium">Waktu Aktif</p>
+                            <p id="statUptime" class="text-xl sm:text-2xl font-extrabold text-emerald-600 mb-1">--%</p>
+                            <p class="text-[11px] text-slate-500 font-medium">Waktu Aktif</p>
                         </div>
 
                         <!-- Normal State -->
-                        <div class="text-center rounded-xl border border-slate-200 bg-slate-50/80 p-3 sm:p-4">
-                            <div class="inline-flex items-center justify-center w-11 h-11 rounded-full bg-indigo-50 mb-3">
-                                <svg class="w-6 h-6 text-purple-600" fill="currentColor" viewBox="0 0 20 20">
+                        <div class="text-center rounded-xl border border-slate-200 bg-slate-50/80 p-2.5 sm:p-3">
+                            <div class="inline-flex items-center justify-center w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-indigo-50 mb-2">
+                                <svg class="w-5 h-5 text-purple-600" fill="currentColor" viewBox="0 0 20 20">
                                     <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
                                 </svg>
                             </div>
-                            <p id="statNormalTime" class="text-2xl sm:text-3xl font-extrabold text-indigo-600 mb-1">--%</p>
-                            <p class="text-xs text-slate-500 font-medium">Normal</p>
+                            <p id="statNormalTime" class="text-xl sm:text-2xl font-extrabold text-indigo-600 mb-1">--%</p>
+                            <p class="text-[11px] text-slate-500 font-medium">Normal</p>
                         </div>
 
                         <!-- Last Anomaly -->
-                        <div class="text-center rounded-xl border border-slate-200 bg-slate-50/80 p-3 sm:p-4">
-                            <div class="inline-flex items-center justify-center w-11 h-11 rounded-full bg-orange-50 mb-3">
-                                <svg class="w-6 h-6 text-orange-600" fill="currentColor" viewBox="0 0 20 20">
+                        <div class="text-center rounded-xl border border-slate-200 bg-slate-50/80 p-2.5 sm:p-3">
+                            <div class="inline-flex items-center justify-center w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-orange-50 mb-2">
+                                <svg class="w-5 h-5 text-orange-600" fill="currentColor" viewBox="0 0 20 20">
                                     <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
                                 </svg>
                             </div>
-                            <p id="statLastAnomaly" class="text-sm font-semibold text-gray-900 mb-1 truncate px-2">Tidak Pernah</p>
-                            <p class="text-xs text-gray-500 font-medium">Peringatan Terakhir</p>
+                            <p id="statLastAnomaly" class="text-xs sm:text-sm font-semibold text-gray-900 mb-1 truncate leading-tight">Tidak Pernah</p>
+                            <p class="text-[11px] text-gray-500 font-medium">Peringatan Terakhir</p>
                         </div>
+                    </div>
                     </div>
                 </div>
             </div>
@@ -314,12 +316,12 @@
             <div id="chartSection" class="hidden">
                 <div class="bg-white rounded-xl shadow-md overflow-hidden w-full min-w-0">
                     <div class="px-4 sm:px-6 xl:px-7 py-4 border-b border-gray-200 bg-gradient-to-r from-blue-50 to-purple-50">
-                        <div class="w-full grid grid-cols-1 lg:grid-cols-[1fr_auto] gap-3 lg:gap-4 items-start">
-                            <div class="min-w-0">
-                                <h3 class="text-lg font-bold text-gray-900">Grafik Multi-Sumbu Real-Time</h3>
+                        <div class="w-full flex flex-col gap-3 lg:gap-4 lg:flex-row lg:flex-nowrap lg:items-start lg:justify-between">
+                            <div class="min-w-0 lg:pr-4">
+                                <h3 class="text-lg font-bold text-gray-900">Grafik Sensor</h3>
                                 <p class="text-xs text-gray-600 mt-1">Pemantauan percepatan secara real-time di semua sumbu</p>
                             </div>
-                            <div class="w-full lg:w-auto flex flex-wrap items-center gap-2 xl:gap-3 lg:justify-end lg:ml-auto">
+                            <div class="w-full lg:w-auto ml-auto flex flex-wrap justify-end items-center gap-2 xl:gap-3 lg:content-start">
                                 <!-- Chart Mode Toggle -->
                                 <div class="flex items-center bg-gray-100 rounded-full shadow-sm p-1 gap-1">
                                     <button id="liveModeBtn" class="px-3 sm:px-4 py-2 text-xs font-semibold rounded-full bg-emerald-500 text-white shadow-md transition transform hover:scale-105">
@@ -392,7 +394,7 @@
                         </div>
                     </div>
                     <div class="p-4 sm:p-6 xl:p-7">
-                        <div class="relative h-[320px] sm:h-[400px]">
+                        <div class="relative multi-axis-chart-wrap">
                             <canvas id="multiAxisChart"></canvas>
                             <!-- Chart Loading Overlay -->
                             <div id="chartLoadingOverlay" class="hidden absolute inset-0 bg-white/80 flex items-center justify-center rounded-lg">
@@ -438,9 +440,9 @@
             <!-- Sensor Data Table -->
             <div id="liveFeedSection" class="mb-6 hidden">
                 <div class="bg-white rounded-xl shadow-md overflow-hidden w-full min-w-0">
-                    <div class="px-4 sm:px-6 xl:px-7 py-4 border-b border-gray-200 bg-gray-50 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-                        <h3 class="text-lg font-bold text-gray-900">Data Langsung</h3>
-                        <p class="text-xs text-gray-500">Menampilkan 10-20 data terbaru secara otomatis</p>
+                    <div class="px-4 sm:px-6 xl:px-7 py-4 border-b border-gray-200 bg-gray-50 w-full flex items-center justify-between gap-3">
+                        <h3 class="text-lg font-bold text-gray-900 text-left shrink-0">Data Langsung</h3>
+                        <p class="text-xs text-gray-500 text-right ml-auto leading-tight">Menampilkan 10-20 data terbaru secara otomatis</p>
                     </div>
                     <div class="overflow-x-auto">
                         <div class="max-h-64 overflow-y-auto" id="liveFeedContainer">
@@ -467,6 +469,25 @@
     </div>
 
     <style>
+        .realtime-page .multi-axis-chart-wrap {
+            height: 300px;
+            min-height: 300px;
+        }
+
+        @media (min-width: 640px) {
+            .realtime-page .multi-axis-chart-wrap {
+                height: 380px;
+                min-height: 380px;
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .realtime-page .multi-axis-chart-wrap {
+                height: 440px;
+                min-height: 440px;
+            }
+        }
+
         @media (max-width: 640px) {
             .realtime-page {
                 overflow-x: hidden;
@@ -1241,6 +1262,13 @@
                     }
                 }
             });
+
+            // Ensure chart recalculates size after section becomes visible.
+            setTimeout(() => {
+                if (multiAxisChart) {
+                    multiAxisChart.resize();
+                }
+            }, 60);
         }
 
         function addChartDataPoint(ax, ay, az) {
@@ -1491,11 +1519,14 @@
 
                 const lastAnomalyElem = document.getElementById('statLastAnomaly');
                 if (latestSummary.last_anomaly) {
-                    lastAnomalyElem.textContent = new Date(latestSummary.last_anomaly).toLocaleString('id-ID');
-                    lastAnomalyElem.className = 'text-2xl font-bold text-orange-600';
+                    const lastAnomalyText = new Date(latestSummary.last_anomaly).toLocaleString('id-ID');
+                    lastAnomalyElem.textContent = lastAnomalyText;
+                    lastAnomalyElem.title = lastAnomalyText;
+                    lastAnomalyElem.className = 'text-xs sm:text-sm font-semibold text-orange-600 truncate leading-tight';
                 } else {
                     lastAnomalyElem.textContent = 'No anomalies';
-                    lastAnomalyElem.className = 'text-2xl font-bold text-green-600';
+                    lastAnomalyElem.title = 'No anomalies';
+                    lastAnomalyElem.className = 'text-xs sm:text-sm font-semibold text-green-600 truncate leading-tight';
                 }
                 return;
             }
@@ -1510,11 +1541,14 @@
 
             const lastAnomalyElem = document.getElementById('statLastAnomaly');
             if (statistics.lastAnomaly) {
-                lastAnomalyElem.textContent = new Date(statistics.lastAnomaly).toLocaleString('id-ID');
-                lastAnomalyElem.className = 'text-2xl font-bold text-orange-600';
+                const lastAnomalyText = new Date(statistics.lastAnomaly).toLocaleString('id-ID');
+                lastAnomalyElem.textContent = lastAnomalyText;
+                lastAnomalyElem.title = lastAnomalyText;
+                lastAnomalyElem.className = 'text-xs sm:text-sm font-semibold text-orange-600 truncate leading-tight';
             } else {
                 lastAnomalyElem.textContent = 'No anomalies';
-                lastAnomalyElem.className = 'text-2xl font-bold text-green-600';
+                lastAnomalyElem.title = 'No anomalies';
+                lastAnomalyElem.className = 'text-xs sm:text-sm font-semibold text-green-600 truncate leading-tight';
             }
 
             const normalTimeFallback = statistics.totalReadings > 0
