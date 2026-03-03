@@ -13,10 +13,10 @@ class AlertManagementController extends Controller
      * Default threshold presets by class
      */
     private const THRESHOLD_PRESETS = [
-        'Class I' => ['warning' => 21.84, 'critical' => 25.11],
-        'Class II' => ['warning' => 21.84, 'critical' => 25.11],
-        'Class III' => ['warning' => 21.84, 'critical' => 25.11],
-        'Class IV' => ['warning' => 21.84, 'critical' => 25.11],
+        'Class I' => ['warning' => 25.0, 'critical' => 28.0],
+        'Class II' => ['warning' => 25.0, 'critical' => 28.0],
+        'Class III' => ['warning' => 25.0, 'critical' => 28.0],
+        'Class IV' => ['warning' => 25.0, 'critical' => 28.0],
     ];
 
     /**
@@ -43,8 +43,8 @@ class AlertManagementController extends Controller
     private function getMachineThreshold(Machine $machine): array
     {
         return [
-            'warning' => (float) ($machine->threshold_warning ?? 21.84),
-            'critical' => (float) ($machine->threshold_critical ?? 25.11),
+            'warning' => (float) ($machine->threshold_warning ?? 25.0),
+            'critical' => (float) ($machine->threshold_critical ?? 28.0),
         ];
     }
 
@@ -198,8 +198,8 @@ class AlertManagementController extends Controller
                     'name' => $machine->name,
                     'location' => $machine->location,
                     'alert_count' => $machine->alert_count,
-                    'threshold_warning' => (float) ($machine->threshold_warning ?? 21.84),
-                    'threshold_critical' => (float) ($machine->threshold_critical ?? 25.11),
+                    'threshold_warning' => (float) ($machine->threshold_warning ?? 25.0),
+                    'threshold_critical' => (float) ($machine->threshold_critical ?? 28.0),
                     'iso_class' => $machine->iso_class ?? 'Class II',
                     'motor_power_hp' => $machine->motor_power_hp,
                 ];
@@ -385,8 +385,8 @@ class AlertManagementController extends Controller
                 'config' => [
                     'machine_id' => $machine->id,
                     'machine_name' => $machine->name,
-                    'warning' => (float) ($machine->threshold_warning ?? 21.84),
-                    'critical' => (float) ($machine->threshold_critical ?? 25.11),
+                    'warning' => (float) ($machine->threshold_warning ?? 25.0),
+                    'critical' => (float) ($machine->threshold_critical ?? 28.0),
                     'motor_power_hp' => $machine->motor_power_hp,
                     'motor_rpm' => $machine->motor_rpm,
                     'iso_class' => $machine->iso_class ?? 'Class II',
@@ -451,8 +451,8 @@ class AlertManagementController extends Controller
                     'id' => $machine->id,
                     'name' => $machine->name,
                     'location' => $machine->location,
-                    'threshold_warning' => (float) ($machine->threshold_warning ?? 21.84),
-                    'threshold_critical' => (float) ($machine->threshold_critical ?? 25.11),
+                    'threshold_warning' => (float) ($machine->threshold_warning ?? 25.0),
+                    'threshold_critical' => (float) ($machine->threshold_critical ?? 28.0),
                     'motor_power_hp' => $machine->motor_power_hp,
                     'motor_rpm' => $machine->motor_rpm,
                     'iso_class' => $machine->iso_class ?? 'Class II',
@@ -659,3 +659,6 @@ class AlertManagementController extends Controller
         return 'Normal';
     }
 }
+
+
+

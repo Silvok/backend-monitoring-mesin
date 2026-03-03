@@ -23,11 +23,11 @@ function check($label, $ok, $details = '') {
 }
 
 // Target thresholds (adjust if needed)
-$targetWarning = 21.84;
-$targetCritical = 25.11;
+$targetWarning = 25.0;
+$targetCritical = 28.0;
 
 // DB config
-$dbHost = envValue('DB_HOST', '127.0.0.1');
+$dbHost = envValue('DB_HOST', '128.0.0.1');
 $dbPort = envValue('DB_PORT', '3306');
 $dbName = envValue('DB_DATABASE', '');
 $dbUser = envValue('DB_USERNAME', '');
@@ -105,3 +105,6 @@ if (count($badHits) > 5) {
 }
 
 echo PHP_EOL . "Checklist finished." . PHP_EOL;
+
+
+

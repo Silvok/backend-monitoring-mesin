@@ -44,4 +44,23 @@ class SettingsController extends Controller
             'sampling_interval_minutes' => (int) $validated['sampling_interval_minutes'],
         ]);
     }
+
+    public function updateMachineStatus(Request $request)
+    {
+        $validated = $request->validate([
+            'machine_id' => 'required|exists:machines,id',
+            'is_active' => 'required|boolean',
+        ]);
+
+        $machine = Machine::findOrFail($validated['machine_id']);
+        $machine->is_active = (bool) $validated['is_active'];
+        $machine->save();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Machine status updated.',
+            'machine_id' => (int) $machine->id,
+            'is_active' => (bool) $machine->is_active,
+        ]);
+    }
 }

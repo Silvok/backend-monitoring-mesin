@@ -33,8 +33,8 @@ class DashboardController extends Controller
                     $rmsValue = $latest ? $latest->rms : 0;
 
                     // Use per-machine threshold from database
-                    $warningThreshold = (float) ($machine->threshold_warning ?? 21.84);
-                    $criticalThreshold = (float) ($machine->threshold_critical ?? 25.11);
+                    $warningThreshold = (float) ($machine->threshold_warning ?? 25.0);
+                    $criticalThreshold = (float) ($machine->threshold_critical ?? 28.0);
 
                     // Calculate status based on per-machine thresholds
                     $status = 'UNKNOWN';
@@ -52,6 +52,7 @@ class DashboardController extends Controller
                         'id' => $machine->id,
                         'name' => $machine->name,
                         'location' => $machine->location,
+                        'is_active' => (bool) $machine->is_active,
                         'status' => $status,
                         'rms' => $rmsValue,
                         'peak_amp' => $latest ? $latest->peak_amp : 0,
@@ -73,8 +74,8 @@ class DashboardController extends Controller
                 ->map(function ($analysis) {
                     // Use per-machine threshold from database
                     $machine = $analysis->machine;
-                    $warningThreshold = (float) ($machine->threshold_warning ?? 21.84);
-                    $criticalThreshold = (float) ($machine->threshold_critical ?? 25.11);
+                    $warningThreshold = (float) ($machine->threshold_warning ?? 25.0);
+                    $criticalThreshold = (float) ($machine->threshold_critical ?? 28.0);
 
                     $severity = 'medium';
                     if ($analysis->rms >= $criticalThreshold) $severity = 'critical';  // Danger zone
@@ -101,8 +102,8 @@ class DashboardController extends Controller
                 ->map(function($analysis) {
                     // Use per-machine threshold from database
                     $machine = $analysis->machine;
-                    $warningThreshold = (float) ($machine->threshold_warning ?? 21.84);
-                    $criticalThreshold = (float) ($machine->threshold_critical ?? 25.11);
+                    $warningThreshold = (float) ($machine->threshold_warning ?? 25.0);
+                    $criticalThreshold = (float) ($machine->threshold_critical ?? 28.0);
 
                     $severity = 'low';
                     if ($analysis->rms >= $criticalThreshold) $severity = 'critical';  // Danger zone
@@ -370,8 +371,8 @@ class DashboardController extends Controller
         // Use per-machine threshold from database
         $machine = Machine::find($machineId);
         $thresholds = [
-            'warning' => (float) ($machine->threshold_warning ?? 21.84),
-            'critical' => (float) ($machine->threshold_critical ?? 25.11)
+            'warning' => (float) ($machine->threshold_warning ?? 25.0),
+            'critical' => (float) ($machine->threshold_critical ?? 28.0)
         ];
         $machineStatus = 'NORMAL';
 
@@ -499,8 +500,8 @@ class DashboardController extends Controller
             $machine = Machine::findOrFail($id);
 
             // Get per-machine threshold from database
-            $warningThreshold = (float) ($machine->threshold_warning ?? 21.84);
-            $criticalThreshold = (float) ($machine->threshold_critical ?? 25.11);
+            $warningThreshold = (float) ($machine->threshold_warning ?? 25.0);
+            $criticalThreshold = (float) ($machine->threshold_critical ?? 28.0);
 
             // Get recent anomaly analyses as alerts
             $alerts = AnalysisResult::where('machine_id', $id)
@@ -539,3 +540,6 @@ class DashboardController extends Controller
         }
     }
 }
+
+
+

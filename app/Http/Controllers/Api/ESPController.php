@@ -33,11 +33,19 @@ class ESPController extends Controller
                 }
             }
 
+            $machine = null;
             if ($machineId) {
-                Machine::firstOrCreate(
+                $machine = Machine::firstOrCreate(
                     ['id' => $machineId],
-                    ['name' => 'Machine ' . $machineId]
+                    ['name' => 'Machine ' . $machineId, 'is_active' => true]
                 );
+                if ($machine && !$machine->is_active) {
+                    return response()->json([
+                        'status' => 'ignored',
+                        'reason' => 'machine_off',
+                        'machine_id' => $machineId,
+                    ], 202);
+                }
             }
 
             $isSamplePayload = (isset($data['data']) && is_array($data['data']))

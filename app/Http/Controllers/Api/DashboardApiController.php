@@ -60,8 +60,8 @@ class DashboardApiController extends Controller
                         $rmsValue = $latest ? $latest->rms : 0;
 
                         // Use per-machine threshold from database
-                        $warningThreshold = (float) ($machine->threshold_warning ?? 21.84);
-                        $criticalThreshold = (float) ($machine->threshold_critical ?? 25.11);
+                        $warningThreshold = (float) ($machine->threshold_warning ?? 25.0);
+                        $criticalThreshold = (float) ($machine->threshold_critical ?? 28.0);
 
                         // Calculate status based on per-machine thresholds
                         $status = 'UNKNOWN';
@@ -79,6 +79,7 @@ class DashboardApiController extends Controller
                             'id' => $machine->id,
                             'name' => $machine->name,
                             'location' => $machine->location,
+                            'is_active' => (bool) $machine->is_active,
                             'status' => $status,
                             'rms' => $rmsValue,
                             'peak_amp' => $latest ? $latest->peak_amp : 0,
@@ -129,8 +130,8 @@ class DashboardApiController extends Controller
                 return $query->map(function($analysis) {
                     // Use per-machine threshold from database
                     $machine = $analysis->machine;
-                    $warningThreshold = (float) ($machine->threshold_warning ?? 21.84);
-                    $criticalThreshold = (float) ($machine->threshold_critical ?? 25.11);
+                    $warningThreshold = (float) ($machine->threshold_warning ?? 25.0);
+                    $criticalThreshold = (float) ($machine->threshold_critical ?? 28.0);
 
                     $severity = 'low';
                     if ($analysis->rms >= $criticalThreshold) {
@@ -180,8 +181,8 @@ class DashboardApiController extends Controller
             $latestAnalysis = $machine->latestAnalysis;
 
             // Use per-machine threshold from database
-            $warningThreshold = (float) ($machine->threshold_warning ?? 21.84);
-            $criticalThreshold = (float) ($machine->threshold_critical ?? 25.11);
+            $warningThreshold = (float) ($machine->threshold_warning ?? 25.0);
+            $criticalThreshold = (float) ($machine->threshold_critical ?? 28.0);
 
             // Determine status based on per-machine threshold
             $rmsValue = $latestAnalysis ? round($latestAnalysis->rms, 4) : 0;
@@ -589,3 +590,6 @@ class DashboardApiController extends Controller
             ], 500);
         }
     }}
+
+
+

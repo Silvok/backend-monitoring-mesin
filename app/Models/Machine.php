@@ -10,6 +10,7 @@ class Machine extends Model
     protected $fillable = [
         'name',
         'location',
+        'is_active',
         'threshold_warning',
         'threshold_critical',
         'motor_power_hp',
@@ -22,6 +23,7 @@ class Machine extends Model
         'threshold_critical' => 'decimal:2',
         'motor_power_hp' => 'decimal:2',
         'motor_rpm' => 'integer',
+        'is_active' => 'boolean',
     ];
 
     /**
@@ -30,8 +32,8 @@ class Machine extends Model
     public function getThresholdConfig(): array
     {
         return [
-            'warning' => (float) ($this->threshold_warning ?? 21.84),
-            'critical' => (float) ($this->threshold_critical ?? 25.11),
+            'warning' => (float) ($this->threshold_warning ?? 25.0),
+            'critical' => (float) ($this->threshold_critical ?? 28.0),
         ];
     }
 
@@ -85,3 +87,6 @@ class Machine extends Model
         return $this->hasOne(AnalysisResult::class)->latestOfMany();
     }
 }
+
+
+

@@ -139,42 +139,75 @@
     </div>
 
     <!-- Mobile Navigation Menu -->
-    <div :class="{'block': open, 'hidden': !open}" class="hidden sm:hidden border-t-2"
-        style="background-color: #275640; border-top-color: #1e4030;">
+    <div :class="{'block': open, 'hidden': !open}" class="hidden sm:hidden border-t border-emerald-900/40"
+        style="background: linear-gradient(180deg, #275640 0%, #214b39 100%);">
         <div class="px-4 pt-2 pb-3 space-y-1">
             <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')"
-                class="text-white hover:bg-white/10 hover:text-white">
+                class="text-emerald-50 hover:bg-white/10 hover:text-white">
                 {{ __('messages.app.dashboard') }}
             </x-responsive-nav-link>
 
-            <x-responsive-nav-link :href="route('real-time-sensor')" :active="request()->routeIs('real-time-sensor')"
-                class="text-white hover:bg-white/10 hover:text-white">
-                {{ __('messages.app.realtime') }}
-            </x-responsive-nav-link>
+            <div class="pt-3 pb-1 border-t border-emerald-900/40 mt-2">
+                <div class="px-4 text-[11px] font-semibold text-white uppercase tracking-wider mb-2">{{ __('messages.app.monitoring') }}</div>
+                <x-responsive-nav-link :href="route('real-time-sensor')" :active="request()->routeIs('real-time-sensor')"
+                    class="text-emerald-50 hover:bg-white/10 hover:text-white">
+                    {{ __('messages.app.realtime') }}
+                </x-responsive-nav-link>
 
-            <x-responsive-nav-link :href="route('monitoring-mesin')" :active="request()->routeIs('monitoring-mesin')"
-                class="text-white hover:bg-white/10 hover:text-white">
-                {{ __('messages.app.monitoring_machine') }}
-            </x-responsive-nav-link>
+                <x-responsive-nav-link :href="route('monitoring-mesin')" :active="request()->routeIs('monitoring-mesin')"
+                    class="text-emerald-50 hover:bg-white/10 hover:text-white">
+                    {{ __('messages.app.monitoring_machine') }}
+                </x-responsive-nav-link>
 
-            <div class="pt-2 pb-1 border-t border-emerald-800/50 mt-2">
-                <div class="px-4 text-xs font-semibold text-emerald-200/50 uppercase tracking-wider mb-2">{{ __('messages.app.alerts_settings') }}</div>
-                <a href="#"
-                    class="block pl-3 pr-4 py-2 border-l-4 border-transparent text-base font-medium text-emerald-100 hover:text-white hover:bg-emerald-800/50 hover:border-emerald-300 transition duration-150 ease-in-out">
-                    Anomali
-                </a>
-                <a href="#"
-                    class="block pl-3 pr-4 py-2 border-l-4 border-transparent text-base font-medium text-emerald-100 hover:text-white hover:bg-emerald-800/50 hover:border-emerald-300 transition duration-150 ease-in-out">
-                    Pengaturan
-                </a>
+                <x-responsive-nav-link :href="route('parameter-monitoring')" :active="request()->routeIs('parameter-monitoring')"
+                    class="text-emerald-50 hover:bg-white/10 hover:text-white">
+                    {{ __('messages.app.parameter_monitoring') }}
+                </x-responsive-nav-link>
             </div>
+
+            <div class="pt-3 pb-1 border-t border-emerald-900/40 mt-2">
+                <div class="px-4 text-[11px] font-semibold text-white uppercase tracking-wider mb-2">Analisis &amp; Laporan</div>
+                <x-responsive-nav-link :href="route('monthly-report')" :active="request()->routeIs('monthly-report')"
+                    class="text-emerald-50 hover:bg-white/10 hover:text-white">
+                    Laporan Bulanan
+                </x-responsive-nav-link>
+            </div>
+
+            <div class="pt-3 pb-1 border-t border-emerald-900/40 mt-2">
+                <div class="px-4 text-[11px] font-semibold text-white uppercase tracking-wider mb-2">{{ __('messages.app.alerts') }}</div>
+                <x-responsive-nav-link :href="route('alert-management')" :active="request()->routeIs('alert-management')"
+                    class="text-emerald-50 hover:bg-white/10 hover:text-white">
+                    {{ __('messages.app.alert_management') }}
+                </x-responsive-nav-link>
+            </div>
+
+            @if(in_array(Auth::user()->role, ['admin', 'super_admin'], true))
+                <div class="pt-3 pb-1 border-t border-emerald-900/40 mt-2">
+                    <div class="px-4 text-[11px] font-semibold text-white uppercase tracking-wider mb-2">{{ __('messages.app.settings') }}</div>
+                    <x-responsive-nav-link :href="route('settings')" :active="request()->routeIs('settings')"
+                        class="text-emerald-50 hover:bg-white/10 hover:text-white">
+                        {{ __('messages.app.settings') }}
+                    </x-responsive-nav-link>
+                    <x-responsive-nav-link :href="route('user-management')" :active="request()->routeIs('user-management')"
+                        class="text-emerald-50 hover:bg-white/10 hover:text-white">
+                        {{ __('messages.app.user_management') }}
+                    </x-responsive-nav-link>
+                    @if(Auth::user()->role === 'super_admin')
+                        <x-responsive-nav-link :href="route('role-management')" :active="request()->routeIs('role-management')"
+                            class="text-emerald-50 hover:bg-white/10 hover:text-white">
+                            Role Management
+                        </x-responsive-nav-link>
+                    @endif
+                </div>
+            @endif
+
         </div>
 
         <!-- Mobile User Menu -->
-        <div class="pt-4 pb-3 border-t" style="border-top-color: #31694E;">
+        <div class="pt-4 pb-3 border-t border-emerald-900/40">
             <div class="px-4 py-2">
                 <p class="text-sm font-semibold text-white">{{ Auth::user()->name }}</p>
-                <p class="text-xs text-gray-200">{{ Auth::user()->email }}</p>
+                <p class="text-xs text-white">{{ Auth::user()->email }}</p>
             </div>
             <div class="mt-3 space-y-1">
                 <a href="{{ route('profile.edit') }}"
@@ -186,7 +219,7 @@
                     <span>{{ __('messages.app.profile') }}</span>
                 </a>
                 <a href="{{ route('logout') }}"
-                    class="block w-full text-left px-4 py-2 rounded text-red-300 hover:bg-white/10 transition flex items-center space-x-2">
+                    class="block w-full text-left px-4 py-2 rounded text-white hover:bg-white/10 transition flex items-center space-x-2">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />

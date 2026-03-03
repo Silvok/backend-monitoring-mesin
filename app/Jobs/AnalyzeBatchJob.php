@@ -289,8 +289,8 @@ class AnalyzeBatchJob implements ShouldQueue
             }
 
             $machineId = $samples->first()->machine_id ?? null;
-            $warningThreshold = 21.84;
-            $criticalThreshold = 25.11;
+            $warningThreshold = 25.0;
+            $criticalThreshold = 28.0;
             $machine = null;
             if ($machineId) {
                 $machine = Machine::find($machineId);
@@ -398,3 +398,6 @@ class AnalyzeBatchJob implements ShouldQueue
     }
     // ...existing code...
 }
+
+
+

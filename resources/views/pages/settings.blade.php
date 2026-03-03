@@ -172,16 +172,28 @@
                                         <select id="machineSelect" class="mt-2 w-full rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-700 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500">
                                             @foreach($machines as $machine)
                                                 <option value="{{ $machine->id }}"
-                                                    data-warning="{{ $machine->threshold_warning ?? 21.84 }}"
-                                                    data-critical="{{ $machine->threshold_critical ?? 25.11 }}"
+                                                    data-warning="{{ $machine->threshold_warning ?? 25.0 }}"
+                                                    data-critical="{{ $machine->threshold_critical ?? 28.0 }}"
                                                     data-hp="{{ $machine->motor_power_hp ?? '' }}"
                                                     data-rpm="{{ $machine->motor_rpm ?? '' }}"
-                                                    data-iso="{{ $machine->iso_class ?? 'Class II' }}">
+                                                    data-iso="{{ $machine->iso_class ?? 'Class II' }}"
+                                                    data-active="{{ $machine->is_active ? '1' : '0' }}">
                                                     {{ $machine->name }}
                                                 </option>
                                             @endforeach
                                         </select>
                                     </div>
+                                    <div class="flex items-center justify-between rounded-lg border border-gray-200 bg-white px-3 py-2">
+                                        <div>
+                                            <p class="text-xs font-semibold text-gray-500 uppercase tracking-widest">Status Mesin</p>
+                                            <p id="machineStatusText" class="text-sm text-gray-700">Aktif</p>
+                                        </div>
+                                        <button type="button" id="machineToggleBtn"
+                                            class="px-3 py-1.5 rounded-full text-xs font-semibold bg-emerald-600 text-white hover:bg-emerald-700">
+                                            ON
+                                        </button>
+                                    </div>
+                                    <p id="machineStatusMsg" class="text-xs text-gray-500"></p>
                                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                                         <div>
                                             <label class="text-xs font-semibold text-gray-500 uppercase tracking-widest">{{ __('messages.settings.warning') }}</label>
@@ -228,11 +240,11 @@
                                     </div>
                                     <div class="p-3 rounded-xl border border-gray-100 bg-white">
                                         <p class="text-xs font-semibold text-gray-500 uppercase tracking-widest">{{ __('messages.settings.default_warning') }}</p>
-                                        <p class="mt-2 text-sm text-gray-700">21.84 mm/s</p>
+                                        <p class="mt-2 text-sm text-gray-700">25.0 mm/s</p>
                                     </div>
                                     <div class="p-3 rounded-xl border border-gray-100 bg-white">
                                         <p class="text-xs font-semibold text-gray-500 uppercase tracking-widest">{{ __('messages.settings.default_critical') }}</p>
-                                        <p class="mt-2 text-sm text-gray-700">25.11 mm/s</p>
+                                        <p class="mt-2 text-sm text-gray-700">28.0 mm/s</p>
                                     </div>
                                 </div>
                             </div>
@@ -467,6 +479,9 @@
             const isoSelect = document.getElementById('machineIso');
             const form = document.getElementById('machineThresholdForm');
             const msg = document.getElementById('thresholdMessage');
+            const toggleBtn = document.getElementById('machineToggleBtn');
+            const statusText = document.getElementById('machineStatusText');
+            const statusMsg = document.getElementById('machineStatusMsg');
             const samplingSelect = document.getElementById('samplingIntervalSelect');
             const samplingSaveBtn = document.getElementById('saveSamplingInterval');
             const samplingMsg = document.getElementById('samplingIntervalMsg');
@@ -494,16 +509,75 @@
                 if (!machineSelect) return;
                 const option = machineSelect.options[machineSelect.selectedIndex];
                 if (!option) return;
-                warningInput.value = option.getAttribute('data-warning') || 21.84;
-                criticalInput.value = option.getAttribute('data-critical') || 25.11;
+                warningInput.value = option.getAttribute('data-warning') || 25.0;
+                criticalInput.value = option.getAttribute('data-critical') || 28.0;
                 hpInput.value = option.getAttribute('data-hp') || '';
                 rpmInput.value = option.getAttribute('data-rpm') || '';
                 isoSelect.value = option.getAttribute('data-iso') || 'Class II';
+
+                const activeFlag = option.getAttribute('data-active') === '1';
+                if (toggleBtn && statusText) {
+                    statusText.textContent = activeFlag ? 'Aktif' : 'Nonaktif';
+                    toggleBtn.textContent = activeFlag ? 'ON' : 'OFF';
+                    toggleBtn.className = activeFlag
+                        ? 'px-3 py-1.5 rounded-full text-xs font-semibold bg-emerald-600 text-white hover:bg-emerald-700'
+                        : 'px-3 py-1.5 rounded-full text-xs font-semibold bg-gray-300 text-gray-700 hover:bg-gray-400';
+                    toggleBtn.dataset.active = activeFlag ? '1' : '0';
+                }
+                if (statusMsg) {
+                    statusMsg.textContent = '';
+                }
             }
 
             if (machineSelect) {
                 machineSelect.addEventListener('change', loadMachineValues);
                 loadMachineValues();
+            }
+
+            if (toggleBtn && machineSelect) {
+                toggleBtn.addEventListener('click', function () {
+                    const option = machineSelect.options[machineSelect.selectedIndex];
+                    if (!option) return;
+                    const nextActive = option.getAttribute('data-active') !== '1';
+                    if (statusMsg) {
+                        statusMsg.textContent = 'Menyimpan status...';
+                        statusMsg.className = 'text-xs text-gray-500';
+                    }
+
+                    fetch('/api/settings/machine-status', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                        },
+                        body: JSON.stringify({
+                            machine_id: machineSelect.value,
+                            is_active: nextActive
+                        })
+                    })
+                        .then(res => res.json())
+                        .then(data => {
+                            if (data.success) {
+                                option.setAttribute('data-active', data.is_active ? '1' : '0');
+                                loadMachineValues();
+                                if (statusMsg) {
+                                    statusMsg.textContent = 'Status tersimpan.';
+                                    statusMsg.className = 'text-xs text-emerald-600';
+                                }
+                            } else {
+                                if (statusMsg) {
+                                    statusMsg.textContent = data.message || 'Gagal menyimpan.';
+                                    statusMsg.className = 'text-xs text-red-600';
+                                }
+                            }
+                        })
+                        .catch(() => {
+                            if (statusMsg) {
+                                statusMsg.textContent = 'Gagal menyimpan.';
+                                statusMsg.className = 'text-xs text-red-600';
+                            }
+                        });
+                });
             }
 
             if (form) {
@@ -583,3 +657,6 @@
     </script>
     @endpush
 </x-app-layout>
+
+
+

@@ -1,12 +1,12 @@
 <x-app-layout>
     <x-slot name="header">
-        <div class="flex items-center justify-between">
-            <div class="flex items-center space-x-8">
-                <h2 class="font-bold text-xl text-emerald-900">
+        <div class="w-full flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+            <div class="flex flex-wrap items-center gap-3 lg:flex-1 lg:justify-start">
+                <h2 class="font-bold text-lg sm:text-xl text-emerald-900">
                     Monitoring &amp; Analisis Mesin
                 </h2>
                 <!-- Live Status Indicator -->
-                <div class="flex items-center space-x-2 px-3 py-1.5 bg-emerald-50 rounded-full border border-emerald-200">
+                <div class="flex items-center gap-2 px-3 py-1.5 bg-emerald-50 rounded-full border border-emerald-200">
                     <div class="relative flex h-3 w-3">
                         <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
                         <span class="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
@@ -14,76 +14,78 @@
                     <span class="text-xs font-semibold text-emerald-700">Terhubung</span>
                 </div>
             </div>
-            <div class="flex items-center space-x-3">
-                <div class="text-sm text-gray-600 bg-gray-50 px-3 py-1.5 rounded-lg border border-gray-200">
+            <div class="flex flex-wrap items-center gap-2 lg:ml-auto lg:justify-end lg:w-auto">
+                <div class="text-xs sm:text-sm text-gray-600 bg-gray-50 px-2.5 sm:px-3 py-1.5 rounded-lg border border-gray-200">
                     <span class="font-semibold" id="currentTime">{{ now()->format('d M Y, H:i:s') }}</span>
                 </div>
             </div>
         </div>
     </x-slot>
 
-    <div class="py-8">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+    <div class="py-6 sm:py-8 realtime-page">
+        <div class="w-full max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 xl:px-10 min-w-0 space-y-6">
 
             <!-- Machine Selector -->
-            <div class="mb-6">
-                <div class="bg-white/90 backdrop-blur rounded-2xl shadow-sm border border-slate-200 p-6">
+            <div>
+                <div class="bg-white/90 backdrop-blur rounded-2xl shadow-sm border border-slate-200 p-4 sm:p-6 xl:p-7 w-full min-w-0">
                     <label for="machineSelector" class="block text-xs font-semibold text-slate-600 uppercase tracking-wide mb-2">
                         Pilih Mesin
                     </label>
-                    <div class="flex flex-col md:flex-row md:items-center gap-3">
-                        <select id="machineSelector" class="w-full md:w-1/2 px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-slate-900 font-semibold bg-white">
+                    <div class="grid grid-cols-1 lg:grid-cols-[minmax(0,560px)_1fr] gap-3 lg:gap-4 lg:items-center">
+                        <select id="machineSelector" class="w-full min-w-0 px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-slate-900 font-semibold bg-white truncate">
                             <option value="">-- Pilih Mesin --</option>
                             @foreach($machines as $machine)
                                 <option value="{{ $machine->id }}"
                                     data-status="{{ $machine->latestAnalysis?->condition_status ?? 'TIDAK DIKETAHUI' }}"
                                     data-location="{{ $machine->location }}">
-                                    {{ $machine->name }}@if($machine->location) ({{ $machine->location }})@endif
+                                    {{ $machine->name }}
                                 </option>
                             @endforeach
                         </select>
-                        <p class="text-xs text-slate-500">Pilih mesin untuk mulai streaming data sensor.</p>
+                        <p class="text-xs text-slate-500 lg:text-sm lg:pl-1">Pilih mesin untuk mulai streaming data sensor.</p>
                     </div>
                 </div>
             </div>
 
             <!-- Machine Status Card -->
-            <div id="machineStatusCard" class="mb-6 hidden">
-                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+            <div id="machineStatusCard" class="hidden">
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-visible sm:overflow-hidden w-full min-w-0">
                     <!-- Status Bar -->
                     <div id="statusBar" class="h-1.5 bg-gray-300"></div>
 
-                    <div class="p-6">
-                        <div class="flex items-start justify-between mb-6">
-                            <div>
-                                <h3 id="machineName" class="text-2xl font-bold text-gray-900 mb-2">-</h3>
-                                <p id="machineLocation" class="text-sm text-gray-600">Lokasi: -</p>
-                            </div>
-                            <div class="flex items-center space-x-3">
-                                <span id="statusBadge" class="px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wide bg-gray-200 text-gray-700">
-                                    TIDAK DIKETAHUI
-                                </span>
-                                <div id="statusIcon" class="w-11 h-11 rounded-xl bg-gray-100 flex items-center justify-center border border-gray-200">
-                                    <svg class="w-6 h-6 text-gray-600" fill="currentColor" viewBox="0 0 20 20">
-                                        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
-                                    </svg>
+                    <div class="p-4 sm:p-6 xl:p-7">
+                        <div class="mb-6">
+                            <div class="flex items-start justify-between gap-3">
+                                <h3 id="machineName" class="text-2xl font-bold text-gray-900 leading-tight">-</h3>
+                                <div class="flex items-center gap-3 shrink-0">
+                                    <span id="statusBadge" class="px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wide bg-gray-200 text-gray-700">
+                                        TIDAK DIKETAHUI
+                                    </span>
+                                    <div id="statusIcon" class="w-10 h-10 rounded-xl bg-gray-100 flex items-center justify-center border border-gray-200">
+                                        <svg class="w-6 h-6 text-gray-600" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+                                        </svg>
+                                    </div>
                                 </div>
                             </div>
+                            <p id="machineLocation" class="text-sm text-gray-600 mt-2">Lokasi: -</p>
                         </div>
 
                         <!-- Metrics Grid -->
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-                            <div class="bg-white rounded-xl p-4 border border-slate-200 shadow-sm">
+                        <div class="mb-6 -mx-1 px-1 overflow-x-auto sm:overflow-visible">
+                            <div class="grid grid-flow-col auto-cols-[minmax(150px,1fr)] sm:grid-flow-row sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
+                            <div class="bg-white rounded-xl p-3 sm:p-4 border border-slate-200 shadow-sm">
                                 <p class="text-[11px] font-semibold text-slate-500 mb-2 uppercase tracking-wide">RMS Value</p>
-                                <p id="rmsValue" class="text-2xl font-extrabold text-slate-900">0.0000</p>
+                                <p id="rmsValue" class="text-xl sm:text-2xl font-extrabold text-slate-900">0.0000</p>
                             </div>
-                            <div class="bg-white rounded-xl p-4 border border-slate-200 shadow-sm">
+                            <div class="bg-white rounded-xl p-3 sm:p-4 border border-slate-200 shadow-sm">
                                 <p class="text-[11px] font-semibold text-slate-500 mb-2 uppercase tracking-wide">Peak Amplitude</p>
-                                <p id="peakValue" class="text-2xl font-extrabold text-slate-900">0.0000</p>
+                                <p id="peakValue" class="text-xl sm:text-2xl font-extrabold text-slate-900">0.0000</p>
                             </div>
-                            <div class="bg-white rounded-xl p-4 border border-slate-200 shadow-sm">
+                            <div class="bg-white rounded-xl p-3 sm:p-4 border border-slate-200 shadow-sm">
                                 <p class="text-[11px] font-semibold text-slate-500 mb-2 uppercase tracking-wide">Frequency</p>
-                                <p id="freqValue" class="text-2xl font-extrabold text-slate-900">0 Hz</p>
+                                <p id="freqValue" class="text-xl sm:text-2xl font-extrabold text-slate-900">0 Hz</p>
+                            </div>
                             </div>
                         </div>
 
@@ -97,11 +99,11 @@
             </div>
 
             <!-- Quick Stats Cards - Simplified & Modern -->
-            <div id="quickStatsSection" class="mb-6 hidden">
-                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
-                    <div class="flex items-center justify-between mb-4">
-                        <h3 class="text-sm font-semibold text-slate-700">Ringkasan Hari Ini</h3>
-                        <div class="flex items-center space-x-1 text-xs text-slate-500">
+            <div id="quickStatsSection" class="hidden">
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-4 sm:p-6 xl:p-7 w-full min-w-0">
+                    <div class="w-full flex flex-wrap items-center justify-between gap-2 mb-4">
+                        <h3 class="text-sm font-semibold text-slate-700 text-left">Ringkasan Hari Ini</h3>
+                        <div class="flex items-center gap-1 text-xs text-slate-500 sm:ml-auto">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                             </svg>
@@ -109,42 +111,42 @@
                         </div>
                     </div>
 
-                    <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-3 sm:gap-5 xl:gap-6">
                         <!-- Total Readings -->
-                        <div class="text-center rounded-xl border border-slate-200 bg-slate-50/80 p-4">
+                        <div class="text-center rounded-xl border border-slate-200 bg-slate-50/80 p-3 sm:p-4">
                             <div class="inline-flex items-center justify-center w-11 h-11 rounded-full bg-blue-50 mb-3">
                                 <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
                                 </svg>
                             </div>
-                            <p id="statReadings" class="text-3xl font-extrabold text-slate-900 mb-1">0</p>
+                            <p id="statReadings" class="text-2xl sm:text-3xl font-extrabold text-slate-900 mb-1">0</p>
                             <p class="text-xs text-slate-500 font-medium">Pembacaan</p>
                         </div>
 
                         <!-- Uptime -->
-                        <div class="text-center rounded-xl border border-slate-200 bg-slate-50/80 p-4">
+                        <div class="text-center rounded-xl border border-slate-200 bg-slate-50/80 p-3 sm:p-4">
                             <div class="inline-flex items-center justify-center w-11 h-11 rounded-full bg-emerald-50 mb-3">
                                 <svg class="w-6 h-6 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                                 </svg>
                             </div>
-                            <p id="statUptime" class="text-3xl font-extrabold text-emerald-600 mb-1">--%</p>
+                            <p id="statUptime" class="text-2xl sm:text-3xl font-extrabold text-emerald-600 mb-1">--%</p>
                             <p class="text-xs text-slate-500 font-medium">Waktu Aktif</p>
                         </div>
 
                         <!-- Normal State -->
-                        <div class="text-center rounded-xl border border-slate-200 bg-slate-50/80 p-4">
+                        <div class="text-center rounded-xl border border-slate-200 bg-slate-50/80 p-3 sm:p-4">
                             <div class="inline-flex items-center justify-center w-11 h-11 rounded-full bg-indigo-50 mb-3">
                                 <svg class="w-6 h-6 text-purple-600" fill="currentColor" viewBox="0 0 20 20">
                                     <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
                                 </svg>
                             </div>
-                            <p id="statNormalTime" class="text-3xl font-extrabold text-indigo-600 mb-1">--%</p>
+                            <p id="statNormalTime" class="text-2xl sm:text-3xl font-extrabold text-indigo-600 mb-1">--%</p>
                             <p class="text-xs text-slate-500 font-medium">Normal</p>
                         </div>
 
                         <!-- Last Anomaly -->
-                        <div class="text-center rounded-xl border border-slate-200 bg-slate-50/80 p-4">
+                        <div class="text-center rounded-xl border border-slate-200 bg-slate-50/80 p-3 sm:p-4">
                             <div class="inline-flex items-center justify-center w-11 h-11 rounded-full bg-orange-50 mb-3">
                                 <svg class="w-6 h-6 text-orange-600" fill="currentColor" viewBox="0 0 20 20">
                                     <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
@@ -158,12 +160,12 @@
             </div>
 
             <!-- Real-time Sensor Values -->
-            <div id="sensorValuesSection" class="mb-6 hidden">
-                <div class="bg-white rounded-2xl shadow-sm border border-slate-200/70 overflow-hidden">
-                    <div class="px-6 py-4 border-b border-slate-200 bg-slate-50">
-                        <div class="flex items-center justify-between">
-                            <h3 class="text-lg font-bold text-gray-900">Nilai Sensor Real-Time</h3>
-                            <div class="flex items-center space-x-2 px-3 py-1 bg-white rounded-full border border-emerald-200 shadow-sm">
+            <div id="sensorValuesSection" class="hidden">
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-200/70 overflow-visible sm:overflow-hidden w-full min-w-0">
+                    <div class="px-4 sm:px-6 xl:px-7 py-4 border-b border-slate-200 bg-slate-50">
+                        <div class="w-full flex flex-wrap items-center justify-between gap-2">
+                            <h3 class="text-lg font-bold text-gray-900 text-left">Nilai Sensor Real-Time</h3>
+                            <div class="flex items-center gap-2 px-3 py-1 bg-white rounded-full border border-emerald-200 shadow-sm sm:ml-auto">
                                 <div class="relative flex h-2 w-2">
                                     <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
                                     <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
@@ -173,18 +175,18 @@
                         </div>
                     </div>
 
-                    <div class="p-6">
+                    <div class="p-4 sm:p-6 xl:p-7">
                         <!-- Acceleration 3-Axis Display -->
                         <div class="mb-6">
                             <h4 class="text-sm font-bold text-gray-700 mb-4 uppercase tracking-wide">Percepatan (G-Force)</h4>
-                            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
                                 <!-- AX Card -->
                                 <div class="relative">
-                                    <div id="axCard" class="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm transition-all duration-300">
+                                    <div id="axCard" class="bg-white rounded-2xl p-4 sm:p-5 border border-slate-200 shadow-sm transition-all duration-300 w-full min-w-0">
                                         <div class="flex items-start justify-between mb-4">
                                             <div>
                                                 <p class="text-xs font-bold text-gray-600 mb-1">SUMBU X</p>
-                                                <p id="axValue" class="text-4xl font-bold text-gray-900">0.0000</p>
+                                                <p id="axValue" class="text-3xl sm:text-4xl font-bold text-gray-900">0.0000</p>
                                                 <p class="text-xs text-gray-500 mt-1">G</p>
                                             </div>
                                             <div id="axIcon" class="w-12 h-12 rounded-xl bg-slate-100 flex items-center justify-center border border-slate-200">
@@ -204,11 +206,11 @@
 
                                 <!-- AY Card -->
                                 <div class="relative">
-                                    <div id="ayCard" class="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm transition-all duration-300">
+                                    <div id="ayCard" class="bg-white rounded-2xl p-4 sm:p-5 border border-slate-200 shadow-sm transition-all duration-300 w-full min-w-0">
                                         <div class="flex items-start justify-between mb-4">
                                             <div>
                                                 <p class="text-xs font-bold text-gray-600 mb-1">SUMBU Y</p>
-                                                <p id="ayValue" class="text-4xl font-bold text-gray-900">0.0000</p>
+                                                <p id="ayValue" class="text-3xl sm:text-4xl font-bold text-gray-900">0.0000</p>
                                                 <p class="text-xs text-gray-500 mt-1">G</p>
                                             </div>
                                             <div id="ayIcon" class="w-12 h-12 rounded-xl bg-slate-100 flex items-center justify-center border border-slate-200">
@@ -228,11 +230,11 @@
 
                                 <!-- AZ Card -->
                                 <div class="relative">
-                                    <div id="azCard" class="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm transition-all duration-300">
+                                    <div id="azCard" class="bg-white rounded-2xl p-4 sm:p-5 border border-slate-200 shadow-sm transition-all duration-300 w-full min-w-0">
                                         <div class="flex items-start justify-between mb-4">
                                             <div>
                                                 <p class="text-xs font-bold text-gray-600 mb-1">SUMBU Z</p>
-                                                <p id="azValue" class="text-4xl font-bold text-gray-900">0.0000</p>
+                                                <p id="azValue" class="text-3xl sm:text-4xl font-bold text-gray-900">0.0000</p>
                                                 <p class="text-xs text-gray-500 mt-1">G</p>
                                             </div>
                                             <div id="azIcon" class="w-12 h-12 rounded-xl bg-slate-100 flex items-center justify-center border border-slate-200">
@@ -255,9 +257,9 @@
                         <!-- Temperature Display -->
                         <div>
                             <h4 class="text-sm font-bold text-gray-700 mb-4 uppercase tracking-wide">Suhu</h4>
-                            <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm">
-                                <div class="flex items-center justify-between">
-                                    <div class="flex items-center space-x-4">
+                            <div class="bg-white rounded-2xl p-4 sm:p-6 border border-slate-200 shadow-sm">
+                                <div class="w-full flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
+                                    <div class="flex items-center gap-4 min-w-0">
                                         <div id="tempIcon" class="w-16 h-16 rounded-2xl bg-orange-50 flex items-center justify-center border border-orange-100">
                                             <svg class="w-8 h-8 text-orange-600" fill="currentColor" viewBox="0 0 20 20">
                                                 <path fill-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" clip-rule="evenodd"></path>
@@ -265,15 +267,15 @@
                                         </div>
                                         <div>
                                             <p class="text-xs font-bold text-gray-600 mb-1">SENSOR SUHU</p>
-                                            <p id="tempValue" class="text-5xl font-bold text-gray-900">--</p>
+                                            <p id="tempValue" class="text-4xl sm:text-5xl font-bold text-gray-900">--</p>
                                             <p class="text-sm text-gray-500 mt-1">°C</p>
                                         </div>
                                     </div>
-                                    <div class="text-right">
-                                        <p id="tempStatus" class="text-sm font-bold text-gray-600 px-4 py-2 bg-white rounded-lg border-2 border-gray-300">
+                                    <div class="pl-2 shrink-0 flex flex-col items-end gap-1 text-right sm:mt-4">
+                                        <p id="tempStatus" class="text-xs sm:text-sm font-bold px-3 sm:px-4 py-2 bg-white rounded-lg border-2 text-gray-600 border-gray-300">
                                             NORMAL
                                         </p>
-                                        <p class="text-xs text-gray-500 mt-2">Rentang: 0-80°C</p>
+                                        <p class="text-xs text-gray-500">Rentang: 0-80°C</p>
                                     </div>
                                 </div>
                                 <div class="relative pt-4 mt-4 border-t border-orange-200">
@@ -290,15 +292,15 @@
                             <div class="flex flex-wrap gap-4">
                                 <div class="flex items-center space-x-2">
                                     <div class="w-3 h-3 rounded-full bg-emerald-500"></div>
-                                    <span class="text-xs text-gray-600">Normal (0-21.84 mm/s / 0-60°C)</span>
+                                    <span class="text-xs text-gray-600">Normal (0-25.0 mm/s / 0-60°C)</span>
                                 </div>
                                 <div class="flex items-center space-x-2">
                                     <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
-                                    <span class="text-xs text-gray-600">Waspada (21.84-25.11 mm/s / 60-80°C)</span>
+                                    <span class="text-xs text-gray-600">Waspada (25.0-28.0 mm/s / 60-80°C)</span>
                                 </div>
                                 <div class="flex items-center space-x-2">
                                     <div class="w-3 h-3 rounded-full bg-red-500"></div>
-                                    <span class="text-xs text-gray-600">Bahaya (>25.11 mm/s / >80°C)</span>
+                                    <span class="text-xs text-gray-600">Bahaya (>28.0 mm/s / >80°C)</span>
                                 </div>
                             </div>
                         </div>
@@ -309,21 +311,21 @@
 
 
             <!-- Real-time Multi-axis Chart -->
-            <div id="chartSection" class="mb-6 hidden">
-                <div class="bg-white rounded-xl shadow-md overflow-hidden">
-                    <div class="px-6 py-4 border-b border-gray-200 bg-gradient-to-r from-blue-50 to-purple-50">
-                        <div class="flex items-center justify-between flex-wrap gap-4">
-                            <div>
+            <div id="chartSection" class="hidden">
+                <div class="bg-white rounded-xl shadow-md overflow-hidden w-full min-w-0">
+                    <div class="px-4 sm:px-6 xl:px-7 py-4 border-b border-gray-200 bg-gradient-to-r from-blue-50 to-purple-50">
+                        <div class="w-full grid grid-cols-1 lg:grid-cols-[1fr_auto] gap-3 lg:gap-4 items-start">
+                            <div class="min-w-0">
                                 <h3 class="text-lg font-bold text-gray-900">Grafik Multi-Sumbu Real-Time</h3>
                                 <p class="text-xs text-gray-600 mt-1">Pemantauan percepatan secara real-time di semua sumbu</p>
                             </div>
-                            <div class="flex items-center space-x-3 flex-wrap gap-2">
+                            <div class="w-full lg:w-auto flex flex-wrap items-center gap-2 xl:gap-3 lg:justify-end lg:ml-auto">
                                 <!-- Chart Mode Toggle -->
                                 <div class="flex items-center bg-gray-100 rounded-full shadow-sm p-1 gap-1">
-                                    <button id="liveModeBtn" class="px-4 py-2 text-xs font-semibold rounded-full bg-emerald-500 text-white shadow-md transition transform hover:scale-105">
+                                    <button id="liveModeBtn" class="px-3 sm:px-4 py-2 text-xs font-semibold rounded-full bg-emerald-500 text-white shadow-md transition transform hover:scale-105">
                                         Langsung
                                     </button>
-                                    <button id="historicalModeBtn" class="px-4 py-2 text-xs font-semibold rounded-full bg-white text-gray-900 border border-gray-300 hover:border-purple-400 hover:text-purple-600 transition">
+                                    <button id="historicalModeBtn" class="px-3 sm:px-4 py-2 text-xs font-semibold rounded-full bg-white text-gray-900 border border-gray-300 hover:border-purple-400 hover:text-purple-600 transition">
                                         Historis
                                     </button>
                                 </div>
@@ -389,8 +391,8 @@
                             </div>
                         </div>
                     </div>
-                    <div class="p-6">
-                        <div class="relative" style="height: 400px;">
+                    <div class="p-4 sm:p-6 xl:p-7">
+                        <div class="relative h-[320px] sm:h-[400px]">
                             <canvas id="multiAxisChart"></canvas>
                             <!-- Chart Loading Overlay -->
                             <div id="chartLoadingOverlay" class="hidden absolute inset-0 bg-white/80 flex items-center justify-center rounded-lg">
@@ -435,8 +437,8 @@
 
             <!-- Sensor Data Table -->
             <div id="liveFeedSection" class="mb-6 hidden">
-                <div class="bg-white rounded-xl shadow-md overflow-hidden">
-                    <div class="px-6 py-4 border-b border-gray-200 bg-gray-50 flex items-center justify-between">
+                <div class="bg-white rounded-xl shadow-md overflow-hidden w-full min-w-0">
+                    <div class="px-4 sm:px-6 xl:px-7 py-4 border-b border-gray-200 bg-gray-50 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
                         <h3 class="text-lg font-bold text-gray-900">Data Langsung</h3>
                         <p class="text-xs text-gray-500">Menampilkan 10-20 data terbaru secara otomatis</p>
                     </div>
@@ -463,6 +465,51 @@
 
         </div>
     </div>
+
+    <style>
+        @media (max-width: 640px) {
+            .realtime-page {
+                overflow-x: hidden;
+            }
+
+            .realtime-page,
+            .realtime-page * {
+                box-sizing: border-box;
+            }
+
+            .realtime-page .max-w-7xl {
+                width: 100%;
+                max-width: 100%;
+            }
+
+            .realtime-page .grid > * {
+                min-width: 0;
+            }
+
+            .realtime-page select,
+            .realtime-page input,
+            .realtime-page canvas,
+            .realtime-page table,
+            .realtime-page .rounded-2xl,
+            .realtime-page .rounded-xl {
+                max-width: 100%;
+            }
+
+            .realtime-page #axCard,
+            .realtime-page #ayCard,
+            .realtime-page #azCard {
+                overflow: visible;
+            }
+
+            .realtime-page #machineStatusCard,
+            .realtime-page #quickStatsSection,
+            .realtime-page #sensorValuesSection,
+            .realtime-page #chartSection,
+            .realtime-page #liveFeedSection {
+                max-width: 100%;
+            }
+        }
+    </style>
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@4.0.1/dist/chartjs-plugin-annotation.min.js"></script>
@@ -654,9 +701,9 @@
                 document.getElementById('lastCheck').textContent = 'Memuat...';
 
                 // Set loading state for status badge
-                document.getElementById('statusBadge').className = 'px-4 py-2 rounded-full text-sm font-bold bg-gray-200 text-gray-700 animate-pulse';
+                document.getElementById('statusBadge').className = 'px-4 py-2 rounded-full text-xs font-bold bg-gray-200 text-gray-700 animate-pulse';
                 document.getElementById('statusBadge').textContent = 'MEMUAT...';
-                document.getElementById('statusBar').className = 'h-2 bg-gray-400 animate-pulse';
+                document.getElementById('statusBar').className = 'h-1.5 bg-gray-400 animate-pulse';
 
                 // Initialize chart first (non-blocking)
                 initializeChart();
@@ -748,16 +795,16 @@
 
             // Update status styling
             if (isNormal) {
-                statusBar.className = 'h-2 bg-emerald-500';
-                statusBadge.className = 'px-4 py-2 rounded-full text-sm font-bold bg-emerald-100 text-emerald-800';
+                statusBar.className = 'h-1.5 bg-emerald-500';
+                statusBadge.className = 'px-4 py-2 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800';
                 statusBadge.textContent = '✓ NORMAL';
-                statusIcon.className = 'w-12 h-12 rounded-lg bg-emerald-100 flex items-center justify-center';
+                statusIcon.className = 'w-10 h-10 rounded-xl bg-emerald-100 flex items-center justify-center';
                 statusIcon.innerHTML = '<svg class="w-6 h-6 text-emerald-600" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>';
             } else {
-                statusBar.className = 'h-2 bg-red-500';
-                statusBadge.className = 'px-4 py-2 rounded-full text-sm font-bold bg-red-100 text-red-800';
+                statusBar.className = 'h-1.5 bg-red-500';
+                statusBadge.className = 'px-4 py-2 rounded-full text-xs font-bold bg-red-100 text-red-800';
                 statusBadge.textContent = '⚠ ANOMALI';
-                statusIcon.className = 'w-12 h-12 rounded-lg bg-red-100 flex items-center justify-center';
+                statusIcon.className = 'w-10 h-10 rounded-xl bg-red-100 flex items-center justify-center';
                 statusIcon.innerHTML = '<svg class="w-6 h-6 text-red-600" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"></path></svg>';
             }
         }
@@ -980,7 +1027,7 @@
             }
 
             // Update styling
-            cardElem.className = `bg-gradient-to-br ${colors.card} rounded-xl p-6 border-2 transition-all duration-300`;
+            cardElem.className = `bg-gradient-to-br ${colors.card} rounded-xl p-4 sm:p-5 border-2 transition-all duration-300 w-full min-w-0`;
             barElem.className = `shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center ${colors.bar} transition-all duration-500`;
             statusElem.className = `text-xs font-semibold ${colors.text} mt-2 text-center`;
             statusElem.textContent = status;
@@ -1031,7 +1078,7 @@
 
             // Update styling
             barElem.className = `shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center ${colors.bar} transition-all duration-500`;
-            statusElem.className = `text-sm font-bold px-4 py-2 bg-white rounded-lg border-2 ${colors.text}`;
+            statusElem.className = `text-xs sm:text-sm font-bold px-3 sm:px-4 py-2 bg-white rounded-lg border-2 ${colors.text}`;
             statusElem.textContent = status;
             iconElem.className = `w-16 h-16 rounded-xl ${colors.icon} flex items-center justify-center`;
             iconElem.querySelector('svg').className = `w-8 h-8 ${colors.iconColor}`;

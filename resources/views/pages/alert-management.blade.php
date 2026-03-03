@@ -142,7 +142,7 @@
                                 </svg>
                             </div>
                         </div>
-                        <p class="text-xs text-gray-400 mt-2">RMS ≥ <span id="criticalThreshold">25.11</span> mm/s</p>
+                        <p class="text-xs text-gray-400 mt-2">RMS ≥ <span id="criticalThreshold">28.0</span> mm/s</p>
                     </div>
 
                     <!-- Warning Alerts -->
@@ -158,7 +158,7 @@
                                 </svg>
                             </div>
                         </div>
-                        <p class="text-xs text-gray-400 mt-2">RMS ≥ <span id="warningThreshold">21.84</span> mm/s</p>
+                        <p class="text-xs text-gray-400 mt-2">RMS ≥ <span id="warningThreshold">25.0</span> mm/s</p>
                     </div>
                 </div>
 
@@ -457,32 +457,32 @@
                                     <div class="font-semibold text-gray-700 mb-1">Class I</div>
                                     <div class="text-gray-500 mb-2">Motor ≤ 15 kW (20 HP)</div>
                                     <div class="space-y-1">
-                                        <div class="flex justify-between"><span class="text-yellow-600">Warning:</span> <span>21.84 mm/s</span></div>
-                                        <div class="flex justify-between"><span class="text-red-600">Critical:</span> <span>25.11 mm/s</span></div>
+                                        <div class="flex justify-between"><span class="text-yellow-600">Warning:</span> <span>25.0 mm/s</span></div>
+                                        <div class="flex justify-between"><span class="text-red-600">Critical:</span> <span>28.0 mm/s</span></div>
                                     </div>
                                 </div>
                                 <div class="p-3 bg-white rounded-lg border border-gray-200">
                                     <div class="font-semibold text-gray-700 mb-1">Class II</div>
                                     <div class="text-gray-500 mb-2">Motor 15-75 kW (20-100 HP)</div>
                                     <div class="space-y-1">
-                                        <div class="flex justify-between"><span class="text-yellow-600">Warning:</span> <span>21.84 mm/s</span></div>
-                                        <div class="flex justify-between"><span class="text-red-600">Critical:</span> <span>25.11 mm/s</span></div>
+                                        <div class="flex justify-between"><span class="text-yellow-600">Warning:</span> <span>25.0 mm/s</span></div>
+                                        <div class="flex justify-between"><span class="text-red-600">Critical:</span> <span>28.0 mm/s</span></div>
                                     </div>
                                 </div>
                                 <div class="p-3 bg-white rounded-lg border border-gray-200">
                                     <div class="font-semibold text-gray-700 mb-1">Class III</div>
                                     <div class="text-gray-500 mb-2">Motor 75-300 kW (100-400 HP)</div>
                                     <div class="space-y-1">
-                                        <div class="flex justify-between"><span class="text-yellow-600">Warning:</span> <span>21.84 mm/s</span></div>
-                                        <div class="flex justify-between"><span class="text-red-600">Critical:</span> <span>25.11 mm/s</span></div>
+                                        <div class="flex justify-between"><span class="text-yellow-600">Warning:</span> <span>25.0 mm/s</span></div>
+                                        <div class="flex justify-between"><span class="text-red-600">Critical:</span> <span>28.0 mm/s</span></div>
                                     </div>
                                 </div>
                                 <div class="p-3 bg-white rounded-lg border border-gray-200">
                                     <div class="font-semibold text-gray-700 mb-1">Class IV</div>
                                     <div class="text-gray-500 mb-2">Turbines, Rigid Foundation</div>
                                     <div class="space-y-1">
-                                        <div class="flex justify-between"><span class="text-yellow-600">Warning:</span> <span>21.84 mm/s</span></div>
-                                        <div class="flex justify-between"><span class="text-red-600">Critical:</span> <span>25.11 mm/s</span></div>
+                                        <div class="flex justify-between"><span class="text-yellow-600">Warning:</span> <span>25.0 mm/s</span></div>
+                                        <div class="flex justify-between"><span class="text-red-600">Critical:</span> <span>28.0 mm/s</span></div>
                                     </div>
                                 </div>
                             </div>
@@ -634,10 +634,10 @@
                                     <label class="block text-sm font-medium text-gray-700 mb-2">Preset Threshold</label>
                                     <select id="modalIsoClass" onchange="applyIsoPreset()"
                                         class="w-full rounded-lg border-gray-300 text-sm focus:ring-emerald-500 focus:border-emerald-500">
-                                        <option value="Class I">Class I - Motor ≤ 15 kW (21.84 / 25.11)</option>
-                                        <option value="Class II">Class II - Motor 15-75 kW (21.84 / 25.11)</option>
-                                        <option value="Class III">Class III - Motor 75-300 kW (21.84 / 25.11)</option>
-                                        <option value="Class IV">Class IV - Turbines (21.84 / 25.11)</option>
+                                        <option value="Class I">Class I - Motor ≤ 15 kW (25.0 / 28.0)</option>
+                                        <option value="Class II">Class II - Motor 15-75 kW (25.0 / 28.0)</option>
+                                        <option value="Class III">Class III - Motor 75-300 kW (25.0 / 28.0)</option>
+                                        <option value="Class IV">Class IV - Turbines (25.0 / 28.0)</option>
                                     </select>
                                 </div>
 
@@ -1294,10 +1294,10 @@
 
         // Threshold presets
         const isoPresets = {
-            'Class I': { warning: 21.84, critical: 25.11 },
-            'Class II': { warning: 21.84, critical: 25.11 },
-            'Class III': { warning: 21.84, critical: 25.11 },
-            'Class IV': { warning: 21.84, critical: 25.11 }
+            'Class I': { warning: 25.0, critical: 28.0 },
+            'Class II': { warning: 25.0, critical: 28.0 },
+            'Class III': { warning: 25.0, critical: 28.0 },
+            'Class IV': { warning: 25.0, critical: 28.0 }
         };
 
         // Load machine thresholds
@@ -1606,3 +1606,6 @@
     </script>
     @endpush
 </x-app-layout>
+
+
+

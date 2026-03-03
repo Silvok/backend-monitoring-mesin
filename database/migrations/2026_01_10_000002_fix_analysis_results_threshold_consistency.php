@@ -15,6 +15,6 @@ return new class extends Migration {
     }
 
     public function down() {
-        // Tidak ada rollback untuk data migration
-    }
+     /*  */   // Tidak ada rollback untuk data migration
+    }/*  */
 };

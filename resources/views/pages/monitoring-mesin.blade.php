@@ -8,14 +8,14 @@
         <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@3.0.1/dist/chartjs-plugin-annotation.min.js"></script>
     @endpush
     <x-slot name="header">
-        <div class="flex items-center justify-between">
-            <div class="flex items-center space-x-8">
-                <h2 class="font-bold text-xl text-emerald-900">
+        <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <div class="flex flex-wrap items-center gap-3">
+                <h2 class="font-bold text-lg sm:text-xl text-emerald-900">
                     {{ __('messages.app.monitoring_title') }}
                 </h2>
                 <!-- Live Status Indicator -->
                 <div
-                    class="flex items-center space-x-2 px-3 py-1.5 bg-emerald-50 rounded-full border border-emerald-200">
+                    class="flex items-center gap-2 px-3 py-1.5 bg-emerald-50 rounded-full border border-emerald-200">
                     <div class="relative flex h-3 w-3">
                         <span
                             class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
@@ -24,8 +24,8 @@
                     <span class="text-xs font-semibold text-emerald-700">{{ __('messages.app.connected') }}</span>
                 </div>
             </div>
-            <div class="flex items-center space-x-3">
-                <div class="text-sm text-gray-600 bg-gray-50 px-3 py-1.5 rounded-lg border border-gray-200">
+            <div class="flex items-center sm:justify-end">
+                <div class="text-xs sm:text-sm text-gray-600 bg-gray-50 px-2.5 sm:px-3 py-1.5 rounded-lg border border-gray-200">
                     <span class="font-semibold" id="currentTime">{{ now()->format('d M Y, H:i:s') }}</span>
                 </div>
             </div>
@@ -33,16 +33,16 @@
     </x-slot>
 
     <div class="py-6">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
+        <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 space-y-6">
 
             <!-- Clean Industry-Standard Filter Card with Green Accents -->
             <div style="border-radius: 24px !important;"
-                class="bg-white border border-gray-100 shadow-sm p-8 mb-8 uppercase tracking-tight relative overflow-hidden">
+                class="bg-white border border-gray-100 shadow-sm p-4 sm:p-8 mb-8 uppercase tracking-tight relative overflow-hidden">
                 <!-- Top Accent Bar -->
                 <div class="absolute top-0 left-0 w-full h-1.5 bg-emerald-500/80"></div>
 
                 <!-- Header "Filters" -->
-                <div class="flex items-center space-x-2.5 mb-8 border-b border-gray-50 pb-4">
+                <div class="flex items-center gap-2.5 mb-6 sm:mb-8 border-b border-gray-50 pb-4">
                     <div style="border-radius: 10px !important;" class="p-1.5 bg-emerald-50">
                         <svg class="w-5 h-5 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -53,7 +53,7 @@
                 </div>
 
                 <!-- Three Column Grid -->
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-8">
                     <!-- Column 1: Machine -->
                     <div class="space-y-3">
                         <div class="flex items-center space-x-2 text-emerald-600">
@@ -121,11 +121,11 @@
             </div>
 
             <!-- Matched Reference Module Switcher -->
-            <div class="flex justify-center mb-10">
-                <div class="bg-[#F1F5F9]/80 p-1 rounded-full flex items-center shadow-inner border border-gray-100">
+            <div class="flex justify-center mb-8 sm:mb-10">
+                <div class="bg-[#F1F5F9]/80 p-1 rounded-full flex items-center shadow-inner border border-gray-100 max-w-full overflow-x-auto">
                     <!-- Button: Grafik -->
                     <button onclick="switchModule('grafik')" id="btn-modul-grafik"
-                        class="flex items-center space-x-2 px-8 py-2.5 rounded-full font-medium text-sm transition-all duration-300 bg-white shadow-sm text-emerald-600 group">
+                        class="flex items-center space-x-2 px-4 sm:px-8 py-2.5 rounded-full font-medium text-sm transition-all duration-300 bg-white shadow-sm text-emerald-600 group whitespace-nowrap">
                         <svg class="w-5 h-5 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z" />
@@ -135,7 +135,7 @@
 
                     <!-- Button: Analisis -->
                     <button onclick="switchModule('analisis')" id="btn-modul-analisis"
-                        class="flex items-center space-x-2 px-8 py-2.5 rounded-full font-medium text-sm transition-all duration-300 text-slate-500 hover:text-emerald-500 group">
+                        class="flex items-center space-x-2 px-4 sm:px-8 py-2.5 rounded-full font-medium text-sm transition-all duration-300 text-slate-500 hover:text-emerald-500 group whitespace-nowrap">
                         <svg class="w-5 h-5 text-slate-400 group-hover:text-emerald-400" fill="none"
                             stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -153,14 +153,14 @@
                     <!-- Modul Grafik: Time Domain -->
                     <div class="grid grid-cols-1 gap-6">
                         <div style="border-radius: 16px !important;"
-                            class="bg-white shadow-sm border border-gray-100 p-6 flex flex-col h-[520px]">
-                            <div class="flex items-center justify-between mb-6">
+                            class="bg-white shadow-sm border border-gray-100 p-4 sm:p-6 flex flex-col min-h-[420px] sm:h-[520px]">
+                            <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mb-4 sm:mb-6">
                                 <div>
                                     <h3 class="text-lg font-bold text-gray-900 tracking-tight">Analisis Time Domain</h3>
                                     <p class="text-[12px] text-gray-500 font-medium">Visualisasi amplitudo getaran (RMS)
                                         dan suhu terhadap waktu</p>
                                 </div>
-                                <div class="flex items-center space-x-3">
+                                <div class="flex items-center flex-wrap gap-2 sm:gap-3">
                                     <!-- Reset Zoom Button -->
                                     <button onclick="resetZoom()"
                                         class="p-1.5 text-gray-400 hover:text-emerald-600 hover:bg-emerald-50 rounded-lg transition-all"
@@ -173,9 +173,9 @@
                                     <!-- Dataset Toggles -->
                                     <div class="flex bg-gray-100 p-1 rounded-lg">
                                         <button onclick="toggleDataset(0)" id="btn-rms"
-                                            class="px-4 py-1.5 text-xs font-bold rounded-md bg-white shadow-sm text-emerald-600 transition-all">GETARAN</button>
+                                            class="px-3 sm:px-4 py-1.5 text-xs font-bold rounded-md bg-white shadow-sm text-emerald-600 transition-all">GETARAN</button>
                                         <button onclick="toggleDataset(1)" id="btn-temp"
-                                            class="px-4 py-1.5 text-xs font-bold rounded-md text-gray-500 hover:text-red-500 transition-all">SUHU</button>
+                                            class="px-3 sm:px-4 py-1.5 text-xs font-bold rounded-md text-gray-500 hover:text-red-500 transition-all">SUHU</button>
                                     </div>
                                 </div>
                             </div>
@@ -207,15 +207,15 @@
                                 <div class="flex flex-wrap items-center justify-center gap-4 text-xs">
                                     <div class="flex items-center gap-1.5">
                                         <div class="w-3 h-3 rounded-full bg-emerald-500"></div>
-                                        <span class="text-gray-600">Normal (0-21.84 mm/s)</span>
+                                        <span class="text-gray-600">Normal (0-25.0 mm/s)</span>
                                     </div>
                                     <div class="flex items-center gap-1.5">
                                         <div class="w-6 h-0.5 bg-yellow-500" style="border-top: 2px dashed #eab308;"></div>
-                                        <span class="text-gray-600">Warning (21.84 mm/s)</span>
+                                        <span class="text-gray-600">Warning (25.0 mm/s)</span>
                                     </div>
                                     <div class="flex items-center gap-1.5">
                                         <div class="w-6 h-0.5 bg-red-500" style="border-top: 2px dashed #ef4444;"></div>
-                                        <span class="text-gray-600">Critical (25.11 mm/s)</span>
+                                        <span class="text-gray-600">Critical (28.0 mm/s)</span>
                                     </div>
                                     <div class="flex items-center gap-1.5">
                                         <div class="w-6 h-0.5" style="border-top: 2px dashed #ef4444;"></div>
@@ -228,8 +228,8 @@
 
                     <!-- Frequency Domain Analysis Module (FFT) -->
                     <div style="border-radius: 16px !important;"
-                        class="bg-white shadow-sm border border-gray-100 p-6 flex flex-col h-[520px]">
-                        <div class="flex items-center justify-between mb-6">
+                        class="bg-white shadow-sm border border-gray-100 p-4 sm:p-6 flex flex-col min-h-[420px] sm:h-[520px]">
+                        <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mb-4 sm:mb-6">
                             <div>
                                 <h3 class="text-lg font-bold text-gray-900 tracking-tight">Analisis Frequency Domain
                                     (FFT)
@@ -238,10 +238,10 @@
                                     Fast
                                     Fourier Transform</p>
                             </div>
-                            <div class="flex items-center space-x-3">
+                            <div class="flex items-center flex-wrap gap-2 sm:gap-3">
                                 <!-- Frequency Info Badge -->
                                 <div id="fft-result-info"
-                                    class="hidden flex items-center space-x-3 bg-blue-50 px-3 py-1.5 rounded-lg border border-blue-100">
+                                    class="hidden flex items-center gap-2 sm:gap-3 bg-blue-50 px-3 py-1.5 rounded-lg border border-blue-100">
                                     <span
                                         class="text-[10px] font-black text-blue-600 uppercase tracking-widest">Puncak:</span>
                                     <span class="text-xs font-black text-blue-700" id="dominant-freq">0</span>
@@ -670,8 +670,8 @@
 
                     <!-- Long-term Trend Analysis Module (OPSIONAL tapi KUAT) -->
                     <div style="border-radius: 16px !important;"
-                        class="bg-white shadow-sm border border-gray-100 p-8 flex flex-col h-[520px]">
-                        <div class="flex items-center justify-between mb-6">
+                        class="bg-white shadow-sm border border-gray-100 p-4 sm:p-8 flex flex-col min-h-[420px] sm:h-[520px]">
+                        <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mb-4 sm:mb-6">
                             <div>
                                 <h3 class="text-lg font-bold text-gray-900 tracking-tight">Analisis Tren Kondisi
                                     (Riwayat)
@@ -680,13 +680,13 @@
                                     Moving
                                     Average RMS harian</p>
                             </div>
-                            <div class="flex items-center space-x-3">
+                            <div class="flex items-center flex-wrap gap-2 sm:gap-3">
                                 <!-- Trend View Toggles -->
                                 <div class="flex bg-gray-50 p-1 rounded-2xl">
                                     <button onclick="setTrendPeriod('daily')" id="btn-trend-daily"
-                                        class="px-4 py-1.5 text-xs font-bold rounded-xl bg-white shadow-sm text-emerald-600 transition-all uppercase tracking-widest">Harian</button>
+                                        class="px-3 sm:px-4 py-1.5 text-xs font-bold rounded-xl bg-white shadow-sm text-emerald-600 transition-all uppercase tracking-widest">Harian</button>
                                     <button onclick="setTrendPeriod('weekly')" id="btn-trend-weekly"
-                                        class="px-4 py-1.5 text-xs font-bold rounded-xl text-gray-400 hover:text-emerald-500 transition-all uppercase tracking-widest">Mingguan</button>
+                                        class="px-3 sm:px-4 py-1.5 text-xs font-bold rounded-xl text-gray-400 hover:text-emerald-500 transition-all uppercase tracking-widest">Mingguan</button>
                                 </div>
 
                                 <!-- Reset Zoom Button -->
@@ -765,8 +765,8 @@
                     const btnGrafik = document.getElementById('btn-modul-grafik');
                     const btnAnalisis = document.getElementById('btn-modul-analisis');
 
-                    const activeClass = "flex items-center space-x-2 px-8 py-2.5 rounded-full font-medium text-sm transition-all duration-300 bg-white shadow-sm text-emerald-600 group";
-                    const inactiveClass = "flex items-center space-x-2 px-8 py-2.5 rounded-full font-medium text-sm transition-all duration-300 text-slate-500 hover:text-emerald-500 group";
+                    const activeClass = "flex items-center space-x-2 px-4 sm:px-8 py-2.5 rounded-full font-medium text-sm transition-all duration-300 bg-white shadow-sm text-emerald-600 group whitespace-nowrap";
+                    const inactiveClass = "flex items-center space-x-2 px-4 sm:px-8 py-2.5 rounded-full font-medium text-sm transition-all duration-300 text-slate-500 hover:text-emerald-500 group whitespace-nowrap";
 
                     if (type === 'grafik') {
                         sectionGrafik.classList.remove('hidden');
@@ -889,14 +889,14 @@
                                     annotations: {
                                         warningLine: {
                                             type: 'line',
-                                            yMin: 21.84,
-                                            yMax: 21.84,
+                                            yMin: 25.0,
+                                            yMax: 25.0,
                                             borderColor: 'rgba(234, 179, 8, 0.7)',
                                             borderWidth: 2,
                                             borderDash: [6, 4],
                                             label: {
                                                 display: true,
-                                                content: 'Warning (21.84)',
+                                                content: 'Warning (25.0)',
                                                 position: 'end',
                                                 backgroundColor: 'rgba(234, 179, 8, 0.8)',
                                                 color: '#fff',
@@ -906,14 +906,14 @@
                                         },
                                         criticalLine: {
                                             type: 'line',
-                                            yMin: 25.11,
-                                            yMax: 25.11,
+                                            yMin: 28.0,
+                                            yMax: 28.0,
                                             borderColor: 'rgba(239, 68, 68, 0.7)',
                                             borderWidth: 2,
                                             borderDash: [6, 4],
                                             label: {
                                                 display: true,
-                                                content: 'Critical (25.11)',
+                                                content: 'Critical (28.0)',
                                                 position: 'end',
                                                 backgroundColor: 'rgba(239, 68, 68, 0.8)',
                                                 color: '#fff',
@@ -1535,12 +1535,12 @@
                     let colorClass = "emerald";
                     let iconPath = "M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"; // Checkmark
 
-                    if (currentValue >= 25.11) {
+                    if (currentValue >= 28.0) {
                         status = "DANGER";
                         interpretation = `Nilai RMS sebesar ${currentValue.toFixed(2)} mm/s berada pada kategori Danger. Sangat tinggi, segera lakukan inspeksi mendalam!`;
                         colorClass = "red";
                         iconPath = "M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"; // Warning Triangle
-                    } else if (currentValue >= 21.84) {
+                    } else if (currentValue >= 25.0) {
                         status = "WARNING";
                         interpretation = `Nilai RMS sebesar ${currentValue.toFixed(2)} mm/s berada pada kategori Warning. Terdeteksi peningkatan getaran yang tidak wajar.`;
                         colorClass = "orange";
@@ -1778,5 +1778,25 @@
             .animate-fade-in {
                 animation: fadeIn 0.3s ease-out forwards;
             }
+
+            @media (max-width: 640px) {
+                #fft-diagnostic-card .fault-indicator {
+                    flex-direction: column;
+                    align-items: flex-start;
+                    gap: 0.5rem;
+                }
+
+                #fft-diagnostic-card .indicator-badge {
+                    align-self: flex-start;
+                }
+
+                #section-grafik canvas,
+                #section-analisis canvas {
+                    max-width: 100% !important;
+                }
+            }
         </style>
 </x-app-layout>
+
+
+

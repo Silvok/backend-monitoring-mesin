@@ -5,6 +5,7 @@ use App\Http\Controllers\GrafikController;
 use App\Http\Controllers\Api\FFTController;
 
 use App\Http\Controllers\Api\ESPController;
+use App\Http\Controllers\Api\MachineControlController;
 
 Route::get('/grafik-rms', [GrafikController::class, 'getRmsData']);
 
@@ -21,3 +22,6 @@ Route::post('/esp-data', [ESPController::class, 'receiveData']);
 // Endpoint agar ESP bisa mengirim ke /api/v1/sensor/batch dan /api/v1/sensor/temperature
 Route::post('/v1/sensor/batch', [ESPController::class, 'receiveData']);
 Route::post('/v1/sensor/temperature', [ESPController::class, 'receiveData']);
+
+// Endpoint untuk ESP cek status mesin (ON/OFF)
+Route::get('/machines/{machineId}/status', [MachineControlController::class, 'status']);

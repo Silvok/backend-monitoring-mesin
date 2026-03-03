@@ -1,9 +1,9 @@
 <x-app-layout>
     <x-slot name="header">
-        <div class="flex items-center justify-between">
-            <div class="flex items-center space-x-8">
-                <h2 class="font-bold text-xl text-emerald-900">{{ __('messages.parameters.title') }}</h2>
-                <div class="flex items-center space-x-2 px-3 py-1.5 bg-emerald-50 rounded-full border border-emerald-200">
+        <div class="w-full flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+            <div class="flex flex-wrap items-center gap-3 md:flex-1 md:justify-start">
+                <h2 class="font-bold text-lg sm:text-xl text-emerald-900">{{ __('messages.parameters.title') }}</h2>
+                <div class="flex items-center gap-2 px-3 py-1.5 bg-emerald-50 rounded-full border border-emerald-200">
                     <div class="relative flex h-3 w-3">
                         <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
                         <span class="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
@@ -11,8 +11,8 @@
                     <span class="text-xs font-semibold text-emerald-700">{{ __('messages.app.active') }}</span>
                 </div>
             </div>
-            <div class="flex items-center space-x-3">
-                <div class="text-sm text-gray-600 bg-gray-50 px-3 py-1.5 rounded-lg border border-gray-200">
+            <div class="flex flex-wrap items-center gap-2 md:ml-auto md:justify-end md:w-auto">
+                <div class="text-xs sm:text-sm text-gray-600 bg-gray-50 px-2.5 sm:px-3 py-1.5 rounded-lg border border-gray-200">
                     <span class="font-semibold" id="currentTime">{{ now()->format('d M Y, H:i:s') }}</span>
                 </div>
             </div>
@@ -20,15 +20,15 @@
     </x-slot>
 
     <div class="py-6">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-4">
+        <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 space-y-4">
             <div class="bg-white rounded-2xl border border-gray-100 shadow-sm px-5 py-4">
-                <div class="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4">
-                    <div class="lg:max-w-sm">
+                <div class="flex flex-col xl:flex-row xl:items-start xl:justify-between gap-4">
+                    <div class="xl:max-w-sm">
                         <h3 class="text-lg font-bold text-gray-900">{{ __('messages.parameters.subtitle') }}</h3>
                         <p class="text-sm text-gray-500 mt-1">{{ __('messages.parameters.subtitle_desc') }}</p>
                     </div>
                     <div class="flex-1">
-                        <div class="grid grid-cols-1 lg:grid-cols-3 gap-3">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3">
                             <div>
                         <label class="text-xs font-semibold text-gray-500 uppercase tracking-widest">{{ __('messages.parameters.filter_group') }}</label>
                         <select id="paramGroup" class="mt-2 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-700 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500">

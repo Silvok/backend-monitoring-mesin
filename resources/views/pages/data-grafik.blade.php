@@ -309,8 +309,8 @@
                     <div class="mb-4">
                         <div class="flex justify-between text-xs text-gray-500 mb-2">
                             <span>0 mm/s</span>
-                            <span>21.84 mm/s (Warning)</span>
-                            <span>25.11 mm/s (Critical)</span>
+                            <span>25.0 mm/s (Warning)</span>
+                            <span>28.0 mm/s (Critical)</span>
                             <span>11.2+ mm/s</span>
                         </div>
                         <div class="relative h-6 bg-gray-200 rounded-full overflow-hidden">
@@ -446,3 +446,6 @@
         });
     </script>
 </x-app-layout>
+
+
+

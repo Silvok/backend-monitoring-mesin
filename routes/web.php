@@ -118,6 +118,7 @@ Route::middleware('auth')->group(function () {
 
     // Settings API routes
     Route::post('/api/settings/sampling-interval', [SettingsController::class, 'updateSamplingInterval'])->middleware('permission:settings.update');
+    Route::post('/api/settings/machine-status', [SettingsController::class, 'updateMachineStatus'])->middleware('permission:settings.update');
 
     // FFT API route
     Route::post('/api/fft-result', [DashboardController::class, 'storeFFT'])->middleware('permission:fft.store');

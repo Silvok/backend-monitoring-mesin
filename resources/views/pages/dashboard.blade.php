@@ -1,39 +1,31 @@
 <x-app-layout>
     <x-slot name="header">
-        <div class="flex items-center justify-between">
-            <div class="flex items-center space-x-8">
-                <h2 class="font-bold text-xl text-emerald-900">
+        <div class="w-full flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+            <div class="flex flex-wrap items-center gap-3 md:flex-1 md:justify-start">
+                <h2 class="font-bold text-lg sm:text-xl text-emerald-900">
                     {{ __('messages.app.dashboard_title') }}
                 </h2>
                 <!-- Live Status Indicator -->
                 <div
-                    class="flex items-center space-x-2 px-3 py-1.5 bg-emerald-50 rounded-full border border-emerald-200">
-                    <div class="relative flex h-3 w-3">
+                    class="flex items-center gap-2 px-2.5 py-1 bg-emerald-50 rounded-full border border-emerald-200">
+                    <div class="relative flex h-2.5 w-2.5">
                         <span
                             class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                        <span class="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
+                        <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
                     </div>
-                    <span class="text-xs font-semibold text-emerald-700">{{ __('messages.app.live') }}</span>
+                    <span class="text-[11px] font-semibold text-emerald-700">{{ __('messages.app.live') }}</span>
                 </div>
             </div>
-            <div class="flex items-center space-x-3">
-                <div class="text-sm text-gray-600 bg-gray-50 px-3 py-1.5 rounded-lg border border-gray-200">
-                    <span class="font-semibold" id="currentTime">{{ now()->locale('id')->translatedFormat('d M Y, H:i:s') }}</span>
+            <div class="flex flex-wrap items-center gap-2 md:ml-auto md:justify-end md:w-auto">
+                <div class="text-[11px] sm:text-sm text-gray-600 bg-gray-50 px-2.5 py-1.5 rounded-lg border border-gray-200">
+                    <span class="font-semibold" id="currentTime">{{ now()->locale('id')->translatedFormat('d M Y, H:i') }}</span>
                 </div>
-                <button onclick="refreshDashboard()"
-                    class="px-4 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-medium rounded-lg transition flex items-center space-x-2 shadow-sm">
-                    <svg id="refreshIcon" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                    </svg>
-                    <span>{{ __('messages.app.refresh') }}</span>
-                </button>
             </div>
         </div>
     </x-slot>
 
     <div class="py-8">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="w-full max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
             <!-- Metrics Cards Component -->
             @component('components.dashboard.metrics-cards', compact('totalMachines', 'totalSamples', 'totalAnalysis', 'anomalyCount', 'normalCount'))
             @endcomponent
@@ -224,6 +216,7 @@
 
                 grid.innerHTML = machines.map((machine, index) => {
                     const isNormal = machine.status === 'NORMAL';
+                    const isActive = machine.is_active !== false;
                     const rmsValue = machine.rms || 0;
                     // Max scale for visualization
                     const rmsPercent = Math.min((rmsValue / 11.2) * 100, 100);
@@ -232,12 +225,15 @@
                         : '<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"></path></svg>';
 
                     // Status colors
-                    const topBarClass = isNormal ? 'bg-emerald-500' : 'bg-red-500';
+                    const topBarClass = !isActive ? 'bg-gray-400' : (isNormal ? 'bg-emerald-500' : 'bg-red-500');
                     const statusBgClass = isNormal ? 'bg-emerald-100 text-emerald-800' : 'bg-red-100 text-red-800';
                     const statusText = isNormal ? '✓ NORMAL' : '⚠ ANOMALI';
                     const iconBgClass = isNormal ? 'bg-emerald-100 text-emerald-600' : 'bg-red-100 text-red-600';
-                    // Thresholds: < 21.84 (green), 21.84-25.11 (yellow), > 25.11 (red)
-                    const progressClass = rmsValue <= 21.84 ? 'bg-emerald-500' : rmsValue <= 25.11 ? 'bg-yellow-500' : 'bg-red-500';
+                    // Thresholds: < 25.0 (green), 25.0-28.0 (yellow), > 28.0 (red)
+                    const progressClass = rmsValue <= 25.0 ? 'bg-emerald-500' : rmsValue <= 28.0 ? 'bg-yellow-500' : 'bg-red-500';
+                    const activeBadge = isActive
+                        ? '<span class="ml-2 px-2 py-1 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">ON</span>'
+                        : '<span class="ml-2 px-2 py-1 rounded-full text-[10px] font-bold bg-gray-100 text-gray-600 border border-gray-200">OFF</span>';
 
                     return `
                             <div class="group relative bg-white rounded-xl border border-gray-200 shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden">
@@ -258,10 +254,11 @@
                                     </div>
 
                                     <!-- Status Badge -->
-                                    <div class="mb-4">
+                                    <div class="mb-4 flex items-center">
                                         <span class="inline-flex items-center px-3 py-1.5 rounded-full text-xs font-bold ${statusBgClass}">
                                             ${statusText}
                                         </span>
+                                        ${activeBadge}
                                     </div>
 
                                     <!-- RMS Value with Progress Bar -->
@@ -461,3 +458,6 @@
         </script>
     @endpush
 </x-app-layout>
+
+
+

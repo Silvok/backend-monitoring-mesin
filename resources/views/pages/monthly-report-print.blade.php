@@ -19,7 +19,7 @@
 </head>
 <body>
     <h1>Laporan Bulanan</h1>
-    <div class="muted">Periode: {{ $month ?? '-' }}</div>
+    <div class="muted">Periode: {{ $day ?? ($month ?? '-') }}</div>
 
     <table style="width:100%; border-collapse: separate; border-spacing: 8px; margin-top: 12px;">
         <tr>
@@ -50,19 +50,99 @@
         </tr>
     </table>
 
+    <div class="section-title">Ringkasan Eksekutif</div>
+    <div class="card" style="margin-top: 8px;">
+        <div style="font-size: 12px; color: #374151;">
+            Pada periode ini, sistem mencatat total <strong>{{ number_format($summary['total'] ?? 0, 0, ',', '.') }}</strong> data
+            dengan <strong>{{ number_format($summary['warning'] ?? 0, 0, ',', '.') }}</strong> warning dan
+            <strong>{{ number_format($summary['critical'] ?? 0, 0, ',', '.') }}</strong> critical.
+            Secara umum kondisi mesin
+            <strong>{{ ($totalAbnormal ?? 0) > 0 ? 'terdapat beberapa abnormal' : 'relatif stabil' }}</strong>.
+        </div>
+    </div>
+
     <div class="section-title">Grafik Abnormal Mingguan</div>
+    <div class="muted">Total abnormal bulan ini: {{ number_format($totalAbnormal ?? 0, 0, ',', '.') }} kejadian.</div>
     @if(!empty($chart_abnormal))
         <img src="{{ $chart_abnormal }}" alt="Grafik Abnormal" style="width: 100%; max-height: 260px; object-fit: contain; border: 1px solid #e5e7eb; border-radius: 8px; padding: 8px;">
     @else
         <div class="muted">Grafik tidak tersedia.</div>
     @endif
 
-    <div class="section-title">Grafik RMS Harian</div>
+    <div class="section-title">{{ !empty($day) ? 'Grafik RMS per 10 Menit' : 'Grafik RMS Harian' }}</div>
     @if(!empty($chart_rms))
         <img src="{{ $chart_rms }}" alt="Grafik RMS" style="width: 100%; max-height: 260px; object-fit: contain; border: 1px solid #e5e7eb; border-radius: 8px; padding: 8px;">
     @else
         <div class="muted">Grafik tidak tersedia.</div>
     @endif
+
+    <div class="section-title">Statistik RMS</div>
+    <table style="width:100%; border-collapse: separate; border-spacing: 8px; margin-top: 8px;">
+        <tr>
+            <td style="width:25%;"><div class="card"><h3>Min</h3><div class="value">{{ number_format($rmsStats['min'] ?? 0, 2) }} mm/s</div></div></td>
+            <td style="width:25%;"><div class="card"><h3>Max</h3><div class="value">{{ number_format($rmsStats['max'] ?? 0, 2) }} mm/s</div></div></td>
+            <td style="width:25%;"><div class="card"><h3>Rata-rata</h3><div class="value">{{ number_format($rmsStats['avg'] ?? 0, 2) }} mm/s</div></div></td>
+            <td style="width:25%;"><div class="card"><h3>Median</h3><div class="value">{{ number_format($rmsStats['median'] ?? 0, 2) }} mm/s</div></div></td>
+        </tr>
+    </table>
+
+    <div class="section-title">Distribusi Status</div>
+    <table>
+        <thead>
+            <tr>
+                <th>Normal</th>
+                <th>Warning</th>
+                <th>Critical</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>{{ number_format($statusDistribution['normal'] ?? 0, 1) }}%</td>
+                <td>{{ number_format($statusDistribution['warning'] ?? 0, 1) }}%</td>
+                <td>{{ number_format($statusDistribution['critical'] ?? 0, 1) }}%</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="section-title">Highlight Abnormal Terbesar</div>
+    <div class="card" style="margin-top: 8px;">
+        @if(!empty($topAbnormal))
+            <div style="font-size: 12px; color: #374151;">
+                {{ $topAbnormal->created_at?->format('Y-m-d H:i') }} —
+                <strong>{{ number_format($topAbnormal->rms ?? 0, 2) }} mm/s</strong>
+                ({{ $topAbnormal->machine?->name ?? '-' }})
+            </div>
+        @else
+            <div class="muted">Belum ada data abnormal.</div>
+        @endif
+    </div>
+
+    <div class="section-title">Parameter Pengukuran</div>
+    <table>
+        <thead>
+            <tr>
+                <th>Interval Sampling</th>
+                <th>Band-pass</th>
+                <th>Satuan</th>
+                <th>Tanggal Data</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>{{ $measurementParams['sampling_interval'] ?? 1 }} menit</td>
+                <td>{{ $measurementParams['band_pass'] ?? '10–500 Hz' }}</td>
+                <td>{{ $measurementParams['unit'] ?? 'mm/s' }}</td>
+                <td>{{ $measurementParams['period_label'] ?? '-' }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="section-title">Catatan Tindakan / Rekomendasi</div>
+    <ul style="font-size: 12px; color: #374151; margin-top: 8px;">
+        <li>Periksa bearing jika RMS cenderung meningkat pada minggu yang sama.</li>
+        <li>Cek alignment dan kekencangan belt pada jam dengan RMS tertinggi.</li>
+        <li>Jadwalkan inspeksi ulang bila warning berulang lebih dari 3 kali.</li>
+    </ul>
 
     <div class="section-title">Daftar Abnormal</div>
     <table>

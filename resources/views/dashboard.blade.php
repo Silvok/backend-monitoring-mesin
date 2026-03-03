@@ -161,7 +161,7 @@
                     <p class="text-sm" style="color: rgba(255,255,255,0.8);">Dari {{ $normalCount }} kondisi normal</p>
                     <div class="mt-2 pt-2 border-t border-white/20">
                         <p class="text-xs font-semibold" style="color: rgba(255,255,255,0.9);">Threshold RMS (Data Historis):</p>
-                        <p class="text-xs mt-1" style="color: rgba(255,255,255,0.7);">✅ Normal: 0-21.84 mm/s | ⚠️ Waspada: 21.84-25.11 mm/s | 🚨 Bahaya: >25.11 mm/s</p>
+                        <p class="text-xs mt-1" style="color: rgba(255,255,255,0.7);">✅ Normal: 0-25.0 mm/s | ⚠️ Waspada: 25.0-28.0 mm/s | 🚨 Bahaya: >28.0 mm/s</p>
                     </div>
                 </div>
             </div>
@@ -208,15 +208,15 @@
                             <div class="space-y-1">
                                 <div class="flex items-center space-x-2">
                                     <div class="w-3 h-3 rounded-full bg-green-500"></div>
-                                    <p class="text-xs text-gray-700"><strong>Normal:</strong> 0 - 21.84 mm/s</p>
+                                    <p class="text-xs text-gray-700"><strong>Normal:</strong> 0 - 25.0 mm/s</p>
                                 </div>
                                 <div class="flex items-center space-x-2">
                                     <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
-                                    <p class="text-xs text-gray-700"><strong>Waspada:</strong> 21.84 - 25.11 mm/s</p>
+                                    <p class="text-xs text-gray-700"><strong>Waspada:</strong> 25.0 - 28.0 mm/s</p>
                                 </div>
                                 <div class="flex items-center space-x-2">
                                     <div class="w-3 h-3 rounded-full bg-red-500"></div>
-                                    <p class="text-xs text-gray-700"><strong>Bahaya:</strong> > 25.11 mm/s</p>
+                                    <p class="text-xs text-gray-700"><strong>Bahaya:</strong> > 28.0 mm/s</p>
                                 </div>
                             </div>
                         </div>
@@ -369,10 +369,10 @@
                             pointHoverBackgroundColor: 'rgb(24, 85, 25)',
                             pointHoverBorderColor: '#fff'
                         },
-                        // Threshold Line - Normal/Waspada boundary (21.84 mm/s)
+                        // Threshold Line - Normal/Waspada boundary (25.0 mm/s)
                         {
-                            label: 'Threshold: Normal (21.84 mm/s)',
-                            data: Array(rmsData.length).fill(21.84),
+                            label: 'Threshold: Normal (25.0 mm/s)',
+                            data: Array(rmsData.length).fill(25.0),
                             borderColor: 'rgba(234, 179, 8, 0.7)',
                             backgroundColor: 'transparent',
                             borderWidth: 2,
@@ -380,10 +380,10 @@
                             pointRadius: 0,
                             fill: false
                         },
-                        // Threshold Line - Waspada/Bahaya boundary (25.11 mm/s)
+                        // Threshold Line - Waspada/Bahaya boundary (28.0 mm/s)
                         {
-                            label: 'Threshold: Bahaya (25.11 mm/s)',
-                            data: Array(rmsData.length).fill(25.11),
+                            label: 'Threshold: Bahaya (28.0 mm/s)',
+                            data: Array(rmsData.length).fill(28.0),
                             borderColor: 'rgba(239, 68, 68, 0.7),
                             backgroundColor: 'transparent',
                             borderWidth: 2,
@@ -1147,3 +1147,6 @@
     </style>
     @endpush
 </x-app-layout>
+
+
+

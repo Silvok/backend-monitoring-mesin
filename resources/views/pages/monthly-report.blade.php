@@ -8,6 +8,7 @@
             @php
                 $reportQuery = [
                     'month' => $month ?? now()->format('Y-m'),
+                    'day' => $day ?? null,
                     'machine_id' => $selectedMachine ?? 'all',
                 ];
             @endphp
@@ -34,6 +35,11 @@
                            class="mt-2 w-full rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-700 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500">
                 </div>
                 <div class="flex-1">
+                    <label class="text-sm font-semibold text-gray-700">Tanggal (opsional)</label>
+                    <input name="day" type="date" value="{{ $day ?? '' }}"
+                           class="mt-2 w-full rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-700 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500">
+                </div>
+                <div class="flex-1">
                     <label class="text-sm font-semibold text-gray-700">Mesin (opsional)</label>
                     <select name="machine_id" class="mt-2 w-full rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-700 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500">
                         <option value="all" @selected(($selectedMachine ?? 'all') === 'all')>Semua Mesin</option>
@@ -49,9 +55,10 @@
                     <input type="text" placeholder="Contoh: bulan pengamatan awal" class="mt-2 w-full rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-700 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500">
                 </div>
             </form>
-            <form id="monthlyReportPdfForm" method="POST" action="{{ route('monthly-report.pdf') }}" class="hidden">
+            <form id="monthlyReportPdfForm" method="POST" action="{{ route('monthly-report.pdf') }}" target="_blank" class="hidden">
                 @csrf
                 <input type="hidden" name="month" value="{{ $month ?? now()->format('Y-m') }}">
+                <input type="hidden" name="day" value="{{ $day ?? '' }}">
                 <input type="hidden" name="machine_id" value="{{ $selectedMachine ?? 'all' }}">
                 <input type="hidden" name="chart_abnormal" id="chartAbnormalInput">
                 <input type="hidden" name="chart_rms" id="chartRmsInput">
@@ -88,6 +95,19 @@
             </div>
         </div>
 
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 sm:p-6">
+            <h3 class="font-bold text-gray-900">Ringkasan Eksekutif</h3>
+            <p class="mt-2 text-sm text-gray-700 leading-relaxed">
+                Pada periode ini, sistem mencatat total <span class="font-semibold text-emerald-700">{{ number_format($summary['total'] ?? 0, 0, ',', '.') }}</span> data
+                dengan <span class="font-semibold text-yellow-700">{{ number_format($summary['warning'] ?? 0, 0, ',', '.') }}</span> warning dan
+                <span class="font-semibold text-red-700">{{ number_format($summary['critical'] ?? 0, 0, ',', '.') }}</span> critical.
+                Secara umum kondisi mesin
+                <span class="font-semibold {{ ($totalAbnormal ?? 0) > 0 ? 'text-yellow-700' : 'text-emerald-700' }}">
+                    {{ ($totalAbnormal ?? 0) > 0 ? 'terdapat beberapa abnormal' : 'relatif stabil' }}
+                </span>.
+            </p>
+        </div>
+
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
             <div class="lg:col-span-2 bg-white rounded-2xl shadow-sm border border-gray-100 p-4 sm:p-6">
                 <div class="flex items-center justify-between">
@@ -101,6 +121,9 @@
                     Keterangan: angka menunjukkan total kejadian abnormal (Warning + Critical) per minggu.
                 </p>
                 <p id="abnormalWeeklySummary" class="mt-1 text-xs text-emerald-700 font-semibold"></p>
+                <p class="mt-1 text-xs text-gray-600">
+                    Total abnormal bulan ini: <span class="font-semibold text-gray-800">{{ number_format($totalAbnormal ?? 0, 0, ',', '.') }}</span> kejadian.
+                </p>
                 <div class="mt-2 h-64">
                     <canvas id="monthlyAbnormalChart"></canvas>
                 </div>
@@ -125,18 +148,139 @@
             </div>
         </div>
 
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 sm:p-6">
+                <h3 class="font-bold text-gray-900">Top 3 {{ !empty($day) ? 'Jam' : 'Hari' }} RMS Tertinggi</h3>
+                <p class="text-xs text-gray-500">
+                    {{ !empty($day) ? 'Rata-rata RMS per 10 menit pada tanggal terpilih.' : 'Rata-rata RMS harian tertinggi pada periode.' }}
+                </p>
+                <ol class="mt-4 space-y-2 text-sm text-gray-700">
+                    @forelse(($topRmsPoints ?? []) as $idx => $row)
+                        <li class="flex items-center justify-between">
+                            <span class="font-semibold text-gray-800">{{ $idx + 1 }}.</span>
+                            <span class="flex-1 ml-2">{{ $row['label'] ?? '-' }}</span>
+                            <span class="font-semibold text-emerald-700">{{ number_format($row['avg_rms'] ?? 0, !empty($day) ? 3 : 2) }} mm/s</span>
+                        </li>
+                    @empty
+                        <li class="text-gray-500">Belum ada data RMS pada periode ini.</li>
+                    @endforelse
+                </ol>
+            </div>
+            <div class="lg:col-span-2 bg-white rounded-2xl shadow-sm border border-gray-100 p-4 sm:p-6">
+                <h3 class="font-bold text-gray-900">Catatan Tindakan / Rekomendasi</h3>
+                <p class="text-xs text-gray-500">Isi tindakan yang disarankan berdasarkan temuan abnormal.</p>
+                <ul class="mt-4 space-y-2 text-sm text-gray-700">
+                    <li class="flex items-start gap-2">
+                        <span class="mt-1 h-2 w-2 rounded-full bg-emerald-500"></span>
+                        Periksa bearing jika RMS cenderung meningkat pada minggu yang sama.
+                    </li>
+                    <li class="flex items-start gap-2">
+                        <span class="mt-1 h-2 w-2 rounded-full bg-emerald-500"></span>
+                        Cek alignment dan kekencangan belt pada jam dengan RMS tertinggi.
+                    </li>
+                    <li class="flex items-start gap-2">
+                        <span class="mt-1 h-2 w-2 rounded-full bg-emerald-500"></span>
+                        Jadwalkan inspeksi ulang bila warning berulang lebih dari 3 kali.
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 sm:p-6">
+                <h3 class="font-bold text-gray-900">Statistik RMS</h3>
+                <p class="text-xs text-gray-500">Min / Max / Rata-rata / Median</p>
+                <div class="mt-4 grid grid-cols-2 gap-3 text-sm text-gray-700">
+                    <div class="rounded-lg border border-gray-100 p-3">
+                        <div class="text-xs text-gray-500">Min</div>
+                        <div class="text-lg font-semibold text-gray-900">{{ number_format($rmsStats['min'] ?? 0, 2) }} mm/s</div>
+                    </div>
+                    <div class="rounded-lg border border-gray-100 p-3">
+                        <div class="text-xs text-gray-500">Max</div>
+                        <div class="text-lg font-semibold text-gray-900">{{ number_format($rmsStats['max'] ?? 0, 2) }} mm/s</div>
+                    </div>
+                    <div class="rounded-lg border border-gray-100 p-3">
+                        <div class="text-xs text-gray-500">Rata-rata</div>
+                        <div class="text-lg font-semibold text-emerald-700">{{ number_format($rmsStats['avg'] ?? 0, 2) }} mm/s</div>
+                    </div>
+                    <div class="rounded-lg border border-gray-100 p-3">
+                        <div class="text-xs text-gray-500">Median</div>
+                        <div class="text-lg font-semibold text-gray-900">{{ number_format($rmsStats['median'] ?? 0, 2) }} mm/s</div>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 sm:p-6">
+                <h3 class="font-bold text-gray-900">Distribusi Status</h3>
+                <p class="text-xs text-gray-500">Persentase Normal vs Warning vs Critical</p>
+                <div class="mt-4 space-y-3 text-sm text-gray-700">
+                    <div class="flex items-center justify-between">
+                        <span class="font-medium text-emerald-700">Normal</span>
+                        <span class="font-semibold text-emerald-800">{{ number_format($statusDistribution['normal'] ?? 0, 1) }}%</span>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <span class="font-medium text-yellow-700">Warning</span>
+                        <span class="font-semibold text-yellow-800">{{ number_format($statusDistribution['warning'] ?? 0, 1) }}%</span>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <span class="font-medium text-red-700">Critical</span>
+                        <span class="font-semibold text-red-800">{{ number_format($statusDistribution['critical'] ?? 0, 1) }}%</span>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 sm:p-6">
+                <h3 class="font-bold text-gray-900">Highlight Abnormal Terbesar</h3>
+                <p class="text-xs text-gray-500">Tanggal &amp; RMS tertinggi</p>
+                <div class="mt-4 text-sm text-gray-700">
+                    @if(!empty($topAbnormal))
+                        <div class="font-semibold text-gray-900">{{ $topAbnormal->created_at?->format('Y-m-d H:i') }}</div>
+                        <div class="mt-1 text-emerald-700 font-semibold">{{ number_format($topAbnormal->rms ?? 0, 2) }} mm/s</div>
+                        <div class="mt-1 text-xs text-gray-500">{{ $topAbnormal->machine?->name ?? '-' }}</div>
+                    @else
+                        <div class="text-gray-500">Belum ada data abnormal pada periode ini.</div>
+                    @endif
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 sm:p-6">
+            <h3 class="font-bold text-gray-900">Parameter Pengukuran</h3>
+            <p class="text-xs text-gray-500">Ringkasan parameter pengambilan data</p>
+            <div class="mt-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 text-sm text-gray-700">
+                <div class="rounded-lg border border-gray-100 p-3">
+                    <div class="text-xs text-gray-500">Interval Sampling</div>
+                    <div class="font-semibold text-gray-900">{{ $measurementParams['sampling_interval'] ?? 1 }} menit</div>
+                </div>
+                <div class="rounded-lg border border-gray-100 p-3">
+                    <div class="text-xs text-gray-500">Band-pass</div>
+                    <div class="font-semibold text-gray-900">{{ $measurementParams['band_pass'] ?? '10–500 Hz' }}</div>
+                </div>
+                <div class="rounded-lg border border-gray-100 p-3">
+                    <div class="text-xs text-gray-500">Satuan</div>
+                    <div class="font-semibold text-gray-900">{{ $measurementParams['unit'] ?? 'mm/s' }}</div>
+                </div>
+                <div class="rounded-lg border border-gray-100 p-3">
+                    <div class="text-xs text-gray-500">Tanggal Data</div>
+                    <div class="font-semibold text-gray-900">{{ $measurementParams['period_label'] ?? '-' }}</div>
+                </div>
+            </div>
+        </div>
+
         <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 sm:p-6">
             <div class="flex items-center justify-between">
                 <div>
-                    <h3 class="font-bold text-gray-900">Rata-rata RMS Harian</h3>
-                    <p class="text-xs text-gray-500">Tren rata-rata RMS selama periode</p>
+                    <h3 class="font-bold text-gray-900">
+                        {{ !empty($day) ? 'Rata-rata RMS per 10 Menit' : 'Rata-rata RMS Harian' }}
+                        </h3>
+                        <p class="text-xs text-gray-500">
+                            {{ !empty($day) ? 'Agregasi RMS per 10 menit pada tanggal terpilih' : 'Tren rata-rata RMS selama periode' }}
+                        </p>
+                    </div>
+                    <span class="px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 text-xs font-semibold">Preview</span>
                 </div>
-                <span class="px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 text-xs font-semibold">Preview</span>
+                <div class="mt-4 h-64">
+                    <canvas id="monthlyRmsTrendChart"></canvas>
+                </div>
             </div>
-            <div class="mt-4 h-64">
-                <canvas id="monthlyRmsTrendChart"></canvas>
-            </div>
-        </div>
 
         <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 sm:p-6">
             <div class="flex items-center justify-between">
@@ -284,8 +428,13 @@
 
             const rmsCtx = document.getElementById('monthlyRmsTrendChart');
             if (rmsCtx) {
-                const labels = {!! json_encode(($dailyTrend ?? collect())->pluck('date')->toArray()) !!};
-                const values = {!! json_encode(($dailyTrend ?? collect())->pluck('avg_rms')->toArray()) !!};
+                const isDaily = {!! json_encode(!empty($day)) !!};
+                const labels = isDaily
+                    ? {!! json_encode(($rawTrend ?? collect())->pluck('label')->toArray()) !!}
+                    : {!! json_encode(($dailyTrend ?? collect())->pluck('label')->toArray()) !!};
+                const values = isDaily
+                    ? {!! json_encode(($rawTrend ?? collect())->pluck('rms')->toArray()) !!}
+                    : {!! json_encode(($dailyTrend ?? collect())->pluck('avg_rms')->toArray()) !!};
 
                 new Chart(rmsCtx, {
                     type: 'line',
@@ -323,11 +472,11 @@
                             const { ctx } = chart;
                             ctx.save();
                             ctx.fillStyle = '#111827';
-                            ctx.font = 'bold 11px Arial';
+                            ctx.font = 'bold 10px Arial';
                             chart.getDatasetMeta(0).data.forEach((point, index) => {
                                 const value = values[index];
                                 if (value === null || value === undefined) return;
-                                const text = Number(value).toFixed(2);
+                                const text = Number(value).toFixed(isDaily ? 3 : 2);
                                 const textWidth = ctx.measureText(text).width;
                                 const yPos = Math.max(point.y - 8, chart.scales.y.top + 12);
                                 ctx.fillText(text, point.x - textWidth / 2, yPos);
@@ -352,14 +501,43 @@
                     return temp.toDataURL('image/jpeg', 0.8);
                 };
 
-                downloadBtn.addEventListener('click', () => {
+                downloadBtn.addEventListener('click', async () => {
                     const abnormalCanvas = document.getElementById('monthlyAbnormalChart');
                     const rmsCanvas = document.getElementById('monthlyRmsTrendChart');
 
                     document.getElementById('chartAbnormalInput').value = captureChart(abnormalCanvas);
                     document.getElementById('chartRmsInput').value = captureChart(rmsCanvas);
 
-                    document.getElementById('monthlyReportPdfForm').submit();
+                    const pdfForm = document.getElementById('monthlyReportPdfForm');
+                    if (!pdfForm) return;
+
+                    // 1) Preview in new tab
+                    pdfForm.submit();
+
+                    // 2) Auto-download in background (use hidden iframe)
+                    const iframeName = 'pdfDownloadFrame';
+                    let iframe = document.getElementById(iframeName);
+                    if (!iframe) {
+                        iframe = document.createElement('iframe');
+                        iframe.id = iframeName;
+                        iframe.name = iframeName;
+                        iframe.style.display = 'none';
+                        document.body.appendChild(iframe);
+                    }
+
+                    const downloadForm = pdfForm.cloneNode(true);
+                    downloadForm.style.display = 'none';
+                    downloadForm.target = iframeName;
+
+                    const downloadInput = document.createElement('input');
+                    downloadInput.type = 'hidden';
+                    downloadInput.name = 'download';
+                    downloadInput.value = '1';
+                    downloadForm.appendChild(downloadInput);
+
+                    document.body.appendChild(downloadForm);
+                    downloadForm.submit();
+                    downloadForm.remove();
                 });
             }
         </script>
