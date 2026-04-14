@@ -378,6 +378,144 @@ class DashboardApiController extends Controller
     }
 
     /**
+     * Get paginated sensor history for a specific machine and trailing time window.
+     */
+    public function getSensorHistory($id, Request $request)
+    {
+        try {
+            $machine = Machine::findOrFail($id);
+
+            $date = $request->input('date', now()->format('Y-m-d'));
+            $hours = max(1, min((int) $request->input('hours', 24), 24));
+            $perPage = max(10, min((int) $request->input('per_page', 20), 100));
+
+            $selectedDayStart = \Carbon\Carbon::parse($date)->startOfDay();
+            $selectedDayEnd = \Carbon\Carbon::parse($date)->endOfDay();
+
+            $endDate = $selectedDayEnd->isToday() ? now() : $selectedDayEnd;
+            $startDate = $endDate->copy()->subHours($hours);
+            if ($startDate->lessThan($selectedDayStart)) {
+                $startDate = $selectedDayStart;
+            }
+
+            $history = RawSample::where('machine_id', $id)
+                ->whereBetween('created_at', [$startDate, $endDate])
+                ->select('id', 'ax_g', 'ay_g', 'az_g', 'temperature_c', 'created_at')
+                ->orderBy('created_at', 'desc')
+                ->paginate($perPage);
+
+            $history->getCollection()->transform(function ($sample) {
+                $ax = (float) ($sample->ax_g ?? 0);
+                $ay = (float) ($sample->ay_g ?? 0);
+                $az = (float) ($sample->az_g ?? 0);
+
+                return [
+                    'id' => $sample->id,
+                    'timestamp' => $sample->created_at->toIso8601String(),
+                    'timestamp_label' => $sample->created_at->format('d-m-Y H:i:s'),
+                    'acceleration_x' => round($ax, 4),
+                    'acceleration_y' => round($ay, 4),
+                    'acceleration_z' => round($az, 4),
+                    'temperature' => $sample->temperature_c !== null ? round((float) $sample->temperature_c, 1) : null,
+                    'rms_g' => round(sqrt(($ax * $ax) + ($ay * $ay) + ($az * $az)), 4),
+                ];
+            });
+
+            return response()->json([
+                'success' => true,
+                'machine' => [
+                    'id' => $machine->id,
+                    'name' => $machine->name,
+                ],
+                'data' => $history->items(),
+                'pagination' => [
+                    'current_page' => $history->currentPage(),
+                    'last_page' => $history->lastPage(),
+                    'per_page' => $history->perPage(),
+                    'total' => $history->total(),
+                    'from' => $history->firstItem(),
+                    'to' => $history->lastItem(),
+                ],
+                'date_range' => [
+                    'start' => $startDate->format('d-m-Y H:i:s'),
+                    'end' => $endDate->format('d-m-Y H:i:s'),
+                ],
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    /**
+     * Export sensor history to CSV for a specific machine and trailing time window.
+     */
+    public function exportSensorHistoryCsv($id, Request $request)
+    {
+        try {
+            $machine = Machine::findOrFail($id);
+
+            $date = $request->input('date', now()->format('Y-m-d'));
+            $hours = max(1, min((int) $request->input('hours', 24), 24));
+
+            $selectedDayStart = \Carbon\Carbon::parse($date)->startOfDay();
+            $selectedDayEnd = \Carbon\Carbon::parse($date)->endOfDay();
+
+            $endDate = $selectedDayEnd->isToday() ? now() : $selectedDayEnd;
+            $startDate = $endDate->copy()->subHours($hours);
+            if ($startDate->lessThan($selectedDayStart)) {
+                $startDate = $selectedDayStart;
+            }
+
+            $rows = RawSample::where('machine_id', $id)
+                ->whereBetween('created_at', [$startDate, $endDate])
+                ->select('ax_g', 'ay_g', 'az_g', 'temperature_c', 'created_at')
+                ->orderBy('created_at', 'desc')
+                ->get();
+
+            $safeMachine = preg_replace('/[^A-Za-z0-9_\-]/', '_', (string) $machine->name) ?: 'machine';
+            $filename = sprintf(
+                'sensor_history_%s_%s_%sh.csv',
+                $safeMachine,
+                \Carbon\Carbon::parse($date)->format('Ymd'),
+                $hours
+            );
+
+            return response()->streamDownload(function () use ($rows) {
+                $handle = fopen('php://output', 'w');
+                fputcsv($handle, ['Waktu', 'Akselerasi_X_G', 'Akselerasi_Y_G', 'Akselerasi_Z_G', 'Suhu_C', 'RMS_G']);
+
+                foreach ($rows as $sample) {
+                    $ax = (float) ($sample->ax_g ?? 0);
+                    $ay = (float) ($sample->ay_g ?? 0);
+                    $az = (float) ($sample->az_g ?? 0);
+                    $rms = round(sqrt(($ax * $ax) + ($ay * $ay) + ($az * $az)), 4);
+
+                    fputcsv($handle, [
+                        $sample->created_at->format('Y-m-d H:i:s'),
+                        round($ax, 4),
+                        round($ay, 4),
+                        round($az, 4),
+                        $sample->temperature_c !== null ? round((float) $sample->temperature_c, 1) : '',
+                        $rms,
+                    ]);
+                }
+
+                fclose($handle);
+            }, $filename, [
+                'Content-Type' => 'text/csv; charset=UTF-8',
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    /**
      * Get historical trend data for Data Grafik page
      */
     public function getHistoricalTrend($id, Request $request)

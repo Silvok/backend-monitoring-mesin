@@ -465,6 +465,54 @@
                 </div>
             </div>
 
+            <!-- Sensor History Table (Historical Mode) -->
+            <div id="historyFeedSection" class="mb-6 hidden">
+                <div class="bg-white rounded-xl shadow-md overflow-hidden w-full min-w-0 border border-purple-100">
+                    <div class="px-4 sm:px-6 xl:px-7 py-4 border-b border-purple-200 bg-purple-50 w-full flex items-center justify-between gap-3">
+                        <h3 class="text-lg font-bold text-purple-900 text-left shrink-0">Riwayat Data Sensor</h3>
+                        <div class="ml-auto flex items-center gap-2">
+                            <p id="historyDateRangeLabel" class="text-xs text-purple-700 text-right leading-tight">Memuat rentang data...</p>
+                            <button id="historyExportBtn" type="button" class="px-3 py-1.5 text-xs font-semibold rounded-lg bg-emerald-600 text-white hover:bg-emerald-700 transition disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                                Export CSV
+                            </button>
+                        </div>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <div class="max-h-72 overflow-y-auto">
+                            <table class="min-w-full divide-y divide-gray-200">
+                                <thead class="bg-gray-50">
+                                    <tr>
+                                        <th class="px-6 py-3 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Waktu</th>
+                                        <th class="px-6 py-3 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Akselerasi X</th>
+                                        <th class="px-6 py-3 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Akselerasi Y</th>
+                                        <th class="px-6 py-3 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Akselerasi Z</th>
+                                        <th class="px-6 py-3 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Suhu (C)</th>
+                                        <th class="px-6 py-3 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">RMS (G)</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="historyFeedBody" class="bg-white divide-y divide-gray-200">
+                                    <tr>
+                                        <td colspan="6" class="px-6 py-4 text-center text-gray-500">Pilih mode historis untuk memuat riwayat.</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="px-4 sm:px-6 py-3 border-t border-gray-200 flex flex-wrap items-center justify-between gap-2">
+                        <p id="historyPaginationInfo" class="text-xs sm:text-sm text-gray-600">Menampilkan 0 data</p>
+                        <div class="flex items-center gap-2">
+                            <button id="historyPrevBtn" type="button" class="px-3 py-1.5 text-xs font-semibold rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                                Prev
+                            </button>
+                            <span id="historyPageLabel" class="text-xs text-gray-600">Halaman 0/0</span>
+                            <button id="historyNextBtn" type="button" class="px-3 py-1.5 text-xs font-semibold rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                                Next
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
         </div>
     </div>
 
@@ -526,7 +574,8 @@
             .realtime-page #quickStatsSection,
             .realtime-page #sensorValuesSection,
             .realtime-page #chartSection,
-            .realtime-page #liveFeedSection {
+            .realtime-page #liveFeedSection,
+            .realtime-page #historyFeedSection {
                 max-width: 100%;
             }
         }
@@ -549,6 +598,14 @@
         let echoEnabled = false;
         let lastValidRms = 0;
         let lastValidPeak = 0;
+        const HISTORY_PER_PAGE = 20;
+        let sensorHistoryMeta = {
+            currentPage: 1,
+            lastPage: 1,
+            total: 0,
+            from: 0,
+            to: 0
+        };
 
         // Chart data storage
         const chartData = {
@@ -634,6 +691,7 @@
                 if (selectedMachineId) {
                     startChartUpdate();
                 }
+                syncFeedSections();
             } else {
                 // Show historical controls
                 document.getElementById('liveModeBtn').className = 'px-4 py-2 text-xs font-semibold rounded-full bg-white text-gray-900 border border-gray-300 hover:border-sky-400 hover:text-sky-600 transition';
@@ -653,8 +711,10 @@
 
                 // Stop live updates and load historical data
                 stopChartUpdate();
+                syncFeedSections();
                 if (selectedMachineId) {
                     loadHistoricalData();
+                    loadSensorHistory(1);
                 }
             }
         }
@@ -663,6 +723,7 @@
         document.getElementById('chartDatePicker').addEventListener('change', function() {
             if (chartMode === 'historical' && selectedMachineId) {
                 loadHistoricalData();
+                loadSensorHistory(1);
             }
         });
 
@@ -670,7 +731,24 @@
         document.getElementById('historicalTimeRange').addEventListener('change', function() {
             if (chartMode === 'historical' && selectedMachineId) {
                 loadHistoricalData();
+                loadSensorHistory(1);
             }
+        });
+
+        document.getElementById('historyPrevBtn').addEventListener('click', function() {
+            if (sensorHistoryMeta.currentPage > 1) {
+                loadSensorHistory(sensorHistoryMeta.currentPage - 1);
+            }
+        });
+
+        document.getElementById('historyNextBtn').addEventListener('click', function() {
+            if (sensorHistoryMeta.currentPage < sensorHistoryMeta.lastPage) {
+                loadSensorHistory(sensorHistoryMeta.currentPage + 1);
+            }
+        });
+
+        document.getElementById('historyExportBtn').addEventListener('click', function() {
+            exportSensorHistoryCsv();
         });
 
         // Time Window Selector Change
@@ -692,6 +770,42 @@
                 multiAxisChart.data.datasets[2].data = [];
                 multiAxisChart.update();
             }
+        }
+
+        function syncFeedSections() {
+            const liveFeedSection = document.getElementById('liveFeedSection');
+            const historyFeedSection = document.getElementById('historyFeedSection');
+            const exportBtn = document.getElementById('historyExportBtn');
+
+            if (!selectedMachineId) {
+                liveFeedSection.classList.add('hidden');
+                historyFeedSection.classList.add('hidden');
+                if (exportBtn) exportBtn.disabled = true;
+                return;
+            }
+
+            if (chartMode === 'historical') {
+                liveFeedSection.classList.add('hidden');
+                historyFeedSection.classList.remove('hidden');
+                if (exportBtn) exportBtn.disabled = false;
+            } else {
+                liveFeedSection.classList.remove('hidden');
+                historyFeedSection.classList.add('hidden');
+                if (exportBtn) exportBtn.disabled = true;
+            }
+        }
+
+        function exportSensorHistoryCsv() {
+            if (!selectedMachineId || chartMode !== 'historical') return;
+
+            const selectedDate = document.getElementById('chartDatePicker').value;
+            const timeRange = document.getElementById('historicalTimeRange').value;
+            const params = new URLSearchParams({
+                date: selectedDate,
+                hours: timeRange
+            });
+
+            window.location.href = `/api/machine/${selectedMachineId}/sensor-history/export?${params.toString()}`;
         }
 
         // Machine Selector Change
@@ -717,7 +831,7 @@
                 document.getElementById('quickStatsSection').classList.remove('hidden');
                 document.getElementById('sensorValuesSection').classList.remove('hidden');
                 document.getElementById('chartSection').classList.remove('hidden');
-                document.getElementById('liveFeedSection').classList.remove('hidden');
+                syncFeedSections();
 
                 // Set instant placeholder data from dropdown
                 document.getElementById('machineName').textContent = machineName;
@@ -740,6 +854,10 @@
                 startAutoUpdate();
                 connectWebSocket(selectedMachineId);
                 startChartUpdate();
+                if (chartMode === 'historical') {
+                    loadHistoricalData();
+                    loadSensorHistory(1);
+                }
             } else {
                 stopAutoUpdate();
                 stopChartUpdate();
@@ -749,6 +867,7 @@
                 document.getElementById('sensorValuesSection').classList.add('hidden');
                 document.getElementById('chartSection').classList.add('hidden');
                 document.getElementById('liveFeedSection').classList.add('hidden');
+                document.getElementById('historyFeedSection').classList.add('hidden');
             }
         });
 
@@ -763,7 +882,7 @@
                         document.getElementById('machineStatusCard').classList.remove('hidden');
                         document.getElementById('sensorValuesSection').classList.remove('hidden');
                         document.getElementById('chartSection').classList.remove('hidden');
-                        document.getElementById('liveFeedSection').classList.remove('hidden');
+                        syncFeedSections();
 
                         liveFeedData = Array.isArray(data.sensor_data) ? data.sensor_data : [];
 
@@ -903,6 +1022,117 @@
             if (container) {
                 container.scrollTop = container.scrollHeight;
             }
+        }
+
+        function setHistoryLoadingState() {
+            const tbody = document.getElementById('historyFeedBody');
+            if (!tbody) return;
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="6" class="px-6 py-4 text-center text-gray-500">Memuat riwayat data sensor...</td>
+                </tr>
+            `;
+        }
+
+        function updateHistoryPagination(meta) {
+            sensorHistoryMeta.currentPage = meta?.current_page ?? 1;
+            sensorHistoryMeta.lastPage = meta?.last_page ?? 1;
+            sensorHistoryMeta.total = meta?.total ?? 0;
+            sensorHistoryMeta.from = meta?.from ?? 0;
+            sensorHistoryMeta.to = meta?.to ?? 0;
+
+            const info = document.getElementById('historyPaginationInfo');
+            const pageLabel = document.getElementById('historyPageLabel');
+            const prevBtn = document.getElementById('historyPrevBtn');
+            const nextBtn = document.getElementById('historyNextBtn');
+
+            if (info) {
+                info.textContent = `Menampilkan ${sensorHistoryMeta.from || 0}-${sensorHistoryMeta.to || 0} dari ${sensorHistoryMeta.total} data`;
+            }
+            if (pageLabel) {
+                pageLabel.textContent = `Halaman ${sensorHistoryMeta.currentPage}/${sensorHistoryMeta.lastPage}`;
+            }
+            if (prevBtn) {
+                prevBtn.disabled = sensorHistoryMeta.currentPage <= 1;
+            }
+            if (nextBtn) {
+                nextBtn.disabled = sensorHistoryMeta.currentPage >= sensorHistoryMeta.lastPage;
+            }
+        }
+
+        function renderSensorHistoryTable(sensorHistory) {
+            const tbody = document.getElementById('historyFeedBody');
+            if (!tbody) return;
+
+            if (!sensorHistory || sensorHistory.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="6" class="px-6 py-4 text-center text-gray-500">Tidak ada data pada rentang waktu ini.</td>
+                    </tr>
+                `;
+                return;
+            }
+
+            tbody.innerHTML = sensorHistory.map(row => {
+                const temperature = row.temperature === null || row.temperature === undefined
+                    ? '-'
+                    : Number(row.temperature).toFixed(1);
+                const timestampLabel = row.timestamp_label || new Date(row.timestamp).toLocaleString('id-ID');
+
+                return `
+                    <tr class="hover:bg-gray-50 transition">
+                        <td class="px-6 py-3 whitespace-nowrap text-sm text-gray-900">${timestampLabel}</td>
+                        <td class="px-6 py-3 whitespace-nowrap text-sm font-mono text-gray-900">${Number(row.acceleration_x).toFixed(4)}</td>
+                        <td class="px-6 py-3 whitespace-nowrap text-sm font-mono text-gray-900">${Number(row.acceleration_y).toFixed(4)}</td>
+                        <td class="px-6 py-3 whitespace-nowrap text-sm font-mono text-gray-900">${Number(row.acceleration_z).toFixed(4)}</td>
+                        <td class="px-6 py-3 whitespace-nowrap text-sm font-mono text-gray-900">${temperature}</td>
+                        <td class="px-6 py-3 whitespace-nowrap text-sm font-mono text-gray-900">${Number(row.rms_g).toFixed(4)}</td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function loadSensorHistory(page = 1) {
+            if (!selectedMachineId || chartMode !== 'historical') return;
+
+            const selectedDate = document.getElementById('chartDatePicker').value;
+            const timeRange = document.getElementById('historicalTimeRange').value;
+            const rangeLabel = document.getElementById('historyDateRangeLabel');
+
+            setHistoryLoadingState();
+
+            fetch(`/api/machine/${selectedMachineId}/sensor-history?date=${selectedDate}&hours=${timeRange}&page=${page}&per_page=${HISTORY_PER_PAGE}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (!data.success) {
+                        throw new Error(data.message || 'Failed to load sensor history');
+                    }
+
+                    renderSensorHistoryTable(data.data || []);
+                    updateHistoryPagination(data.pagination || {});
+
+                    if (rangeLabel && data.date_range) {
+                        rangeLabel.textContent = `${data.date_range.start} - ${data.date_range.end}`;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading sensor history:', error);
+                    const tbody = document.getElementById('historyFeedBody');
+                    if (tbody) {
+                        tbody.innerHTML = `
+                            <tr>
+                                <td colspan="6" class="px-6 py-4 text-center text-red-500">Gagal memuat riwayat data sensor.</td>
+                            </tr>
+                        `;
+                    }
+                    updateHistoryPagination({
+                        current_page: 1,
+                        last_page: 1,
+                        total: 0,
+                        from: 0,
+                        to: 0
+                    });
+                });
         }
 
         function appendLiveFeed(sample) {
