@@ -440,9 +440,9 @@
             <!-- Sensor Data Table -->
             <div id="liveFeedSection" class="mb-6 hidden">
                 <div class="bg-white rounded-xl shadow-md overflow-hidden w-full min-w-0">
-                    <div class="px-4 sm:px-6 xl:px-7 py-4 border-b border-gray-200 bg-gray-50 w-full flex items-center justify-between gap-3">
-                        <h3 class="text-lg font-bold text-gray-900 text-left shrink-0">Data Langsung</h3>
-                        <p class="text-xs text-gray-500 text-right ml-auto leading-tight">Menampilkan 10-20 data terbaru secara otomatis</p>
+                    <div class="px-4 sm:px-6 xl:px-7 py-4 border-b border-emerald-700 bg-emerald-600 w-full flex items-center justify-between gap-3">
+                        <h3 class="text-lg font-bold text-white text-left shrink-0">Data Langsung</h3>
+                        <p class="text-xs text-emerald-100 text-right ml-auto leading-tight">Menampilkan 10-20 data terbaru secara otomatis</p>
                     </div>
                     <div class="overflow-x-auto">
                         <div class="max-h-64 overflow-y-auto" id="liveFeedContainer">
@@ -547,6 +547,8 @@
         let latestSummary = null; // hydrated from backend for Today's Summary
         let liveFeedData = [];
         let echoEnabled = false;
+        let lastValidRms = 0;
+        let lastValidPeak = 0;
 
         // Chart data storage
         const chartData = {
@@ -697,6 +699,10 @@
             selectedMachineId = this.value;
 
             if (selectedMachineId) {
+                // Reset last valid metrics when switching machine
+                lastValidRms = 0;
+                lastValidPeak = 0;
+
                 // Get selected option data for instant display
                 const selectedOption = this.options[this.selectedIndex];
                 const machineName = selectedOption.text.split(' (')[0];
@@ -806,12 +812,27 @@
             const statusBadge = document.getElementById('statusBadge');
             const statusIcon = document.getElementById('statusIcon');
 
+            const rawRms = Number(machine.rms);
+            const rawPeak = Number(machine.peak_amp);
+            const rawFreq = Number(machine.dominant_freq);
+
+            if (Number.isFinite(rawRms) && rawRms > 0) {
+                lastValidRms = rawRms;
+            }
+            if (Number.isFinite(rawPeak) && rawPeak > 0) {
+                lastValidPeak = rawPeak;
+            }
+
+            const rmsValue = (Number.isFinite(rawRms) && rawRms > 0) ? rawRms : lastValidRms;
+            const peakValue = (Number.isFinite(rawPeak) && rawPeak > 0) ? rawPeak : lastValidPeak;
+            const freqValue = Number.isFinite(rawFreq) ? rawFreq : 0;
+
             // Update basic info
             document.getElementById('machineName').textContent = machine.name;
             document.getElementById('machineLocation').textContent = `Location: ${machine.location}`;
-            document.getElementById('rmsValue').textContent = machine.rms.toFixed(4);
-            document.getElementById('peakValue').textContent = machine.peak_amp.toFixed(4);
-            document.getElementById('freqValue').textContent = `${machine.dominant_freq.toFixed(0)} Hz`;
+            document.getElementById('rmsValue').textContent = rmsValue.toFixed(4);
+            document.getElementById('peakValue').textContent = peakValue.toFixed(4);
+            document.getElementById('freqValue').textContent = `${freqValue.toFixed(0)} Hz`;
             document.getElementById('lastCheck').textContent = machine.last_check;
 
             // Update status styling
@@ -920,7 +941,7 @@
             }
 
             echoEnabled = true;
-            stopAutoUpdate();
+            // Keep polling active as a safety net when websocket payload is delayed or unavailable.
 
             echoChannel = window.Echo.channel(`machine.${machineId}`);
             echoChannel.listen('.sensor.updated', (payload) => {

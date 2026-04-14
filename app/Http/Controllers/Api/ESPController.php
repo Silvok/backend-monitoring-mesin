@@ -77,6 +77,7 @@ class ESPController extends Controller
 
             $baseTime = \Carbon\Carbon::parse($capturedAtRaw ?? now());
             $temperatureC = $data['temperature_c'] ?? $data['temperature'] ?? null;
+            $precomputedMetrics = [];
 
             // Simpan data ringkasan 1 data per menit ke raw_samples
             if ($isSamplePayload && $machineId && !empty($rawSampleColumns)) {
@@ -89,6 +90,8 @@ class ESPController extends Controller
                 // Hitung rata-rata dari payload (agar 1 menit = 1 data ringkasan)
                 $axSum = 0.0; $aySum = 0.0; $azSum = 0.0; $valSum = 0.0; $count = 0;
                 $lastTms = null;
+                $windowValues = [];
+                $windowTimeValues = [];
 
                 if (isset($data['data']) && is_array($data['data'])) {
                     foreach ($data['data'] as $item) {
@@ -106,6 +109,8 @@ class ESPController extends Controller
                         }
                         $count++;
                         $lastTms = $t_ms;
+                        $windowValues[] = sqrt(($ax_g * $ax_g) + ($ay_g * $ay_g) + ($az_g * $az_g));
+                        $windowTimeValues[] = $t_ms;
                     }
                 } else {
                     $axis = strtoupper((string) ($data['axis'] ?? ''));
@@ -122,10 +127,14 @@ class ESPController extends Controller
                         $valSum += $sampleValue;
                         $count++;
                         $lastTms = $t_ms;
+                        $windowValues[] = $sampleValue;
+                        $windowTimeValues[] = $t_ms;
                     }
                 }
 
                 if ($count > 0) {
+                    $precomputedMetrics = $this->buildPrecomputedMetricsFromWindow($windowValues, $windowTimeValues);
+
                     $avgAx = $axSum / $count;
                     $avgAy = $aySum / $count;
                     $avgAz = $azSum / $count;
@@ -196,7 +205,7 @@ class ESPController extends Controller
 
             // Dispatch analysis job jika batch berhasil dibuat
             if ($batchId) {
-                \App\Jobs\AnalyzeBatchJob::dispatch($batchId);
+                \App\Jobs\AnalyzeBatchJob::dispatch($batchId, $precomputedMetrics);
             }
 
             return response()->json(['status' => 'success', 'received' => $data], 200);
@@ -204,5 +213,88 @@ class ESPController extends Controller
             Log::error('Gagal simpan data batch ESP: ' . $e->getMessage(), ['trace' => $e->getTraceAsString(), 'data' => $data]);
             return response()->json(['status' => 'error', 'message' => $e->getMessage()], 500);
         }
+    }
+
+    private function buildPrecomputedMetricsFromWindow(array $values, array $timeValues): array
+    {
+        $count = count($values);
+        if ($count === 0) {
+            return [];
+        }
+
+        $sum = array_sum($values);
+        $mean = $sum / $count;
+        $squareSum = 0.0;
+        $peak = 0.0;
+        foreach ($values as $v) {
+            $squareSum += ($v * $v);
+            $abs = abs($v);
+            if ($abs > $peak) {
+                $peak = $abs;
+            }
+        }
+        $rms = sqrt($squareSum / $count);
+        $variance = 0.0;
+        foreach ($values as $v) {
+            $variance += pow($v - $mean, 2);
+        }
+        $std = sqrt($variance / $count);
+
+        $defaultFsHz = (float) env('SAMPLE_RATE_HZ', 1000);
+        $dtSamples = [];
+        for ($i = 1; $i < $count; $i++) {
+            $currentT = $timeValues[$i] ?? null;
+            $previousT = $timeValues[$i - 1] ?? null;
+            if ($currentT !== null && $previousT !== null) {
+                $dtMs = (float) $currentT - (float) $previousT;
+                if ($dtMs > 0) {
+                    $dtSamples[] = $dtMs / 1000;
+                }
+            }
+        }
+        $avgDt = !empty($dtSamples) ? (array_sum($dtSamples) / count($dtSamples)) : null;
+        $fsHz = ($avgDt !== null && $avgDt > 0)
+            ? (1 / $avgDt)
+            : ($defaultFsHz > 0 ? $defaultFsHz : null);
+
+        $dominantFreqHz = null;
+        if ($count > 1 && $fsHz !== null && $fsHz > 0) {
+            $signal = [];
+            foreach ($values as $v) {
+                $signal[] = $v - $mean;
+            }
+
+            $half = (int) floor($count / 2);
+            $maxAmp = null;
+            $maxIdx = null;
+            for ($k = 1; $k <= $half; $k++) {
+                $real = 0.0;
+                $imag = 0.0;
+                for ($nIdx = 0; $nIdx < $count; $nIdx++) {
+                    $angle = 2 * M_PI * $k * $nIdx / $count;
+                    $real += $signal[$nIdx] * cos($angle);
+                    $imag -= $signal[$nIdx] * sin($angle);
+                }
+                $amp = sqrt(($real * $real) + ($imag * $imag)) / $count;
+                if ($maxAmp === null || $amp > $maxAmp) {
+                    $maxAmp = $amp;
+                    $maxIdx = $k;
+                }
+            }
+
+            if ($maxIdx !== null) {
+                $dominantFreqHz = ($maxIdx * $fsHz) / $count;
+            }
+        }
+
+        return [
+            'sample_count' => $count,
+            'rms_g' => round($rms, 6),
+            'peak_g' => round($peak, 6),
+            'mean_g' => round($mean, 6),
+            'std_g' => round($std, 6),
+            'fs_hz' => $fsHz !== null ? round($fsHz, 4) : null,
+            'dominant_freq_hz' => $dominantFreqHz !== null ? round($dominantFreqHz, 4) : null,
+        ];
     }
 }

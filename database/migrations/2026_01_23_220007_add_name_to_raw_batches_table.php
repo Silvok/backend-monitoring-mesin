@@ -12,14 +12,18 @@ return new class extends Migration
     public function up()
     {
         Schema::table('raw_batches', function (Blueprint $table) {
-            $table->string('name')->nullable()->after('captured_at');
+            if (!Schema::hasColumn('raw_batches', 'name')) {
+                $table->string('name')->nullable()->after('captured_at');
+            }
         });
     }
 
     public function down()
     {
         Schema::table('raw_batches', function (Blueprint $table) {
-            $table->dropColumn('name');
+            if (Schema::hasColumn('raw_batches', 'name')) {
+                $table->dropColumn('name');
+            }
         });
     }
 

@@ -18,10 +18,12 @@ class AnalyzeBatchJob implements ShouldQueue
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     public $batchId;
+    public array $precomputedMetrics = [];
 
-    public function __construct($batchId)
+    public function __construct($batchId, array $precomputedMetrics = [])
     {
         $this->batchId = $batchId;
+        $this->precomputedMetrics = $precomputedMetrics;
     }
 
     public function handle(): void
@@ -147,7 +149,8 @@ class AnalyzeBatchJob implements ShouldQueue
                 }
             }
             $avgDt = !empty($dtSamples) ? (array_sum($dtSamples) / count($dtSamples)) : $defaultDt;
-            if ($avgDt !== null && $avgDt > 0) {
+            $hasEnoughSamplesForVelocity = $count > 1;
+            if ($hasEnoughSamplesForVelocity && $avgDt !== null && $avgDt > 0) {
                 $fsHz = 1 / $avgDt;
                 $axMean = array_sum($axValues) / $count;
                 $ayMean = array_sum($ayValues) / $count;
@@ -282,10 +285,46 @@ class AnalyzeBatchJob implements ShouldQueue
                     }
                     $dominantFreqHz = $fftFrequencies[$maxIdx] ?? null;
                 }
+            } elseif (!$hasEnoughSamplesForVelocity) {
+                \Log::info('AnalyzeBatchJob: insufficient sample count, velocity RMS fallback to acceleration', [
+                    'batch_id' => $this->batchId ?? null,
+                    'n' => $count,
+                ]);
             } else {
                 \Log::warning('AnalyzeBatchJob: missing sample timing, velocity RMS fallback to acceleration', [
                     'batch_id' => $this->batchId ?? null,
                 ]);
+            }
+
+            $precomputed = is_array($this->precomputedMetrics) ? $this->precomputedMetrics : [];
+            $precomputedSampleCount = isset($precomputed['sample_count']) ? (int) $precomputed['sample_count'] : null;
+            $precomputedRmsG = isset($precomputed['rms_g']) ? (float) $precomputed['rms_g'] : null;
+            $precomputedPeakG = isset($precomputed['peak_g']) ? (float) $precomputed['peak_g'] : null;
+            $precomputedMeanG = isset($precomputed['mean_g']) ? (float) $precomputed['mean_g'] : null;
+            $precomputedStdG = isset($precomputed['std_g']) ? (float) $precomputed['std_g'] : null;
+            $precomputedFsHz = isset($precomputed['fs_hz']) ? (float) $precomputed['fs_hz'] : null;
+            $precomputedDominantFreqHz = isset($precomputed['dominant_freq_hz']) ? (float) $precomputed['dominant_freq_hz'] : null;
+
+            if ($count <= 1 && $precomputedSampleCount !== null && $precomputedSampleCount > 1) {
+                $count = $precomputedSampleCount;
+                if ($precomputedRmsG !== null && $precomputedRmsG > 0) {
+                    $rmsG = $precomputedRmsG;
+                }
+                if ($precomputedPeakG !== null && $precomputedPeakG > 0) {
+                    $peak = $precomputedPeakG;
+                }
+                if ($precomputedMeanG !== null) {
+                    $mean = $precomputedMeanG;
+                }
+                if ($precomputedStdG !== null) {
+                    $std = $precomputedStdG;
+                }
+            }
+            if (($fsHz === null || $fsHz <= 0) && $precomputedFsHz !== null && $precomputedFsHz > 0) {
+                $fsHz = $precomputedFsHz;
+            }
+            if (($dominantFreqHz === null || $dominantFreqHz <= 0) && $precomputedDominantFreqHz !== null && $precomputedDominantFreqHz > 0) {
+                $dominantFreqHz = $precomputedDominantFreqHz;
             }
 
             $machineId = $samples->first()->machine_id ?? null;

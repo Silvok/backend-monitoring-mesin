@@ -185,7 +185,18 @@ class DashboardApiController extends Controller
             $criticalThreshold = (float) ($machine->threshold_critical ?? 28.0);
 
             // Determine status based on per-machine threshold
-            $rmsValue = $latestAnalysis ? round($latestAnalysis->rms, 4) : 0;
+            $rmsRaw = $latestAnalysis ? (float) ($latestAnalysis->rms ?? 0) : 0.0;
+            if ($latestAnalysis && $rmsRaw <= 0 && $latestAnalysis->rms_g !== null) {
+                $rmsRaw = (float) $latestAnalysis->rms_g;
+            }
+            $rmsValue = round($rmsRaw, 4);
+
+            $peakRaw = $latestAnalysis ? (float) ($latestAnalysis->peak_amp ?? 0) : 0.0;
+            if ($latestAnalysis && $peakRaw <= 0 && $latestAnalysis->rms_g !== null) {
+                $peakRaw = (float) $latestAnalysis->rms_g;
+            }
+            $peakAmpValue = round($peakRaw, 4);
+            $dominantFreqValue = $latestAnalysis ? round((float) ($latestAnalysis->dominant_freq_hz ?? 0), 2) : 0;
             if ($latestAnalysis) {
                 if ($rmsValue < $warningThreshold) {
                     $status = 'NORMAL';
@@ -261,8 +272,8 @@ class DashboardApiController extends Controller
                     'type' => $machine->type,
                     'status' => $status,
                     'rms' => $rmsValue,
-                    'peak_amp' => $latestAnalysis ? round($latestAnalysis->peak_amp, 4) : 0,
-                    'dominant_freq' => $latestAnalysis ? round($latestAnalysis->dominant_freq_hz, 2) : 0,
+                    'peak_amp' => $peakAmpValue,
+                    'dominant_freq' => $dominantFreqValue,
                     'last_check' => $latestAnalysis ? $latestAnalysis->created_at->diffForHumans() : 'Never',
                 ],
                 'sensor_data' => $sensorData,

@@ -1,0 +1,87 @@
+digraph Arsitektur {
+  graph [
+    rankdir=TB,
+    newrank=true,
+    splines=ortho,
+    bgcolor="white",
+    fontname="Arial",
+    nodesep=0.55,
+    ranksep=0.82,
+    pad=0.24,
+    compound=true
+  ];
+  node [
+    shape=box,
+    style="rounded,filled",
+    fillcolor="#f7f7f7",
+    color="#666666",
+    fontname="Arial",
+    fontsize=12,
+    margin="0.14,0.10",
+    fixedsize=false
+  ];
+  edge [
+    color="#333333",
+    arrowsize=0.8,
+    penwidth=1.1,
+    fontname="Arial",
+    fontsize=10,
+    labeldistance=2.0,
+    labelangle=25
+  ];
+
+  admin [label="Admin / Teknisi", shape=plaintext, style="", fillcolor="", color="#333333", fontsize=13, group="g1"];
+  frontend [label="Aplikasi Dashboard Monitoring\n(Frontend - Blade Laravel)", group="g1"];
+
+  subgraph cluster_backend {
+    label="Backend Laravel 12 (PHP)";
+    color="#333333";
+    style="rounded,filled";
+    fillcolor="#f0f0f0";
+    fontsize=13;
+    margin=18;
+
+    api [label="REST API\n(JSON Request/Response)", width=2.45, group="g1"];
+    logsvc [label="Log Activity Service\n(Pencatatan Aktivitas User)", width=3.05, group="g2"];
+    rms [label="RMS/FFT Engine\n(Pengolahan Data Getaran)", width=2.65, group="g1"];
+    alert [label="Alert Processor\n(Evaluasi Threshold & Generate Alert)", width=2.9, group="g1"];
+
+    { rank=same; api; logsvc; }
+    { rank=same; rms; }
+    { rank=same; alert; }
+
+    api:e -> logsvc:w [xlabel="Catat Aktivitas User", minlen=1];
+    api:s -> rms:n [xlabel="Kirim Data Mentah", minlen=1];
+    rms:s -> alert:n [xlabel="Kirim RMS/FFT", minlen=1];
+  }
+
+  subgraph cluster_external {
+    label="Sistem Eksternal";
+    color="#333333";
+    style="rounded,filled";
+    fillcolor="#f0f0f0";
+    fontsize=13;
+    margin=16;
+
+    iot [label="Sensor IoT (ESP32 - Getaran & Suhu, Data Mentah)", width=4.1, group="g3"];
+  }
+
+  db [label="Database Internal (MySQL)\n(User, Sensor, RMS/FFT, Alert, Log)", shape=cylinder, style="filled", fillcolor="#f7f7f7", group="g2"];
+
+  admin -> frontend [xlabel="Akses Dashboard", minlen=1];
+  frontend:s -> api:n [xlabel="HTTP Request\n(GET/POST JSON)", minlen=1];
+  api:nw -> frontend:sw [xlabel="JSON Response\n(Data)", constraint=false, minlen=1];
+
+  iot:sw -> api:se [taillabel="HTTP POST JSON\n(Data Mentah)", labeldistance=3.0, labelangle=26, constraint=false, minlen=1];
+  api:ne -> iot:nw [headlabel="HTTP Response\n(200 OK)", labeldistance=3.0, labelangle=-26, constraint=false, minlen=1];
+
+  api:s -> db:nw [headlabel="Simpan Data Sensor\n(Data Mentah)", minlen=1];
+  rms:s -> db:n [headlabel="Simpan Data Sensor\n(RMS & FFT)", minlen=1];
+  alert:s -> db:n [headlabel="Simpan Alert", minlen=1];
+  logsvc:s -> db:ne [headlabel="Simpan Log Aktivitas User", minlen=1];
+
+  frontend -> logsvc [style=invis, weight=2, minlen=1];
+  logsvc -> iot [style=invis, weight=20, minlen=1];
+  { rank=same; api; logsvc; iot; }
+}
+

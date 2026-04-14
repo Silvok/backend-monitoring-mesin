@@ -1,0 +1,98 @@
+<mxfile host="app.diagrams.net" agent="Codex GPT-5" version="26.0.11" modified="2026-03-13T00:00:00.000Z">
+  <diagram id="arsitektur-monitoring" name="Page-1">
+    <mxGraphModel dx="1600" dy="1000" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1920" pageHeight="1080" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <mxCell id="2" value="Admin / Teknisi" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;" vertex="1" parent="1">
+          <mxGeometry x="120" y="30" width="60" height="100" as="geometry" />
+        </mxCell>
+
+        <mxCell id="3" value="Aplikasi Dashboard Monitoring&lt;br/&gt;(Frontend - Blade Laravel)" style="rounded=1;whiteSpace=wrap;html=1;strokeColor=#666666;fillColor=#f7f7f7;fontSize=14;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="35" y="170" width="300" height="80" as="geometry" />
+        </mxCell>
+
+        <mxCell id="4" value="Backend Laravel 12 (PHP)" style="rounded=0;whiteSpace=wrap;html=1;strokeColor=#333333;fillColor=#f0f0f0;fontStyle=1;align=center;verticalAlign=top;spacingTop=8;" vertex="1" parent="1">
+          <mxGeometry x="35" y="300" width="930" height="450" as="geometry" />
+        </mxCell>
+
+        <mxCell id="5" value="REST API&lt;br/&gt;(JSON Request/Response)" style="rounded=1;whiteSpace=wrap;html=1;strokeColor=#777777;fillColor=#fafafa;fontSize=14;" vertex="1" parent="1">
+          <mxGeometry x="95" y="370" width="260" height="90" as="geometry" />
+        </mxCell>
+
+        <mxCell id="6" value="Log Activity Service&lt;br/&gt;(Pencatatan Aktivitas User)" style="rounded=1;whiteSpace=wrap;html=1;strokeColor=#777777;fillColor=#fafafa;fontSize=14;" vertex="1" parent="1">
+          <mxGeometry x="470" y="360" width="430" height="110" as="geometry" />
+        </mxCell>
+
+        <mxCell id="7" value="RMS/FFT Engine&lt;br/&gt;(Pengolahan Data Getaran)" style="rounded=1;whiteSpace=wrap;html=1;strokeColor=#777777;fillColor=#fafafa;fontSize=14;" vertex="1" parent="1">
+          <mxGeometry x="95" y="510" width="350" height="110" as="geometry" />
+        </mxCell>
+
+        <mxCell id="8" value="Alert Processor&lt;br/&gt;(Evaluasi Threshold &amp; Generate Alert)" style="rounded=1;whiteSpace=wrap;html=1;strokeColor=#777777;fillColor=#fafafa;fontSize=14;" vertex="1" parent="1">
+          <mxGeometry x="95" y="650" width="350" height="100" as="geometry" />
+        </mxCell>
+
+        <mxCell id="9" value="Sistem Eksternal" style="rounded=0;whiteSpace=wrap;html=1;strokeColor=#333333;fillColor=#f0f0f0;fontStyle=1;align=center;verticalAlign=top;spacingTop=8;" vertex="1" parent="1">
+          <mxGeometry x="1010" y="430" width="520" height="170" as="geometry" />
+        </mxCell>
+
+        <mxCell id="10" value="Sensor IoT (ESP32 - Getaran &amp; Suhu, Data Mentah)" style="rounded=1;whiteSpace=wrap;html=1;strokeColor=#777777;fillColor=#fafafa;fontSize=14;" vertex="1" parent="1">
+          <mxGeometry x="1045" y="500" width="450" height="80" as="geometry" />
+        </mxCell>
+
+        <mxCell id="11" value="Database Internal (MySQL)&lt;br/&gt;(User, Sensor, RMS/FFT, Alert, Log)" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;size=15;strokeColor=#666666;fillColor=#f7f7f7;fontSize=14;" vertex="1" parent="1">
+          <mxGeometry x="490" y="820" width="460" height="100" as="geometry" />
+        </mxCell>
+
+        <mxCell id="12" value="Akses Dashboard" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;labelBackgroundColor=#ffffff;endArrow=block;endFill=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="2" target="3">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="13" value="HTTP Request&lt;br/&gt;(GET/POST JSON)" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;labelBackgroundColor=#ffffff;endArrow=block;endFill=1;exitX=0.35;exitY=1;exitDx=0;exitDy=0;entryX=0.35;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="3" target="5">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="14" value="JSON Response&lt;br/&gt;(Data)" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;labelBackgroundColor=#ffffff;endArrow=block;endFill=1;exitX=0.65;exitY=0;exitDx=0;exitDy=0;entryX=0.65;entryY=1;entryDx=0;entryDy=0;" edge="1" parent="1" source="5" target="3">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="15" value="Catat Aktivitas User" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;labelBackgroundColor=#ffffff;endArrow=block;endFill=1;exitX=1;exitY=0.4;exitDx=0;exitDy=0;entryX=0;entryY=0.4;entryDx=0;entryDy=0;" edge="1" parent="1" source="5" target="6">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="16" value="HTTP POST JSON&lt;br/&gt;(Data Mentah)" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;labelBackgroundColor=#ffffff;endArrow=block;endFill=1;exitX=0;exitY=0.35;exitDx=0;exitDy=0;entryX=1;entryY=0.35;entryDx=0;entryDy=0;" edge="1" parent="1" source="10" target="5">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="17" value="HTTP Response&lt;br/&gt;(200 OK)" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;labelBackgroundColor=#ffffff;endArrow=block;endFill=1;exitX=1;exitY=0.65;exitDx=0;exitDy=0;entryX=0;entryY=0.65;entryDx=0;entryDy=0;" edge="1" parent="1" source="5" target="10">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="18" value="Kirim Data Mentah" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;labelBackgroundColor=#ffffff;endArrow=block;endFill=1;exitX=0.35;exitY=1;exitDx=0;exitDy=0;entryX=0.35;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="5" target="7">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="19" value="Kirim RMS/FFT" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;labelBackgroundColor=#ffffff;endArrow=block;endFill=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="7" target="8">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="20" value="Simpan Data Sensor&lt;br/&gt;(Data Mentah)" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;labelBackgroundColor=#ffffff;endArrow=block;endFill=1;exitX=0.75;exitY=1;exitDx=0;exitDy=0;entryX=0.3;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="5" target="11">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="21" value="Simpan Data Sensor&lt;br/&gt;(RMS &amp; FFT)" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;labelBackgroundColor=#ffffff;endArrow=block;endFill=1;exitX=1;exitY=0.55;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="7" target="11">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="22" value="Simpan Alert" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;labelBackgroundColor=#ffffff;endArrow=block;endFill=1;exitX=0.8;exitY=1;exitDx=0;exitDy=0;entryX=0.7;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="8" target="11">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="23" value="Simpan Log Aktivitas User" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;labelBackgroundColor=#ffffff;endArrow=block;endFill=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.95;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="6" target="11">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

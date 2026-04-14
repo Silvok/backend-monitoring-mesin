@@ -25,8 +25,13 @@ return new class extends Migration
             if (!Schema::hasColumn('raw_samples', 'az_g')) {
                 $table->float('az_g', 10, 6)->nullable()->after('ay_g');
             }
-            // index supaya query cepat
-            $existingIndexes = collect(\DB::select("SHOW INDEX FROM raw_samples"))->pluck('Key_name');
+            // index supaya query cepat (kompatibel MySQL + SQLite testing)
+            $driver = Schema::getConnection()->getDriverName();
+            if ($driver === 'sqlite') {
+                $existingIndexes = collect(\DB::select("PRAGMA index_list('raw_samples')"))->pluck('name');
+            } else {
+                $existingIndexes = collect(\DB::select("SHOW INDEX FROM raw_samples"))->pluck('Key_name');
+            }
             if (!$existingIndexes->contains('raw_samples_machine_id_batch_id_index')) {
                 $table->index(['machine_id', 'batch_id']);
             }
