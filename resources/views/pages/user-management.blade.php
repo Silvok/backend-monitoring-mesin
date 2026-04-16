@@ -70,7 +70,7 @@
 				</button>
 			</form>
 		</div>
-		<div class="bg-white/80 rounded-xl border border-gray-100 p-4 mb-6 shadow-sm">
+		<div class="bg-gradient-to-r from-emerald-50/80 via-white to-emerald-50/40 rounded-xl border border-emerald-100 p-4 mb-6 shadow-sm">
 			<div class="w-full flex flex-col xl:flex-row xl:items-end xl:justify-between gap-4">
 				<div class="flex-1">
 					<div class="flex items-center gap-2 mb-2">
