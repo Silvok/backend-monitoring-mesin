@@ -1,24 +1,14 @@
 <x-app-layout>
     <x-slot name="header">
-        <div class="w-full flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-            <div class="flex flex-wrap items-center gap-3 md:flex-1 md:justify-start">
-                <h2 class="font-bold text-lg sm:text-xl text-emerald-900">
+        <div class="w-full min-w-0 flex items-center justify-between gap-2">
+            <div class="min-w-0 flex-1">
+                <h2 class="font-bold text-base sm:text-xl text-emerald-900 truncate">
                     {{ __('messages.app.dashboard_title') }}
                 </h2>
-                <!-- Live Status Indicator -->
-                <div
-                    class="flex items-center gap-2 px-2.5 py-1 bg-emerald-50 rounded-full border border-emerald-200">
-                    <div class="relative flex h-2.5 w-2.5">
-                        <span
-                            class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                        <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
-                    </div>
-                    <span class="text-[11px] font-semibold text-emerald-700">{{ __('messages.app.live') }}</span>
-                </div>
             </div>
-            <div class="flex flex-wrap items-center gap-2 md:ml-auto md:justify-end md:w-auto">
-                <div class="text-[11px] sm:text-sm text-gray-600 bg-gray-50 px-2.5 py-1.5 rounded-lg border border-gray-200">
-                    <span class="font-semibold" id="currentTime">{{ now()->locale('id')->translatedFormat('d M Y, H:i') }}</span>
+            <div class="flex-shrink-0">
+                <div class="inline-flex items-center text-[10px] sm:text-sm text-gray-600 bg-gray-50 px-2 py-1.5 rounded-lg border border-gray-200">
+                    <span class="font-semibold whitespace-nowrap tabular-nums" id="currentTime">{{ now()->locale('id')->translatedFormat('d M Y, H:i') }}</span>
                 </div>
             </div>
         </div>
@@ -114,12 +104,11 @@
             }
 
             function startClock() {
-                const days = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
                 const months = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
 
                 function updateTime() {
                     const now = new Date();
-                    const timeString = `${days[now.getDay()]}, ${String(now.getDate()).padStart(2, '0')} ${months[now.getMonth()]} ${now.getFullYear()}, ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+                    const timeString = `${String(now.getDate()).padStart(2, '0')} ${months[now.getMonth()]} ${now.getFullYear()}, ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
                     const el = document.getElementById('currentTime');
                     if (el) el.textContent = timeString;
                 }
