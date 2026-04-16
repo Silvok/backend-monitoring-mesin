@@ -60,6 +60,19 @@
 				}
 			}
 
+			@media (max-width: 389.98px) {
+				.user-header-row {
+					flex-wrap: wrap;
+					align-items: flex-start;
+				}
+				.user-header-title {
+					flex: 1 1 100%;
+				}
+				.user-time-wrap {
+					margin-left: 0;
+				}
+			}
+
 			@media (min-width: 1024px) {
 				.user-header-row {
 					gap: 1rem;
@@ -144,40 +157,6 @@
 					{{ __('messages.users.add') }}
 				</button>
 			</form>
-		</div>
-		<div class="bg-gradient-to-r from-emerald-50/80 via-white to-emerald-50/40 rounded-xl border border-emerald-100 p-4 mb-6 shadow-sm">
-			<div class="w-full flex flex-col xl:flex-row xl:items-end xl:justify-between gap-4">
-				<div class="flex-1">
-					<div class="flex items-center gap-2 mb-2">
-						<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-funnel w-5 h-5 text-emerald-400 shrink-0"><path d="M10 20a1 1 0 0 0 .553.895l2 1A1 1 0 0 0 14 21v-7a2 2 0 0 1 .517-1.341L21.74 4.67A1 1 0 0 0 21 3H3a1 1 0 0 0-.742 1.67l7.225 7.989A2 2 0 0 1 10 14z"></path></svg>
-						<span class="text-sm font-semibold text-gray-700">{{ __('messages.users.filters') }}</span>
-					</div>
-					<div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-						<select class="w-full border border-gray-200 rounded-md px-3 py-2 text-sm text-gray-700 focus:ring-2 focus:ring-emerald-200 focus:border-emerald-400 bg-white transition">
-							<option>{{ __('messages.users.all_roles') }}</option>
-							<option>Admin</option>
-							<option>Teknisi</option>
-						</select>
-						<select class="w-full border border-gray-200 rounded-md px-3 py-2 text-sm text-gray-700 focus:ring-2 focus:ring-yellow-200 focus:border-yellow-400 bg-white transition">
-							<option>{{ __('messages.users.all_status') }}</option>
-							<option>{{ __('messages.users.active') }}</option>
-							<option>{{ __('messages.users.inactive') }}</option>
-						</select>
-					</div>
-				</div>
-				<div class="w-full xl:w-56">
-					<div class="flex items-center gap-2 mb-2">
-						<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-up-narrow-wide w-5 h-5 text-yellow-400 shrink-0"><path d="m3 8 4-4 4 4"></path><path d="M7 4v16"></path><path d="M11 12h4"></path><path d="M11 16h7"></path><path d="M11 20h10"></path></svg>
-						<span class="text-sm font-semibold text-gray-700">Sort</span>
-					</div>
-					<select class="w-full border border-gray-200 rounded-md px-3 py-2 text-sm text-gray-700 focus:ring-2 focus:ring-yellow-200 focus:border-yellow-400 bg-white transition">
-						<option>Name A-Z</option>
-						<option>Name Z-A</option>
-						<option>Terbaru</option>
-						<option>Terlama</option>
-					</select>
-				</div>
-			</div>
 		</div>
 		<!-- Card Tabel User Modern -->
 		<div class="user-table-desktop relative overflow-x-auto bg-white rounded-2xl shadow-lg border border-gray-100 mb-8" style="border-radius: 24px !important;">

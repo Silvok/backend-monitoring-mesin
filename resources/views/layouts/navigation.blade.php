@@ -31,31 +31,6 @@
                     </svg>
                     <span id="notifBadge" class="absolute -top-1 -right-1 min-w-[18px] px-1.5 py-0.5 text-[10px] font-bold bg-red-500 text-white rounded-full hidden"></span>
                 </button>
-                <div id="notifMenu" class="fixed top-24 w-72 max-w-[calc(100vw-2rem)] max-h-[calc(100vh-6rem)] -translate-x-1/2 bg-white rounded-2xl shadow-2xl border border-gray-100 hidden z-50 overflow-hidden">
-                    <div class="px-4 py-3 border-b border-gray-100">
-                        <div class="flex items-center justify-between">
-                            <div class="flex items-center gap-2">
-                                <svg class="w-5 h-5 text-emerald-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
-                                </svg>
-                                <div>
-                                    <p class="text-sm font-semibold text-gray-900">{{ __('messages.notifications.title') }}</p>
-                                    <p class="text-[11px] text-gray-500">{{ __('messages.notifications.subtitle') }}</p>
-                                </div>
-                            </div>
-                            <div class="flex items-center gap-2">
-                                <span id="notifUnreadPill" class="text-[10px] font-bold px-2 py-1 rounded-full bg-gray-900 text-white hidden"></span>
-                                <button id="notifReadAll" class="text-[10px] font-semibold px-2.5 py-1 rounded-full border border-gray-200 text-gray-700 hover:bg-gray-50">
-                                    {{ __('messages.notifications.mark_all') }}
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                    <div id="notifList" class="max-h-64 overflow-y-auto bg-gray-50/70">
-                        <div class="px-4 py-6 text-center text-sm text-gray-500">{{ __('messages.notifications.loading') }}</div>
-                    </div>
-                </div>
 
                 <!-- User Dropdown -->
                 <div x-data="{ dropdownOpen: false }" class="relative">
@@ -124,7 +99,15 @@
             </div>
 
             <!-- Mobile Hamburger -->
-            <div class="sm:hidden flex-shrink-0 ml-2">
+            <div class="sm:hidden flex items-center gap-2 flex-shrink-0 ml-2">
+                <button id="notifBtnMobile" type="button"
+                    class="relative inline-flex items-center justify-center p-2 rounded-lg text-white hover:bg-white/10 transition duration-200">
+                    <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+                    </svg>
+                    <span id="notifBadgeMobile" class="absolute -top-1 -right-1 min-w-[18px] px-1.5 py-0.5 text-[10px] font-bold bg-red-500 text-white rounded-full hidden"></span>
+                </button>
                 <button @click="open = !open"
                     class="inline-flex items-center justify-center p-2 rounded-lg text-white hover:bg-white/10 transition duration-200">
                     <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
@@ -135,6 +118,7 @@
                     </svg>
                 </button>
             </div>
+
         </div>
     </div>
 
@@ -229,26 +213,75 @@
             </div>
         </div>
     </div>
+
+    <div id="notifMenu" class="fixed top-24 w-72 max-w-[calc(100vw-2rem)] max-h-[calc(100vh-6rem)] -translate-x-1/2 bg-white rounded-2xl shadow-2xl border border-gray-100 hidden z-[60] overflow-hidden">
+        <div class="px-4 py-3 border-b border-gray-100">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                    <svg class="w-5 h-5 text-emerald-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+                    </svg>
+                    <div>
+                        <p class="text-sm font-semibold text-gray-900">{{ __('messages.notifications.title') }}</p>
+                        <p class="text-[11px] text-gray-500">{{ __('messages.notifications.subtitle') }}</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-2">
+                    <span id="notifUnreadPill" class="text-[10px] font-bold px-2 py-1 rounded-full bg-gray-900 text-white hidden"></span>
+                    <button id="notifReadAll" class="text-[10px] font-semibold px-2.5 py-1 rounded-full border border-gray-200 text-gray-700 hover:bg-gray-50">
+                        {{ __('messages.notifications.mark_all') }}
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div id="notifList" class="max-h-64 overflow-y-auto bg-gray-50/70">
+            <div class="px-4 py-6 text-center text-sm text-gray-500">{{ __('messages.notifications.loading') }}</div>
+        </div>
+    </div>
 </nav>
 
 @push('scripts')
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-        const btn = document.getElementById('notifBtn');
+        const desktopBtn = document.getElementById('notifBtn');
+        const mobileBtn = document.getElementById('notifBtnMobile');
+        const triggers = [desktopBtn, mobileBtn].filter(Boolean);
         const menu = document.getElementById('notifMenu');
         const list = document.getElementById('notifList');
-        const badge = document.getElementById('notifBadge');
+        const badges = [
+            document.getElementById('notifBadge'),
+            document.getElementById('notifBadgeMobile'),
+        ].filter(Boolean);
         const markAll = document.getElementById('notifReadAll');
         const unreadPill = document.getElementById('notifUnreadPill');
+        let activeTrigger = triggers[0] || null;
 
-        if (!btn || !menu || !list || !badge || !markAll) {
+        if (!triggers.length || !menu || !list || !markAll) {
             return;
         }
 
-        function positionMenu() {
-            const rect = btn.getBoundingClientRect();
-            menu.style.top = `${rect.bottom + 24}px`;
-            menu.style.left = `${rect.left + (rect.width / 2)}px`;
+        function setMenuOpen(open) {
+            menu.classList.toggle('hidden', !open);
+            if (open) {
+                menu.style.display = 'block';
+            } else {
+                menu.style.display = '';
+            }
+        }
+
+        function positionMenu(trigger = activeTrigger || triggers[0]) {
+            if (!trigger) return;
+            const rect = trigger.getBoundingClientRect();
+            const menuWidth = menu.offsetWidth || 288;
+            const halfWidth = menuWidth / 2;
+            const desiredCenter = rect.left + (rect.width / 2);
+            const minCenter = halfWidth + 8;
+            const maxCenter = window.innerWidth - halfWidth - 8;
+            const centerX = Math.max(minCenter, Math.min(desiredCenter, maxCenter));
+
+            menu.style.top = `${rect.bottom + 12}px`;
+            menu.style.left = `${centerX}px`;
             menu.style.right = 'auto';
         }
 
@@ -261,8 +294,10 @@
         function renderNotifications(data) {
             const items = data.items || [];
             const unread = data.unread_count || 0;
-            badge.textContent = unread > 99 ? '99+' : String(unread);
-            badge.classList.toggle('hidden', unread === 0);
+            badges.forEach((badge) => {
+                badge.textContent = unread > 99 ? '99+' : String(unread);
+                badge.classList.toggle('hidden', unread === 0);
+            });
             if (unreadPill) {
                 unreadPill.textContent = `${unread} ${notifText.unread}`;
                 unreadPill.classList.toggle('hidden', unread === 0);
@@ -322,18 +357,27 @@
                 });
         }
 
-        btn.addEventListener('click', function (e) {
-            e.stopPropagation();
-            menu.classList.toggle('hidden');
-            if (!menu.classList.contains('hidden')) {
-                positionMenu();
+        triggers.forEach((trigger) => {
+            trigger.addEventListener('click', function (e) {
+                e.stopPropagation();
+                const shouldOpen = menu.classList.contains('hidden') || activeTrigger !== trigger;
+                activeTrigger = trigger;
+
+                if (!shouldOpen) {
+                    setMenuOpen(false);
+                    return;
+                }
+
+                setMenuOpen(true);
+                positionMenu(trigger);
                 loadNotifications();
-            }
+            });
         });
 
         document.addEventListener('click', function (e) {
-            if (!menu.contains(e.target) && !btn.contains(e.target)) {
-                menu.classList.add('hidden');
+            const clickedTrigger = triggers.some((trigger) => trigger.contains(e.target));
+            if (!menu.contains(e.target) && !clickedTrigger) {
+                setMenuOpen(false);
             }
         });
 
@@ -373,7 +417,7 @@
 
         window.addEventListener('resize', function () {
             if (!menu.classList.contains('hidden')) {
-                positionMenu();
+                positionMenu(activeTrigger);
             }
         });
 
