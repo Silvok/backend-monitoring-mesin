@@ -8,25 +8,15 @@
         <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@3.0.1/dist/chartjs-plugin-annotation.min.js"></script>
     @endpush
     <x-slot name="header">
-        <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-            <div class="flex flex-wrap items-center gap-3">
-                <h2 class="font-bold text-lg sm:text-xl text-emerald-900">
+        <div class="w-full min-w-0 flex items-center justify-between gap-2">
+            <div class="min-w-0 flex-1">
+                <h2 class="font-bold text-base sm:text-xl text-emerald-900 truncate">
                     {{ __('messages.app.monitoring_title') }}
                 </h2>
-                <!-- Live Status Indicator -->
-                <div
-                    class="flex items-center gap-2 px-3 py-1.5 bg-emerald-50 rounded-full border border-emerald-200">
-                    <div class="relative flex h-3 w-3">
-                        <span
-                            class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                        <span class="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
-                    </div>
-                    <span class="text-xs font-semibold text-emerald-700">{{ __('messages.app.connected') }}</span>
-                </div>
             </div>
-            <div class="flex items-center sm:justify-end">
-                <div class="text-xs sm:text-sm text-gray-600 bg-gray-50 px-2.5 sm:px-3 py-1.5 rounded-lg border border-gray-200">
-                    <span class="font-semibold" id="currentTime">{{ now()->format('d M Y, H:i:s') }}</span>
+            <div class="flex-shrink-0">
+                <div class="inline-flex items-center text-[10px] sm:text-sm text-gray-600 bg-gray-50 px-2 py-1.5 rounded-lg border border-gray-200">
+                    <span class="font-semibold whitespace-nowrap tabular-nums" id="currentTime">{{ now()->format('d M Y, H:i') }}</span>
                 </div>
             </div>
         </div>
@@ -1747,16 +1737,55 @@
                             month: 'short',
                             year: 'numeric',
                             hour: '2-digit',
-                            minute: '2-digit',
-                            second: '2-digit'
+                            minute: '2-digit'
                         }).replace(/\./g, ':');
                     }
                 }
 
+                function normalizeMonitoringHeader() {
+                    const titleCandidates = Array.from(document.querySelectorAll('header h2'));
+                    const titleEl = titleCandidates.find((el) =>
+                        (el.textContent || '').toLowerCase().includes('monitoring') &&
+                        (el.textContent || '').toLowerCase().includes('analisis')
+                    ) || titleCandidates[0];
+
+                    const timeEl = document.getElementById('currentTime');
+                    if (!titleEl || !timeEl) return;
+
+                    // Remove legacy live/connected chip if still present in rendered markup.
+                    ['Terhubung', 'Live', 'Connected'].forEach((label) => {
+                        const span = Array.from(document.querySelectorAll('header span'))
+                            .find((el) => (el.textContent || '').trim() === label);
+                        if (span) {
+                            const chip = span.closest('div');
+                            if (chip) chip.remove();
+                        }
+                    });
+
+                    // Force one-line layout: title left, running time right.
+                    const row = titleEl.closest('div.w-full') || titleEl.closest('div.flex') || titleEl.parentElement;
+                    if (row) {
+                        row.className = 'w-full min-w-0 flex items-center justify-between gap-2';
+                    }
+
+                    const leftWrap = titleEl.closest('div');
+                    if (leftWrap) leftWrap.className = 'min-w-0 flex-1';
+                    titleEl.className = 'font-bold text-base sm:text-xl text-emerald-900 truncate';
+
+                    const timeBox = timeEl.parentElement;
+                    const rightWrap = timeBox && timeBox.parentElement ? timeBox.parentElement : null;
+                    if (rightWrap) rightWrap.className = 'flex-shrink-0';
+                    if (timeBox) {
+                        timeBox.className = 'inline-flex items-center text-[10px] sm:text-sm text-gray-600 bg-gray-50 px-2 py-1.5 rounded-lg border border-gray-200';
+                    }
+                    timeEl.className = 'font-semibold whitespace-nowrap tabular-nums';
+                }
+
                 document.addEventListener('DOMContentLoaded', () => {
+                    normalizeMonitoringHeader();
                     initCharts();
                     updateClock();
-                    setInterval(updateClock, 1000);
+                    setInterval(updateClock, 60000);
                 });
             </script>
         @endpush

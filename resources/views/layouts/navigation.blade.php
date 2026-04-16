@@ -1,13 +1,13 @@
 <nav x-data="{ open: false }" class="shadow-lg border-b-2 fixed top-0 left-0 right-0 z-50"
     style="background: linear-gradient(to right, #31694E, #275640); border-bottom-color: #1e4030;">
     <!-- Primary Navigation Menu -->
-    <div class="w-full px-3 sm:px-4 overflow-hidden">
+    <div class="w-full px-3 sm:px-4">
         <div class="flex justify-between items-center h-20 min-w-0">
-            <div class="flex flex-1 sm:flex-none items-center min-w-0">
+            <div class="flex flex-1 sm:flex-none items-center min-w-0 pr-2">
                 <!-- Logo & Brand -->
                 <div class="flex items-center min-w-0">
-                    <a href="{{ route('dashboard') }}" class="flex items-center gap-2 hover:opacity-90 transition min-w-0 max-w-[calc(100vw-5rem)] sm:max-w-none">
-                        <div class="w-12 h-12 sm:w-16 sm:h-16 lg:w-20 lg:h-20 flex-shrink-0">
+                    <a href="{{ route('dashboard') }}" class="w-full sm:w-auto flex items-center gap-2 hover:opacity-90 transition min-w-0 max-w-[calc(100vw-9.5rem)] sm:max-w-none">
+                        <div class="w-10 h-10 sm:w-16 sm:h-16 lg:w-20 lg:h-20 flex-shrink-0">
                             <img src="{{ asset('images/unnamed.png') }}" alt="PreMaint Logo"
                                 class="w-full h-full object-contain">
                         </div>
@@ -99,9 +99,9 @@
             </div>
 
             <!-- Mobile Hamburger -->
-            <div class="sm:hidden flex items-center gap-2 flex-shrink-0 ml-2">
+            <div class="sm:hidden flex items-center gap-1.5 flex-shrink-0">
                 <button id="notifBtnMobile" type="button"
-                    class="relative inline-flex items-center justify-center p-2 rounded-lg text-white hover:bg-white/10 transition duration-200">
+                    class="relative inline-flex items-center justify-center p-1.5 rounded-lg text-white hover:bg-white/10 transition duration-200">
                     <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
@@ -109,7 +109,7 @@
                     <span id="notifBadgeMobile" class="absolute -top-1 -right-1 min-w-[18px] px-1.5 py-0.5 text-[10px] font-bold bg-red-500 text-white rounded-full hidden"></span>
                 </button>
                 <button @click="open = !open"
-                    class="inline-flex items-center justify-center p-2 rounded-lg text-white hover:bg-white/10 transition duration-200">
+                    class="inline-flex items-center justify-center p-1.5 rounded-lg text-white hover:bg-white/10 transition duration-200">
                     <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
                         <path :class="{'hidden': open, 'inline-flex': !open}" class="inline-flex" stroke-linecap="round"
                             stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />

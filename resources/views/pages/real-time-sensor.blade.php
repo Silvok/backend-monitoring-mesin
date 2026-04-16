@@ -1,23 +1,11 @@
 <x-app-layout>
     <x-slot name="header">
-        <div class="w-full flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
-            <div class="flex flex-wrap items-center gap-3 lg:flex-1 lg:justify-start">
-                <h2 class="font-bold text-lg sm:text-xl text-emerald-900">
-                    Monitoring &amp; Analisis Mesin
-                </h2>
-                <!-- Live Status Indicator -->
-                <div class="flex items-center gap-2 px-3 py-1.5 bg-emerald-50 rounded-full border border-emerald-200">
-                    <div class="relative flex h-3 w-3">
-                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                        <span class="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
-                    </div>
-                    <span class="text-xs font-semibold text-emerald-700">Terhubung</span>
-                </div>
-            </div>
-            <div class="flex flex-wrap items-center gap-2 lg:ml-auto lg:justify-end lg:w-auto">
-                <div class="text-xs sm:text-sm text-gray-600 bg-gray-50 px-2.5 sm:px-3 py-1.5 rounded-lg border border-gray-200">
-                    <span class="font-semibold" id="currentTime">{{ now()->format('d M Y, H:i:s') }}</span>
-                </div>
+        <div class="w-full min-w-0 grid grid-cols-[minmax(0,1fr)_auto] items-center gap-2">
+            <h2 class="font-bold text-sm sm:text-xl text-emerald-900 truncate pr-1">
+                Monitoring &amp; Analisis Mesin
+            </h2>
+            <div class="inline-flex max-w-[45vw] sm:max-w-none items-center text-[10px] sm:text-sm text-gray-600 bg-gray-50 px-2 py-1.5 rounded-lg border border-gray-200">
+                <span class="font-semibold whitespace-nowrap tabular-nums" id="currentTime">{{ now()->format('d M Y, H:i') }}</span>
             </div>
         </div>
     </x-slot>
@@ -55,20 +43,20 @@
 
                     <div class="p-4 sm:p-6 xl:p-7">
                         <div class="mb-6">
-                            <div class="flex items-start justify-between gap-3">
-                                <h3 id="machineName" class="text-2xl font-bold text-gray-900 leading-tight">-</h3>
-                                <div class="flex items-center gap-3 shrink-0">
-                                    <span id="statusBadge" class="px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wide bg-gray-200 text-gray-700">
+                            <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 min-w-0">
+                                <h3 id="machineName" class="text-2xl font-bold text-gray-900 leading-tight break-words min-w-0">-</h3>
+                                <div class="flex items-center justify-start sm:justify-end gap-2 sm:gap-3 flex-wrap sm:flex-nowrap min-w-0">
+                                    <span id="statusBadge" class="max-w-full px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wide bg-gray-200 text-gray-700">
                                         TIDAK DIKETAHUI
                                     </span>
-                                    <div id="statusIcon" class="w-10 h-10 rounded-xl bg-gray-100 flex items-center justify-center border border-gray-200">
+                                    <div id="statusIcon" class="w-10 h-10 rounded-xl bg-gray-100 flex items-center justify-center border border-gray-200 shrink-0">
                                         <svg class="w-6 h-6 text-gray-600" fill="currentColor" viewBox="0 0 20 20">
                                             <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
                                         </svg>
                                     </div>
                                 </div>
                             </div>
-                            <p id="machineLocation" class="text-sm text-gray-600 mt-2">Lokasi: -</p>
+                            <p id="machineLocation" class="text-sm text-gray-600 mt-2 break-words">Lokasi: -</p>
                         </div>
 
                         <!-- Metrics Grid -->
@@ -273,7 +261,7 @@
                                             <p class="text-sm text-gray-500 mt-1">°C</p>
                                         </div>
                                     </div>
-                                    <div class="pl-2 shrink-0 flex flex-col items-end gap-1 text-right sm:mt-4">
+                                    <div class="pl-2 sm:shrink-0 flex flex-col items-end gap-1 text-right sm:mt-4">
                                         <p id="tempStatus" class="text-xs sm:text-sm font-bold px-3 sm:px-4 py-2 bg-white rounded-lg border-2 text-gray-600 border-gray-300">
                                             NORMAL
                                         </p>
@@ -551,6 +539,14 @@
                 max-width: 100%;
             }
 
+            .realtime-page .overflow-x-auto {
+                max-width: 100%;
+            }
+
+            .realtime-page .w-full {
+                min-width: 0;
+            }
+
             .realtime-page .grid > * {
                 min-width: 0;
             }
@@ -577,6 +573,11 @@
             .realtime-page #liveFeedSection,
             .realtime-page #historyFeedSection {
                 max-width: 100%;
+            }
+
+            .realtime-page #machineStatusCard * {
+                max-width: 100%;
+                min-width: 0;
             }
         }
     </style>
@@ -641,14 +642,10 @@
         // Clock
         function updateClock() {
             const now = new Date();
-            document.getElementById('currentTime').textContent = now.toLocaleString('id-ID', {
-                day: '2-digit',
-                month: 'short',
-                year: 'numeric',
-                hour: '2-digit',
-                minute: '2-digit',
-                second: '2-digit'
-            });
+            const months = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
+            const formatted = `${String(now.getDate()).padStart(2, '0')} ${months[now.getMonth()]} ${now.getFullYear()}, ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+            const el = document.getElementById('currentTime');
+            if (el) el.textContent = formatted;
         }
 
         // Initialize when DOM is ready
@@ -662,7 +659,7 @@
 
             // Start clock
             updateClock();
-            setInterval(updateClock, 1000);
+            setInterval(updateClock, 60000);
 
         // Chart Mode Toggle
         document.getElementById('liveModeBtn').addEventListener('click', function() {
