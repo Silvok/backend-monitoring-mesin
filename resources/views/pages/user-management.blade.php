@@ -7,10 +7,20 @@
 		<style>
 			.user-table-desktop { display: block; }
 			.user-table-mobile { display: none; }
+			.user-add-btn {
+				width: 100%;
+			}
 
 			@media (max-width: 1023.98px) {
 				.user-table-desktop { display: none !important; }
 				.user-table-mobile { display: block; }
+			}
+
+			@media (min-width: 1024px) {
+				.user-add-btn {
+					width: auto;
+					min-width: 190px;
+				}
 			}
 		</style>
 	@endpush
@@ -73,7 +83,7 @@
 						</svg>
 					</a>
 				</div>
-				<button type="button" class="w-full lg:w-auto inline-flex items-center justify-center gap-2 px-5 h-10 rounded-lg bg-emerald-500 hover:bg-emerald-600 text-white text-sm font-medium transition shadow-sm whitespace-nowrap" id="addUserBtn" onclick="openUserModal(false)">
+				<button type="button" class="user-add-btn inline-flex items-center justify-center gap-2 px-5 h-10 rounded-lg bg-emerald-500 hover:bg-emerald-600 text-white text-sm font-medium transition shadow-sm whitespace-nowrap shrink-0" id="addUserBtn" onclick="openUserModal(false)">
 					<svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>
 					{{ __('messages.users.add') }}
 				</button>
