@@ -7,13 +7,13 @@
 	@endpush
 
 	<x-slot name="header">
-		<div class="flex items-center justify-between">
-			<div class="flex items-center space-x-8">
+		<div class="w-full flex flex-wrap items-center justify-between gap-3">
+			<div class="flex flex-wrap items-center gap-3 lg:gap-6">
 				<h2 class="font-bold text-xl text-emerald-900">
 					{{ __('messages.users.title') }}
 				</h2>
 				<!-- Live Status Indicator -->
-				<div class="flex items-center space-x-2 px-3 py-1.5 bg-emerald-50 rounded-full border border-emerald-200">
+				<div class="inline-flex items-center space-x-2 px-3 py-1.5 bg-emerald-50 rounded-full border border-emerald-200">
 					<div class="relative flex h-3 w-3">
 						<span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
 						<span class="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
@@ -21,7 +21,7 @@
 					<span class="text-xs font-semibold text-emerald-700">Terhubung</span>
 				</div>
 			</div>
-			<div class="flex items-center space-x-3">
+			<div class="flex items-center">
 				<div class="text-sm text-gray-600 bg-gray-50 px-3 py-1.5 rounded-lg border border-gray-200">
 					<span class="font-semibold" id="currentTime">{{ now()->format('d M Y, H:i:s') }}</span>
 				</div>
@@ -35,69 +35,80 @@
 
 		<div class="mb-4">
 			<div class="rounded-xl border border-gray-100 bg-white/90 px-3 py-2 shadow-lg">
-				<div class="flex flex-row flex-wrap sm:flex-nowrap justify-between items-center gap-2">
-					<div class="text-center flex-1 min-w-[90px]">
+				<div class="grid grid-cols-3 gap-2">
+					<div class="text-center">
 						<p class="text-[10px] font-bold text-emerald-700 uppercase tracking-widest">Total</p>
 						<p class="text-lg font-black text-gray-900 mt-0.5">{{ $summary['total'] ?? 0 }}</p>
 					</div>
-					<div class="text-center flex-1 min-w-[90px]">
+					<div class="text-center">
 						<p class="text-[10px] font-bold text-blue-700 uppercase tracking-widest">Teknisi</p>
 						<p class="text-lg font-black text-gray-900 mt-0.5">{{ $summary['teknisi'] ?? 0 }}</p>
 					</div>
-					<div class="text-center flex-1 min-w-[90px]">
+					<div class="text-center">
 						<p class="text-[10px] font-bold text-amber-700 uppercase tracking-widest">Admin</p>
 						<p class="text-lg font-black text-gray-900 mt-0.5">{{ $summary['admin'] ?? 0 }}</p>
 					</div>
 				</div>
 			</div>
 		</div>
-		<div class="flex justify-end mb-6">
-			<form class="flex items-center gap-2" method="GET" action="">
-				<input id="userSearchInput" type="text" name="search" placeholder="{{ __('messages.users.search_placeholder') }}" class="w-44 bg-gray-100 border border-gray-200 rounded-lg focus:ring-emerald-200 focus:border-emerald-400 text-gray-700 placeholder-gray-400 text-sm outline-none h-10 px-4 transition" autocomplete="off" />
-				<button type="submit" class="flex items-center justify-center h-8 w-8 rounded-full bg-emerald-500 hover:bg-emerald-600 text-white transition p-0" title="Cari">
-					<svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 104.5 4.5a7.5 7.5 0 0012.15 12.15z" /></svg>
-				</button>
-				<a href="/user-management" class="ml-1 flex items-center justify-center h-8 w-8 rounded-full bg-gray-200 hover:bg-gray-300 text-gray-600 transition p-0" title="Reset" style="text-decoration:none;">
-					<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
-					</svg>
-				</a>
-				<button type="button" class="ml-2 flex items-center gap-2 px-4 h-10 rounded-lg bg-emerald-500 hover:bg-emerald-600 text-white text-sm font-medium transition shadow-sm" id="addUserBtn" onclick="openUserModal(false)">
+		<div class="mb-6">
+			<form class="w-full flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3" method="GET" action="">
+				<div class="w-full lg:flex-1 lg:max-w-xl flex items-center gap-2">
+					<input id="userSearchInput" type="text" name="search" placeholder="{{ __('messages.users.search_placeholder') }}" class="w-full bg-gray-100 border border-gray-200 rounded-lg focus:ring-emerald-200 focus:border-emerald-400 text-gray-700 placeholder-gray-400 text-sm outline-none h-10 px-4 transition" autocomplete="off" />
+					<button type="submit" class="flex items-center justify-center h-10 w-10 rounded-full bg-emerald-500 hover:bg-emerald-600 text-white transition p-0 shrink-0" title="Cari">
+						<svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 104.5 4.5a7.5 7.5 0 0012.15 12.15z" /></svg>
+					</button>
+					<a href="/user-management" class="flex items-center justify-center h-10 w-10 rounded-full bg-gray-200 hover:bg-gray-300 text-gray-600 transition p-0 shrink-0" title="Reset" style="text-decoration:none;">
+						<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+						</svg>
+					</a>
+				</div>
+				<button type="button" class="inline-flex items-center justify-center gap-2 px-5 h-10 rounded-lg bg-emerald-500 hover:bg-emerald-600 text-white text-sm font-medium transition shadow-sm whitespace-nowrap" id="addUserBtn" onclick="openUserModal(false)">
 					<svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>
 					{{ __('messages.users.add') }}
 				</button>
 			</form>
 		</div>
-		<div class="bg-white/80 rounded-xl border border-gray-100 p-4 mb-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4 shadow-sm">
-			<div class="flex items-center gap-3">
-				<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-funnel w-5 h-5 text-emerald-400"><path d="M10 20a1 1 0 0 0 .553.895l2 1A1 1 0 0 0 14 21v-7a2 2 0 0 1 .517-1.341L21.74 4.67A1 1 0 0 0 21 3H3a1 1 0 0 0-.742 1.67l7.225 7.989A2 2 0 0 1 10 14z"></path></svg>
-				<span class="text-sm font-medium text-gray-700">{{ __('messages.users.filters') }}:</span>
-				<select class="border border-gray-200 rounded-md px-3 py-2 text-sm text-gray-700 focus:ring-2 focus:ring-emerald-200 focus:border-emerald-400 bg-white transition" style="min-width:120px;">
-					<option>{{ __('messages.users.all_roles') }}</option>
-					<option>Admin</option>
-					<option>Teknisi</option>
-				</select>
-				<select class="border border-gray-200 rounded-md px-3 py-2 text-sm text-gray-700 focus:ring-2 focus:ring-yellow-200 focus:border-yellow-400 bg-white transition" style="min-width:120px;">
-					<option>{{ __('messages.users.all_status') }}</option>
-					<option>{{ __('messages.users.active') }}</option>
-					<option>{{ __('messages.users.inactive') }}</option>
-				</select>
-			</div>
-			<div class="flex items-center gap-3">
-				<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-up-narrow-wide w-5 h-5 text-yellow-400"><path d="m3 8 4-4 4 4"></path><path d="M7 4v16"></path><path d="M11 12h4"></path><path d="M11 16h7"></path><path d="M11 20h10"></path></svg>
-				<select class="border border-gray-200 rounded-md px-3 py-2 text-sm text-gray-700 focus:ring-2 focus:ring-yellow-200 focus:border-yellow-400 bg-white transition" style="min-width:140px;">
-					<option>Name A–Z</option>
-					<option>Name Z–A</option>
-					<option>Terbaru</option>
-					<option>Terlama</option>
-				</select>
+		<div class="bg-white/80 rounded-xl border border-gray-100 p-4 mb-6 shadow-sm">
+			<div class="w-full flex flex-col xl:flex-row xl:items-end xl:justify-between gap-4">
+				<div class="flex-1">
+					<div class="flex items-center gap-2 mb-2">
+						<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-funnel w-5 h-5 text-emerald-400 shrink-0"><path d="M10 20a1 1 0 0 0 .553.895l2 1A1 1 0 0 0 14 21v-7a2 2 0 0 1 .517-1.341L21.74 4.67A1 1 0 0 0 21 3H3a1 1 0 0 0-.742 1.67l7.225 7.989A2 2 0 0 1 10 14z"></path></svg>
+						<span class="text-sm font-semibold text-gray-700">{{ __('messages.users.filters') }}</span>
+					</div>
+					<div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+						<select class="w-full border border-gray-200 rounded-md px-3 py-2 text-sm text-gray-700 focus:ring-2 focus:ring-emerald-200 focus:border-emerald-400 bg-white transition">
+							<option>{{ __('messages.users.all_roles') }}</option>
+							<option>Admin</option>
+							<option>Teknisi</option>
+						</select>
+						<select class="w-full border border-gray-200 rounded-md px-3 py-2 text-sm text-gray-700 focus:ring-2 focus:ring-yellow-200 focus:border-yellow-400 bg-white transition">
+							<option>{{ __('messages.users.all_status') }}</option>
+							<option>{{ __('messages.users.active') }}</option>
+							<option>{{ __('messages.users.inactive') }}</option>
+						</select>
+					</div>
+				</div>
+				<div class="w-full xl:w-56">
+					<div class="flex items-center gap-2 mb-2">
+						<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-up-narrow-wide w-5 h-5 text-yellow-400 shrink-0"><path d="m3 8 4-4 4 4"></path><path d="M7 4v16"></path><path d="M11 12h4"></path><path d="M11 16h7"></path><path d="M11 20h10"></path></svg>
+						<span class="text-sm font-semibold text-gray-700">Sort</span>
+					</div>
+					<select class="w-full border border-gray-200 rounded-md px-3 py-2 text-sm text-gray-700 focus:ring-2 focus:ring-yellow-200 focus:border-yellow-400 bg-white transition">
+						<option>Name A-Z</option>
+						<option>Name Z-A</option>
+						<option>Terbaru</option>
+						<option>Terlama</option>
+					</select>
+				</div>
 			</div>
 		</div>
 		<!-- Card Tabel User Modern -->
 		<div class="relative overflow-x-auto bg-white rounded-2xl shadow-lg border border-gray-100 mb-8" style="border-radius: 24px !important;">
 			<!-- Top Accent Bar -->
 			<div class="absolute top-0 left-0 w-full h-1.5 bg-emerald-500/80 rounded-t-2xl"></div>
-			<div class="p-6 md:p-8">
+			<div class="p-4 sm:p-6 md:p-8">
 				<div class="flex items-center justify-between mb-6">
 					<div class="flex items-center space-x-2.5">
 						<div style="border-radius: 10px !important;" class="p-1.5 bg-emerald-50">
@@ -182,7 +193,7 @@
 							</tr>
 						@empty
 							<tr>
-								<td colspan="6" class="text-center py-8 text-gray-400">
+								<td colspan="8" class="text-center py-8 text-gray-400">
 									Tidak ada user ditemukan
 								</td>
 							</tr>

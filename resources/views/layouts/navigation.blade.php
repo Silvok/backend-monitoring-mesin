@@ -1,21 +1,21 @@
 <nav x-data="{ open: false }" class="shadow-lg border-b-2 fixed top-0 left-0 right-0 z-50"
     style="background: linear-gradient(to right, #31694E, #275640); border-bottom-color: #1e4030;">
     <!-- Primary Navigation Menu -->
-    <div class="w-full px-4">
-        <div class="flex justify-between items-center h-20">
-            <div class="flex items-center ml-12">
+    <div class="w-full px-3 sm:px-4 overflow-hidden">
+        <div class="flex justify-between items-center h-20 min-w-0">
+            <div class="flex items-center min-w-0">
                 <!-- Logo & Brand -->
-                <div class="flex items-center">
-                    <a href="{{ route('dashboard') }}" class="flex items-center space-x-2 hover:opacity-90 transition">
-                        <div class="w-16 h-16 sm:w-20 sm:h-20 flex-shrink-0">
+                <div class="flex items-center min-w-0">
+                    <a href="{{ route('dashboard') }}" class="flex items-center gap-2 hover:opacity-90 transition min-w-0 max-w-[calc(100vw-5rem)] sm:max-w-none">
+                        <div class="w-12 h-12 sm:w-16 sm:h-16 lg:w-20 lg:h-20 flex-shrink-0">
                             <img src="{{ asset('images/unnamed.png') }}" alt="PreMaint Logo"
                                 class="w-full h-full object-contain">
                         </div>
-                        <div class="leading-tight">
+                        <div class="leading-tight min-w-0">
                             <span
-                                class="text-white font-black text-2xl sm:text-3xl block"
+                                class="text-white font-black text-xl sm:text-2xl lg:text-3xl block truncate"
                                 style="font-weight: 900;">PreMaint</span>
-                            <span class="text-emerald-100 text-base sm:text-lg font-semibold block">Prediktif Maintenance</span>
+                            <span class="hidden sm:block text-emerald-100 text-sm lg:text-lg font-semibold truncate">Prediktif Maintenance</span>
                         </div>
                     </a>
                 </div>

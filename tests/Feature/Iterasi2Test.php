@@ -173,6 +173,70 @@ class Iterasi2Test extends TestCase
         $this->assertTrue((bool) Cache::get("alert_ack_{$firstAlertId}", false));
     }
 
+    public function test_endpoint_notifikasi_mengembalikan_data_user_dan_unread_count(): void
+    {
+        $user = $this->createSuperAdmin();
+        $otherUser = User::factory()->create();
+
+        $machine = Machine::create([
+            'name' => 'Machine Notify',
+            'location' => 'NT-01',
+            'threshold_warning' => 10.0,
+            'threshold_critical' => 20.0,
+            'is_active' => true,
+        ]);
+
+        DB::table('notifications')->insert([
+            [
+                'user_id' => $user->id,
+                'machine_id' => $machine->id,
+                'type' => 'ALERT',
+                'severity' => 'CRITICAL',
+                'title' => 'Alert CRITICAL: Machine Notify',
+                'message' => 'Nilai RMS melewati ambang.',
+                'payload' => json_encode(['status' => 'CRITICAL']),
+                'is_read' => false,
+                'read_at' => null,
+                'created_at' => now()->subMinute(),
+                'updated_at' => now()->subMinute(),
+            ],
+            [
+                'user_id' => $user->id,
+                'machine_id' => $machine->id,
+                'type' => 'ALERT',
+                'severity' => 'WARNING',
+                'title' => 'Alert WARNING: Machine Notify',
+                'message' => 'Nilai RMS mendekati ambang.',
+                'payload' => json_encode(['status' => 'WARNING']),
+                'is_read' => true,
+                'read_at' => now()->subSeconds(30),
+                'created_at' => now()->subSeconds(30),
+                'updated_at' => now()->subSeconds(30),
+            ],
+            [
+                'user_id' => $otherUser->id,
+                'machine_id' => $machine->id,
+                'type' => 'ALERT',
+                'severity' => 'CRITICAL',
+                'title' => 'Alert user lain',
+                'message' => 'Harus terfilter.',
+                'payload' => json_encode(['status' => 'CRITICAL']),
+                'is_read' => false,
+                'read_at' => null,
+                'created_at' => now()->subSeconds(10),
+                'updated_at' => now()->subSeconds(10),
+            ],
+        ]);
+
+        $response = $this->actingAs($user)->getJson('/notifications?limit=10');
+
+        $response->assertOk()
+            ->assertJsonPath('unread_count', 1)
+            ->assertJsonCount(2, 'items')
+            ->assertJsonPath('items.0.title', 'Alert WARNING: Machine Notify')
+            ->assertJsonPath('items.1.title', 'Alert CRITICAL: Machine Notify');
+    }
+
     private function createSuperAdmin(): User
     {
         return User::factory()->create([
@@ -272,4 +336,3 @@ class Iterasi2Test extends TestCase
         DB::table('raw_samples')->insert($rows);
     }
 }
-

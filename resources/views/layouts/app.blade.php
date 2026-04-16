@@ -18,7 +18,7 @@
     <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
 </head>
 
-<body class="font-sans antialiased">
+<body class="font-sans antialiased overflow-x-hidden">
     <div x-data="{ sidebarOpen: true }" class="min-h-screen bg-gray-50 flex flex-col">
         @include('layouts.navigation')
 
