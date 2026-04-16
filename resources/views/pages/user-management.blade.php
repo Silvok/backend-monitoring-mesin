@@ -10,39 +10,95 @@
 			.user-add-btn {
 				width: 100%;
 			}
+			.user-header-row {
+				display: flex;
+				flex-wrap: nowrap;
+				align-items: center;
+				justify-content: space-between;
+				gap: 0.75rem;
+				width: 100%;
+				min-width: 0;
+			}
+			.user-header-title {
+				display: flex;
+				align-items: center;
+				flex: 1 1 auto;
+				min-width: 0;
+			}
+			.user-time-wrap {
+				display: flex;
+				width: auto;
+				margin-left: auto;
+				flex: 0 0 auto;
+			}
+			.user-time-chip {
+				display: inline-flex;
+				align-items: center;
+				justify-content: center;
+				gap: 0.5rem;
+				width: auto;
+				max-width: 100%;
+				padding: 0.375rem 0.75rem;
+				border: 1px solid rgb(229 231 235);
+				border-radius: 0.5rem;
+				background: rgb(249 250 251);
+				color: rgb(75 85 99);
+				font-size: 0.75rem;
+				line-height: 1rem;
+			}
 
 			@media (max-width: 1023.98px) {
 				.user-table-desktop { display: none !important; }
 				.user-table-mobile { display: block; }
 			}
 
+			@media (max-width: 639.98px) {
+				.user-time-chip {
+					padding: 0.25rem 0.5rem;
+					font-size: 0.6875rem;
+					line-height: 1rem;
+				}
+			}
+
 			@media (min-width: 1024px) {
+				.user-header-row {
+					gap: 1rem;
+				}
 				.user-add-btn {
 					width: auto;
 					min-width: 190px;
+				}
+				.user-header-title {
+					flex: 1 1 auto;
+				}
+				.user-time-wrap {
+					width: auto;
+					justify-content: flex-end;
+				}
+				.user-time-chip {
+					width: auto;
+					min-width: 210px;
+					font-size: 0.875rem;
+					line-height: 1.25rem;
 				}
 			}
 		</style>
 	@endpush
 
 	<x-slot name="header">
-		<div class="w-full min-w-0 flex flex-wrap items-start sm:items-center justify-between gap-3">
-			<div class="flex min-w-0 flex-wrap items-center gap-3 lg:gap-6">
-				<h2 class="font-bold text-xl text-emerald-900 min-w-0">
+		<div class="user-header-row">
+			<div class="user-header-title">
+				<h2 class="font-bold text-xl text-emerald-900 leading-tight min-w-0 whitespace-nowrap">
 					{{ __('messages.users.title') }}
 				</h2>
-				<!-- Live Status Indicator -->
-				<div class="inline-flex items-center space-x-2 px-3 py-1.5 bg-emerald-50 rounded-full border border-emerald-200 shrink-0">
-					<div class="relative flex h-3 w-3">
-						<span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-						<span class="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
-					</div>
-					<span class="text-xs font-semibold text-emerald-700">Terhubung</span>
-				</div>
 			</div>
-			<div class="flex w-full sm:w-auto items-center">
-				<div class="text-sm text-gray-600 bg-gray-50 px-3 py-1.5 rounded-lg border border-gray-200">
-					<span class="font-semibold" id="currentTime">{{ now()->format('d M Y, H:i:s') }}</span>
+			<div class="user-time-wrap">
+				<div class="user-time-chip">
+					<svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-gray-500 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+						<circle cx="12" cy="12" r="9"></circle>
+						<path d="M12 7v5l3 2"></path>
+					</svg>
+					<span class="font-semibold whitespace-nowrap" id="currentTime">{{ now()->format('d M Y, H:i:s') }}</span>
 				</div>
 			</div>
 		</div>
