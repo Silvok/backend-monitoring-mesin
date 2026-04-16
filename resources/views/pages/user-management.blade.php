@@ -4,16 +4,25 @@
 	@section('title', 'Manajemen User')
 	@push('styles')
 		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+		<style>
+			.user-table-desktop { display: block; }
+			.user-table-mobile { display: none; }
+
+			@media (max-width: 1023.98px) {
+				.user-table-desktop { display: none !important; }
+				.user-table-mobile { display: block; }
+			}
+		</style>
 	@endpush
 
 	<x-slot name="header">
-		<div class="w-full flex flex-wrap items-center justify-between gap-3">
-			<div class="flex flex-wrap items-center gap-3 lg:gap-6">
-				<h2 class="font-bold text-xl text-emerald-900">
+		<div class="w-full min-w-0 flex flex-wrap items-start sm:items-center justify-between gap-3">
+			<div class="flex min-w-0 flex-wrap items-center gap-3 lg:gap-6">
+				<h2 class="font-bold text-xl text-emerald-900 min-w-0">
 					{{ __('messages.users.title') }}
 				</h2>
 				<!-- Live Status Indicator -->
-				<div class="inline-flex items-center space-x-2 px-3 py-1.5 bg-emerald-50 rounded-full border border-emerald-200">
+				<div class="inline-flex items-center space-x-2 px-3 py-1.5 bg-emerald-50 rounded-full border border-emerald-200 shrink-0">
 					<div class="relative flex h-3 w-3">
 						<span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
 						<span class="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
@@ -21,7 +30,7 @@
 					<span class="text-xs font-semibold text-emerald-700">Terhubung</span>
 				</div>
 			</div>
-			<div class="flex items-center">
+			<div class="flex w-full sm:w-auto items-center">
 				<div class="text-sm text-gray-600 bg-gray-50 px-3 py-1.5 rounded-lg border border-gray-200">
 					<span class="font-semibold" id="currentTime">{{ now()->format('d M Y, H:i:s') }}</span>
 				</div>
@@ -53,8 +62,8 @@
 		</div>
 		<div class="mb-6">
 			<form class="w-full flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3" method="GET" action="">
-				<div class="w-full lg:flex-1 lg:max-w-xl flex items-center gap-2">
-					<input id="userSearchInput" type="text" name="search" placeholder="{{ __('messages.users.search_placeholder') }}" class="w-full bg-gray-100 border border-gray-200 rounded-lg focus:ring-emerald-200 focus:border-emerald-400 text-gray-700 placeholder-gray-400 text-sm outline-none h-10 px-4 transition" autocomplete="off" />
+				<div class="w-full lg:flex-1 lg:max-w-xl flex items-center gap-2 min-w-0">
+					<input id="userSearchInput" type="text" name="search" placeholder="{{ __('messages.users.search_placeholder') }}" class="flex-1 min-w-0 bg-gray-100 border border-gray-200 rounded-lg focus:ring-emerald-200 focus:border-emerald-400 text-gray-700 placeholder-gray-400 text-sm outline-none h-10 px-4 transition" autocomplete="off" />
 					<button type="submit" class="flex items-center justify-center h-10 w-10 rounded-full bg-emerald-500 hover:bg-emerald-600 text-white transition p-0 shrink-0" title="Cari">
 						<svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 104.5 4.5a7.5 7.5 0 0012.15 12.15z" /></svg>
 					</button>
@@ -64,7 +73,7 @@
 						</svg>
 					</a>
 				</div>
-				<button type="button" class="inline-flex items-center justify-center gap-2 px-5 h-10 rounded-lg bg-emerald-500 hover:bg-emerald-600 text-white text-sm font-medium transition shadow-sm whitespace-nowrap" id="addUserBtn" onclick="openUserModal(false)">
+				<button type="button" class="w-full lg:w-auto inline-flex items-center justify-center gap-2 px-5 h-10 rounded-lg bg-emerald-500 hover:bg-emerald-600 text-white text-sm font-medium transition shadow-sm whitespace-nowrap" id="addUserBtn" onclick="openUserModal(false)">
 					<svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>
 					{{ __('messages.users.add') }}
 				</button>
@@ -105,7 +114,7 @@
 			</div>
 		</div>
 		<!-- Card Tabel User Modern -->
-		<div class="relative overflow-x-auto bg-white rounded-2xl shadow-lg border border-gray-100 mb-8" style="border-radius: 24px !important;">
+		<div class="user-table-desktop relative overflow-x-auto bg-white rounded-2xl shadow-lg border border-gray-100 mb-8" style="border-radius: 24px !important;">
 			<!-- Top Accent Bar -->
 			<div class="absolute top-0 left-0 w-full h-1.5 bg-emerald-500/80 rounded-t-2xl"></div>
 			<div class="p-4 sm:p-6 md:p-8">
@@ -200,6 +209,82 @@
 						@endforelse
 					</tbody>
 				</table>
+			</div>
+		</div>
+
+		<div class="user-table-mobile bg-white rounded-2xl shadow-lg border border-gray-100 mb-8 overflow-hidden">
+			<div class="h-1.5 bg-emerald-500/80"></div>
+			<div class="p-4">
+				<div class="flex items-center space-x-2.5 mb-4">
+					<div class="p-1.5 bg-emerald-50 rounded-lg">
+						<svg class="w-5 h-5 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.121 17.804A13.937 13.937 0 0112 15c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0z" />
+						</svg>
+					</div>
+					<h3 class="font-bold text-gray-900 text-lg">{{ __('messages.users.table_title') }}</h3>
+				</div>
+
+				<div class="space-y-3">
+					@forelse($users as $user)
+						<div class="rounded-xl border border-gray-100 bg-gray-50/70 p-3">
+							<div class="flex items-start justify-between gap-3">
+								<div class="flex items-center gap-3 min-w-0">
+									<span class="inline-block h-10 w-10 rounded-full overflow-hidden bg-gray-200 flex-shrink-0">
+										@if(isset($user->profile_photo_url))
+											<img src="{{ $user->profile_photo_url }}" alt="{{ $user->name }}" class="h-10 w-10 object-cover">
+										@else
+											<svg class="h-10 w-10 text-gray-400" fill="currentColor" viewBox="0 0 24 24">
+												<path d="M24 24H0c0-6.627 5.373-12 12-12s12 5.373 12 12z"/>
+												<circle cx="12" cy="8" r="4"/>
+											</svg>
+										@endif
+									</span>
+									<div class="min-w-0">
+										<p class="font-semibold text-gray-900 truncate">{{ $user->name }}</p>
+										<p class="text-sm text-gray-600 truncate">{{ $user->email }}</p>
+									</div>
+								</div>
+								<div class="flex items-center gap-1 flex-shrink-0">
+									<button onclick="editUser({{ $user->id }})" class="inline-flex items-center justify-center p-2 rounded-full text-emerald-600 hover:bg-emerald-100 hover:text-emerald-800 transition" title="Edit">
+										<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+											<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16.862 3.487a2.25 2.25 0 113.182 3.182L7.5 19.213l-4 1 1-4 12.362-12.726z" />
+										</svg>
+									</button>
+									<button onclick="confirmDeleteUser({{ $user->id }})" class="inline-flex items-center justify-center p-2 rounded-full text-red-600 hover:bg-red-100 hover:text-red-800 transition" title="Hapus">
+										<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+											<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 7h12M9 7V4a1 1 0 011-1h4a1 1 0 011 1v3m2 0v12a2 2 0 01-2 2H8a2 2 0 01-2-2V7h12z" />
+										</svg>
+									</button>
+								</div>
+							</div>
+
+							<div class="mt-3 grid grid-cols-2 gap-2 text-xs">
+								@php
+									$roleLabel = match ($user->role ?? null) {
+										'operator' => 'Teknisi',
+										'admin' => 'Admin',
+										default => $user->role ?? '-',
+									};
+								@endphp
+								<div>
+									<p class="text-gray-500 mb-1">Role</p>
+									<span class="inline-block px-2 py-1 text-xs rounded bg-emerald-100 text-emerald-700 font-semibold">{{ $roleLabel }}</span>
+								</div>
+								<div>
+									<p class="text-gray-500 mb-1">Status</p>
+									<span class="px-2 py-1 text-xs font-semibold rounded-full {{ ($user->status ?? true) ? 'bg-emerald-100 text-emerald-700' : 'bg-gray-200 text-gray-500' }}">
+										{{ ($user->status ?? true) ? 'Active' : 'Inactive' }}
+									</span>
+								</div>
+							</div>
+							<p class="mt-2 text-xs text-gray-500">Last login: {{ $user->last_login_at ? \Carbon\Carbon::parse($user->last_login_at)->format('d M Y, H:i') : '-' }}</p>
+						</div>
+					@empty
+						<div class="text-center py-8 text-gray-400">
+							Tidak ada user ditemukan
+						</div>
+					@endforelse
+				</div>
 			</div>
 		</div>
 

@@ -3,7 +3,7 @@
     <!-- Primary Navigation Menu -->
     <div class="w-full px-3 sm:px-4 overflow-hidden">
         <div class="flex justify-between items-center h-20 min-w-0">
-            <div class="flex items-center min-w-0">
+            <div class="flex flex-1 sm:flex-none items-center min-w-0">
                 <!-- Logo & Brand -->
                 <div class="flex items-center min-w-0">
                     <a href="{{ route('dashboard') }}" class="flex items-center gap-2 hover:opacity-90 transition min-w-0 max-w-[calc(100vw-5rem)] sm:max-w-none">
@@ -124,7 +124,7 @@
             </div>
 
             <!-- Mobile Hamburger -->
-            <div class="sm:hidden">
+            <div class="sm:hidden flex-shrink-0 ml-2">
                 <button @click="open = !open"
                     class="inline-flex items-center justify-center p-2 rounded-lg text-white hover:bg-white/10 transition duration-200">
                     <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
