@@ -37,7 +37,7 @@
 
             <!-- Machine Status Card -->
             <div id="machineStatusCard" class="hidden">
-                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-visible sm:overflow-hidden w-full min-w-0">
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden w-full min-w-0">
                     <!-- Status Bar -->
                     <div id="statusBar" class="h-1.5 bg-gray-300"></div>
 
@@ -60,8 +60,8 @@
                         </div>
 
                         <!-- Metrics Grid -->
-                        <div class="mb-6 -mx-1 px-1 overflow-x-auto sm:overflow-visible">
-                            <div class="grid grid-flow-col auto-cols-[minmax(150px,1fr)] sm:grid-flow-row sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
+                        <div class="mb-6">
+                            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 min-w-0">
                             <div class="bg-white rounded-xl p-3 sm:p-4 border border-slate-200 shadow-sm">
                                 <p class="text-[11px] font-semibold text-slate-500 mb-2 uppercase tracking-wide">RMS Value</p>
                                 <p id="rmsValue" class="text-xl sm:text-2xl font-extrabold text-slate-900">0.0000</p>
@@ -99,8 +99,8 @@
                         </div>
                     </div>
 
-                    <div class="-mx-1 px-1 overflow-x-auto sm:overflow-visible">
-                    <div class="grid grid-flow-col auto-cols-[minmax(150px,1fr)] sm:grid-flow-row sm:grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3">
+                    <div class="w-full min-w-0">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3 min-w-0">
                         <!-- Total Readings -->
                         <div class="text-center rounded-xl border border-slate-200 bg-slate-50/80 p-2.5 sm:p-3">
                             <div class="inline-flex items-center justify-center w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-blue-50 mb-2">
@@ -151,7 +151,7 @@
 
             <!-- Real-time Sensor Values -->
             <div id="sensorValuesSection" class="hidden">
-                <div class="bg-white rounded-2xl shadow-sm border border-slate-200/70 overflow-visible sm:overflow-hidden w-full min-w-0">
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-200/70 overflow-hidden w-full min-w-0">
                     <div class="px-4 sm:px-6 xl:px-7 py-4 border-b border-slate-200 bg-slate-50">
                         <div class="w-full flex flex-wrap items-center justify-between gap-2">
                             <h3 class="text-lg font-bold text-gray-900 text-left">Nilai Sensor Real-Time</h3>
@@ -525,6 +525,11 @@
         }
 
         @media (max-width: 640px) {
+            html,
+            body {
+                overflow-x: hidden;
+            }
+
             .realtime-page {
                 overflow-x: hidden;
             }
@@ -537,6 +542,13 @@
             .realtime-page .max-w-7xl {
                 width: 100%;
                 max-width: 100%;
+                overflow-x: hidden;
+            }
+
+            .realtime-page .max-w-7xl > * {
+                width: 100%;
+                max-width: 100%;
+                min-width: 0;
             }
 
             .realtime-page .overflow-x-auto {
@@ -572,11 +584,18 @@
             .realtime-page #chartSection,
             .realtime-page #liveFeedSection,
             .realtime-page #historyFeedSection {
+                width: 100%;
                 max-width: 100%;
+                overflow-x: hidden;
             }
 
             .realtime-page #machineStatusCard * {
                 max-width: 100%;
+                min-width: 0;
+            }
+
+            .realtime-page #quickStatsSection .grid > div {
+                width: 100%;
                 min-width: 0;
             }
         }

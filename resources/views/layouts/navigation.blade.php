@@ -3,15 +3,15 @@
     <!-- Primary Navigation Menu -->
     <div class="w-full px-3 sm:px-4">
         <div class="flex justify-between items-center h-20 min-w-0">
-            <div class="flex flex-1 sm:flex-none items-center min-w-0 pr-2">
+            <div class="flex flex-1 sm:flex-none items-center min-w-0 pr-2 max-w-[calc(100%-5.5rem)] sm:max-w-none">
                 <!-- Logo & Brand -->
                 <div class="flex items-center min-w-0">
-                    <a href="{{ route('dashboard') }}" class="w-full sm:w-auto flex items-center gap-2 hover:opacity-90 transition min-w-0 max-w-[calc(100vw-9.5rem)] sm:max-w-none">
+                    <a href="{{ route('dashboard') }}" class="flex items-center gap-2 hover:opacity-90 transition min-w-0 max-w-full sm:max-w-none">
                         <div class="w-10 h-10 sm:w-16 sm:h-16 lg:w-20 lg:h-20 flex-shrink-0">
                             <img src="{{ asset('images/unnamed.png') }}" alt="PreMaint Logo"
                                 class="w-full h-full object-contain">
                         </div>
-                        <div class="leading-tight min-w-0">
+                        <div class="leading-tight min-w-0 max-w-full">
                             <span
                                 class="text-white font-black text-xl sm:text-2xl lg:text-3xl block truncate"
                                 style="font-weight: 900;">PreMaint</span>
