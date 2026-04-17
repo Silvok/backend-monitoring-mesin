@@ -30,12 +30,22 @@
             <!-- Main Content -->
             <div class="flex-1 min-w-0 w-full transition-all duration-300" :class="sidebarOpen ? 'md:ml-72' : 'md:ml-16'">
                 <!-- Page Heading -->
+                @php($isRealtimeHeader = request()->routeIs('real-time-sensor'))
                 @isset($header)
-                    <header class="bg-white/80 backdrop-blur-md shadow-sm border-b border-gray-100 sticky top-16 sm:top-20 z-40">
+                    <header
+                        class="bg-white/80 backdrop-blur-md shadow-sm border-b border-gray-100 z-40 {{ $isRealtimeHeader ? 'fixed top-16 sm:top-20 left-0 right-0 md:left-72 transition-all duration-300' : 'sticky top-16 sm:top-20' }}"
+                        @if($isRealtimeHeader)
+                            data-fixed-realtime="1"
+                            :class="sidebarOpen ? 'md:left-72' : 'md:left-16'"
+                        @endif
+                    >
                         <div class="w-full max-w-7xl mx-auto py-4 px-3 sm:py-6 sm:px-6 lg:px-8 min-w-0">
                             {{ $header }}
                         </div>
                     </header>
+                    @if($isRealtimeHeader)
+                        <div id="fixedHeaderSpacer" class="w-full"></div>
+                    @endif
                 @endisset
 
                 <!-- Page Content -->
@@ -48,6 +58,21 @@
 
     <!-- Scripts Stack -->
     @stack('scripts')
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const fixedHeader = document.querySelector('header[data-fixed-realtime="1"]');
+            const spacer = document.getElementById('fixedHeaderSpacer');
+            if (!fixedHeader || !spacer) return;
+
+            const syncFixedHeaderSpacer = () => {
+                spacer.style.height = `${fixedHeader.offsetHeight}px`;
+            };
+
+            syncFixedHeaderSpacer();
+            window.addEventListener('resize', syncFixedHeaderSpacer);
+            setTimeout(syncFixedHeaderSpacer, 120);
+        });
+    </script>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const path = window.location.pathname.replace(/\/+$/, '');
