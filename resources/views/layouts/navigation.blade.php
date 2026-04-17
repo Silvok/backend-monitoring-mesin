@@ -2,7 +2,7 @@
     style="background: linear-gradient(to right, #31694E, #275640); border-bottom-color: #1e4030;">
     <!-- Primary Navigation Menu -->
     <div class="w-full px-3 sm:px-4">
-        <div class="flex justify-between items-center h-20 min-w-0">
+        <div class="flex justify-between items-center h-16 sm:h-20 min-w-0">
             <div class="flex flex-1 sm:flex-none items-center min-w-0 pr-2 max-w-[calc(100%-5.5rem)] sm:max-w-none">
                 <!-- Logo & Brand -->
                 <div class="flex items-center min-w-0">
@@ -214,7 +214,7 @@
         </div>
     </div>
 
-    <div id="notifMenu" class="fixed top-24 w-72 max-w-[calc(100vw-2rem)] max-h-[calc(100vh-6rem)] -translate-x-1/2 bg-white rounded-2xl shadow-2xl border border-gray-100 hidden z-[60] overflow-hidden">
+    <div id="notifMenu" class="fixed top-20 sm:top-24 w-72 max-w-[calc(100vw-2rem)] max-h-[calc(100vh-6rem)] -translate-x-1/2 bg-white rounded-2xl shadow-2xl border border-gray-100 hidden z-[60] overflow-hidden">
         <div class="px-4 py-3 border-b border-gray-100">
             <div class="flex items-center justify-between">
                 <div class="flex items-center gap-2">

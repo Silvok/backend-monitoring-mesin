@@ -1,11 +1,15 @@
 <x-app-layout>
     <x-slot name="header">
-        <div class="w-full min-w-0 grid grid-cols-[minmax(0,1fr)_auto] items-center gap-2">
-            <h2 class="font-bold text-sm sm:text-xl text-emerald-900 truncate pr-1">
-                Monitoring &amp; Analisis Mesin
-            </h2>
-            <div class="inline-flex max-w-[45vw] sm:max-w-none items-center text-[10px] sm:text-sm text-gray-600 bg-gray-50 px-2 py-1.5 rounded-lg border border-gray-200">
-                <span class="font-semibold whitespace-nowrap tabular-nums" id="currentTime">{{ now()->format('d M Y, H:i') }}</span>
+        <div class="w-full min-w-0 flex items-center justify-between gap-2">
+            <div class="min-w-0 flex-1">
+                <h2 class="font-bold text-base sm:text-xl text-emerald-900 truncate">
+                    Monitoring &amp; Analisis Mesin
+                </h2>
+            </div>
+            <div class="flex-shrink-0">
+                <div class="inline-flex items-center text-[10px] sm:text-sm text-gray-600 bg-gray-50 px-2 py-1.5 rounded-lg border border-gray-200">
+                    <span class="font-semibold whitespace-nowrap tabular-nums" id="currentTime">{{ now()->format('d M Y, H:i') }}</span>
+                </div>
             </div>
         </div>
     </x-slot>

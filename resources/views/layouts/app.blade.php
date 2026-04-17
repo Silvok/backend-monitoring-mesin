@@ -20,18 +20,18 @@
 </head>
 
 <body class="font-sans antialiased overflow-x-hidden w-full">
-    <div x-data="{ sidebarOpen: true }" class="min-h-screen bg-gray-50 flex flex-col w-full overflow-x-hidden">
+    <div x-data="{ sidebarOpen: true }" class="min-h-screen bg-gray-50 flex flex-col w-full">
         @include('layouts.navigation')
 
-        <div class="flex flex-1 pt-20 w-full min-w-0">
+        <div class="flex flex-1 pt-16 sm:pt-20 w-full min-w-0">
             <!-- Sidebar -->
             @include('layouts.sidebar')
 
             <!-- Main Content -->
-            <div class="flex-1 min-w-0 w-full overflow-x-hidden transition-all duration-300" :class="sidebarOpen ? 'md:ml-72' : 'md:ml-16'">
+            <div class="flex-1 min-w-0 w-full transition-all duration-300" :class="sidebarOpen ? 'md:ml-72' : 'md:ml-16'">
                 <!-- Page Heading -->
                 @isset($header)
-                    <header class="bg-white/80 backdrop-blur-md shadow-sm border-b border-gray-100 sticky top-20 z-40 overflow-x-hidden">
+                    <header class="bg-white/80 backdrop-blur-md shadow-sm border-b border-gray-100 sticky top-16 sm:top-20 z-40">
                         <div class="w-full max-w-7xl mx-auto py-4 px-3 sm:py-6 sm:px-6 lg:px-8 min-w-0">
                             {{ $header }}
                         </div>
