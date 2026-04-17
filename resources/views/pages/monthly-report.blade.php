@@ -288,15 +288,15 @@
                 <a href="{{ route('monthly-report.export', $reportQuery) }}"
                    class="text-sm font-semibold text-emerald-700 hover:text-emerald-800">Export CSV</a>
             </div>
-            <div class="mt-4 overflow-x-auto">
+            <div class="mt-4 overflow-x-auto rounded-lg">
                 <table class="min-w-full text-sm">
                     <thead class="bg-emerald-700 text-white">
-                        <tr class="text-emerald-700">
-                            <th class="px-4 py-3 text-left font-semibold">Tanggal</th>
+                        <tr class="text-white">
+                            <th class="px-4 py-3 text-left font-semibold rounded-tl-lg">Tanggal</th>
                             <th class="px-4 py-3 text-left font-semibold">Mesin</th>
                             <th class="px-4 py-3 text-left font-semibold">Status</th>
                             <th class="px-4 py-3 text-left font-semibold">RMS</th>
-                            <th class="px-4 py-3 text-left font-semibold">Catatan</th>
+                            <th class="px-4 py-3 text-left font-semibold rounded-tr-lg">Catatan</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-100">
@@ -328,16 +328,16 @@
 
         <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 sm:p-6">
             <h3 class="font-bold text-gray-900">Rekap per Mesin</h3>
-            <div class="mt-4 overflow-x-auto">
+            <div class="mt-4 overflow-x-auto rounded-lg">
                 <table class="min-w-full text-sm">
-                    <thead class="bg-gray-50 text-gray-600">
-                        <tr>
-                            <th class="px-4 py-3 text-left font-semibold">Mesin</th>
+                    <thead class="bg-emerald-700 text-white">
+                        <tr class="text-white">
+                            <th class="px-4 py-3 text-left font-semibold rounded-tl-lg">Mesin</th>
                             <th class="px-4 py-3 text-left font-semibold">Total</th>
                             <th class="px-4 py-3 text-left font-semibold">Normal</th>
                             <th class="px-4 py-3 text-left font-semibold">Warning</th>
                             <th class="px-4 py-3 text-left font-semibold">Critical</th>
-                            <th class="px-4 py-3 text-left font-semibold">RMS Rata-rata</th>
+                            <th class="px-4 py-3 text-left font-semibold rounded-tr-lg">RMS Rata-rata</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-100">

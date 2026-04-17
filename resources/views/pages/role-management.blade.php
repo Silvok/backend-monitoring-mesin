@@ -1,26 +1,15 @@
 <x-app-layout>
     <x-slot name="header">
-        <div class="flex items-center justify-between">
-            <div class="flex items-center space-x-8">
-                <h2 class="font-bold text-xl text-emerald-900">
+        <div class="w-full min-w-0 flex items-center justify-between gap-2">
+            <div class="min-w-0 flex-1">
+                <h2 class="font-bold text-base sm:text-xl text-emerald-900 truncate">
                     Role & Permission
                 </h2>
-                <div class="flex items-center space-x-2 px-3 py-1.5 bg-emerald-50 rounded-full border border-emerald-200">
-                    <div class="relative flex h-3 w-3">
-                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                        <span class="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
-                    </div>
-                    <span class="text-xs font-semibold text-emerald-700">Terhubung</span>
-                </div>
             </div>
-            <div class="flex items-center space-x-3">
-                <div class="text-sm text-gray-600 bg-gray-50 px-3 py-1.5 rounded-lg border border-gray-200">
+            <div class="flex-shrink-0">
+                <div class="inline-flex items-center text-[10px] sm:text-sm text-gray-600 bg-gray-50 px-2 py-1.5 rounded-lg border border-gray-200">
                     <span class="font-semibold" id="currentTime">{{ now()->format('d M Y, H:i:s') }}</span>
                 </div>
-                <button id="openRoleModal" class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-500 hover:bg-emerald-600 text-white text-sm font-semibold shadow-sm">
-                    <span class="text-lg leading-none">+</span>
-                    Tambah Role
-                </button>
             </div>
         </div>
     </x-slot>
@@ -28,7 +17,13 @@
     <div class="py-6">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-4">
             <div class="rounded-2xl border border-gray-100 bg-white shadow-sm p-4">
-                <div class="text-sm font-semibold text-gray-700 mb-2">Cari Role</div>
+                <div class="mb-3 flex flex-wrap items-center justify-between gap-2">
+                    <div class="text-sm font-semibold text-gray-700">Cari Role</div>
+                    <button id="openRoleModal" class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-500 hover:bg-emerald-600 text-white text-sm font-semibold shadow-sm">
+                        <span class="text-lg leading-none">+</span>
+                        Tambah Role
+                    </button>
+                </div>
                 <div class="flex items-center gap-3 rounded-xl border border-gray-200 bg-gray-50 px-3 py-2">
                     <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 104.5 4.5a7.5 7.5 0 0012.15 12.15z" />
