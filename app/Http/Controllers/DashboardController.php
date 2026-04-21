@@ -14,19 +14,25 @@ class DashboardController extends Controller
 {
     public function index()
     {
-        // Single cache key for all dashboard data - reduces cache lookups
-        $dashboardData = Cache::remember('dashboard_all_data', 30, function () {
-            // Run all counts in parallel using single query with conditional counts
+        // Keep warm longer to avoid heavy recompute on frequent logins.
+        $dashboardData = Cache::remember('dashboard_all_data_v2', 300, function () {
+            // Use longer-lived cache for heavy total count on large table.
+            $totalSamples = Cache::remember('dashboard_total_samples', 900, function () {
+                return RawSample::count();
+            });
+
             $stats = [
                 'totalMachines' => Machine::count(),
-                'totalSamples' => RawSample::count(),
+                'totalSamples' => $totalSamples,
                 'totalAnalysis' => AnalysisResult::count(),
                 'anomalyCount' => AnalysisResult::whereIn('condition_status', ['ANOMALY', 'WARNING', 'FAULT', 'CRITICAL'])->count(),
                 'normalCount' => AnalysisResult::where('condition_status', 'NORMAL')->count(),
             ];
 
-            // Get machine status data (preloaded to avoid AJAX call)
-            $machineStatus = Machine::with('latestAnalysis')
+            // Select only required columns to reduce hydration overhead.
+            $machineStatus = Machine::query()
+                ->select(['id', 'name', 'location', 'is_active', 'threshold_warning', 'threshold_critical'])
+                ->with('latestAnalysis')
                 ->get()
                 ->map(function($machine) {
                     $latest = $machine->latestAnalysis;
@@ -64,11 +70,11 @@ class DashboardController extends Controller
                     ];
                 });
 
-            // Get alerts data (preloaded to avoid AJAX call)
             $alerts = AnalysisResult::with('machine')
                 ->where('condition_status', 'ANOMALY')
                 ->where('created_at', '>=', now()->subDay())
                 ->orderBy('created_at', 'desc')
+                ->select(['id', 'machine_id', 'rms', 'created_at'])
                 ->limit(20)
                 ->get()
                 ->map(function ($analysis) {
@@ -93,10 +99,10 @@ class DashboardController extends Controller
                     ];
                 });
 
-            // Get top machines by risk (preloaded to avoid AJAX call)
             $topMachines = AnalysisResult::with('machine')
                 ->where('created_at', '>=', now()->subDay())
                 ->orderBy('rms', 'desc')
+                ->select(['id', 'machine_id', 'rms', 'condition_status', 'created_at'])
                 ->limit(5)
                 ->get()
                 ->map(function($analysis) {
@@ -120,11 +126,10 @@ class DashboardController extends Controller
                     ];
                 });
 
-            // RMS chart data
             $rmsData = AnalysisResult::where('created_at', '>=', now()->subHours(24))
                 ->orderBy('created_at', 'desc')
                 ->select('rms', 'created_at')
-                ->limit(100) // Limit data points for faster rendering
+                ->limit(100)
                 ->get()
                 ->sortBy('created_at')
                 ->map(fn($item) => [
@@ -132,9 +137,19 @@ class DashboardController extends Controller
                     'value' => round($item->rms, 4)
                 ]);
 
-            // Latest sensor & temperature data
-            $latestSensorData = RawSample::with('machine')->latest()->limit(10)->get();
-            $latestTemperatureData = TemperatureReading::with('machine')->latest('recorded_at')->limit(10)->get();
+            $latestSensorData = RawSample::query()
+                ->select(['id', 'machine_id', 'created_at', 'ax_g', 'ay_g', 'az_g', 'temperature_c'])
+                ->with('machine:id,name')
+                ->latest()
+                ->limit(10)
+                ->get();
+
+            $latestTemperatureData = TemperatureReading::query()
+                ->select(['id', 'machine_id', 'recorded_at', 'temperature_c'])
+                ->with('machine:id,name')
+                ->latest('recorded_at')
+                ->limit(10)
+                ->get();
 
             return [
                 'stats' => $stats,

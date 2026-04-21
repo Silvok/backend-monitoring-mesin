@@ -5,6 +5,7 @@ namespace App\Http\Middleware;
 use Closure;
 use Illuminate\Http\Request;
 use App\Models\Role;
+use Illuminate\Support\Facades\Cache;
 
 class PermissionMiddleware
 {
@@ -15,12 +16,16 @@ class PermissionMiddleware
             abort(403);
         }
 
-        $role = Role::where('slug', $user->role)->first();
-        if (!$role) {
+        $cacheKey = 'role_permissions:' . $user->role;
+        $perms = Cache::remember($cacheKey, 300, function () use ($user) {
+            $role = Role::query()->select(['id', 'permissions'])->where('slug', $user->role)->first();
+            return $role?->permissions;
+        });
+
+        if (!$perms) {
             abort(403);
         }
 
-        $perms = $role->permissions ?? [];
         if ($perms === ['*']) {
             return $next($request);
         }
