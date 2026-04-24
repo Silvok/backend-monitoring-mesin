@@ -439,7 +439,7 @@
                     <div class="overflow-x-auto">
                         <div class="max-h-64 overflow-y-auto" id="liveFeedContainer">
                             <table class="min-w-full divide-y divide-gray-200">
-                                <thead class="bg-gray-50">
+                                <thead class="bg-gray-50 sticky top-0 z-10">
                                     <tr>
                                         <th class="px-6 py-3 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Waktu</th>
                                         <th class="px-6 py-3 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Akselerasi X</th>
@@ -472,7 +472,7 @@
                     <div class="overflow-x-auto">
                         <div class="max-h-72 overflow-y-auto">
                             <table class="min-w-full divide-y divide-gray-200">
-                                <thead class="bg-gray-50">
+                                <thead class="bg-gray-50 sticky top-0 z-10">
                                     <tr>
                                         <th class="px-6 py-3 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Waktu</th>
                                         <th class="px-6 py-3 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Akselerasi X</th>

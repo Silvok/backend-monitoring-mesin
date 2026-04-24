@@ -7,6 +7,11 @@ use Illuminate\Http\Request;
 
 class RoleManagementController extends Controller
 {
+    private function isSystemProtected(Role $role): bool
+    {
+        return $role->slug === 'super_admin';
+    }
+
     public function index()
     {
         $roles = Role::orderBy('is_protected', 'desc')
@@ -41,7 +46,7 @@ class RoleManagementController extends Controller
 
     public function update(Request $request, Role $role)
     {
-        if ($role->is_protected) {
+        if ($this->isSystemProtected($role)) {
             return response()->json(['success' => false, 'message' => 'Role ini dilindungi.'], 403);
         }
 
@@ -62,7 +67,7 @@ class RoleManagementController extends Controller
 
     public function destroy(Role $role)
     {
-        if ($role->is_protected) {
+        if ($this->isSystemProtected($role)) {
             return response()->json(['success' => false, 'message' => 'Role ini dilindungi.'], 403);
         }
 

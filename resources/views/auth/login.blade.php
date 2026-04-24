@@ -85,11 +85,14 @@
                 <span class="ml-2 text-sm text-gray-700 font-medium">Ingat saya</span>
             </label>
 
-            @if (Route::has('password.request'))
-                <a class="text-sm text-emerald-700 hover:text-emerald-900 font-semibold transition" href="{{ route('password.request') }}">
-                    Lupa Password?
-                </a>
-            @endif
+            <a
+                class="text-sm text-emerald-700 hover:text-emerald-900 font-semibold transition"
+                href="https://wa.me/6287825729377?text=Selamat%20siang%20Admin.%0A%0APerkenalkan%2C%20saya%20pengguna%20aplikasi%20PreMaint%20dengan%20detail%20berikut%3A%0A-%20Nama%3A%20%0A-%20Email%20Akun%3A%20%0A-%20Waktu%20Permintaan%3A%20%0A%0ASaya%20mengalami%20kendala%20lupa%20kata%20sandi%20dan%20memohon%20bantuan%20untuk%20reset%20password.%0ATerima%20kasih%20atas%20bantuannya."
+                target="_blank"
+                rel="noopener noreferrer"
+            >
+                Lupa Password?
+            </a>
         </div>
 
         <!-- Submit Button -->
@@ -104,7 +107,12 @@
         <div class="mt-6 text-center">
             <p class="text-gray-600">
                 Lupa kata sandi?
-                <a href="mailto:admin@example.com" class="text-emerald-700 hover:text-emerald-900 font-semibold transition">
+                <a
+                    href="https://wa.me/6287825729377?text=Selamat%20siang%20Admin.%0A%0APerkenalkan%2C%20saya%20pengguna%20aplikasi%20PreMaint%20dengan%20detail%20berikut%3A%0A-%20Nama%3A%20%0A-%20Email%20Akun%3A%20%0A-%20Waktu%20Permintaan%3A%20%0A%0ASaya%20mengalami%20kendala%20lupa%20kata%20sandi%20dan%20memohon%20bantuan%20untuk%20reset%20password.%0ATerima%20kasih%20atas%20bantuannya."
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="text-emerald-700 hover:text-emerald-900 font-semibold transition"
+                >
                     Hubungi Admin
                 </a>
             </p>

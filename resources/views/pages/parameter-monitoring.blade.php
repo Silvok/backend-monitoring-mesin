@@ -21,42 +21,37 @@
 
     <div class="py-6">
         <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 space-y-4">
-            <div class="bg-white rounded-2xl border border-gray-100 shadow-sm px-5 py-4">
-                <div class="flex flex-col xl:flex-row xl:items-start xl:justify-between gap-4">
-                    <div class="xl:max-w-sm">
-                        <h3 class="text-lg font-bold text-gray-900">{{ __('messages.parameters.subtitle') }}</h3>
-                        <p class="text-sm text-gray-500 mt-1">{{ __('messages.parameters.subtitle_desc') }}</p>
-                    </div>
-                    <div class="flex-1">
-                        <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3">
-                            <div>
-                        <label class="text-xs font-semibold text-gray-500 uppercase tracking-widest">{{ __('messages.parameters.filter_group') }}</label>
-                        <select id="paramGroup" class="mt-2 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-700 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500">
-                            <option value="">{{ __('messages.parameters.filter_all_groups') }}</option>
+            <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-4">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-2.5">
+                    <div>
+                        <label for="paramGroup" class="sr-only">Group</label>
+                        <select id="paramGroup" class="w-full rounded-lg border border-gray-300 bg-white px-3 py-2.5 text-sm text-gray-700 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500">
+                            <option value="">All Groups</option>
                             @foreach($groups as $key => $label)
                                 <option value="{{ $key }}">{{ $label }}</option>
                             @endforeach
                         </select>
-                            </div>
-                            <div>
-                        <label class="text-xs font-semibold text-gray-500 uppercase tracking-widest">{{ __('messages.parameters.filter_status') }}</label>
-                        <select id="paramStatus" class="mt-2 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-700 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500">
-                            <option value="">{{ __('messages.parameters.filter_all_status') }}</option>
+                    </div>
+                    <div>
+                        <label for="paramStatus" class="sr-only">Status</label>
+                        <select id="paramStatus" class="w-full rounded-lg border border-gray-300 bg-white px-3 py-2.5 text-sm text-gray-700 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500">
+                            <option value="">All Status</option>
                             <option value="NORMAL">Normal</option>
                             <option value="WARNING">Warning</option>
                             <option value="CRITICAL">Critical</option>
                             <option value="INFO">Info</option>
                         </select>
-                            </div>
-                            <div>
-                        <label class="text-xs font-semibold text-gray-500 uppercase tracking-widest">{{ __('messages.parameters.filter_search') }}</label>
-                        <div class="mt-2 flex items-center gap-2 bg-gray-50 border border-gray-200 rounded-lg px-3 h-10">
-                            <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 104.5 4.5a7.5 7.5 0 0012.15 12.15z"></path>
-                            </svg>
-                            <input id="paramSearch" type="text" placeholder="{{ __('messages.parameters.filter_search_placeholder') }}" class="w-full bg-transparent text-sm text-gray-700 placeholder-gray-500 outline-none h-10 rounded-md border border-gray-300">
-                        </div>
-                            </div>
+                    </div>
+                    <div>
+                        <label for="paramSearch" class="sr-only">Search</label>
+                        <div class="flex gap-2">
+                            <input id="paramSearch" type="text" placeholder="Search parameters..." class="flex-1 rounded-lg border border-gray-300 bg-white px-3 py-2.5 text-sm text-gray-700 placeholder-gray-400 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500" />
+                            <button id="paramReloadBtn" type="button" class="px-3 py-2.5 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-800 text-sm font-semibold transition">
+                                Reload
+                            </button>
+                            <button id="paramClearBtn" type="button" class="px-3 py-2.5 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-600 text-sm font-semibold transition">
+                                Clear
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -65,103 +60,69 @@
             <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
                 <div class="overflow-x-auto">
                     <table class="min-w-full text-sm text-left text-gray-700">
-                        <thead class="bg-emerald-600 text-xs uppercase tracking-wider">
-                            @php
-                                $firstGroupKey = array_key_first($groups);
-                                $firstGroupLabel = $groups[$firstGroupKey] ?? '';
-                                $firstGroupCount = $groupCounts[$firstGroupKey] ?? 0;
-                            @endphp
-                            <tr class="bg-emerald-50/60">
-                                <th class="px-6 py-4 font-semibold text-gray-900" colspan="5">
-                                    <div class="flex items-center gap-3">
-                                        <span class="w-9 h-9 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center font-bold">
-                                            {{ strtoupper(substr($firstGroupLabel, 0, 1)) }}
-                                        </span>
-                                        <span class="text-sm font-bold">{{ $firstGroupLabel }}</span>
-                                        <span class="text-[10px] font-semibold px-2 py-1 rounded-full bg-white border border-emerald-200 text-emerald-700">
-                                            {{ $firstGroupCount }} {{ __('messages.parameters.table_params') }}
-                                        </span>
-                                    </div>
-                                </th>
-                            </tr>
-                            <tr class="bg-gray-200">
-                                <th class="px-6 py-3 text-left text-xs font-bold text-gray-800 uppercase tracking-wider">
-                                    <div class="flex flex-col">
-                                        <span class="text-[11px] font-medium text-gray-700 leading-tight">Nama parameter</span>
-                                    </div>
-                                </th>
-                                <th class="px-6 py-3 text-left text-xs font-bold text-gray-800 uppercase tracking-wider">
-                                    <div class="flex flex-col">
-                                        <span class="text-[11px] font-medium text-gray-700 leading-tight">Makna singkat</span>
-                                    </div>
-                                </th>
-                                <th class="px-6 py-3 text-left text-xs font-bold text-gray-800 uppercase tracking-wider">
-                                    <div class="flex flex-col">
-                                        <span class="text-[11px] font-medium text-gray-700 leading-tight">Batas / rumus</span>
-                                    </div>
-                                </th>
-                                <th class="px-6 py-3 text-left text-xs font-bold text-gray-800 uppercase tracking-wider">
-                                    <div class="flex flex-col">
-                                        <span class="text-[11px] font-medium text-gray-700 leading-tight">Kategori kondisi</span>
-                                    </div>
-                                </th>
-                                <th class="px-6 py-3 text-left text-xs font-bold text-gray-800 uppercase tracking-wider">
-                                    <div class="flex flex-col">
-                                        <span class="text-[11px] font-medium text-gray-700 leading-tight">Lihat detail</span>
-                                    </div>
-                                </th>
+                        <thead class="bg-emerald-700 text-white">
+                            <tr>
+                                <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider">Parameter Key</th>
+                                <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider">Description</th>
+                                <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider">Value</th>
+                                <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider">Status</th>
+                                <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider">Actions</th>
                             </tr>
                         </thead>
                         <tbody id="paramTableBody" class="divide-y divide-gray-100">
                             @foreach($groups as $groupKey => $groupLabel)
-                                @if($groupKey !== $firstGroupKey)
-                                    <tr class="group-row bg-emerald-50/60" data-group="{{ $groupKey }}">
-                                        <td class="px-6 py-4 font-semibold text-gray-900" colspan="5">
-                                            <div class="flex items-center gap-3">
-                                                <span class="w-9 h-9 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center font-bold">
-                                                    {{ strtoupper(substr($groupLabel, 0, 1)) }}
-                                                </span>
-                                                <span class="text-sm font-bold">{{ $groupLabel }}</span>
-                                                <span class="text-[10px] font-semibold px-2 py-1 rounded-full bg-white border border-emerald-200 text-emerald-700">
-                                                    {{ $groupCounts[$groupKey] ?? 0 }} {{ __('messages.parameters.table_params') }}
-                                                </span>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                @endif
+                                <tr class="group-row bg-emerald-50/60" data-group="{{ $groupKey }}">
+                                    <td colspan="5" class="px-6 py-4">
+                                        <div class="flex items-center gap-3">
+                                            <span class="w-9 h-9 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center font-bold">
+                                                {{ strtoupper(substr($groupLabel, 0, 1)) }}
+                                            </span>
+                                            <span class="text-base font-bold text-gray-900">{{ strtoupper($groupLabel) }}</span>
+                                            <span class="px-3 py-1 rounded-full bg-white border border-gray-300 text-xs font-semibold text-gray-700">
+                                                {{ $groupCounts[$groupKey] ?? 0 }} parameters
+                                            </span>
+                                        </div>
+                                    </td>
+                                </tr>
+
                                 @foreach($parameters as $item)
                                     @if($item['group'] === $groupKey)
-                                        <tr class="param-row" data-group="{{ $item['group'] }}" data-status="{{ $item['status'] }}" data-search="{{ strtolower($item['label'].' '.$item['description'].' '.$item['value']) }}">
-                                            <td class="px-6 py-4 font-semibold text-gray-900">
-                                                <div class="flex flex-col">
-                                                    <span>{{ $item['label'] }}</span>
-                                                    <span class="text-[11px] text-gray-400">{{ $item['key'] }}</span>
-                                                </div>
-                                            </td>
-                                            <td class="px-6 py-4 text-gray-600">{{ $item['description'] }}</td>
+                                        @php
+                                            $statusClasses = [
+                                                'NORMAL' => 'bg-emerald-100 text-emerald-700',
+                                                'WARNING' => 'bg-yellow-100 text-yellow-700',
+                                                'CRITICAL' => 'bg-red-100 text-red-700',
+                                                'INFO' => 'bg-blue-100 text-blue-700',
+                                            ];
+                                        @endphp
+                                        <tr
+                                            class="param-row"
+                                            data-group="{{ $item['group'] }}"
+                                            data-key="{{ $item['key'] }}"
+                                            data-group-label="{{ $groups[$item['group']] ?? $item['group'] }}"
+                                            data-status="{{ $item['status'] }}"
+                                            data-value="{{ $item['value'] }}"
+                                            data-description="{{ $item['description'] }}"
+                                            data-search="{{ strtolower($item['key'].' '.$item['description'].' '.$item['value'].' '.$item['status']) }}"
+                                        >
+                                            <td class="px-6 py-4 font-bold text-gray-900">{{ $item['key'] }}</td>
+                                            <td class="px-6 py-4 text-gray-700 param-desc-text">{{ $item['description'] }}</td>
                                             <td class="px-6 py-4">
-                                                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-gray-100 text-gray-800">
+                                                <span class="inline-flex items-center px-3 py-1 rounded-xl text-sm font-semibold bg-gray-100 text-gray-800 param-value-text">
                                                     {{ $item['value'] }}
                                                 </span>
                                             </td>
                                             <td class="px-6 py-4">
-                                                @php
-                                                    $statusClasses = [
-                                                        'NORMAL' => 'bg-emerald-100 text-emerald-700',
-                                                        'WARNING' => 'bg-yellow-100 text-yellow-700',
-                                                        'CRITICAL' => 'bg-red-100 text-red-700',
-                                                        'INFO' => 'bg-blue-100 text-blue-700',
-                                                    ];
-                                                @endphp
-                                                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold {{ $statusClasses[$item['status']] ?? 'bg-gray-100 text-gray-700' }}">
-                                                    {{ $item['status'] }}
+                                                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold param-status-badge {{ $statusClasses[$item['status']] ?? 'bg-gray-100 text-gray-700' }}">
+                                                    <span class="param-status-text">{{ $item['status'] }}</span>
                                                 </span>
                                             </td>
                                             <td class="px-6 py-4">
-                                                <button type="button" class="param-detail-btn text-emerald-700 hover:text-emerald-800 text-xs font-semibold"
-                                                    data-title="{{ $item['label'] }}"
-                                                    data-detail="{{ $item['detail'] }}">
-                                                    {{ __('messages.parameters.table_detail') }}
+                                                <button type="button" class="param-edit-btn inline-flex items-center gap-2 text-emerald-700 hover:text-emerald-800 text-sm font-semibold">
+                                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5h2m-1-1v2m-6 4h12M5 12h14M7 16h10" />
+                                                    </svg>
+                                                    Edit
                                                 </button>
                                             </td>
                                         </tr>
@@ -172,34 +133,59 @@
                     </table>
                 </div>
             </div>
-
-            <div class="rounded-2xl border border-emerald-100 bg-emerald-50/60 px-4 py-3 text-xs text-emerald-700">
-                {{ __('messages.parameters.note') }}
-            </div>
         </div>
     </div>
 
-    <div id="paramDetailBackdrop" class="fixed inset-0 bg-black/40 hidden items-center justify-center z-50">
-        <div class="bg-white w-full max-w-md rounded-2xl shadow-xl border border-gray-100 mx-4">
-            <div class="flex items-center justify-between px-4 py-3 border-b border-gray-100">
-                <div>
-                    <p class="text-sm font-bold text-gray-900" id="paramDetailTitle">Detail</p>
-                    <p class="text-[11px] text-gray-500">Ringkas dan praktis</p>
-                </div>
-                <button id="paramDetailClose" type="button" class="w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-600 flex items-center justify-center">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <div id="paramEditBackdrop" class="fixed inset-0 bg-black/40 hidden items-center justify-center z-50">
+        <div class="bg-white w-full max-w-xl rounded-2xl shadow-xl border border-gray-100 mx-4">
+            <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+                <h3 class="text-3xl font-bold text-gray-900">Edit Parameter</h3>
+                <button id="paramEditClose" type="button" class="w-9 h-9 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-600 flex items-center justify-center">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                     </svg>
                 </button>
             </div>
-            <div class="px-4 py-4">
-                <p class="text-sm text-gray-700" id="paramDetailBody"></p>
-            </div>
-            <div class="px-4 py-3 border-t border-gray-100 flex justify-end">
-                <button id="paramDetailOk" type="button" class="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold">
-                    OK
-                </button>
-            </div>
+            <form id="paramEditForm" class="px-6 py-5 space-y-4">
+                <div>
+                    <label class="text-sm font-semibold text-gray-700 block mb-2">Parameter Key</label>
+                    <p id="editParamKey" class="inline-block px-2 py-1 bg-gray-100 text-gray-900 text-xl"></p>
+                </div>
+                <div>
+                    <label for="editParamValue" class="text-sm font-semibold text-gray-700 block mb-2">Value <span class="text-red-500">*</span></label>
+                    <textarea id="editParamValue" rows="3" class="w-full rounded-lg border border-gray-300 px-4 py-3 text-sm text-gray-800 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"></textarea>
+                </div>
+                <div>
+                    <label for="editParamDescription" class="text-sm font-semibold text-gray-700 block mb-2">Description</label>
+                    <textarea id="editParamDescription" rows="3" class="w-full rounded-lg border border-gray-300 px-4 py-3 text-sm text-gray-800 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"></textarea>
+                </div>
+                <div>
+                    <label for="editParamGroup" class="text-sm font-semibold text-gray-700 block mb-2">Group</label>
+                    <select id="editParamGroup" class="w-full rounded-lg border border-gray-300 px-4 py-3 text-sm text-gray-800 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500">
+                        @foreach($groups as $key => $label)
+                            <option value="{{ $key }}">{{ $label }}</option>
+                        @endforeach
+                    </select>
+                    <p class="text-xs text-gray-500 mt-1">Pilih group untuk mengelompokkan parameter yang sejenis</p>
+                </div>
+                <div>
+                    <label for="editParamStatus" class="text-sm font-semibold text-gray-700 block mb-2">Status</label>
+                    <select id="editParamStatus" class="w-full rounded-lg border border-gray-300 px-4 py-3 text-sm text-gray-800 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500">
+                        <option value="NORMAL">Normal</option>
+                        <option value="WARNING">Warning</option>
+                        <option value="CRITICAL">Critical</option>
+                        <option value="INFO">Info</option>
+                    </select>
+                </div>
+                <div class="flex justify-end gap-3 pt-2">
+                    <button id="paramEditCancel" type="button" class="px-6 py-2.5 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold">
+                        Cancel
+                    </button>
+                    <button type="submit" class="px-6 py-2.5 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white font-semibold">
+                        Update Parameter
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
 
@@ -209,14 +195,33 @@
                 const groupSelect = document.getElementById('paramGroup');
                 const statusSelect = document.getElementById('paramStatus');
                 const searchInput = document.getElementById('paramSearch');
+                const clearBtn = document.getElementById('paramClearBtn');
+                const reloadBtn = document.getElementById('paramReloadBtn');
                 const rows = Array.from(document.querySelectorAll('.param-row'));
-                const groupHeaders = Array.from(document.querySelectorAll('tr.group-row'));
-                const detailButtons = Array.from(document.querySelectorAll('.param-detail-btn'));
-                const detailBackdrop = document.getElementById('paramDetailBackdrop');
-                const detailTitle = document.getElementById('paramDetailTitle');
-                const detailBody = document.getElementById('paramDetailBody');
-                const detailClose = document.getElementById('paramDetailClose');
-                const detailOk = document.getElementById('paramDetailOk');
+                const groupHeaders = Array.from(document.querySelectorAll('.group-row'));
+                const editButtons = Array.from(document.querySelectorAll('.param-edit-btn'));
+
+                const editBackdrop = document.getElementById('paramEditBackdrop');
+                const editClose = document.getElementById('paramEditClose');
+                const editCancel = document.getElementById('paramEditCancel');
+                const editForm = document.getElementById('paramEditForm');
+                const editKey = document.getElementById('editParamKey');
+                const editValue = document.getElementById('editParamValue');
+                const editDescription = document.getElementById('editParamDescription');
+                const editGroup = document.getElementById('editParamGroup');
+                const editStatus = document.getElementById('editParamStatus');
+
+                let currentEditingRow = null;
+
+                function statusClass(status) {
+                    const map = {
+                        NORMAL: 'bg-emerald-100 text-emerald-700',
+                        WARNING: 'bg-yellow-100 text-yellow-700',
+                        CRITICAL: 'bg-red-100 text-red-700',
+                        INFO: 'bg-blue-100 text-blue-700',
+                    };
+                    return map[status] || 'bg-gray-100 text-gray-700';
+                }
 
                 function applyFilters() {
                     const group = groupSelect.value;
@@ -237,31 +242,77 @@
                     });
                 }
 
-                [groupSelect, statusSelect, searchInput].forEach(input => {
-                    input.addEventListener('change', applyFilters);
-                    input.addEventListener('keyup', applyFilters);
+                function openEditModal(row) {
+                    currentEditingRow = row;
+                    editKey.textContent = row.dataset.key || '-';
+                    editValue.value = row.dataset.value || '';
+                    editDescription.value = row.dataset.description || '';
+                    editGroup.value = row.dataset.group || '';
+                    editStatus.value = row.dataset.status || 'INFO';
+                    editBackdrop.classList.remove('hidden');
+                    editBackdrop.classList.add('flex');
+                }
+
+                function closeEditModal() {
+                    editBackdrop.classList.add('hidden');
+                    editBackdrop.classList.remove('flex');
+                    currentEditingRow = null;
+                    editForm.reset();
+                }
+
+                [groupSelect, statusSelect].forEach(el => el.addEventListener('change', applyFilters));
+                searchInput.addEventListener('keyup', applyFilters);
+                searchInput.addEventListener('change', applyFilters);
+
+                clearBtn.addEventListener('click', function () {
+                    groupSelect.value = '';
+                    statusSelect.value = '';
+                    searchInput.value = '';
+                    applyFilters();
                 });
 
-                detailButtons.forEach(button => {
-                    button.addEventListener('click', () => {
-                        detailTitle.textContent = button.getAttribute('data-title') || 'Detail';
-                        detailBody.textContent = button.getAttribute('data-detail') || '-';
-                        detailBackdrop.classList.remove('hidden');
-                        detailBackdrop.classList.add('flex');
+                reloadBtn.addEventListener('click', function () {
+                    window.location.reload();
+                });
+
+                editButtons.forEach(button => {
+                    button.addEventListener('click', function () {
+                        const row = button.closest('.param-row');
+                        if (!row) return;
+                        openEditModal(row);
                     });
                 });
 
-                function closeDetail() {
-                    detailBackdrop.classList.add('hidden');
-                    detailBackdrop.classList.remove('flex');
-                }
+                editClose.addEventListener('click', closeEditModal);
+                editCancel.addEventListener('click', closeEditModal);
+                editBackdrop.addEventListener('click', function (event) {
+                    if (event.target === editBackdrop) closeEditModal();
+                });
 
-                detailClose.addEventListener('click', closeDetail);
-                detailOk.addEventListener('click', closeDetail);
-                detailBackdrop.addEventListener('click', (event) => {
-                    if (event.target === detailBackdrop) {
-                        closeDetail();
-                    }
+                editForm.addEventListener('submit', function (event) {
+                    event.preventDefault();
+                    if (!currentEditingRow) return;
+
+                    const newValue = editValue.value.trim();
+                    const newDescription = editDescription.value.trim();
+                    const newGroup = editGroup.value;
+                    const newStatus = editStatus.value;
+                    const key = currentEditingRow.dataset.key || '';
+
+                    currentEditingRow.dataset.value = newValue;
+                    currentEditingRow.dataset.description = newDescription;
+                    currentEditingRow.dataset.group = newGroup;
+                    currentEditingRow.dataset.status = newStatus;
+                    currentEditingRow.dataset.search = `${key} ${newDescription} ${newValue} ${newStatus}`.toLowerCase();
+
+                    currentEditingRow.querySelector('.param-value-text').textContent = newValue || '-';
+                    currentEditingRow.querySelector('.param-desc-text').textContent = newDescription || '-';
+                    currentEditingRow.querySelector('.param-status-text').textContent = newStatus;
+                    currentEditingRow.querySelector('.param-status-badge').className =
+                        `inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold param-status-badge ${statusClass(newStatus)}`;
+
+                    applyFilters();
+                    closeEditModal();
                 });
 
                 applyFilters();

@@ -123,18 +123,22 @@
 
 		<div class="mb-4">
 			<div class="rounded-xl border border-gray-100 bg-white/90 px-3 py-2 shadow-lg">
-				<div class="grid grid-cols-3 gap-2">
-					<div class="text-center">
-						<p class="text-[10px] font-bold text-emerald-700 uppercase tracking-widest">Total</p>
+				<div class="flex items-center justify-between gap-2">
+					<div class="flex-1 text-center min-w-0">
+						<p class="text-[10px] font-bold text-emerald-700 uppercase tracking-widest whitespace-nowrap">Total</p>
 						<p class="text-lg font-black text-gray-900 mt-0.5">{{ $summary['total'] ?? 0 }}</p>
 					</div>
-					<div class="text-center">
-						<p class="text-[10px] font-bold text-blue-700 uppercase tracking-widest">Teknisi</p>
-						<p class="text-lg font-black text-gray-900 mt-0.5">{{ $summary['teknisi'] ?? 0 }}</p>
+					<div class="flex-1 text-center min-w-0">
+						<p class="text-[10px] font-bold text-amber-700 uppercase tracking-widest whitespace-nowrap">Super Admin</p>
+						<p class="text-lg font-black text-gray-900 mt-0.5">{{ $summary['super_admin'] ?? 0 }}</p>
 					</div>
-					<div class="text-center">
-						<p class="text-[10px] font-bold text-amber-700 uppercase tracking-widest">Admin</p>
+					<div class="flex-1 text-center min-w-0">
+						<p class="text-[10px] font-bold text-blue-700 uppercase tracking-widest whitespace-nowrap">Admin</p>
 						<p class="text-lg font-black text-gray-900 mt-0.5">{{ $summary['admin'] ?? 0 }}</p>
+					</div>
+					<div class="flex-1 text-center min-w-0">
+						<p class="text-[10px] font-bold text-purple-700 uppercase tracking-widest whitespace-nowrap">Koordinator</p>
+						<p class="text-lg font-black text-gray-900 mt-0.5">{{ $summary['koordinator'] ?? 0 }}</p>
 					</div>
 				</div>
 			</div>
@@ -237,6 +241,19 @@
 											<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16.862 3.487a2.25 2.25 0 113.182 3.182L7.5 19.213l-4 1 1-4 12.362-12.726z" />
 										</svg>
 									</button>
+									<button onclick="confirmResetPassword({{ $user->id }}, @js($user->name))" class="inline-flex items-center justify-center mr-2 p-2 rounded-full text-amber-600 hover:bg-amber-100 hover:text-amber-800 transition" title="Ubah Password">
+										<!-- Key Icon -->
+										<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+											<circle cx="8" cy="10" r="3" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></circle>
+											<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 10h10m-3 0v3m-3-3v3"></path>
+										</svg>
+									</button>
+									<button onclick="confirmForceResetPassword({{ $user->id }}, @js($user->name))" class="inline-flex items-center justify-center mr-2 p-2 rounded-full text-blue-600 hover:bg-blue-100 hover:text-blue-800 transition" title="Reset Password (Lupa Password)">
+										<!-- Reset Icon -->
+										<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+											<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9M20 20v-5h-.581m0 0a8.003 8.003 0 01-15.357-2" />
+										</svg>
+									</button>
 									<button onclick="confirmDeleteUser({{ $user->id }})" class="inline-flex items-center justify-center p-2 rounded-full text-red-600 hover:bg-red-100 hover:text-red-800 transition" title="Hapus">
 										<!-- Trash Icon -->
 										<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -293,6 +310,17 @@
 									<button onclick="editUser({{ $user->id }})" class="inline-flex items-center justify-center p-2 rounded-full text-emerald-600 hover:bg-emerald-100 hover:text-emerald-800 transition" title="Edit">
 										<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
 											<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16.862 3.487a2.25 2.25 0 113.182 3.182L7.5 19.213l-4 1 1-4 12.362-12.726z" />
+										</svg>
+									</button>
+									<button onclick="confirmResetPassword({{ $user->id }}, @js($user->name))" class="inline-flex items-center justify-center p-2 rounded-full text-amber-600 hover:bg-amber-100 hover:text-amber-800 transition" title="Ubah Password">
+										<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+											<circle cx="8" cy="10" r="3" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></circle>
+											<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 10h10m-3 0v3m-3-3v3"></path>
+										</svg>
+									</button>
+									<button onclick="confirmForceResetPassword({{ $user->id }}, @js($user->name))" class="inline-flex items-center justify-center p-2 rounded-full text-blue-600 hover:bg-blue-100 hover:text-blue-800 transition" title="Reset Password (Lupa Password)">
+										<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+											<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9M20 20v-5h-.581m0 0a8.003 8.003 0 01-15.357-2" />
 										</svg>
 									</button>
 									<button onclick="confirmDeleteUser({{ $user->id }})" class="inline-flex items-center justify-center p-2 rounded-full text-red-600 hover:bg-red-100 hover:text-red-800 transition" title="Hapus">
@@ -385,15 +413,56 @@
 			</div>
 		</div>
 
-		<!-- Modal Konfirmasi Reset Password -->
+		<!-- Modal Ubah Password -->
 		<div id="resetPasswordModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/10 transition-all duration-200 backdrop-blur-sm supports-backdrop-blur hidden" style="backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);">
-			<div class="bg-white rounded-lg shadow-lg w-full max-w-sm p-6 relative">
-				<h4 class="text-lg font-bold mb-4">Reset Password User</h4>
-				<p>Reset password user ke default (misal: 12345678)?</p>
-				<div class="flex justify-end space-x-2 mt-6">
-					<button type="button" onclick="closeResetPasswordModal()" class="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300">Batal</button>
-					<button type="button" onclick="resetPassword()" class="px-4 py-2 bg-yellow-600 text-white rounded hover:bg-yellow-700">Reset</button>
+			<div class="bg-white rounded-lg shadow-lg w-full max-w-md p-6 relative">
+				<h4 class="text-lg font-bold mb-4">Ubah Password</h4>
+				<div class="mb-4 rounded-md border border-blue-200 bg-blue-50 px-3 py-2 text-sm text-blue-800">
+					Mengubah password untuk: <span id="resetPasswordTargetName" class="font-semibold">-</span>
 				</div>
+				<form id="resetPasswordForm">
+					<div class="mb-3">
+						<label class="block text-sm font-medium mb-1">Password Saat Ini (Admin)</label>
+						<input type="password" id="currentPassword" class="w-full border rounded px-3 py-2" placeholder="Masukkan password admin saat ini" required>
+					</div>
+					<div class="mb-3">
+						<label class="block text-sm font-medium mb-1">Password Baru</label>
+						<input type="password" id="newPassword" class="w-full border rounded px-3 py-2" placeholder="Minimal 8 karakter" minlength="8" required>
+					</div>
+					<div class="mb-3">
+						<label class="block text-sm font-medium mb-1">Konfirmasi Password Baru</label>
+						<input type="password" id="newPasswordConfirmation" class="w-full border rounded px-3 py-2" placeholder="Ketik ulang password baru" minlength="8" required>
+					</div>
+					<div class="flex justify-end space-x-2 mt-6">
+						<button type="button" onclick="closeResetPasswordModal()" class="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300">Batal</button>
+						<button type="submit" class="px-4 py-2 bg-emerald-600 text-white rounded hover:bg-emerald-700">Ubah Password</button>
+					</div>
+				</form>
+			</div>
+		</div>
+
+		<!-- Modal Reset Password (Lupa Password) -->
+		<div id="forceResetPasswordModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/10 transition-all duration-200 backdrop-blur-sm supports-backdrop-blur hidden" style="backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);">
+			<div class="bg-white rounded-lg shadow-lg w-full max-w-md p-6 relative">
+				<h4 class="text-lg font-bold mb-4">Reset Password</h4>
+				<div class="mb-4 rounded-md border border-yellow-200 bg-yellow-50 px-3 py-2 text-sm text-yellow-800">
+					Reset password untuk: <span id="forceResetPasswordTargetName" class="font-semibold">-</span><br>
+					Password lama tidak diperlukan karena user lupa password.
+				</div>
+				<form id="forceResetPasswordForm">
+					<div class="mb-3">
+						<label class="block text-sm font-medium mb-1">Password Baru</label>
+						<input type="password" id="forceNewPassword" class="w-full border rounded px-3 py-2" placeholder="Minimal 8 karakter" minlength="8" required>
+					</div>
+					<div class="mb-3">
+						<label class="block text-sm font-medium mb-1">Konfirmasi Password Baru</label>
+						<input type="password" id="forceNewPasswordConfirmation" class="w-full border rounded px-3 py-2" placeholder="Ketik ulang password baru" minlength="8" required>
+					</div>
+					<div class="flex justify-end space-x-2 mt-6">
+						<button type="button" onclick="closeForceResetPasswordModal()" class="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300">Batal</button>
+						<button type="submit" class="px-4 py-2 bg-emerald-600 text-white rounded hover:bg-emerald-700">Reset Password</button>
+					</div>
+				</form>
 			</div>
 		</div>
 	</div>
@@ -461,12 +530,23 @@
 		function closeDeleteUserModal() {
 			document.getElementById('deleteUserModal').classList.add('hidden');
 		}
-		function confirmResetPassword(id) {
+		function confirmResetPassword(id, name) {
 			window.selectedUserId = id;
+			document.getElementById('resetPasswordTargetName').textContent = name || '-';
 			document.getElementById('resetPasswordModal').classList.remove('hidden');
 		}
 		function closeResetPasswordModal() {
 			document.getElementById('resetPasswordModal').classList.add('hidden');
+			document.getElementById('resetPasswordForm').reset();
+		}
+		function confirmForceResetPassword(id, name) {
+			window.selectedUserId = id;
+			document.getElementById('forceResetPasswordTargetName').textContent = name || '-';
+			document.getElementById('forceResetPasswordModal').classList.remove('hidden');
+		}
+		function closeForceResetPasswordModal() {
+			document.getElementById('forceResetPasswordModal').classList.add('hidden');
+			document.getElementById('forceResetPasswordForm').reset();
 		}
 
 		// Toast notification
@@ -557,15 +637,30 @@
 			}
 		};
 
-		// Reset password
+		// Reset password by admin (with admin current password verification)
 		window.resetPassword = async function() {
 			const id = window.selectedUserId;
+			const currentPassword = document.getElementById('currentPassword').value;
+			const newPassword = document.getElementById('newPassword').value;
+			const newPasswordConfirmation = document.getElementById('newPasswordConfirmation').value;
+
+			if (newPassword !== newPasswordConfirmation) {
+				showToast('Konfirmasi password baru tidak sama', 'error');
+				return;
+			}
+
 			try {
 				const response = await fetch(`/user-management/${id}/reset-password`, {
 					method: 'POST',
 					headers: {
+						'Content-Type': 'application/json',
 						'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
-					}
+					},
+					body: JSON.stringify({
+						current_password: currentPassword,
+						new_password: newPassword,
+						new_password_confirmation: newPasswordConfirmation
+					})
 				});
 				const res = await response.json();
 				if (res.success) {
@@ -578,6 +673,49 @@
 				showToast('Terjadi kesalahan', 'error');
 			}
 		};
+
+		window.forceResetPassword = async function() {
+			const id = window.selectedUserId;
+			const newPassword = document.getElementById('forceNewPassword').value;
+			const newPasswordConfirmation = document.getElementById('forceNewPasswordConfirmation').value;
+
+			if (newPassword !== newPasswordConfirmation) {
+				showToast('Konfirmasi password baru tidak sama', 'error');
+				return;
+			}
+
+			try {
+				const response = await fetch(`/user-management/${id}/force-reset-password`, {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json',
+						'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+					},
+					body: JSON.stringify({
+						new_password: newPassword,
+						new_password_confirmation: newPasswordConfirmation
+					})
+				});
+				const res = await response.json();
+				if (res.success) {
+					showToast(res.message, 'success');
+					closeForceResetPasswordModal();
+				} else {
+					showToast(res.message || 'Gagal reset password', 'error');
+				}
+			} catch (err) {
+				showToast('Terjadi kesalahan', 'error');
+			}
+		};
+
+		document.getElementById('resetPasswordForm').addEventListener('submit', function(e) {
+			e.preventDefault();
+			window.resetPassword();
+		});
+		document.getElementById('forceResetPasswordForm').addEventListener('submit', function(e) {
+			e.preventDefault();
+			window.forceResetPassword();
+		});
 		</script>
 	@endpush
 </x-app-layout>

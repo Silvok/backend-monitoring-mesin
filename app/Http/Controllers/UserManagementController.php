@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 
 class UserManagementController extends Controller
 {
@@ -23,7 +24,8 @@ class UserManagementController extends Controller
         $summary = [
             'total' => User::count(),
             'admin' => User::where('role', 'admin')->count(),
-            'teknisi' => User::whereIn('role', ['teknisi', 'operator'])->count(),
+            'koordinator' => User::where('role', 'koordinator')->count(),
+            'super_admin' => User::where('role', 'super_admin')->count(),
         ];
         return view('pages.user-management', compact('users', 'summary'));
     }
@@ -66,12 +68,53 @@ class UserManagementController extends Controller
         return response()->json(['success' => true, 'message' => 'User berhasil dihapus']);
     }
 
-    public function resetPassword($id)
+    public function resetPassword(Request $request, $id)
     {
+        $validated = $request->validate([
+            'current_password' => ['required', 'current_password'],
+            'new_password' => ['required', 'string', 'min:8', 'confirmed'],
+        ]);
+
         $user = User::findOrFail($id);
-        $user->password = bcrypt('12345678');
+
+        if (Hash::check($validated['new_password'], $user->password)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Password baru tidak boleh sama dengan password sebelumnya.',
+            ], 422);
+        }
+
+        $user->password = bcrypt($validated['new_password']);
         $user->save();
-        return response()->json(['success' => true, 'message' => 'Password berhasil direset ke default']);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Password user berhasil diperbarui.',
+        ]);
+    }
+
+    public function forceResetPassword(Request $request, $id)
+    {
+        $validated = $request->validate([
+            'new_password' => ['required', 'string', 'min:8', 'confirmed'],
+        ]);
+
+        $user = User::findOrFail($id);
+
+        if (Hash::check($validated['new_password'], $user->password)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Password baru tidak boleh sama dengan password sebelumnya.',
+            ], 422);
+        }
+
+        $user->password = bcrypt($validated['new_password']);
+        $user->save();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Reset password user berhasil.',
+        ]);
     }
     // Show user detail for AJAX edit
     public function show($id)
