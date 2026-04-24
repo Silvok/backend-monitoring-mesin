@@ -20,7 +20,7 @@
                     <th class="px-4 sm:px-6 py-3 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">{{ __('messages.dashboard.temperature') }}</th>
                 </tr>
             </thead>
-            <tbody class="bg-white divide-y divide-gray-200">
+            <tbody id="latestSensorTableBody" class="bg-white divide-y divide-gray-200">
                 @forelse($latestSensorData->take(5) as $data)
                 @php
                     // Find corresponding temperature reading for this sensor data

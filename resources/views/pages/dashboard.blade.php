@@ -45,6 +45,7 @@
             let refreshInterval;
             let isRefreshing = false;
             let isInitialized = false;
+            const AUTO_REFRESH_INTERVAL_MS = 10000;
 
             // Preloaded data from server - NO AJAX needed on initial load!
             const preloadedData = @json($preloadedData ?? []);
@@ -69,8 +70,19 @@
                 initAlertSound();
 
                 // Start auto refresh for subsequent updates
+                refreshDashboard({ force: true });
                 startAutoRefresh();
                 subscribeToRealTimeUpdates();
+
+                document.addEventListener('visibilitychange', () => {
+                    if (!document.hidden) {
+                        refreshDashboard({ force: true });
+                    }
+                });
+
+                window.addEventListener('monitoring:auto-refresh', () => {
+                    refreshDashboard({ force: false });
+                });
             });
 
             function updateLiveIndicator(anomalyCount) {
@@ -82,18 +94,25 @@
 
             function startAutoRefresh() {
                 refreshInterval = setInterval(() => {
-                    if (!isRefreshing) {
-                        refreshDashboard();
-                    }
-                }, 30000);
+                    refreshDashboard({ force: false });
+                }, AUTO_REFRESH_INTERVAL_MS);
             }
 
-            function refreshDashboard() {
+            function refreshDashboard({ force = false } = {}) {
+                if (isRefreshing) {
+                    return;
+                }
+
+                if (!force && document.hidden) {
+                    return;
+                }
+
                 isRefreshing = true;
                 const icon = document.getElementById('refreshIcon');
                 if (icon) icon.classList.add('animate-spin');
 
                 Promise.all([
+                    loadDashboardSummary(),
                     loadAlerts(),
                     loadMachineStatus(),
                     loadTopMachinesByRisk()
@@ -117,6 +136,108 @@
                 setInterval(updateTime, 60000);
             }
 
+            function loadDashboardSummary() {
+                return fetch('/api/dashboard-data')
+                    .then(async response => {
+                        if (!response.ok) {
+                            const text = await response.text();
+                            throw new Error(`HTTP ${response.status}: ${text}`);
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        renderMetricsCards(data);
+                        updateLiveIndicator(Number(data.anomalyCount || 0));
+                        if (window.updateDashboardRmsChart && data.rmsChartData) {
+                            window.updateDashboardRmsChart(data.rmsChartData);
+                        }
+                        if (Array.isArray(data.latestSensorData)) {
+                            renderLatestSensorTable(data.latestSensorData);
+                        }
+                    })
+                    .catch(error => console.error('Error loading dashboard summary:', error));
+            }
+
+            function renderMetricsCards(data) {
+                const totalMachinesEl = document.getElementById('totalMachines');
+                const totalSamplesEl = document.getElementById('totalSamples');
+                const totalAnalysisEl = document.getElementById('totalAnalysis');
+                const anomalyCountEl = document.getElementById('anomalyCount');
+                const normalCountTextEl = document.getElementById('normalCountText');
+
+                if (totalMachinesEl) totalMachinesEl.textContent = formatInteger(data.totalMachines || 0);
+                if (totalSamplesEl) totalSamplesEl.textContent = formatInteger(data.totalSamples || 0);
+                if (totalAnalysisEl) totalAnalysisEl.textContent = formatInteger(data.totalAnalysis || 0);
+                if (anomalyCountEl) anomalyCountEl.textContent = formatInteger(data.anomalyCount || 0);
+                if (normalCountTextEl) {
+                    const template = normalCountTextEl.dataset.template || '__COUNT__';
+                    normalCountTextEl.textContent = template.replace('__COUNT__', formatInteger(data.normalCount || 0));
+                }
+            }
+
+            function renderLatestSensorTable(rows) {
+                const body = document.getElementById('latestSensorTableBody');
+                if (!body) {
+                    return;
+                }
+
+                if (!rows.length) {
+                    body.innerHTML = `
+                        <tr>
+                            <td colspan="6" class="px-6 py-8 text-center text-gray-500">
+                                {{ __('messages.dashboard.no_sensor_data') }}
+                            </td>
+                        </tr>
+                    `;
+                    return;
+                }
+
+                body.innerHTML = rows.map(row => {
+                    const temperature = row.temperature_c;
+                    const temperatureClass = temperature === null
+                        ? 'text-gray-500'
+                        : (temperature > 50 ? 'text-red-600' : (temperature > 40 ? 'text-orange-600' : 'text-green-600'));
+
+                    return `
+                        <tr class="hover:bg-gray-50 transition">
+                            <td class="px-4 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-sm text-gray-900">${formatDateTime(row.timestamp)}</td>
+                            <td class="px-4 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-sm font-semibold text-emerald-900">${escapeHtml(row.machine_name || 'N/A')}</td>
+                            <td class="px-4 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-sm text-gray-900">${formatDecimal(row.ax_g, 4)}</td>
+                            <td class="hidden sm:table-cell px-4 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-sm text-gray-900">${formatDecimal(row.ay_g, 4)}</td>
+                            <td class="hidden md:table-cell px-4 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-sm text-gray-900">${formatDecimal(row.az_g, 4)}</td>
+                            <td class="px-4 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-sm font-semibold ${temperatureClass}">${temperature === null ? 'N/A' : `${formatDecimal(temperature, 2)}°C`}</td>
+                        </tr>
+                    `;
+                }).join('');
+            }
+
+            function formatInteger(value) {
+                return Number(value || 0).toLocaleString('id-ID');
+            }
+
+            function formatDecimal(value, digits) {
+                return Number(value || 0).toFixed(digits);
+            }
+
+            function formatDateTime(value) {
+                if (!value) return '-';
+                const date = new Date(value);
+                if (Number.isNaN(date.getTime())) return value;
+                return date.toLocaleString('id-ID', {
+                    day: '2-digit',
+                    month: '2-digit',
+                    year: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+            }
+
+            function escapeHtml(value) {
+                const div = document.createElement('div');
+                div.textContent = String(value ?? '');
+                return div.innerHTML;
+            }
+
             // Alert Functions - only used for refresh, not initial load
             function loadAlerts() {
                 return fetch('/api/alerts')
@@ -133,6 +254,10 @@
                 const alertCount = document.getElementById('alertCount');
                 const alertPanel = document.getElementById('alertPanel');
 
+                if (!alertList || !alertCount) {
+                    return;
+                }
+
                 alertCount.textContent = alerts.length;
 
                 // Hide panel if no alerts
@@ -148,12 +273,14 @@
                         <div class="px-6 py-4 border-b border-gray-200 hover:bg-red-50 transition">
                             <div class="flex items-start justify-between">
                                 <div class="flex-1">
-                                    <p class="font-semibold text-gray-900">${alert.machine_name}</p>
-                                    <p class="text-sm text-gray-600 mt-1">${alert.message}</p>
-                                    <p class="text-xs text-gray-400 mt-2">${new Date(alert.created_at).toLocaleString('id-ID')}</p>
+                                    <p class="font-semibold text-gray-900">${escapeHtml(alert.machine_name || 'Unknown')}</p>
+                                    <p class="text-sm text-gray-600 mt-1">
+                                        RMS ${formatDecimal(alert.rms, 3)} mm/s${alert.location ? ` - ${escapeHtml(alert.location)}` : ''}
+                                    </p>
+                                    <p class="text-xs text-gray-400 mt-2">${formatDateTime(alert.timestamp || alert.created_at)}</p>
                                 </div>
-                                <span class="px-3 py-1 rounded-full text-sm font-bold ${getSeverityClass(alert.severity)}">
-                                    ${alert.severity}
+                                <span class="px-3 py-1 rounded-full text-sm font-bold ${getSeverityClass(alert.severity || '')}">
+                                    ${String(alert.severity || 'unknown').toUpperCase()}
                                 </span>
                             </div>
                         </div>
@@ -162,12 +289,12 @@
 
             function getSeverityClass(severity) {
                 const classes = {
-                    'CRITICAL': 'bg-red-100 text-red-800',
-                    'HIGH': 'bg-orange-100 text-orange-800',
-                    'MEDIUM': 'bg-yellow-100 text-yellow-800',
-                    'LOW': 'bg-blue-100 text-blue-800'
+                    critical: 'bg-red-100 text-red-800',
+                    high: 'bg-orange-100 text-orange-800',
+                    medium: 'bg-yellow-100 text-yellow-800',
+                    low: 'bg-blue-100 text-blue-800'
                 };
-                return classes[severity] || 'bg-gray-100 text-gray-800';
+                return classes[String(severity).toLowerCase()] || 'bg-gray-100 text-gray-800';
             }
 
             // Machine Status Functions
@@ -389,21 +516,26 @@
 
             // WebSocket Subscription
             function subscribeToRealTimeUpdates() {
-                if (window.Echo) {
-                    window.Echo.channel('machines').listen('MachineStatusUpdated', (event) => {
-                        console.log('Machine status updated:', event);
-                        loadMachineStatus();
-                        loadTopMachinesByRisk();
-                    });
-
-                    window.Echo.channel('machines').listen('AnomalyDetected', (event) => {
-                        console.log('Anomaly detected:', event);
-                        loadAlerts();
-                        if (alertSoundEnabled) {
-                            playAlertSound();
-                        }
-                    });
+                if (!window.Echo) {
+                    return;
                 }
+
+                const machinesChannel = window.Echo.channel('machines');
+
+                machinesChannel.listen('.machine.status.updated', () => {
+                    refreshDashboard({ force: true });
+                });
+
+                machinesChannel.listen('.analysis.updated', () => {
+                    refreshDashboard({ force: true });
+                    if (alertSoundEnabled) {
+                        playAlertSound();
+                    }
+                });
+
+                machinesChannel.listen('.sensor.updated', () => {
+                    loadDashboardSummary();
+                });
             }
 
             function playAlertSound() {

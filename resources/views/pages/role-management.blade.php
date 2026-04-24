@@ -15,7 +15,7 @@
     </x-slot>
 
     <div class="py-6">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-4">
+        <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 space-y-4">
             <div class="rounded-2xl border border-gray-100 bg-white shadow-sm p-4">
                 <div class="mb-3 flex flex-wrap items-center justify-between gap-2">
                     <div class="text-sm font-semibold text-gray-700">Cari Role</div>
@@ -34,12 +34,12 @@
 
             <div class="rounded-2xl border border-gray-100 bg-white shadow-sm overflow-hidden">
                 <div class="overflow-x-auto">
-                    <table class="min-w-full text-sm">
+                    <table class="min-w-[760px] w-full text-sm">
                         <thead class="bg-emerald-50 text-emerald-800">
                             <tr>
-                                <th class="px-6 py-3 text-left font-semibold">ROLE NAME</th>
-                                <th class="px-6 py-3 text-left font-semibold">PERMISSIONS</th>
-                                <th class="px-6 py-3 text-left font-semibold">ACTIONS</th>
+                                <th class="px-3 py-3 sm:px-6 text-left font-semibold">ROLE NAME</th>
+                                <th class="px-3 py-3 sm:px-6 text-left font-semibold">PERMISSIONS</th>
+                                <th class="px-3 py-3 sm:px-6 text-left font-semibold">ACTIONS</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-gray-100" id="roleTableBody">
@@ -51,11 +51,11 @@
                                     $extraCount = max(count($permList) - count($showPerms), 0);
                                 @endphp
                                 <tr data-role="{{ strtolower($role->name) }}">
-                                    <td class="px-6 py-4">
+                                    <td class="px-3 py-3 sm:px-6 sm:py-4">
                                         <div class="font-semibold text-gray-900">{{ $role->name }}</div>
                                         <div class="text-xs text-gray-500">{{ $role->slug }}</div>
                                     </td>
-                                    <td class="px-6 py-4">
+                                    <td class="px-3 py-3 sm:px-6 sm:py-4">
                                         <div class="flex flex-wrap gap-2">
                                             @foreach($showPerms as $perm)
                                                 <span class="px-3 py-1 rounded-full bg-blue-100 text-blue-700 text-xs font-semibold">
@@ -67,7 +67,7 @@
                                             @endif
                                         </div>
                                     </td>
-                                    <td class="px-6 py-4">
+                                    <td class="px-3 py-3 sm:px-6 sm:py-4">
                                         @if($role->slug === 'super_admin')
                                             <span class="inline-flex items-center gap-2 px-3 py-1 rounded-lg bg-gray-100 text-gray-600 text-xs font-semibold">
                                                 <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -85,14 +85,14 @@
                                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5h2m-1-1v2m-6 4h12M5 12h14M7 16h10" />
                                                     </svg>
-                                                    Edit
+                                                    <span class="hidden sm:inline">Edit</span>
                                                 </button>
                                                 <button class="inline-flex items-center gap-1 text-red-500 hover:text-red-600 btn-delete-role"
                                                     data-role="{{ $role->id }}">
                                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 7h12M9 7V4h6v3m-7 4v7m4-7v7m4-7v7M5 7h14l-1 14H6L5 7z" />
                                                     </svg>
-                                                    Delete
+                                                    <span class="hidden sm:inline">Delete</span>
                                                 </button>
                                             </div>
                                         @endif
@@ -100,7 +100,7 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="3" class="px-6 py-6 text-center text-gray-400">Belum ada role.</td>
+                                    <td colspan="3" class="px-3 py-6 sm:px-6 text-center text-gray-400">Belum ada role.</td>
                                 </tr>
                             @endforelse
                         </tbody>

@@ -123,8 +123,8 @@
     </div>
 
     <!-- Mobile Navigation Menu -->
-    <div :class="{'block': open, 'hidden': !open}" class="hidden sm:hidden border-t border-emerald-900/40"
-        style="background: linear-gradient(180deg, #275640 0%, #214b39 100%);">
+    <div :class="{'block': open, 'hidden': !open}" class="hidden sm:hidden border-t border-emerald-900/40 overflow-y-auto overscroll-contain"
+        style="background: linear-gradient(180deg, #275640 0%, #214b39 100%); max-height: calc(100dvh - 4rem); padding-bottom: max(0.75rem, env(safe-area-inset-bottom));">
         <div class="px-4 pt-2 pb-3 space-y-1">
             <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')"
                 class="text-emerald-50 hover:bg-white/10 hover:text-white">
@@ -193,7 +193,7 @@
                 <p class="text-sm font-semibold text-white">{{ Auth::user()->name }}</p>
                 <p class="text-xs text-white">{{ Auth::user()->email }}</p>
             </div>
-            <div class="mt-3 space-y-1">
+            <div class="mt-2 space-y-1">
                 <a href="{{ route('profile.edit') }}"
                     class="block px-4 py-2 rounded text-white hover:bg-white/10 transition flex items-center space-x-2">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -202,13 +202,11 @@
                     </svg>
                     <span>{{ __('messages.app.profile') }}</span>
                 </a>
+            </div>
+            <div class="px-4 mt-3">
                 <a href="{{ route('logout') }}"
-                    class="block w-full text-left px-4 py-2 rounded text-white hover:bg-white/10 transition flex items-center space-x-2">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-                    </svg>
-                    <span>{{ __('messages.app.logout') }}</span>
+                    class="block w-full text-center px-4 py-2.5 rounded-lg bg-red-500/20 border border-red-300/30 text-red-100 font-semibold hover:bg-red-500/30 transition">
+                    {{ __('messages.app.logout') }}
                 </a>
             </div>
         </div>

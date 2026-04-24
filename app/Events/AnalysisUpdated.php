@@ -44,6 +44,7 @@ class AnalysisUpdated implements ShouldBroadcastNow
     public function broadcastOn(): array
     {
         return [
+            new Channel('machines'),
             new Channel("machine.{$this->machineId}"),
         ];
     }

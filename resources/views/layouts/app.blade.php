@@ -117,6 +117,149 @@
             setInterval(updateMonitoringHeaderClock, 1000);
         });
     </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const idleMinutes = Number(@json((int) config('session.idle_logout_minutes', 30)));
+            if (!Number.isFinite(idleMinutes) || idleMinutes <= 0) return;
+
+            const idleMs = idleMinutes * 60 * 1000;
+            const syncKey = 'monitoring:last-activity-at';
+            const forceLogoutKey = 'monitoring:force-logout-at';
+            const loginUrl = @json(route('login'));
+            const logoutUrl = @json(route('logout'));
+            const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
+
+            let lastActivityAt = Date.now();
+            let hiddenSince = document.hidden ? Date.now() : null;
+            let isLoggingOut = false;
+            let lastSyncedAt = 0;
+
+            function syncActivity(ts) {
+                if (ts - lastSyncedAt < 5000) return;
+                lastSyncedAt = ts;
+
+                try {
+                    localStorage.setItem(syncKey, String(ts));
+                } catch (_) {
+                    // no-op (private mode / storage disabled)
+                }
+            }
+
+            function markActivity() {
+                if (isLoggingOut) return;
+                const now = Date.now();
+                lastActivityAt = now;
+                syncActivity(now);
+            }
+
+            function pullSharedActivity() {
+                try {
+                    const value = localStorage.getItem(syncKey);
+                    const parsed = Number(value);
+                    if (Number.isFinite(parsed) && parsed > lastActivityAt) {
+                        lastActivityAt = parsed;
+                    }
+                } catch (_) {
+                    // no-op
+                }
+            }
+
+            async function logoutDueToIdle() {
+                if (isLoggingOut) return;
+                isLoggingOut = true;
+
+                try {
+                    localStorage.setItem(forceLogoutKey, String(Date.now()));
+                } catch (_) {
+                    // no-op
+                }
+
+                try {
+                    await fetch(logoutUrl, {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRF-TOKEN': csrfToken,
+                            'X-Requested-With': 'XMLHttpRequest',
+                            'Accept': 'application/json',
+                        },
+                        credentials: 'same-origin',
+                    });
+                } catch (_) {
+                    // if request fails (expired session/network), continue redirect
+                }
+
+                window.location.href = loginUrl;
+            }
+
+            function checkIdleTimeout() {
+                if (isLoggingOut) return;
+                pullSharedActivity();
+
+                const now = Date.now();
+                if (hiddenSince !== null && (now - hiddenSince) >= idleMs) {
+                    logoutDueToIdle();
+                    return;
+                }
+
+                if ((now - lastActivityAt) >= idleMs) {
+                    logoutDueToIdle();
+                }
+            }
+
+            const activityEvents = [
+                'mousemove',
+                'mousedown',
+                'keydown',
+                'scroll',
+                'touchstart',
+                'click',
+            ];
+
+            activityEvents.forEach((eventName) => {
+                window.addEventListener(eventName, markActivity, { passive: true });
+            });
+
+            document.addEventListener('visibilitychange', function () {
+                if (document.hidden) {
+                    hiddenSince = Date.now();
+                    return;
+                }
+
+                const now = Date.now();
+                if (hiddenSince !== null && (now - hiddenSince) >= idleMs) {
+                    logoutDueToIdle();
+                    return;
+                }
+
+                hiddenSince = null;
+                markActivity();
+            });
+
+            window.addEventListener('storage', function (event) {
+                if (event.key === syncKey && event.newValue) {
+                    const parsed = Number(event.newValue);
+                    if (Number.isFinite(parsed) && parsed > lastActivityAt) {
+                        lastActivityAt = parsed;
+                    }
+                    return;
+                }
+
+                if (event.key === forceLogoutKey && event.newValue) {
+                    window.location.href = loginUrl;
+                }
+            });
+
+            markActivity();
+            pullSharedActivity();
+
+            const idleCheckIntervalMs = Math.min(15000, Math.max(3000, Math.floor(idleMs / 6)));
+            const idleTimer = setInterval(checkIdleTimeout, idleCheckIntervalMs);
+
+            window.addEventListener('beforeunload', function () {
+                clearInterval(idleTimer);
+            });
+        });
+    </script>
 </body>
 
 </html>

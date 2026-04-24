@@ -433,9 +433,12 @@ class AnalyzeBatchJob implements ShouldQueue
 
             // Invalidate dashboard caches to show latest RMS/status
             Cache::forget('dashboard_all_data');
+            Cache::forget('dashboard_all_data_v2');
+            Cache::forget('dashboard_total_samples');
             Cache::forget('api_dashboard_data');
             Cache::forget('api_machine_status');
             Cache::forget('api_top_machines_risk');
+            Cache::forget('api_active_alerts');
         } catch (\Throwable $e) {
             \Log::error('AnalyzeBatchJob FAILED', [
                 'batch_id' => $this->batchId ?? null,

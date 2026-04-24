@@ -38,6 +38,19 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Idle Auto Logout (Client-Side)
+    |--------------------------------------------------------------------------
+    |
+    | Extra browser-side idle timeout in minutes. When the user has no
+    | interaction for this duration, the app will trigger logout.
+    | Set to 0 to disable client-side idle auto logout.
+    |
+    */
+
+    'idle_logout_minutes' => (int) env('SESSION_IDLE_LOGOUT_MINUTES', 30),
+
+    /*
+    |--------------------------------------------------------------------------
     | Session Encryption
     |--------------------------------------------------------------------------
     |

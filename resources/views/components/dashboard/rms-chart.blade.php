@@ -40,13 +40,23 @@
 </div>
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-        const chartData = JSON.parse(document.getElementById('rmsChart').dataset.chart);
+        let chartData = normalizeChartData(JSON.parse(document.getElementById('rmsChart').dataset.chart));
         const ctx = document.getElementById('rmsChart').getContext('2d');
         let chartType = 'line';
         const chartTypeSelect = document.getElementById('chartType');
         const scaleToggle = document.getElementById('rmsScaleToggle');
         let chartInstance = null;
         let useAutoScale = true;
+
+        function normalizeChartData(data) {
+            return {
+                labels: Array.isArray(data?.labels) ? data.labels : [],
+                values: Array.isArray(data?.values) ? data.values : [],
+                full_times: Array.isArray(data?.full_times) ? data.full_times : [],
+                machines: Array.isArray(data?.machines) ? data.machines : [],
+                statuses: Array.isArray(data?.statuses) ? data.statuses : [],
+            };
+        }
 
         function renderChart(type) {
             if (chartInstance) chartInstance.destroy();
@@ -216,5 +226,10 @@
                 }
             });
         }
+
+        window.updateDashboardRmsChart = function (nextChartData) {
+            chartData = normalizeChartData(nextChartData || {});
+            renderChart(chartType);
+        };
     });
 </script>

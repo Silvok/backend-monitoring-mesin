@@ -78,6 +78,8 @@ class ESPController extends Controller
             $baseTime = \Carbon\Carbon::parse($capturedAtRaw ?? now());
             $temperatureC = $data['temperature_c'] ?? $data['temperature'] ?? null;
             $precomputedMetrics = [];
+            $didWriteRawData = false;
+            $didWriteTemperature = false;
 
             // Simpan data ringkasan 1 data per menit ke raw_samples
             if ($isSamplePayload && $machineId && !empty($rawSampleColumns)) {
@@ -176,6 +178,7 @@ class ESPController extends Controller
 
                         if (!empty($row)) {
                             DB::table('raw_samples')->insert($row);
+                            $didWriteRawData = true;
                         }
                     }
 
@@ -201,11 +204,18 @@ class ESPController extends Controller
                     'value'         => $temperatureC,
                     'temperature_c' => $temperatureC,
                 ]);
+                $didWriteTemperature = true;
             }
 
             // Dispatch analysis job jika batch berhasil dibuat
             if ($batchId) {
                 \App\Jobs\AnalyzeBatchJob::dispatch($batchId, $precomputedMetrics);
+            }
+
+            if ($didWriteRawData || $didWriteTemperature) {
+                Cache::forget('api_dashboard_data');
+                Cache::forget('dashboard_all_data_v2');
+                Cache::forget('dashboard_total_samples');
             }
 
             return response()->json(['status' => 'success', 'received' => $data], 200);

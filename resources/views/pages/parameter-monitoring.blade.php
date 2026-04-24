@@ -1,19 +1,14 @@
 <x-app-layout>
     <x-slot name="header">
-        <div class="w-full flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-            <div class="flex flex-wrap items-center gap-3 md:flex-1 md:justify-start">
-                <h2 class="font-bold text-lg sm:text-xl text-emerald-900">{{ __('messages.parameters.title') }}</h2>
-                <div class="flex items-center gap-2 px-3 py-1.5 bg-emerald-50 rounded-full border border-emerald-200">
-                    <div class="relative flex h-3 w-3">
-                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                        <span class="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
-                    </div>
-                    <span class="text-xs font-semibold text-emerald-700">{{ __('messages.app.active') }}</span>
-                </div>
+        <div class="w-full min-w-0 flex items-center justify-between gap-2">
+            <div class="min-w-0 flex-1">
+                <h2 class="font-bold text-base sm:text-xl text-emerald-900 truncate">
+                    {{ __('messages.parameters.title') }}
+                </h2>
             </div>
-            <div class="flex flex-wrap items-center gap-2 md:ml-auto md:justify-end md:w-auto">
-                <div class="text-xs sm:text-sm text-gray-600 bg-gray-50 px-2.5 sm:px-3 py-1.5 rounded-lg border border-gray-200">
-                    <span class="font-semibold" id="currentTime">{{ now()->format('d M Y, H:i:s') }}</span>
+            <div class="flex-shrink-0">
+                <div class="inline-flex items-center text-[10px] sm:text-sm text-gray-600 bg-gray-50 px-2 py-1.5 rounded-lg border border-gray-200">
+                    <span class="font-semibold whitespace-nowrap tabular-nums" id="currentTime">{{ now()->format('d M Y, H:i') }}</span>
                 </div>
             </div>
         </div>
@@ -44,7 +39,7 @@
                     </div>
                     <div>
                         <label for="paramSearch" class="sr-only">Search</label>
-                        <div class="flex gap-2">
+                        <div class="flex flex-wrap sm:flex-nowrap gap-2">
                             <input id="paramSearch" type="text" placeholder="Search parameters..." class="flex-1 rounded-lg border border-gray-300 bg-white px-3 py-2.5 text-sm text-gray-700 placeholder-gray-400 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500" />
                             <button id="paramReloadBtn" type="button" class="px-3 py-2.5 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-800 text-sm font-semibold transition">
                                 Reload
@@ -59,26 +54,26 @@
 
             <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
                 <div class="overflow-x-auto">
-                    <table class="min-w-full text-sm text-left text-gray-700">
+                    <table class="min-w-[720px] w-full text-sm text-left text-gray-700">
                         <thead class="bg-emerald-700 text-white">
                             <tr>
-                                <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider">Parameter Key</th>
-                                <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider">Description</th>
-                                <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider">Value</th>
-                                <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider">Status</th>
-                                <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider">Actions</th>
+                                <th class="px-3 py-3 sm:px-6 sm:py-4 text-xs font-bold uppercase tracking-wider">Parameter Key</th>
+                                <th class="px-3 py-3 sm:px-6 sm:py-4 text-xs font-bold uppercase tracking-wider">Description</th>
+                                <th class="px-3 py-3 sm:px-6 sm:py-4 text-xs font-bold uppercase tracking-wider">Value</th>
+                                <th class="px-3 py-3 sm:px-6 sm:py-4 text-xs font-bold uppercase tracking-wider">Status</th>
+                                <th class="px-3 py-3 sm:px-6 sm:py-4 text-xs font-bold uppercase tracking-wider">Actions</th>
                             </tr>
                         </thead>
                         <tbody id="paramTableBody" class="divide-y divide-gray-100">
                             @foreach($groups as $groupKey => $groupLabel)
                                 <tr class="group-row bg-emerald-50/60" data-group="{{ $groupKey }}">
-                                    <td colspan="5" class="px-6 py-4">
+                                    <td colspan="5" class="px-3 py-3 sm:px-6 sm:py-4">
                                         <div class="flex items-center gap-3">
-                                            <span class="w-9 h-9 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center font-bold">
+                                            <span class="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center font-bold text-sm">
                                                 {{ strtoupper(substr($groupLabel, 0, 1)) }}
                                             </span>
-                                            <span class="text-base font-bold text-gray-900">{{ strtoupper($groupLabel) }}</span>
-                                            <span class="px-3 py-1 rounded-full bg-white border border-gray-300 text-xs font-semibold text-gray-700">
+                                            <span class="text-sm sm:text-base font-bold text-gray-900">{{ strtoupper($groupLabel) }}</span>
+                                            <span class="px-2.5 sm:px-3 py-1 rounded-full bg-white border border-gray-300 text-[11px] sm:text-xs font-semibold text-gray-700">
                                                 {{ $groupCounts[$groupKey] ?? 0 }} parameters
                                             </span>
                                         </div>
@@ -105,24 +100,24 @@
                                             data-description="{{ $item['description'] }}"
                                             data-search="{{ strtolower($item['key'].' '.$item['description'].' '.$item['value'].' '.$item['status']) }}"
                                         >
-                                            <td class="px-6 py-4 font-bold text-gray-900">{{ $item['key'] }}</td>
-                                            <td class="px-6 py-4 text-gray-700 param-desc-text">{{ $item['description'] }}</td>
-                                            <td class="px-6 py-4">
-                                                <span class="inline-flex items-center px-3 py-1 rounded-xl text-sm font-semibold bg-gray-100 text-gray-800 param-value-text">
+                                            <td class="px-3 py-3 sm:px-6 sm:py-4 font-bold text-gray-900">{{ $item['key'] }}</td>
+                                            <td class="px-3 py-3 sm:px-6 sm:py-4 text-gray-700 param-desc-text">{{ $item['description'] }}</td>
+                                            <td class="px-3 py-3 sm:px-6 sm:py-4">
+                                                <span class="inline-flex items-center px-2.5 sm:px-3 py-1 rounded-xl text-xs sm:text-sm font-semibold bg-gray-100 text-gray-800 param-value-text">
                                                     {{ $item['value'] }}
                                                 </span>
                                             </td>
-                                            <td class="px-6 py-4">
+                                            <td class="px-3 py-3 sm:px-6 sm:py-4">
                                                 <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold param-status-badge {{ $statusClasses[$item['status']] ?? 'bg-gray-100 text-gray-700' }}">
                                                     <span class="param-status-text">{{ $item['status'] }}</span>
                                                 </span>
                                             </td>
-                                            <td class="px-6 py-4">
+                                            <td class="px-3 py-3 sm:px-6 sm:py-4">
                                                 <button type="button" class="param-edit-btn inline-flex items-center gap-2 text-emerald-700 hover:text-emerald-800 text-sm font-semibold">
                                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5h2m-1-1v2m-6 4h12M5 12h14M7 16h10" />
                                                     </svg>
-                                                    Edit
+                                                    <span class="hidden sm:inline">Edit</span>
                                                 </button>
                                             </td>
                                         </tr>
@@ -139,7 +134,7 @@
     <div id="paramEditBackdrop" class="fixed inset-0 bg-black/40 hidden items-center justify-center z-50">
         <div class="bg-white w-full max-w-xl rounded-2xl shadow-xl border border-gray-100 mx-4">
             <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
-                <h3 class="text-3xl font-bold text-gray-900">Edit Parameter</h3>
+                <h3 class="text-xl sm:text-2xl font-bold text-gray-900">Edit Parameter</h3>
                 <button id="paramEditClose" type="button" class="w-9 h-9 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-600 flex items-center justify-center">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>

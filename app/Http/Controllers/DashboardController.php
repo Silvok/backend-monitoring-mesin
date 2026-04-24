@@ -14,10 +14,10 @@ class DashboardController extends Controller
 {
     public function index()
     {
-        // Keep warm longer to avoid heavy recompute on frequent logins.
-        $dashboardData = Cache::remember('dashboard_all_data_v2', 300, function () {
-            // Use longer-lived cache for heavy total count on large table.
-            $totalSamples = Cache::remember('dashboard_total_samples', 900, function () {
+        // Keep warm, but shorter for near real-time dashboard refresh.
+        $dashboardData = Cache::remember('dashboard_all_data_v2', 60, function () {
+            // Use moderate cache for heavy total count on large table.
+            $totalSamples = Cache::remember('dashboard_total_samples', 120, function () {
                 return RawSample::count();
             });
 

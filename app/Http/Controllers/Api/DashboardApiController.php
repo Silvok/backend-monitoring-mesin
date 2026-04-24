@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Machine;
 use App\Models\RawSample;
 use App\Models\AnalysisResult;
+use App\Models\TemperatureReading;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 
@@ -13,26 +14,74 @@ class DashboardApiController extends Controller
 {
     public function getDashboardData()
     {
-        // Cache dashboard data for 30 seconds
-        return Cache::remember('api_dashboard_data', 30, function () {
+        // Short cache so dashboard can feel near real-time while still avoiding query storms.
+        $payload = Cache::remember('api_dashboard_data', 5, function () {
             $totalMachines = Machine::count();
             $totalSamples = RawSample::count();
             $totalAnalysis = AnalysisResult::count();
             $anomalyCount = AnalysisResult::whereIn('condition_status', ['ANOMALY', 'WARNING', 'FAULT', 'CRITICAL'])->count();
             $normalCount = AnalysisResult::where('condition_status', 'NORMAL')->count();
 
-            $rmsData = AnalysisResult::where('created_at', '>=', now()->subHours(24))
-                ->orderBy('created_at', 'asc')
-                ->select('rms', 'created_at')
+            $rmsRows = AnalysisResult::query()
+                ->where('created_at', '>=', now()->subHours(24))
+                ->with('machine:id,name')
+                ->select('machine_id', 'rms', 'condition_status', 'created_at')
+                ->orderBy('created_at', 'desc')
+                ->limit(100)
                 ->get()
-                ->map(function($item) {
-                    return [
-                        'time' => $item->created_at->format('H:i'),
-                        'value' => round($item->rms, 4)
-                    ];
+                ->sortBy('created_at')
+                ->values();
+
+            $rmsData = $rmsRows->map(function ($item) {
+                return [
+                    'time' => $item->created_at->format('H:i'),
+                    'value' => round((float) $item->rms, 4),
+                ];
+            })->values();
+
+            $rmsChartData = [
+                'labels' => $rmsRows->pluck('created_at')->map(fn ($ts) => $ts->format('H:i'))->values()->toArray(),
+                'values' => $rmsRows->pluck('rms')->map(fn ($rms) => round((float) $rms, 4))->values()->toArray(),
+                'full_times' => $rmsRows->pluck('created_at')->map(fn ($ts) => $ts->format('Y-m-d H:i:s'))->values()->toArray(),
+                'machines' => $rmsRows->pluck('machine.name')->map(fn ($name) => $name ?? '-')->values()->toArray(),
+                'statuses' => $rmsRows->pluck('condition_status')->map(fn ($status) => strtoupper((string) $status))->values()->toArray(),
+            ];
+
+            $latestTemperatureByMachine = TemperatureReading::query()
+                ->select(['machine_id', 'temperature_c', 'recorded_at'])
+                ->latest('recorded_at')
+                ->limit(200)
+                ->get()
+                ->groupBy('machine_id')
+                ->map(function ($rows) {
+                    return optional($rows->first())->temperature_c;
                 });
 
-            return response()->json([
+            $latestSensorData = RawSample::query()
+                ->select(['id', 'machine_id', 'created_at', 'ax_g', 'ay_g', 'az_g', 'temperature_c'])
+                ->with('machine:id,name')
+                ->latest()
+                ->limit(5)
+                ->get()
+                ->map(function ($sample) use ($latestTemperatureByMachine) {
+                    $temperature = $sample->temperature_c;
+                    if ($temperature === null && isset($latestTemperatureByMachine[$sample->machine_id])) {
+                        $temperature = $latestTemperatureByMachine[$sample->machine_id];
+                    }
+
+                    return [
+                        'id' => $sample->id,
+                        'machine_id' => $sample->machine_id,
+                        'machine_name' => $sample->machine->name ?? 'N/A',
+                        'timestamp' => optional($sample->created_at)->format('Y-m-d H:i:s'),
+                        'ax_g' => round((float) ($sample->ax_g ?? 0), 4),
+                        'ay_g' => round((float) ($sample->ay_g ?? 0), 4),
+                        'az_g' => round((float) ($sample->az_g ?? 0), 4),
+                        'temperature_c' => $temperature !== null ? round((float) $temperature, 2) : null,
+                    ];
+                })->values();
+
+            return [
                 'success' => true,
                 'totalMachines' => $totalMachines,
                 'totalSamples' => $totalSamples,
@@ -40,9 +89,13 @@ class DashboardApiController extends Controller
                 'anomalyCount' => $anomalyCount,
                 'normalCount' => $normalCount,
                 'rmsData' => $rmsData,
-                'timestamp' => now()->format('l, d-m-Y H:i')
-            ]);
+                'rmsChartData' => $rmsChartData,
+                'latestSensorData' => $latestSensorData,
+                'timestamp' => now()->format('l, d-m-Y H:i'),
+            ];
         });
+
+        return response()->json($payload);
     }
 
     /**

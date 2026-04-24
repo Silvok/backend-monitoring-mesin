@@ -1,19 +1,14 @@
 <x-app-layout>
     <x-slot name="header">
-        <div class="flex items-center justify-between">
-            <div class="flex items-center space-x-8">
-                <h2 class="font-bold text-xl text-emerald-900">{{ __('messages.settings.title') }}</h2>
-                <div class="flex items-center space-x-2 px-3 py-1.5 bg-emerald-50 rounded-full border border-emerald-200">
-                    <div class="relative flex h-3 w-3">
-                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                        <span class="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
-                    </div>
-                    <span class="text-xs font-semibold text-emerald-700">{{ __('messages.app.active') }}</span>
-                </div>
+        <div class="w-full min-w-0 flex items-center justify-between gap-2">
+            <div class="min-w-0 flex-1">
+                <h2 class="font-bold text-base sm:text-xl text-emerald-900 truncate">
+                    {{ __('messages.settings.title') }}
+                </h2>
             </div>
-            <div class="flex items-center space-x-3">
-                <div class="text-sm text-gray-600 bg-gray-50 px-3 py-1.5 rounded-lg border border-gray-200">
-                    <span class="font-semibold" id="currentTime">{{ now()->format('d M Y, H:i:s') }}</span>
+            <div class="flex-shrink-0">
+                <div class="inline-flex items-center text-[10px] sm:text-sm text-gray-600 bg-gray-50 px-2 py-1.5 rounded-lg border border-gray-200">
+                    <span class="font-semibold whitespace-nowrap tabular-nums" id="currentTime">{{ now()->format('d M Y, H:i') }}</span>
                 </div>
             </div>
         </div>
