@@ -184,6 +184,7 @@
 							<th class="px-6 py-3 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">{{ __('messages.users.full_name') }}</th>
 							<th class="px-6 py-3 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">{{ __('messages.users.email') }}</th>
 							<th class="px-6 py-3 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">{{ __('messages.users.phone') }}</th>
+							<th class="px-6 py-3 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">WA Notif</th>
 							<th class="px-6 py-3 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">{{ __('messages.users.role') }}</th>
 							<th class="px-6 py-3 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">{{ __('messages.users.status') }}</th>
 							<th class="px-6 py-3 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">{{ __('messages.users.last_login') }}</th>
@@ -214,6 +215,12 @@
 								<td class="px-6 py-4 whitespace-nowrap text-gray-700">{{ $user->email }}</td>
 								<!-- Phone Number -->
 								<td class="px-6 py-4 whitespace-nowrap text-gray-700">{{ $user->phone ?? '-' }}</td>
+								<!-- WA Notification -->
+								<td class="px-6 py-4 whitespace-nowrap">
+									<span class="px-2 py-1 text-xs font-semibold rounded-full {{ ($user->wa_notification_enabled ?? true) ? 'bg-emerald-100 text-emerald-700' : 'bg-gray-200 text-gray-500' }}">
+										{{ ($user->wa_notification_enabled ?? true) ? 'On' : 'Off' }}
+									</span>
+								</td>
 								<!-- Role -->
 								<td class="px-6 py-4 whitespace-nowrap capitalize">
 									@php
@@ -264,7 +271,7 @@
 							</tr>
 						@empty
 							<tr>
-								<td colspan="8" class="text-center py-8 text-gray-400">
+								<td colspan="9" class="text-center py-8 text-gray-400">
 									Tidak ada user ditemukan
 								</td>
 							</tr>
@@ -375,6 +382,10 @@
 						<label class="block text-sm font-medium mb-1">Email</label>
 						<input type="email" id="userEmail" name="email" class="w-full border rounded px-3 py-2" required>
 					</div>
+					<div class="mb-3">
+						<label class="block text-sm font-medium mb-1">Nomor WA</label>
+						<input type="text" id="userPhone" name="phone" class="w-full border rounded px-3 py-2" placeholder="628xxxxxxxxxx" required>
+					</div>
 					<div class="mb-3" id="passwordField">
 						<label class="block text-sm font-medium mb-1">Password</label>
 						<input type="password" id="userPassword" name="password" class="w-full border rounded px-3 py-2">
@@ -389,6 +400,13 @@
 					<div class="mb-3">
 						<label class="block text-sm font-medium mb-1">Status</label>
 						<select id="userStatus" name="status" class="w-full border rounded px-3 py-2">
+							<option value="1">Aktif</option>
+							<option value="0">Nonaktif</option>
+						</select>
+					</div>
+					<div class="mb-3">
+						<label class="block text-sm font-medium mb-1">Notifikasi WA</label>
+						<select id="userWaNotification" name="wa_notification_enabled" class="w-full border rounded px-3 py-2">
 							<option value="1">Aktif</option>
 							<option value="0">Nonaktif</option>
 						</select>
@@ -515,8 +533,10 @@
 				document.getElementById('userId').value = user.id;
 				document.getElementById('userName').value = user.name;
 				document.getElementById('userEmail').value = user.email;
+				document.getElementById('userPhone').value = user.phone || '';
 				document.getElementById('userRole').value = user.role;
 				document.getElementById('userStatus').value = user.status ? '1' : '0';
+				document.getElementById('userWaNotification').value = user.wa_notification_enabled ? '1' : '0';
 				document.getElementById('passwordField').classList.add('hidden');
 			}
 		}
@@ -576,8 +596,10 @@
 			const data = {
 				name: document.getElementById('userName').value,
 				email: document.getElementById('userEmail').value,
+				phone: document.getElementById('userPhone').value,
 				role: document.getElementById('userRole').value,
 				status: document.getElementById('userStatus').value,
+				wa_notification_enabled: document.getElementById('userWaNotification').value,
 			};
 			if (!id) data.password = document.getElementById('userPassword').value;
 			if (id && document.getElementById('userPassword').value) data.password = document.getElementById('userPassword').value;

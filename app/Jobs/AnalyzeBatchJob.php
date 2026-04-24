@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Cache;
 use App\Models\Machine;
 use App\Models\User;
 use App\Events\AnalysisUpdated;
+use App\Services\WhatsAppService;
 
 class AnalyzeBatchJob implements ShouldQueue
 {
@@ -405,6 +406,15 @@ class AnalyzeBatchJob implements ShouldQueue
                             'updated_at' => $now,
                         ]);
                     }
+
+                    $this->sendWhatsAppToCoordinators(
+                        machineId: (int) ($machineId ?? 0),
+                        machineName: $machineName,
+                        conditionStatus: (string) $conditionStatus,
+                        rmsForStatus: $rmsForStatus,
+                        warningThreshold: $warningThreshold,
+                        criticalThreshold: $criticalThreshold
+                    );
                 }
 
                 if ($analysisId && $machine) {
@@ -435,7 +445,104 @@ class AnalyzeBatchJob implements ShouldQueue
             throw $e;
         }
     }
-    // ...existing code...
+
+    private function sendWhatsAppToCoordinators(
+        int $machineId,
+        string $machineName,
+        string $conditionStatus,
+        ?float $rmsForStatus,
+        float $warningThreshold,
+        float $criticalThreshold
+    ): void {
+        if (!config('services.whatsapp.enabled')) {
+            return;
+        }
+
+        $coordinators = User::query()
+            ->select('id', 'name', 'phone')
+            ->where('role', 'koordinator')
+            ->where('status', 'active')
+            ->where('wa_notification_enabled', true)
+            ->whereNotNull('phone')
+            ->get();
+
+        if ($coordinators->isEmpty()) {
+            return;
+        }
+
+        $statusUpper = strtoupper($conditionStatus);
+        $cooldownMinutes = max(0, (int) config('services.whatsapp.alert_cooldown_minutes', 5));
+        $service = app(WhatsAppService::class);
+        $message = $this->buildWhatsAppAlertMessage(
+            machineName: $machineName,
+            conditionStatus: $statusUpper,
+            rmsForStatus: $rmsForStatus,
+            warningThreshold: $warningThreshold,
+            criticalThreshold: $criticalThreshold
+        );
+
+        foreach ($coordinators as $coordinator) {
+            $cacheKey = "wa_alert_sent:{$coordinator->id}:{$machineId}:{$statusUpper}";
+
+            if ($cooldownMinutes > 0 && Cache::has($cacheKey)) {
+                continue;
+            }
+
+            try {
+                $result = $service->sendMessage((string) $coordinator->phone, $message);
+
+                if (($result['ok'] ?? false) && $cooldownMinutes > 0) {
+                    Cache::put($cacheKey, true, now()->addMinutes($cooldownMinutes));
+                }
+            } catch (\Throwable $e) {
+                \Log::error('WhatsApp alert send failed', [
+                    'user_id' => $coordinator->id,
+                    'phone' => $coordinator->phone,
+                    'machine_id' => $machineId,
+                    'status' => $statusUpper,
+                    'error' => $e->getMessage(),
+                ]);
+            }
+        }
+    }
+
+    private function buildWhatsAppAlertMessage(
+        string $machineName,
+        string $conditionStatus,
+        ?float $rmsForStatus,
+        float $warningThreshold,
+        float $criticalThreshold
+    ): string {
+        $rmsLabel = $rmsForStatus !== null ? number_format($rmsForStatus, 3) . ' mm/s' : '-';
+        $dashboardUrl = rtrim((string) config('app.url'), '/') . '/alert-management';
+        $statusLabel = match ($conditionStatus) {
+            'CRITICAL', 'ANOMALY', 'DANGER' => 'KRITIS',
+            'WARNING' => 'PERINGATAN',
+            default => $conditionStatus,
+        };
+
+        return trim(implode("\n", [
+            "Halo Koordinator,",
+            "",
+            "Sistem Monitoring Mesin mendeteksi kondisi {$statusLabel} pada unit berikut:",
+            "Mesin: {$machineName}",
+            "Status Alert: {$conditionStatus}",
+            "Nilai RMS saat ini: {$rmsLabel}",
+            "Batas Warning: " . number_format($warningThreshold, 3) . " mm/s",
+            "Batas Critical: " . number_format($criticalThreshold, 3) . " mm/s",
+            "Waktu deteksi: " . now()->format('d-m-Y H:i') . " WIB",
+            "",
+            "Mohon tindak lanjut:",
+            "1. Cek kondisi mesin di area terkait.",
+            "2. Koordinasikan teknisi untuk pemeriksaan awal.",
+            "3. Update status penanganan melalui dashboard.",
+            "",
+            "Akses dashboard: {$dashboardUrl}",
+            "",
+            "Terima kasih.",
+            "Pesan ini dikirim otomatis oleh Sistem Monitoring Mesin.",
+        ]));
+    }
 }
 
 

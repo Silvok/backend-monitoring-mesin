@@ -1,4 +1,4 @@
-<x-guest-layout>
+﻿<x-guest-layout>
     <div class="mb-4 text-sm text-gray-600">
         Lupa password? Silakan masukkan email Anda untuk menerima link reset password.
     </div>
@@ -6,7 +6,7 @@
     <div class="mb-4 text-sm text-gray-600">
         Jika tidak menerima email atau masih kesulitan login,
         <a
-            href="https://wa.me/6287825729377?text=Selamat%20siang%20Admin.%0A%0APerkenalkan%2C%20saya%20pengguna%20aplikasi%20PreMaint%20dengan%20detail%20berikut%3A%0A-%20Nama%3A%20%0A-%20Email%20Akun%3A%20%0A-%20Waktu%20Permintaan%3A%20%0A%0ASaya%20mengalami%20kendala%20lupa%20kata%20sandi%20dan%20memohon%20bantuan%20untuk%20reset%20password.%0ATerima%20kasih%20atas%20bantuannya."
+            href="https://wa.me/083183061372?text=Selamat%20siang%20Admin.%0A%0APerkenalkan%2C%20saya%20pengguna%20aplikasi%20PreMaint%20dengan%20detail%20berikut%3A%0A-%20Nama%3A%20%0A-%20Email%20Akun%3A%20%0A-%20Waktu%20Permintaan%3A%20%0A%0ASaya%20mengalami%20kendala%20lupa%20kata%20sandi%20dan%20memohon%20bantuan%20untuk%20reset%20password.%0ATerima%20kasih%20atas%20bantuannya."
             target="_blank"
             rel="noopener noreferrer"
             class="text-emerald-700 hover:text-emerald-900 font-semibold transition"
@@ -35,3 +35,4 @@
         </div>
     </form>
 </x-guest-layout>
+

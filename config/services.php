@@ -35,4 +35,13 @@ return [
         ],
     ],
 
+    'whatsapp' => [
+        'enabled' => filter_var(env('WHATSAPP_ENABLED', false), FILTER_VALIDATE_BOOLEAN),
+        'provider' => env('WHATSAPP_PROVIDER', 'fonnte'),
+        'endpoint' => env('WHATSAPP_ENDPOINT', 'https://api.fonnte.com/send'),
+        'token' => env('WHATSAPP_TOKEN'),
+        'timeout' => (int) env('WHATSAPP_TIMEOUT', 15),
+        'alert_cooldown_minutes' => (int) env('WHATSAPP_ALERT_COOLDOWN_MINUTES', 5),
+    ],
+
 ];

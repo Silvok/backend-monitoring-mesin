@@ -34,10 +34,13 @@ class UserManagementController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email',
+            'phone' => ['required', 'string', 'max:30', 'regex:/^[0-9+\-\s()]+$/'],
             'password' => 'required|string|min:8',
             'role' => 'required|string',
             'status' => 'required|boolean',
+            'wa_notification_enabled' => 'required|boolean',
         ]);
+        $validated['phone'] = $this->normalizePhoneNumber($validated['phone']);
         $validated['password'] = bcrypt($validated['password']);
         User::create($validated);
         return response()->json(['success' => true, 'message' => 'User berhasil ditambahkan']);
@@ -49,11 +52,15 @@ class UserManagementController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email,' . $user->id,
+            'phone' => ['required', 'string', 'max:30', 'regex:/^[0-9+\-\s()]+$/'],
             'role' => 'required|string',
             'status' => 'required',
+            'wa_notification_enabled' => 'required|boolean',
         ]);
+        $validated['phone'] = $this->normalizePhoneNumber($validated['phone']);
         // Cast status to boolean
         $validated['status'] = $validated['status'] == '1' ? 1 : 0;
+        $validated['wa_notification_enabled'] = $validated['wa_notification_enabled'] == '1' ? 1 : 0;
         if ($request->filled('password')) {
             $validated['password'] = bcrypt($request->password);
         }
@@ -121,5 +128,10 @@ class UserManagementController extends Controller
     {
         $user = User::findOrFail($id);
         return response()->json($user);
+    }
+
+    private function normalizePhoneNumber(string $phone): string
+    {
+        return preg_replace('/\D+/', '', $phone) ?? $phone;
     }
 }
