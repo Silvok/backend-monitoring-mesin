@@ -1,15 +1,19 @@
 <?php
 
-use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
+namespace Database\Seeders;
+
+use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
-return new class extends Migration
+class RoleSeeder extends Seeder
 {
-    private function defaultRoles(): array
+    /**
+     * Seed or sync default roles.
+     */
+    public function run(): void
     {
-        return [
+        $now = now();
+        $roles = [
             [
                 'name' => 'Super Admin',
                 'slug' => 'super_admin',
@@ -57,24 +61,8 @@ return new class extends Migration
                 'is_protected' => true,
             ],
         ];
-    }
 
-    public function up(): void
-    {
-        if (!Schema::hasTable('roles')) {
-            Schema::create('roles', function (Blueprint $table) {
-                $table->id();
-                $table->string('name');
-                $table->string('slug')->unique();
-                $table->json('permissions')->nullable();
-                $table->boolean('is_protected')->default(false);
-                $table->timestamps();
-            });
-        }
-
-        // Seed/update default roles safely, even if table already exists.
-        $now = now();
-        foreach ($this->defaultRoles() as $role) {
+        foreach ($roles as $role) {
             $exists = DB::table('roles')->where('slug', $role['slug'])->exists();
             $payload = [
                 'name' => $role['name'],
@@ -95,9 +83,4 @@ return new class extends Migration
             ]);
         }
     }
-
-    public function down(): void
-    {
-        Schema::dropIfExists('roles');
-    }
-};
+}

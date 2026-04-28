@@ -89,8 +89,13 @@ class ESPController extends Controller
                     }
                 };
 
-                // Hitung rata-rata dari payload (agar 1 menit = 1 data ringkasan)
-                $axSum = 0.0; $aySum = 0.0; $azSum = 0.0; $valSum = 0.0; $count = 0;
+                // Hitung statistik payload untuk diakumulasikan ke ringkasan per interval.
+                $axSum = 0.0;
+                $aySum = 0.0;
+                $azSum = 0.0;
+                $valSum = 0.0;
+                $count = 0;
+                $valueCount = 0;
                 $lastTms = null;
                 $windowValues = [];
                 $windowTimeValues = [];
@@ -108,6 +113,7 @@ class ESPController extends Controller
                         $azSum += $az_g;
                         if ($value !== null) {
                             $valSum += $value;
+                            $valueCount++;
                         }
                         $count++;
                         $lastTms = $t_ms;
@@ -127,6 +133,7 @@ class ESPController extends Controller
                         $aySum += $ay_g;
                         $azSum += $az_g;
                         $valSum += $sampleValue;
+                        $valueCount++;
                         $count++;
                         $lastTms = $t_ms;
                         $windowValues[] = $sampleValue;
@@ -140,7 +147,7 @@ class ESPController extends Controller
                     $avgAx = $axSum / $count;
                     $avgAy = $aySum / $count;
                     $avgAz = $azSum / $count;
-                    $avgVal = $valSum > 0 ? ($valSum / $count) : null;
+                    $avgVal = $valueCount > 0 ? ($valSum / $valueCount) : null;
 
                     $intervalMinutes = (int) Cache::get('sampling_interval_minutes', 1);
                     if ($intervalMinutes < 1) {
@@ -151,15 +158,90 @@ class ESPController extends Controller
                     $minuteStart->minute($bucketMinute);
                     $minuteEnd = $minuteStart->copy()->addMinutes($intervalMinutes);
 
-                    $alreadySaved = false;
-                    if (array_key_exists('sample_time', $rawSampleColumns)) {
-                        $alreadySaved = DB::table('raw_samples')
-                            ->where('machine_id', $machineId)
-                            ->whereBetween('sample_time', [$minuteStart, $minuteEnd])
-                            ->exists();
+                    $summarySelectColumns = ['id'];
+                    foreach (['ax_g', 'ay_g', 'az_g', 'value', 'created_at'] as $column) {
+                        if (array_key_exists($column, $rawSampleColumns)) {
+                            $summarySelectColumns[] = $column;
+                        }
+                    }
+                    foreach ([
+                        'sample_time',
+                        'summary_count',
+                        'summary_value_count',
+                        'summary_sum_ax',
+                        'summary_sum_ay',
+                        'summary_sum_az',
+                        'summary_sum_value',
+                    ] as $column) {
+                        if (array_key_exists($column, $rawSampleColumns)) {
+                            $summarySelectColumns[] = $column;
+                        }
                     }
 
-                    if (!$alreadySaved) {
+                    $existingSummary = DB::table('raw_samples')
+                        ->select($summarySelectColumns)
+                        ->where('machine_id', $machineId)
+                        ->when(
+                            array_key_exists('sample_time', $rawSampleColumns),
+                            fn($query) => $query->where('sample_time', $minuteStart),
+                            fn($query) => $query->whereBetween('created_at', [$minuteStart, $minuteEnd])
+                        )
+                        ->orderByDesc('id')
+                        ->first();
+
+                    if ($existingSummary) {
+                        $prevCount = isset($existingSummary->summary_count)
+                            ? max(1, (int) $existingSummary->summary_count)
+                            : 1;
+                        $prevValueCount = isset($existingSummary->summary_value_count)
+                            ? max(0, (int) $existingSummary->summary_value_count)
+                            : (isset($existingSummary->value) && $existingSummary->value !== null ? $prevCount : 0);
+
+                        $prevAxSum = isset($existingSummary->summary_sum_ax) && $existingSummary->summary_sum_ax !== null
+                            ? (float) $existingSummary->summary_sum_ax
+                            : ((float) ($existingSummary->ax_g ?? 0) * $prevCount);
+                        $prevAySum = isset($existingSummary->summary_sum_ay) && $existingSummary->summary_sum_ay !== null
+                            ? (float) $existingSummary->summary_sum_ay
+                            : ((float) ($existingSummary->ay_g ?? 0) * $prevCount);
+                        $prevAzSum = isset($existingSummary->summary_sum_az) && $existingSummary->summary_sum_az !== null
+                            ? (float) $existingSummary->summary_sum_az
+                            : ((float) ($existingSummary->az_g ?? 0) * $prevCount);
+                        $prevValSum = isset($existingSummary->summary_sum_value) && $existingSummary->summary_sum_value !== null
+                            ? (float) $existingSummary->summary_sum_value
+                            : ($prevValueCount > 0 ? (float) ($existingSummary->value ?? 0) * $prevValueCount : 0.0);
+
+                        $newCount = $prevCount + $count;
+                        $newValueCount = $prevValueCount + $valueCount;
+                        $newAxSum = $prevAxSum + $axSum;
+                        $newAySum = $prevAySum + $aySum;
+                        $newAzSum = $prevAzSum + $azSum;
+                        $newValSum = $prevValSum + $valSum;
+
+                        $row = [];
+                        $addIf($row, 'raw_batch_id', $batchId);
+                        $addIf($row, 'batch_id', $batchId);
+                        $addIf($row, 't_ms', $lastTms);
+                        $addIf($row, 'ax_g', $newAxSum / $newCount);
+                        $addIf($row, 'ay_g', $newAySum / $newCount);
+                        $addIf($row, 'az_g', $newAzSum / $newCount);
+                        $addIf($row, 'value', $newValueCount > 0 ? ($newValSum / $newValueCount) : null);
+                        $addIf($row, 'temperature_c', $temperatureC);
+                        $addIf($row, 'captured_at', $capturedAt);
+                        $addIf($row, 'summary_count', $newCount);
+                        $addIf($row, 'summary_value_count', $newValueCount);
+                        $addIf($row, 'summary_sum_ax', $newAxSum);
+                        $addIf($row, 'summary_sum_ay', $newAySum);
+                        $addIf($row, 'summary_sum_az', $newAzSum);
+                        $addIf($row, 'summary_sum_value', $newValSum);
+                        $addIf($row, 'updated_at', now());
+
+                        if (!empty($row)) {
+                            DB::table('raw_samples')
+                                ->where('id', $existingSummary->id)
+                                ->update($row);
+                            $didWriteRawData = true;
+                        }
+                    } else {
                         $row = [];
                         $addIf($row, 'machine_id', $machineId);
                         $addIf($row, 'raw_batch_id', $batchId);
@@ -172,8 +254,15 @@ class ESPController extends Controller
                         $addIf($row, 'temperature_c', $temperatureC);
                         $addIf($row, 'captured_at', $capturedAt);
                         $addIf($row, 'sample_time', $minuteStart);
+                        $addIf($row, 'summary_count', $count);
+                        $addIf($row, 'summary_value_count', $valueCount);
+                        $addIf($row, 'summary_sum_ax', $axSum);
+                        $addIf($row, 'summary_sum_ay', $aySum);
+                        $addIf($row, 'summary_sum_az', $azSum);
+                        $addIf($row, 'summary_sum_value', $valSum);
                         $addIf($row, 'name', $batchId ? 'ESP32 Sample ' . $batchId : 'ESP32 Sample');
-                        $addIf($row, 'created_at', now());
+                        // Keep created_at aligned to bucket start when sample_time is not available.
+                        $addIf($row, 'created_at', $minuteStart);
                         $addIf($row, 'updated_at', now());
 
                         if (!empty($row)) {

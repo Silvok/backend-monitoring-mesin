@@ -27,7 +27,7 @@ $targetWarning = 25.0;
 $targetCritical = 28.0;
 
 // DB config
-$dbHost = envValue('DB_HOST', '128.0.0.1');
+$dbHost = envValue('DB_HOST', '127.0.0.1');
 $dbPort = envValue('DB_PORT', '3306');
 $dbName = envValue('DB_DATABASE', '');
 $dbUser = envValue('DB_USERNAME', '');
@@ -101,10 +101,11 @@ foreach ($scanDirs as $dir) {
 }
 check('No old thresholds in code', count($badHits) === 0, $badHits ? implode(', ', array_slice($badHits, 0, 5)) : 'clean');
 if (count($badHits) > 5) {
-    echo "…and " . (count($badHits) - 5) . " more files" . PHP_EOL;
+    echo "...and " . (count($badHits) - 5) . " more files" . PHP_EOL;
 }
 
 echo PHP_EOL . "Checklist finished." . PHP_EOL;
+
 
 
 

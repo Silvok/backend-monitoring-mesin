@@ -30,11 +30,20 @@ $appKey = envValue('APP_KEY', '');
 check('APP_KEY set', !empty($appKey), $appKey ? 'set' : 'missing');
 $appEnv = envValue('APP_ENV', 'local');
 check('APP_ENV', true, $appEnv, 'PASS');
+$isProduction = strtolower($appEnv) === 'production';
+check('APP_ENV is production', $isProduction, 'current=' . $appEnv, 'WARN');
 $appDebug = envValue('APP_DEBUG', 'true');
 check('APP_DEBUG disabled', $appDebug === 'false', 'current=' . $appDebug, 'WARN');
+$appUrl = envValue('APP_URL', '');
+$isLocalUrl = str_contains($appUrl, '127.0.0.1') || str_contains($appUrl, 'localhost');
+check('APP_URL is not localhost', !$isLocalUrl, 'current=' . $appUrl, 'WARN');
+$broadcastConnection = envValue('BROADCAST_CONNECTION', 'log');
+check('BROADCAST_CONNECTION', true, $broadcastConnection, 'PASS');
+check('BROADCAST uses reverb/pusher for realtime', in_array($broadcastConnection, ['reverb', 'pusher'], true), 'current=' . $broadcastConnection, 'WARN');
 
 check('storage/ writable', is_writable($root . '/storage'), '', is_writable($root . '/storage') ? 'PASS' : 'FAIL');
 check('bootstrap/cache writable', is_writable($root . '/bootstrap/cache'), '', is_writable($root . '/bootstrap/cache') ? 'PASS' : 'FAIL');
+check('public/storage linked', file_exists($root . '/public/storage'), '', file_exists($root . '/public/storage') ? 'PASS' : 'WARN');
 
 // DB config
 $dbHost = envValue('DB_HOST', '127.0.0.1');
@@ -73,6 +82,26 @@ check('Raw samples available', $rawCount > 0, $rawCount . ' rows');
 // Roles presence
 $roleCount = (int) $pdo->query("SELECT COUNT(*) FROM roles")->fetchColumn();
 check('Roles configured', $roleCount > 0, $roleCount . ' roles');
+
+// Pending migration detection
+$migrationTableExists = (bool) $pdo->query("SHOW TABLES LIKE 'migrations'")->fetchColumn();
+if ($migrationTableExists) {
+    $ranMigrations = $pdo->query("SELECT migration FROM migrations")->fetchAll(PDO::FETCH_COLUMN);
+    $migrationFiles = glob($root . '/database/migrations/*.php') ?: [];
+    $migrationNames = array_map(
+        static fn(string $file): string => pathinfo($file, PATHINFO_FILENAME),
+        $migrationFiles
+    );
+    $pending = array_values(array_diff($migrationNames, $ranMigrations));
+    check(
+        'No pending migrations',
+        count($pending) === 0,
+        count($pending) > 0 ? implode(', ', array_slice($pending, 0, 3)) : 'clean',
+        'WARN'
+    );
+} else {
+    check('Migrations table exists', false);
+}
 
 // Check recent log errors
 $logPath = $root . '/storage/logs/laravel.log';
