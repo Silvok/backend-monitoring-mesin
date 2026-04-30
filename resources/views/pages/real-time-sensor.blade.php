@@ -27,10 +27,14 @@
                         <select id="machineSelector" class="w-full min-w-0 px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-slate-900 font-semibold bg-white truncate">
                             <option value="">-- Pilih Mesin --</option>
                             @foreach($machines as $machine)
+                                @php
+                                    $hasData = (($machine->raw_samples_count ?? 0) > 0) || (($machine->analysis_results_count ?? 0) > 0);
+                                @endphp
                                 <option value="{{ $machine->id }}"
                                     data-status="{{ $machine->latestAnalysis?->condition_status ?? 'TIDAK DIKETAHUI' }}"
-                                    data-location="{{ $machine->location }}">
-                                    {{ $machine->name }}
+                                    data-location="{{ $machine->location }}"
+                                    data-has-data="{{ $hasData ? '1' : '0' }}">
+                                    {{ $machine->name }}{{ $hasData ? '' : ' (belum ada data)' }}
                                 </option>
                             @endforeach
                         </select>
@@ -684,6 +688,23 @@
             updateClock();
             setInterval(updateClock, 60000);
 
+            // Ensure machine selection always triggers initial data load.
+            const machineSelector = document.getElementById('machineSelector');
+            if (machineSelector) {
+                if (machineSelector.value) {
+                    // Browser/session may restore selected value without firing "change".
+                    machineSelector.dispatchEvent(new Event('change'));
+                } else {
+                    const firstMachineWithData = Array.from(machineSelector.options).find(
+                        option => option.value && option.dataset.hasData === '1'
+                    );
+                    if (firstMachineWithData) {
+                        machineSelector.value = firstMachineWithData.value;
+                        machineSelector.dispatchEvent(new Event('change'));
+                    }
+                }
+            }
+
         // Chart Mode Toggle
         document.getElementById('liveModeBtn').addEventListener('click', function() {
             switchChartMode('live');
@@ -725,8 +746,10 @@
                 // Auto-set date picker to latest sample date if available
                 if (latestSampleTimestamp) {
                     const d = new Date(latestSampleTimestamp);
-                    const isoDate = d.toISOString().slice(0, 10);
-                    document.getElementById('chartDatePicker').value = isoDate;
+                    if (!Number.isNaN(d.getTime())) {
+                        const isoDate = d.toISOString().slice(0, 10);
+                        document.getElementById('chartDatePicker').value = isoDate;
+                    }
                 }
 
                 // Stop live updates and load historical data
@@ -1027,9 +1050,11 @@
                 const temp = data.temperature !== undefined && data.temperature !== null
                     ? parseFloat(data.temperature).toFixed(1)
                     : '25.0';
+                const timestampLabel = data.timestamp_label
+                    || (data.timestamp ? new Date(data.timestamp).toLocaleString('id-ID') : '-');
                 return `
                     <tr class="hover:bg-gray-50 transition">
-                        <td class="px-6 py-3 whitespace-nowrap text-sm text-gray-900">${data.timestamp}</td>
+                        <td class="px-6 py-3 whitespace-nowrap text-sm text-gray-900">${timestampLabel}</td>
                         <td class="px-6 py-3 whitespace-nowrap text-sm font-mono text-gray-900">${data.acceleration_x}</td>
                         <td class="px-6 py-3 whitespace-nowrap text-sm font-mono text-gray-900">${data.acceleration_y}</td>
                         <td class="px-6 py-3 whitespace-nowrap text-sm font-mono text-gray-900">${data.acceleration_z}</td>

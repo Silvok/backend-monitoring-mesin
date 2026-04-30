@@ -201,8 +201,15 @@ class DashboardController extends Controller
 
     public function realTimeSensor()
     {
-        // Get all machines for dropdown
+        // Prioritize machines that already have sensor/analysis data.
         $machines = Machine::with('latestAnalysis')
+            ->withCount(['rawSamples', 'analysisResults'])
+            ->where(function ($query) {
+                $query->has('rawSamples')
+                    ->orHas('analysisResults');
+            })
+            ->orderByDesc('raw_samples_count')
+            ->orderByDesc('analysis_results_count')
             ->orderBy('name')
             ->get();
 

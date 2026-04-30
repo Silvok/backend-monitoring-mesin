@@ -271,7 +271,8 @@ class DashboardApiController extends Controller
                 ->map(function($sample) {
                     return [
                         'id' => $sample->id,
-                        'timestamp' => $sample->created_at->format('l, d-m-Y H:i'),
+                        'timestamp' => $sample->created_at->toIso8601String(),
+                        'timestamp_label' => $sample->created_at->format('d-m-Y H:i:s'),
                         'time_ago' => $sample->created_at->diffForHumans(),
                         'acceleration_x' => round($sample->ax_g ?? 0, 4),
                         'acceleration_y' => round($sample->ay_g ?? 0, 4),
