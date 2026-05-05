@@ -39,12 +39,13 @@
     </div>
 </div>
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
+    document.addEventListener('DOMContentLoaded', async function () {
         let chartData = normalizeChartData(JSON.parse(document.getElementById('rmsChart').dataset.chart));
         const ctx = document.getElementById('rmsChart').getContext('2d');
         let chartType = 'line';
         const chartTypeSelect = document.getElementById('chartType');
         const scaleToggle = document.getElementById('rmsScaleToggle');
+        const chartContainer = document.getElementById('rmsChart');
         let chartInstance = null;
         let useAutoScale = true;
 
@@ -179,19 +180,51 @@
             });
         }
 
-        renderChart(chartType);
+        async function ensureChartReady() {
+            if (window.ensureChartJs) {
+                try {
+                    await window.ensureChartJs();
+                } catch (error) {
+                    console.error('Failed to load Chart.js:', error);
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        let initialized = false;
+        async function initWhenVisible() {
+            if (initialized) return;
+            initialized = true;
+            const ready = await ensureChartReady();
+            if (!ready) return;
+            renderChart(chartType);
+        }
+
+        if ('IntersectionObserver' in window && chartContainer) {
+            const observer = new IntersectionObserver((entries, io) => {
+                if (entries.some((entry) => entry.isIntersecting)) {
+                    io.disconnect();
+                    initWhenVisible();
+                }
+            }, { rootMargin: '200px' });
+
+            observer.observe(chartContainer);
+        } else {
+            initWhenVisible();
+        }
 
         if (scaleToggle) {
             scaleToggle.addEventListener('change', function () {
                 useAutoScale = scaleToggle.checked;
-                renderChart(chartType);
+                if (chartInstance) renderChart(chartType);
             });
         }
 
         if (chartTypeSelect) {
             chartTypeSelect.addEventListener('change', function (e) {
                 chartType = e.target.value;
-                renderChart(chartType);
+                if (chartInstance) renderChart(chartType);
             });
         }
 
@@ -229,7 +262,7 @@
 
         window.updateDashboardRmsChart = function (nextChartData) {
             chartData = normalizeChartData(nextChartData || {});
-            renderChart(chartType);
+            if (chartInstance) renderChart(chartType);
         };
     });
 </script>

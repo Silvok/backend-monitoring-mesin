@@ -9,6 +9,7 @@
                     <a href="{{ route('dashboard') }}" class="flex items-center gap-2 hover:opacity-90 transition min-w-0 max-w-full sm:max-w-none">
                         <div class="w-10 h-10 sm:w-16 sm:h-16 lg:w-20 lg:h-20 flex-shrink-0">
                             <img src="{{ asset('images/unnamed.png') }}" alt="PreMaint Logo"
+                                width="80" height="80" fetchpriority="high" decoding="async"
                                 class="w-full h-full object-contain">
                         </div>
                         <div class="leading-tight min-w-0 max-w-full">

@@ -1206,8 +1206,16 @@
         }
 
         // Real-time updates via Laravel Echo
-        function connectWebSocket(machineId) {
+        async function connectWebSocket(machineId) {
             disconnectWebSocket();
+
+            try {
+                if (window.ensureEcho) {
+                    await window.ensureEcho();
+                }
+            } catch (error) {
+                console.warn('Echo not available. Falling back to polling only.', error);
+            }
 
             if (!window.Echo) {
                 console.warn('Echo not available. Falling back to polling only.');

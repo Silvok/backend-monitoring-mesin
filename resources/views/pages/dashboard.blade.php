@@ -40,12 +40,12 @@
     </div>
 
     @push('scripts')
-        <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js" defer></script>
         <script>
             let refreshInterval;
             let isRefreshing = false;
             let isInitialized = false;
-            const AUTO_REFRESH_INTERVAL_MS = 10000;
+            let refreshCycle = 0;
+            const AUTO_REFRESH_INTERVAL_MS = 30000;
 
             // Preloaded data from server - NO AJAX needed on initial load!
             const preloadedData = @json($preloadedData ?? []);
@@ -69,10 +69,9 @@
                 startClock();
                 initAlertSound();
 
-                // Start auto refresh for subsequent updates
-                refreshDashboard({ force: true });
+                // Use preloaded payload first and delay API refresh to improve first paint.
+                setTimeout(() => refreshDashboard({ force: false }), 3000);
                 startAutoRefresh();
-                subscribeToRealTimeUpdates();
 
                 document.addEventListener('visibilitychange', () => {
                     if (!document.hidden) {
@@ -108,14 +107,16 @@
                 }
 
                 isRefreshing = true;
+                refreshCycle += 1;
                 const icon = document.getElementById('refreshIcon');
                 if (icon) icon.classList.add('animate-spin');
 
+                const runHeavyRefresh = force || (refreshCycle % 2 === 0);
                 Promise.all([
                     loadDashboardSummary(),
-                    loadAlerts(),
-                    loadMachineStatus(),
-                    loadTopMachinesByRisk()
+                    (runHeavyRefresh ? loadAlerts() : Promise.resolve()),
+                    (runHeavyRefresh ? loadMachineStatus() : Promise.resolve()),
+                    (runHeavyRefresh ? loadTopMachinesByRisk() : Promise.resolve())
                 ]).finally(() => {
                     if (icon) icon.classList.remove('animate-spin');
                     isRefreshing = false;
@@ -514,48 +515,6 @@
                 if (soundIcon) soundIcon.classList.toggle('opacity-50');
             }
 
-            // WebSocket Subscription
-            function subscribeToRealTimeUpdates() {
-                if (!window.Echo) {
-                    return;
-                }
-
-                const machinesChannel = window.Echo.channel('machines');
-
-                machinesChannel.listen('.machine.status.updated', () => {
-                    refreshDashboard({ force: true });
-                });
-
-                machinesChannel.listen('.analysis.updated', () => {
-                    refreshDashboard({ force: true });
-                    if (alertSoundEnabled) {
-                        playAlertSound();
-                    }
-                });
-
-                machinesChannel.listen('.sensor.updated', () => {
-                    loadDashboardSummary();
-                });
-            }
-
-            function playAlertSound() {
-                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-                const oscillator = audioContext.createOscillator();
-                const gainNode = audioContext.createGain();
-
-                oscillator.connect(gainNode);
-                gainNode.connect(audioContext.destination);
-
-                oscillator.frequency.value = 800;
-                oscillator.type = 'sine';
-
-                gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
-                gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
-
-                oscillator.start(audioContext.currentTime);
-                oscillator.stop(audioContext.currentTime + 0.5);
-            }
-
             // Alert Panel Controls
             function toggleAlertPanel() {
                 const panel = document.getElementById('alertPanel');
@@ -579,6 +538,3 @@
         </script>
     @endpush
 </x-app-layout>
-
-
-
