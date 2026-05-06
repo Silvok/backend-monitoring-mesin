@@ -12,7 +12,7 @@
             <input id="rmsScaleToggle" type="checkbox" class="rounded border-gray-300 text-emerald-600 focus:ring-emerald-500" checked>
             {{ __('messages.dashboard.auto_zoom') }}
         </label>
-        <span class="text-[11px] text-gray-400">{{ __('messages.dashboard.full_scale') }}</span>
+        <span class="text-[11px] text-gray-600">{{ __('messages.dashboard.full_scale') }}</span>
     </div>
     <div class="relative h-64 sm:h-80">
         <canvas id="rmsChart" data-chart="{{ json_encode($rmsChartData ?? []) }}"></canvas>

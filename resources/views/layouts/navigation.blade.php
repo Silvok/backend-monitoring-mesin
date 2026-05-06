@@ -25,7 +25,7 @@
             <!-- Right Side Menu -->
             <div class="hidden sm:flex items-center space-x-4 absolute right-0 pr-8">
                 <!-- Notification Bell -->
-                <button id="notifBtn" type="button" class="relative text-white hover:bg-white/10 p-2 rounded-lg transition duration-200">
+                <button id="notifBtn" type="button" aria-label="{{ __('messages.notifications.title') }}" title="{{ __('messages.notifications.title') }}" class="relative text-white hover:bg-white/10 p-2 rounded-lg transition duration-200">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
@@ -101,7 +101,7 @@
 
             <!-- Mobile Hamburger -->
             <div class="sm:hidden flex items-center gap-1.5 flex-shrink-0">
-                <button id="notifBtnMobile" type="button"
+                <button id="notifBtnMobile" type="button" aria-label="{{ __('messages.notifications.title') }}" title="{{ __('messages.notifications.title') }}"
                     class="relative inline-flex items-center justify-center p-1.5 rounded-lg text-white hover:bg-white/10 transition duration-200">
                     <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -348,7 +348,7 @@
         }
 
         function loadNotifications() {
-            fetch('/notifications')
+            fetch('notifications')
                 .then(r => r.json())
                 .then(renderNotifications)
                 .catch(() => {
@@ -384,13 +384,13 @@
             const item = e.target.closest('.notif-item');
             if (!item) return;
             const id = item.getAttribute('data-id');
-            fetch(`/notifications/${id}/read`, {
+            fetch(`notifications/${id}/read`, {
                 method: 'POST',
                 headers: {
                     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
                 }
             }).then(() => {
-                fetch(`/notifications/${id}`, {
+                fetch(`notifications/${id}`, {
                     method: 'DELETE',
                     headers: {
                         'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
@@ -400,13 +400,13 @@
                     if (!list.querySelector('.notif-item')) {
                         list.innerHTML = `<div class="px-4 py-6 text-center text-sm text-gray-500">${notifText.empty}</div>`;
                     }
-                    window.location.href = '/alert-management';
+                    window.location.href = 'alert-management';
                 });
             });
         });
 
         markAll.addEventListener('click', function () {
-            fetch('/notifications/read-all', {
+            fetch('notifications/read-all', {
                 method: 'POST',
                 headers: {
                     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content

@@ -45,10 +45,10 @@
                         {{ number_format($data->az_g, 4) }}
                     </td>
                     <td class="px-4 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-sm font-semibold
-                        @if($tempReading && $tempReading->temperature_c > 50) text-red-600
-                        @elseif($tempReading && $tempReading->temperature_c > 40) text-orange-600
-                        @elseif($tempReading) text-green-600
-                        @else text-gray-500
+                        @if($tempReading && $tempReading->temperature_c > 50) text-red-700
+                        @elseif($tempReading && $tempReading->temperature_c > 40) text-orange-700
+                        @elseif($tempReading) text-emerald-700
+                        @else text-gray-600
                         @endif">
                         {{ $tempReading ? number_format($tempReading->temperature_c, 2) . '°C' : 'N/A' }}
                     </td>

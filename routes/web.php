@@ -2,33 +2,33 @@
 
 // API endpoint for user detail (for edit modal)
 Route::get('/api/users/{id}', [App\Http\Controllers\UserManagementController::class, 'show'])
-    ->middleware(['auth', 'verified', 'permission:user_management.view'])
+    ->middleware(['auth', 'verified'])
     ->name('api.users.show');
 
 // User Management Page
 use App\Http\Controllers\UserManagementController;
 
-Route::get('/user-management', [UserManagementController::class, 'index'])->middleware(['auth', 'verified', 'permission:user_management.view'])->name('user-management');
-Route::post('/user-management', [UserManagementController::class, 'store'])->middleware(['auth', 'verified', 'permission:user_management.create'])->name('user-management.store');
-Route::put('/user-management/{id}', [UserManagementController::class, 'update'])->middleware(['auth', 'verified', 'permission:user_management.edit'])->name('user-management.update');
-Route::delete('/user-management/{id}', [UserManagementController::class, 'destroy'])->middleware(['auth', 'verified', 'permission:user_management.delete'])->name('user-management.destroy');
-Route::post('/user-management/{id}/reset-password', [UserManagementController::class, 'resetPassword'])->middleware(['auth', 'verified', 'permission:user_management.reset_password'])->name('user-management.reset-password');
-Route::post('/user-management/{id}/force-reset-password', [UserManagementController::class, 'forceResetPassword'])->middleware(['auth', 'verified', 'permission:user_management.reset_password'])->name('user-management.force-reset-password');
+Route::get('/user-management', [UserManagementController::class, 'index'])->middleware(['auth', 'verified'])->name('user-management');
+Route::post('/user-management', [UserManagementController::class, 'store'])->middleware(['auth', 'verified'])->name('user-management.store');
+Route::put('/user-management/{id}', [UserManagementController::class, 'update'])->middleware(['auth', 'verified'])->name('user-management.update');
+Route::delete('/user-management/{id}', [UserManagementController::class, 'destroy'])->middleware(['auth', 'verified'])->name('user-management.destroy');
+Route::post('/user-management/{id}/reset-password', [UserManagementController::class, 'resetPassword'])->middleware(['auth', 'verified'])->name('user-management.reset-password');
+Route::post('/user-management/{id}/force-reset-password', [UserManagementController::class, 'forceResetPassword'])->middleware(['auth', 'verified'])->name('user-management.force-reset-password');
 
 Route::get('/role-management', [App\Http\Controllers\RoleManagementController::class, 'index'])
-    ->middleware(['auth', 'verified', 'permission:roles.view'])
+    ->middleware(['auth', 'verified'])
     ->name('role-management');
 
 Route::post('/role-management', [App\Http\Controllers\RoleManagementController::class, 'store'])
-    ->middleware(['auth', 'verified', 'permission:roles.create'])
+    ->middleware(['auth', 'verified'])
     ->name('role-management.store');
 
 Route::put('/role-management/{role}', [App\Http\Controllers\RoleManagementController::class, 'update'])
-    ->middleware(['auth', 'verified', 'permission:roles.edit'])
+    ->middleware(['auth', 'verified'])
     ->name('role-management.update');
 
 Route::delete('/role-management/{role}', [App\Http\Controllers\RoleManagementController::class, 'destroy'])
-    ->middleware(['auth', 'verified', 'permission:roles.delete'])
+    ->middleware(['auth', 'verified'])
     ->name('role-management.destroy');
 
 use App\Http\Controllers\ProfileController;

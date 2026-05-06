@@ -19,10 +19,12 @@
             <div class="rounded-2xl border border-gray-100 bg-white shadow-sm p-4">
                 <div class="mb-3 flex flex-wrap items-center justify-between gap-2">
                     <div class="text-sm font-semibold text-gray-700">Cari Role</div>
-                    <button id="openRoleModal" class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-500 hover:bg-emerald-600 text-white text-sm font-semibold shadow-sm">
-                        <span class="text-lg leading-none">+</span>
-                        Tambah Role
-                    </button>
+                    @if($canCreateRole)
+                        <button id="openRoleModal" class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-500 hover:bg-emerald-600 text-white text-sm font-semibold shadow-sm">
+                            <span class="text-lg leading-none">+</span>
+                            Tambah Role
+                        </button>
+                    @endif
                 </div>
                 <div class="flex items-center gap-3 rounded-xl border border-gray-200 bg-gray-50 px-3 py-2">
                     <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -75,26 +77,32 @@
                                                 </svg>
                                                 Protected Role
                                             </span>
-                                        @else
+                                        @elseif($canEditRole || $canDeleteRole)
                                             <div class="flex items-center gap-4 text-sm">
-                                                <button class="inline-flex items-center gap-1 text-emerald-600 hover:text-emerald-700 btn-edit-role"
-                                                    data-role="{{ $role->id }}"
-                                                    data-name="{{ $role->name }}"
-                                                    data-slug="{{ $role->slug }}"
-                                                    data-permissions='@json($role->permissions ?? [])'>
-                                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5h2m-1-1v2m-6 4h12M5 12h14M7 16h10" />
-                                                    </svg>
-                                                    <span class="hidden sm:inline">Edit</span>
-                                                </button>
-                                                <button class="inline-flex items-center gap-1 text-red-500 hover:text-red-600 btn-delete-role"
-                                                    data-role="{{ $role->id }}">
-                                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 7h12M9 7V4h6v3m-7 4v7m4-7v7m4-7v7M5 7h14l-1 14H6L5 7z" />
-                                                    </svg>
-                                                    <span class="hidden sm:inline">Delete</span>
-                                                </button>
+                                                @if($canEditRole)
+                                                    <button class="inline-flex items-center gap-1 text-emerald-600 hover:text-emerald-700 btn-edit-role"
+                                                        data-role="{{ $role->id }}"
+                                                        data-name="{{ $role->name }}"
+                                                        data-slug="{{ $role->slug }}"
+                                                        data-permissions='@json($role->permissions ?? [])'>
+                                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5h2m-1-1v2m-6 4h12M5 12h14M7 16h10" />
+                                                        </svg>
+                                                        <span class="hidden sm:inline">Edit</span>
+                                                    </button>
+                                                @endif
+                                                @if($canDeleteRole)
+                                                    <button class="inline-flex items-center gap-1 text-red-500 hover:text-red-600 btn-delete-role"
+                                                        data-role="{{ $role->id }}">
+                                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 7h12M9 7V4h6v3m-7 4v7m4-7v7m4-7v7M5 7h14l-1 14H6L5 7z" />
+                                                        </svg>
+                                                        <span class="hidden sm:inline">Delete</span>
+                                                    </button>
+                                                @endif
                                             </div>
+                                        @else
+                                            <span class="text-xs text-gray-400">No action</span>
                                         @endif
                                     </td>
                                 </tr>

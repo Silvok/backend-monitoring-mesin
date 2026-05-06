@@ -54,7 +54,7 @@
                             <button onclick="dismissAllAlerts()" class="bg-white/20 hover:bg-white/30 text-white px-3 py-1.5 rounded-lg text-sm font-medium transition">
                                 Dismiss All
                             </button>
-                            <button onclick="toggleAlertPanel()" class="bg-white/20 hover:bg-white/30 text-white p-1.5 rounded-lg transition">
+                            <button onclick="toggleAlertPanel()" aria-label="Tutup panel alert" title="Tutup panel alert" class="bg-white/20 hover:bg-white/30 text-white p-1.5 rounded-lg transition">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                                 </svg>

@@ -11,7 +11,7 @@
             <span class="text-2xl sm:text-3xl font-bold" id="totalMachines">{{ $totalMachines }}</span>
         </div>
         <h3 class="text-base sm:text-lg font-semibold">{{ __('messages.dashboard.metrics_total_machines') }}</h3>
-        <p class="text-xs sm:text-sm mt-1" style="color: rgba(255,255,255,0.8);">{{ __('messages.dashboard.metrics_machines_monitored') }}</p>
+        <p class="text-xs sm:text-sm mt-1" style="color: rgba(255,255,255,0.95);">{{ __('messages.dashboard.metrics_machines_monitored') }}</p>
     </div>
 
     <!-- Total Samples -->
@@ -25,7 +25,7 @@
             <span class="text-2xl sm:text-3xl font-bold" id="totalSamples">{{ number_format($totalSamples) }}</span>
         </div>
         <h3 class="text-base sm:text-lg font-semibold">{{ __('messages.dashboard.metrics_sensor_data') }}</h3>
-        <p class="text-xs sm:text-sm mt-1" style="color: rgba(255,255,255,0.8);">{{ __('messages.dashboard.metrics_total_samples') }}</p>
+        <p class="text-xs sm:text-sm mt-1" style="color: rgba(255,255,255,0.95);">{{ __('messages.dashboard.metrics_total_samples') }}</p>
     </div>
 
     <!-- Total Analysis -->
@@ -57,7 +57,7 @@
             id="normalCountText"
             data-template="{{ __('messages.dashboard.metrics_normal', ['count' => '__COUNT__']) }}"
             class="text-xs sm:text-sm mt-1"
-            style="color: rgba(255,255,255,0.8);"
+            style="color: rgba(255,255,255,0.95);"
         >
             {{ __('messages.dashboard.metrics_normal', ['count' => $normalCount]) }}
         </p>

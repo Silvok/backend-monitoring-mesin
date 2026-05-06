@@ -138,7 +138,7 @@
             }
 
             function loadDashboardSummary() {
-                return fetch('/api/dashboard-data')
+                return fetch('api/dashboard-data')
                     .then(async response => {
                         if (!response.ok) {
                             const text = await response.text();
@@ -241,7 +241,7 @@
 
             // Alert Functions - only used for refresh, not initial load
             function loadAlerts() {
-                return fetch('/api/alerts')
+                return fetch('api/alerts')
                     .then(response => response.json())
                     .then(data => {
                         const alerts = Array.isArray(data) ? data : (data.alerts || []);
@@ -309,7 +309,7 @@
                     return;
                 }
 
-                return fetch('/api/machine-status')
+                return fetch('api/machine-status')
                     .then(response => response.json())
                     .then(data => {
                         console.log('Machine status data:', data);
@@ -405,7 +405,7 @@
                                     <!-- Last Check Info -->
                                     <div class="pt-3 border-t border-gray-200">
                                         <p class="text-xs text-gray-600">
-                                            <span class="font-semibold text-emerald-600">{{ __('messages.dashboard.last_check') }}:</span> ${machine.last_check || '{{ __('messages.dashboard.no_data') }}'}
+                                            <span class="font-semibold text-emerald-700">{{ __('messages.dashboard.last_check') }}:</span> ${machine.last_check || '{{ __('messages.dashboard.no_data') }}'}
                                         </p>
                                     </div>
                                 </div>
@@ -416,7 +416,7 @@
 
             // Top Machines Functions
             function loadTopMachinesByRisk() {
-                return fetch('/api/top-machines-by-risk')
+                return fetch('api/top-machines-by-risk')
                     .then(async response => {
                         if (!response.ok) {
                             const text = await response.text();
@@ -522,7 +522,7 @@
             }
 
             function dismissAllAlerts() {
-                fetch('/api/alerts/machine/all/dismiss', { method: 'POST' })
+                fetch('api/alerts/machine/all/dismiss', { method: 'POST' })
                     .then(() => loadAlerts())
                     .catch(error => console.error('Error dismissing alerts:', error));
             }
