@@ -3,6 +3,7 @@
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schedule;
 use App\Models\User;
 use App\Services\WhatsAppService;
 
@@ -85,3 +86,6 @@ Artisan::command('wa:test-alert', function () {
 
     return 0;
 })->purpose('Kirim test WhatsApp alert ke koordinator aktif');
+
+
+Schedule::command('sensor:cleanup-old-data')->dailyAt('02:00');
