@@ -30,18 +30,18 @@
             <form id="monthlyReportForm" method="GET" action="{{ route('monthly-report') }}"
                   class="flex flex-col lg:flex-row lg:items-end gap-4">
                 <div class="flex-1">
-                    <label class="text-sm font-semibold text-gray-700">Periode</label>
-                    <input name="month" type="month" value="{{ $month ?? now()->format('Y-m') }}"
+                    <label for="report-month" class="text-sm font-semibold text-gray-700">Periode</label>
+                    <input id="report-month" name="month" type="month" value="{{ $month ?? now()->format('Y-m') }}"
                            class="mt-2 w-full rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-700 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500">
                 </div>
                 <div class="flex-1">
-                    <label class="text-sm font-semibold text-gray-700">Tanggal (opsional)</label>
-                    <input name="day" type="date" value="{{ $day ?? '' }}"
+                    <label for="report-day" class="text-sm font-semibold text-gray-700">Tanggal (opsional)</label>
+                    <input id="report-day" name="day" type="date" value="{{ $day ?? '' }}"
                            class="mt-2 w-full rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-700 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500">
                 </div>
                 <div class="flex-1">
-                    <label class="text-sm font-semibold text-gray-700">Mesin (opsional)</label>
-                    <select name="machine_id" class="mt-2 w-full rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-700 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500">
+                    <label for="report-machine" class="text-sm font-semibold text-gray-700">Mesin (opsional)</label>
+                    <select id="report-machine" name="machine_id" class="mt-2 w-full rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-700 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500">
                         <option value="all" @selected(($selectedMachine ?? 'all') === 'all')>Semua Mesin</option>
                         @foreach(($machines ?? []) as $machine)
                             <option value="{{ $machine->id }}" @selected((string) ($selectedMachine ?? 'all') === (string) $machine->id)>
@@ -51,8 +51,8 @@
                     </select>
                 </div>
                 <div class="flex-1">
-                    <label class="text-sm font-semibold text-gray-700">Catatan</label>
-                    <input type="text" placeholder="Contoh: bulan pengamatan awal" class="mt-2 w-full rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-700 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500">
+                    <label for="report-note" class="text-sm font-semibold text-gray-700">Catatan</label>
+                    <input id="report-note" name="note" type="text" placeholder="Contoh: bulan pengamatan awal" class="mt-2 w-full rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-700 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500">
                 </div>
             </form>
             <form id="monthlyReportPdfForm" method="POST" action="{{ route('monthly-report.pdf') }}" target="_blank" class="hidden">

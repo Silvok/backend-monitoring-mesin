@@ -3,7 +3,7 @@
         <div class="w-full min-w-0 flex items-center justify-between gap-2">
             <div class="min-w-0 flex-1">
                 <h2 class="font-bold text-base sm:text-xl text-emerald-900 truncate">
-                    Monitoring &amp; Analisis Mesin
+                    Real-time Sensor
                 </h2>
             </div>
             <div class="flex-shrink-0">
@@ -24,7 +24,7 @@
                         Pilih Mesin
                     </label>
                     <div class="grid grid-cols-1 lg:grid-cols-[minmax(0,560px)_1fr] gap-3 lg:gap-4 lg:items-center">
-                        <select id="machineSelector" class="w-full min-w-0 px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-slate-900 font-semibold bg-white truncate">
+                        <select id="machineSelector" autocomplete="off" class="w-full min-w-0 px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-slate-900 font-semibold bg-white truncate">
                             <option value="">-- Pilih Mesin --</option>
                             @foreach($machines as $machine)
                                 @php
@@ -688,21 +688,12 @@
             updateClock();
             setInterval(updateClock, 60000);
 
-            // Ensure machine selection always triggers initial data load.
+            // Always start from default placeholder on page load.
             const machineSelector = document.getElementById('machineSelector');
             if (machineSelector) {
-                if (machineSelector.value) {
-                    // Browser/session may restore selected value without firing "change".
-                    machineSelector.dispatchEvent(new Event('change'));
-                } else {
-                    const firstMachineWithData = Array.from(machineSelector.options).find(
-                        option => option.value && option.dataset.hasData === '1'
-                    );
-                    if (firstMachineWithData) {
-                        machineSelector.value = firstMachineWithData.value;
-                        machineSelector.dispatchEvent(new Event('change'));
-                    }
-                }
+                machineSelector.selectedIndex = 0;
+                machineSelector.value = '';
+                machineSelector.dispatchEvent(new Event('change'));
             }
 
         // Chart Mode Toggle

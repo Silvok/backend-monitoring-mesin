@@ -111,11 +111,11 @@ Route::middleware('auth')->group(function () {
     Route::get('/api/dashboard-data', [DashboardApiController::class, 'getDashboardData'])->middleware('permission:dashboard.view');
     Route::get('/api/machine-status', [DashboardApiController::class, 'getMachineStatus'])->middleware('permission:dashboard.view');
     Route::get('/api/top-machines-by-risk', [DashboardApiController::class, 'getTopMachinesByRisk'])->middleware('permission:dashboard.view');
-    Route::get('/api/machine/{id}/sensor-data', [DashboardApiController::class, 'getMachineSensorData'])->middleware('permission:monitoring.view');
-    Route::get('/api/machine/{id}/historical-data', [DashboardApiController::class, 'getHistoricalData'])->middleware('permission:monitoring.view');
-    Route::get('/api/machine/{id}/sensor-history', [DashboardApiController::class, 'getSensorHistory'])->middleware('permission:monitoring.view');
-    Route::get('/api/machine/{id}/sensor-history/export', [DashboardApiController::class, 'exportSensorHistoryCsv'])->middleware('permission:monitoring.view');
-    Route::get('/api/machine/{id}/historical-trend', [DashboardApiController::class, 'getHistoricalTrend'])->middleware('permission:monitoring.view');
+    Route::get('/api/machine/{id}/sensor-data', [DashboardApiController::class, 'getMachineSensorData'])->middleware('permission:realtime.view');
+    Route::get('/api/machine/{id}/historical-data', [DashboardApiController::class, 'getHistoricalData'])->middleware('permission:realtime.view');
+    Route::get('/api/machine/{id}/sensor-history', [DashboardApiController::class, 'getSensorHistory'])->middleware('permission:realtime.view');
+    Route::get('/api/machine/{id}/sensor-history/export', [DashboardApiController::class, 'exportSensorHistoryCsv'])->middleware('permission:realtime.view');
+    Route::get('/api/machine/{id}/historical-trend', [DashboardApiController::class, 'getHistoricalTrend'])->middleware('permission:realtime.view');
     Route::get('/api/machine/{id}/alerts', [DashboardController::class, 'getMachineAlerts'])->middleware('permission:alerts.view');
     Route::post('/api/analysis', [DashboardApiController::class, 'getAnalysisData'])->middleware('permission:analysis.view');
 

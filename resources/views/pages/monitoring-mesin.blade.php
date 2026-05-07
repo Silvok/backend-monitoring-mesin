@@ -22,7 +22,7 @@
         </div>
     </x-slot>
 
-    <div class="py-6">
+    <div class="py-6 monitoring-page">
         <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 space-y-6">
 
             <!-- Clean Industry-Standard Filter Card with Green Accents -->
@@ -46,13 +46,13 @@
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-8">
                     <!-- Column 1: Machine -->
                     <div class="space-y-3">
-                        <div class="flex items-center space-x-2 text-emerald-600">
+                        <label for="filter-machine" class="flex items-center space-x-2 text-emerald-700">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10" />
                             </svg>
                             <span class="text-sm font-bold tracking-wide">Machine</span>
-                        </div>
+                        </label>
                         <div class="relative group">
                             <select id="filter-machine" onchange="applyFilter()" style="border-radius: 12px !important;"
                                 class="w-full bg-white border border-gray-200 px-4 py-2.5 text-sm font-medium text-gray-700 focus:ring-2 focus:ring-emerald-500/10 focus:border-emerald-500 transition-all appearance-none cursor-pointer">
@@ -66,7 +66,7 @@
 
                     <!-- Column 2: Analysis Axis -->
                     <div class="space-y-3">
-                        <div class="flex items-center space-x-2 text-emerald-600">
+                        <label for="filter-axis" class="flex items-center space-x-2 text-emerald-700">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
@@ -74,7 +74,7 @@
                                     d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                             </svg>
                             <span class="text-sm font-bold tracking-wide">Analysis Axis</span>
-                        </div>
+                        </label>
                         <div class="relative group">
                             <select id="filter-axis" onchange="applyFilter()" style="border-radius: 12px !important;"
                                 class="w-full bg-white border border-gray-200 px-4 py-2.5 text-sm font-medium text-gray-700 focus:ring-2 focus:ring-emerald-500/10 focus:border-emerald-500 transition-all appearance-none cursor-pointer">
@@ -88,13 +88,13 @@
 
                     <!-- Column 3: Time Range -->
                     <div class="space-y-3">
-                        <div class="flex items-center space-x-2 text-emerald-600">
+                        <label for="filter-time-range" class="flex items-center space-x-2 text-emerald-700">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2-2v12a2 2 0 002 2z" />
                             </svg>
                             <span class="text-sm font-bold tracking-wide">Time Period</span>
-                        </div>
+                        </label>
                         <div class="relative group">
                             <select id="filter-time-range" onchange="applyFilter()"
                                 style="border-radius: 12px !important;"
@@ -1792,6 +1792,19 @@
 
 
         <style>
+            /* Accessibility: improve low-contrast utility text on this page */
+            .monitoring-page .text-gray-400 {
+                color: #6b7280 !important;
+            }
+
+            .monitoring-page .text-gray-500 {
+                color: #4b5563 !important;
+            }
+
+            .monitoring-page .text-emerald-600 {
+                color: #047857 !important;
+            }
+
             @keyframes fadeIn {
                 from {
                     opacity: 0;
