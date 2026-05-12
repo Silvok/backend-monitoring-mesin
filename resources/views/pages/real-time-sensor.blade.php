@@ -1660,6 +1660,93 @@
             }
         }
 
+        async function fetchJson(url) {
+            const response = await fetch(url, {
+                headers: {
+                    'Accept': 'application/json'
+                }
+            });
+
+            const raw = await response.text();
+            let data = null;
+
+            try {
+                data = raw ? JSON.parse(raw) : null;
+            } catch (error) {
+                const snippet = raw ? raw.slice(0, 180) : '(empty response)';
+                throw new Error(`Invalid JSON (${response.status}). Response: ${snippet}`);
+            }
+
+            if (!response.ok) {
+                const message = data?.message || `HTTP ${response.status}`;
+                throw new Error(message);
+            }
+
+            return data;
+        }
+
+        function applyHistoricalChartData(samples) {
+            if (!Array.isArray(samples) || samples.length === 0) {
+                clearChartData();
+                if (multiAxisChart) {
+                    updateYAxisScale();
+                }
+                return false;
+            }
+
+            const labels = [];
+            const axData = [];
+            const ayData = [];
+            const azData = [];
+
+            samples.forEach(sample => {
+                const timestamp = sample.timestamp ? new Date(sample.timestamp) : null;
+                if (!timestamp || Number.isNaN(timestamp.getTime())) {
+                    return;
+                }
+
+                const ax = Number.parseFloat(sample.acceleration_x);
+                const ay = Number.parseFloat(sample.acceleration_y);
+                const az = Number.parseFloat(sample.acceleration_z);
+
+                if (!Number.isFinite(ax) || !Number.isFinite(ay) || !Number.isFinite(az)) {
+                    return;
+                }
+
+                labels.push(timestamp.toLocaleTimeString('id-ID', {
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit'
+                }));
+                axData.push(ax);
+                ayData.push(ay);
+                azData.push(az);
+            });
+
+            if (labels.length === 0) {
+                clearChartData();
+                if (multiAxisChart) {
+                    updateYAxisScale();
+                }
+                return false;
+            }
+
+            chartData.labels = labels;
+            chartData.ax = axData;
+            chartData.ay = ayData;
+            chartData.az = azData;
+
+            if (multiAxisChart) {
+                multiAxisChart.data.labels = labels;
+                multiAxisChart.data.datasets[0].data = axData;
+                multiAxisChart.data.datasets[1].data = ayData;
+                multiAxisChart.data.datasets[2].data = azData;
+                updateYAxisScale();
+            }
+
+            return true;
+        }
+
         function loadHistoricalData() {
             if (!selectedMachineId) return;
 
@@ -1672,58 +1759,40 @@
             // Clear existing data
             clearChartData();
 
-            // Fetch historical data from API
-            fetch(`/api/machine/${selectedMachineId}/historical-data?date=${selectedDate}&hours=${timeRange}`)
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success && data.sensor_data && data.sensor_data.length > 0) {
-                        // Batch process data for better performance
-                        const labels = [];
-                        const axData = [];
-                        const ayData = [];
-                        const azData = [];
+            (async () => {
+                try {
+                    const historicalUrl = `/api/machine/${selectedMachineId}/historical-data?date=${selectedDate}&hours=${timeRange}`;
+                    const data = await fetchJson(historicalUrl);
 
-                        data.sensor_data.forEach(sample => {
-                            const timestamp = new Date(sample.timestamp);
-                            labels.push(timestamp.toLocaleTimeString('id-ID', {
-                                hour: '2-digit',
-                                minute: '2-digit',
-                                second: '2-digit'
-                            }));
-                            axData.push(parseFloat(sample.acceleration_x));
-                            ayData.push(parseFloat(sample.acceleration_y));
-                            azData.push(parseFloat(sample.acceleration_z));
-                        });
-
-                        // Update chartData
-                        chartData.labels = labels;
-                        chartData.ax = axData;
-                        chartData.ay = ayData;
-                        chartData.az = azData;
-
-                        // Update chart in single operation
-                        if (multiAxisChart) {
-                            multiAxisChart.data.labels = labels;
-                            multiAxisChart.data.datasets[0].data = axData;
-                            multiAxisChart.data.datasets[1].data = ayData;
-                            multiAxisChart.data.datasets[2].data = azData;
-                            updateYAxisScale();
-                        }
-
-                        console.log(`Loaded ${data.total_points} points (from ${data.original_count || data.total_points} total)`);
-                    } else {
-                        console.warn('No historical data available for selected date and range', data.date_range);
-                        if (multiAxisChart) {
-                            clearChartData();
-                            updateYAxisScale();
+                    if (data.success && Array.isArray(data.sensor_data) && data.sensor_data.length > 0) {
+                        const applied = applyHistoricalChartData(data.sensor_data);
+                        if (applied) {
+                            console.log(`Loaded ${data.total_points} points (from ${data.original_count || data.total_points} total)`);
+                            return;
                         }
                     }
-                })
-                .catch(error => console.error('Error loading historical data:', error))
-                .finally(() => {
-                    // Hide loading indicator
+
+                    // Fallback: use sensor history endpoint if optimized historical endpoint is empty.
+                    const fallbackUrl = `/api/machine/${selectedMachineId}/sensor-history?date=${selectedDate}&hours=${timeRange}&page=1&per_page=100`;
+                    const fallback = await fetchJson(fallbackUrl);
+                    const fallbackRows = Array.isArray(fallback.data) ? [...fallback.data].reverse() : [];
+                    const fallbackApplied = applyHistoricalChartData(fallbackRows);
+
+                    if (!fallbackApplied) {
+                        console.warn('No historical data available for selected date and range', data?.date_range || fallback?.date_range);
+                    } else {
+                        console.log(`Loaded fallback historical points: ${fallbackRows.length}`);
+                    }
+                } catch (error) {
+                    console.error('Error loading historical data:', error);
+                    clearChartData();
+                    if (multiAxisChart) {
+                        updateYAxisScale();
+                    }
+                } finally {
                     showChartLoading(false);
-                });
+                }
+            })();
         }
 
         function stopChartUpdate() {

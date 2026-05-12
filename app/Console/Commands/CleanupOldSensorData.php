@@ -20,16 +20,22 @@ class CleanupOldSensorData extends Command
 
         $this->info('Starting old sensor data cleanup...');
 
-        // Raw data: simpan pendek
-        $this->deleteOldData('raw_samples', 1);
-        $this->deleteOldData('raw_samples_3axis', 1);
+        // Raw data retention (days) - configurable via env.
+        $rawDays = max(1, (int) env('SENSOR_RETENTION_RAW_SAMPLES_DAYS', 1));
+        $raw3AxisDays = max(1, (int) env('SENSOR_RETENTION_RAW_3AXIS_DAYS', $rawDays));
 
-        // Batch dan temperature readings: simpan beberapa hari
-        $this->deleteOldData('raw_batches', 7);
-        $this->deleteOldData('temperature_readings', 7);
+        // Batch and temperature retention (days).
+        $batchDays = max(1, (int) env('SENSOR_RETENTION_RAW_BATCHES_DAYS', 7));
+        $temperatureDays = max(1, (int) env('SENSOR_RETENTION_TEMPERATURE_DAYS', 7));
 
-        // Hasil analisis: simpan lebih lama, contoh 180 hari / 6 bulan
-        $this->deleteOldData('analysis_results', 180);
+        // Analysis result retention (days).
+        $analysisDays = max(1, (int) env('SENSOR_RETENTION_ANALYSIS_DAYS', 180));
+
+        $this->deleteOldData('raw_samples', $rawDays);
+        $this->deleteOldData('raw_samples_3axis', $raw3AxisDays);
+        $this->deleteOldData('raw_batches', $batchDays);
+        $this->deleteOldData('temperature_readings', $temperatureDays);
+        $this->deleteOldData('analysis_results', $analysisDays);
 
         $this->info('Old sensor data cleanup completed.');
 

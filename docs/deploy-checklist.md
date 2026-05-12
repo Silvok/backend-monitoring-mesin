@@ -10,6 +10,7 @@ Pastikan ini sudah beres sebelum repo dikirim ke tim perusahaan:
 5. Fitur utama lolos uji manual (dashboard, analisis, alert, export PDF/CSV).
 6. Konfigurasi contoh production sudah jelas di `.env.example`.
 7. Dokumen setup realtime/queue tersedia (`WEBSOCKET_SETUP.md`, checklist ini).
+8. Jika butuh restore histori sensor lama, siapkan dokumen import (`docs/deploy-historical-import.md`).
 
 ## 2) Handover Ke Tim Perusahaan (Infra/Deploy)
 Bagian ini biasanya dikerjakan tim perusahaan di server mereka:
