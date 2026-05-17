@@ -59,12 +59,43 @@
             };
         }
 
+        function parseToEpochMs(timeString) {
+            if (!timeString) return null;
+            // Backend sends "YYYY-MM-DD HH:mm:ss". Convert to ISO-like local time for Date parsing.
+            const normalized = String(timeString).replace(' ', 'T');
+            const parsed = new Date(normalized);
+            const time = parsed.getTime();
+            return Number.isFinite(time) ? time : null;
+        }
+
+        function buildTimeSeriesPoints() {
+            const points = [];
+            const values = chartData.values || [];
+            const fullTimes = chartData.full_times || [];
+            const labels = chartData.labels || [];
+
+            for (let i = 0; i < values.length; i++) {
+                const sourceTime = fullTimes[i] || labels[i];
+                const epochMs = parseToEpochMs(sourceTime);
+                if (epochMs === null) continue;
+
+                points.push({
+                    x: epochMs,
+                    y: values[i],
+                    idx: i
+                });
+            }
+
+            return points;
+        }
+
         function renderChart(type) {
             if (chartInstance) chartInstance.destroy();
             // Highlight anomaly/critical/fault points
             const statusArr = chartData.statuses || [];
             const highlightStatuses = ['ANOMALY', 'FAULT', 'CRITICAL', 'WARNING'];
             const values = chartData.values || [];
+            const points = buildTimeSeriesPoints();
             let yMin = 0;
             let yMax = 0;
             if (values.length) {
@@ -78,13 +109,14 @@
                 yMax = autoMax + pad;
             }
             // Untuk bar: array warna background, untuk line: array warna point
-            const barColors = (chartData.values || []).map((_, i) => {
+            const barColors = values.map((_, i) => {
                 if (highlightStatuses.includes((statusArr[i] || '').toUpperCase())) {
                     return 'rgba(239,68,68,0.7)'; // merah
                 }
                 return 'rgba(5,150,105,0.3)'; // hijau
             });
-            const pointColors = (chartData.values || []).map((_, i) => {
+            const pointColors = points.map((point) => {
+                const i = point.idx;
                 if (highlightStatuses.includes((statusArr[i] || '').toUpperCase())) {
                     return '#ef4444'; // merah
                 }
@@ -93,11 +125,11 @@
             chartInstance = new Chart(ctx, {
                 type: type,
                 data: {
-                    labels: chartData.labels || [],
+                    labels: type === 'bar' ? (chartData.labels || []) : undefined,
                     datasets: [
                         {
                             label: 'RMS Value',
-                            data: chartData.values || [],
+                            data: type === 'bar' ? values : points,
                             borderColor: '#059669',
                             backgroundColor: type === 'bar' ? barColors : 'rgba(5, 150, 105, 0.1)',
                             borderWidth: 3,
@@ -126,12 +158,12 @@
                         tooltip: {
                             callbacks: {
                                 title: function (context) {
-                                    const idx = context[0].dataIndex;
+                                    const idx = context[0].raw?.idx ?? context[0].dataIndex;
                                     let waktu = chartData.full_times && chartData.full_times[idx] ? chartData.full_times[idx] : context[0].label;
                                     return '{{ __('messages.dashboard.time') }}: ' + waktu;
                                 },
                                 label: function (context) {
-                                    const idx = context.dataIndex;
+                                    const idx = context.raw?.idx ?? context.dataIndex;
                                     let rms = context.parsed.y;
                                     let label = '{{ __('messages.dashboard.rms_label') }}: ' + rms + ' mm/s';
                                     if (chartData.machines && chartData.machines[idx]) {
@@ -165,6 +197,7 @@
                             }
                         },
                         x: {
+                            type: type === 'bar' ? 'category' : 'linear',
                             grid: {
                                 color: '#e5e7eb'
                             },
@@ -172,7 +205,17 @@
                                 color: '#6b7280',
                                 maxRotation: 0,
                                 autoSkip: true,
-                                maxTicksLimit: 10
+                                maxTicksLimit: 10,
+                                callback: function (value) {
+                                    if (type === 'bar') return this.getLabelForValue(value);
+                                    const date = new Date(Number(value));
+                                    if (Number.isNaN(date.getTime())) return '';
+                                    return date.toLocaleTimeString('id-ID', {
+                                        hour: '2-digit',
+                                        minute: '2-digit',
+                                        hour12: false
+                                    });
+                                }
                             }
                         }
                     }
