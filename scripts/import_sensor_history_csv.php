@@ -16,11 +16,12 @@ $options = getopt('', [
     'batch-size::',
     'date::',
     'delete-existing::',
+    'skip-zero::',
 ]);
 
 $file = $options['file'] ?? null;
 if (!$file) {
-    fwrite(STDERR, "Usage: php scripts/import_sensor_history_csv.php --file=<path> [--machine=1] [--batch-size=1000] [--date=YYYY-MM-DD] [--delete-existing=1]\n");
+    fwrite(STDERR, "Usage: php scripts/import_sensor_history_csv.php --file=<path> [--machine=1] [--batch-size=1000] [--date=YYYY-MM-DD] [--delete-existing=1] [--skip-zero=1]\n");
     exit(1);
 }
 
@@ -28,6 +29,7 @@ $machineId = isset($options['machine']) ? (int) $options['machine'] : 1;
 $batchSize = isset($options['batch-size']) ? max(100, (int) $options['batch-size']) : 1000;
 $dateFilter = $options['date'] ?? null;
 $deleteExisting = isset($options['delete-existing']) ? ((int) $options['delete-existing'] === 1) : true;
+$skipZero = isset($options['skip-zero']) ? ((int) $options['skip-zero'] === 1) : true;
 
 if (!is_file($file)) {
     fwrite(STDERR, "File not found: {$file}\n");
@@ -79,6 +81,7 @@ if ($header === false) {
 $rows = [];
 $inserted = 0;
 $skipped = 0;
+$skippedZero = 0;
 
 $flush = static function (array &$buffer, $dbTable) use (&$inserted): void {
     if (empty($buffer)) {
@@ -117,6 +120,19 @@ while (($data = fgetcsv($handle)) !== false) {
         continue;
     }
 
+    if (
+        $skipZero
+        && $ax !== null
+        && $ay !== null
+        && $az !== null
+        && $ax == 0.0
+        && $ay == 0.0
+        && $az == 0.0
+    ) {
+        $skippedZero++;
+        continue;
+    }
+
     $rows[] = [
         'name' => 'import_csv_sensor_history',
         'machine_id' => $machineId,
@@ -140,3 +156,4 @@ fclose($handle);
 echo "Import complete.\n";
 echo "Inserted: {$inserted}\n";
 echo "Skipped: {$skipped}\n";
+echo "Skipped zero XYZ rows: {$skippedZero}\n";

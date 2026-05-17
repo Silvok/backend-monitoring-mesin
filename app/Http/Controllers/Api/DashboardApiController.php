@@ -106,10 +106,11 @@ class DashboardApiController extends Controller
         try {
             // Cache for 15 seconds
             $machines = Cache::remember('api_machine_status', 15, function () {
-                return Machine::with('latestAnalysis')
+                return Machine::with(['latestAnalysis', 'latestRawSample'])
                     ->get()
                     ->map(function($machine) {
                         $latest = $machine->latestAnalysis;
+                        $latestRaw = $machine->latestRawSample;
                         $rmsValue = $latest ? $latest->rms : 0;
 
                         // Use per-machine threshold from database
@@ -128,6 +129,14 @@ class DashboardApiController extends Controller
                             }
                         }
 
+                        $latestActivityAt = null;
+                        if ($latest && $latest->created_at) {
+                            $latestActivityAt = $latest->created_at->copy();
+                        }
+                        if ($latestRaw && $latestRaw->created_at && (!$latestActivityAt || $latestRaw->created_at->gt($latestActivityAt))) {
+                            $latestActivityAt = $latestRaw->created_at->copy();
+                        }
+
                         return [
                             'id' => $machine->id,
                             'name' => $machine->name,
@@ -137,8 +146,8 @@ class DashboardApiController extends Controller
                             'rms' => $rmsValue,
                             'peak_amp' => $latest ? $latest->peak_amp : 0,
                             'dominant_freq' => $latest ? $latest->dominant_freq_hz : 0,
-                            'last_check' => $latest ? $latest->created_at->diffForHumans() : 'Never',
-                            'last_check_time' => $latest ? $latest->created_at->format('l, d-m-Y H:i') : null,
+                            'last_check' => $latestActivityAt ? $latestActivityAt->diffForHumans() : 'Never',
+                            'last_check_time' => $latestActivityAt ? $latestActivityAt->format('l, d-m-Y H:i') : null,
                             'threshold_warning' => $warningThreshold,
                             'threshold_critical' => $criticalThreshold,
                         ];
@@ -228,10 +237,19 @@ class DashboardApiController extends Controller
     public function getMachineSensorData($id)
     {
         try {
-            $machine = Machine::with('latestAnalysis')->findOrFail($id);
+            $machine = Machine::with(['latestAnalysis', 'latestRawSample'])->findOrFail($id);
 
             // Get latest analysis first (fastest response)
             $latestAnalysis = $machine->latestAnalysis;
+            $latestRaw = $machine->latestRawSample;
+
+            $latestActivityAt = null;
+            if ($latestAnalysis && $latestAnalysis->created_at) {
+                $latestActivityAt = $latestAnalysis->created_at->copy();
+            }
+            if ($latestRaw && $latestRaw->created_at && (!$latestActivityAt || $latestRaw->created_at->gt($latestActivityAt))) {
+                $latestActivityAt = $latestRaw->created_at->copy();
+            }
 
             // Use per-machine threshold from database
             $warningThreshold = (float) ($machine->threshold_warning ?? 25.0);
@@ -328,7 +346,7 @@ class DashboardApiController extends Controller
                     'rms' => $rmsValue,
                     'peak_amp' => $peakAmpValue,
                     'dominant_freq' => $dominantFreqValue,
-                    'last_check' => $latestAnalysis ? $latestAnalysis->created_at->diffForHumans() : 'Never',
+                    'last_check' => $latestActivityAt ? $latestActivityAt->diffForHumans() : 'Never',
                 ],
                 'sensor_data' => $sensorData,
                 'summary' => [
@@ -793,6 +811,3 @@ class DashboardApiController extends Controller
             ], 500);
         }
     }}
-
-
-

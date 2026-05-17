@@ -62,9 +62,13 @@ class AlertManagementController extends Controller
     public function getAlerts(Request $request)
     {
         try {
-            $query = AnalysisResult::with('machine')
+            $query = AnalysisResult::query()
+                ->select('analysis_results.*')
+                ->leftJoin('machines', 'machines.id', '=', 'analysis_results.machine_id')
+                ->with('machine')
                 ->whereIn('condition_status', ['ANOMALY', 'WARNING', 'CRITICAL', 'DANGER'])
-                ->orderBy('created_at', 'desc');
+                ->whereRaw('analysis_results.rms >= COALESCE(machines.threshold_warning, 25.0)')
+                ->orderBy('analysis_results.created_at', 'desc');
 
             // Filter by machine
             if ($request->filled('machine_id')) {
@@ -83,10 +87,10 @@ class AlertManagementController extends Controller
 
             // Filter by date range
             if ($request->filled('date_from')) {
-                $query->whereDate('created_at', '>=', $request->date_from);
+                $query->whereDate('analysis_results.created_at', '>=', $request->date_from);
             }
             if ($request->filled('date_to')) {
-                $query->whereDate('created_at', '<=', $request->date_to);
+                $query->whereDate('analysis_results.created_at', '<=', $request->date_to);
             }
 
             $alerts = $query->paginate($request->get('per_page', 15));
@@ -101,7 +105,7 @@ class AlertManagementController extends Controller
                     'id' => $alert->id,
                     'machine_id' => $alert->machine_id,
                     'machine_name' => $alert->machine->name ?? 'Unknown',
-                    'location' => $alert->machine->location ?? 'Unknown',
+                    'location' => $alert->machine->location ?? 'Factory',
                     'rms' => round($alert->rms, 4),
                     'peak_amp' => round($alert->peak_amp ?? 0, 4),
                     'dominant_freq_hz' => round($alert->dominant_freq_hz ?? 0, 2),
@@ -122,10 +126,13 @@ class AlertManagementController extends Controller
                 ];
             });
 
-            // Remove resolved alerts from active list
+            // Keep only active alerts (not resolved) and non-normal severities.
             $alerts->setCollection(
                 $alerts->getCollection()
-                    ->filter(fn($alert) => empty($alert['resolved']))
+                    ->filter(function ($alert) {
+                        return empty($alert['resolved'])
+                            && in_array($alert['severity'], ['warning', 'critical'], true);
+                    })
                     ->values()
             );
 
@@ -196,7 +203,7 @@ class AlertManagementController extends Controller
                 return [
                     'id' => $machine->id,
                     'name' => $machine->name,
-                    'location' => $machine->location,
+                    'location' => $machine->location ?? 'Factory',
                     'alert_count' => $machine->alert_count,
                     'threshold_warning' => (float) ($machine->threshold_warning ?? 25.0),
                     'threshold_critical' => (float) ($machine->threshold_critical ?? 28.0),
@@ -450,7 +457,7 @@ class AlertManagementController extends Controller
                 return [
                     'id' => $machine->id,
                     'name' => $machine->name,
-                    'location' => $machine->location,
+                    'location' => $machine->location ?? 'Factory',
                     'threshold_warning' => (float) ($machine->threshold_warning ?? 25.0),
                     'threshold_critical' => (float) ($machine->threshold_critical ?? 28.0),
                     'motor_power_hp' => $machine->motor_power_hp,
@@ -506,19 +513,23 @@ class AlertManagementController extends Controller
     public function getHistory(Request $request)
     {
         try {
-            $query = AnalysisResult::with('machine')
+            $query = AnalysisResult::query()
+                ->select('analysis_results.*')
+                ->leftJoin('machines', 'machines.id', '=', 'analysis_results.machine_id')
+                ->with('machine')
                 ->whereIn('condition_status', ['ANOMALY', 'WARNING', 'CRITICAL', 'DANGER'])
-                ->orderBy('created_at', 'desc');
+                ->whereRaw('analysis_results.rms >= COALESCE(machines.threshold_warning, 25.0)')
+                ->orderBy('analysis_results.created_at', 'desc');
 
             // Filter by date range
             if ($request->filled('date_from')) {
-                $query->whereDate('created_at', '>=', $request->date_from);
+                $query->whereDate('analysis_results.created_at', '>=', $request->date_from);
             } else {
-                $query->where('created_at', '>=', now()->subDays(30));
+                $query->where('analysis_results.created_at', '>=', now()->subDays(30));
             }
 
             if ($request->filled('date_to')) {
-                $query->whereDate('created_at', '<=', $request->date_to);
+                $query->whereDate('analysis_results.created_at', '<=', $request->date_to);
             }
 
             if ($request->filled('machine_id')) {
@@ -536,7 +547,7 @@ class AlertManagementController extends Controller
                 return [
                     'id' => $alert->id,
                     'machine_name' => $alert->machine->name ?? 'Unknown',
-                    'location' => $alert->machine->location ?? 'Unknown',
+                    'location' => $alert->machine->location ?? 'Factory',
                     'rms' => round($alert->rms, 4),
                     'severity' => $this->getSeverityLevel($alert->rms, $thresholds),
                     'severity_label' => $this->getSeverityLabel($alert->rms, $thresholds),
@@ -553,10 +564,14 @@ class AlertManagementController extends Controller
                 ];
             });
 
-            // Show acknowledged or resolved alerts in history
+            // Show only acknowledged/resolved alerts that are still warning/critical by current thresholds.
             $alerts->setCollection(
                 $alerts->getCollection()
-                    ->filter(fn($alert) => !empty($alert['resolved']) || !empty($alert['acknowledged']))
+                    ->filter(function ($alert) {
+                        $isHandled = !empty($alert['resolved']) || !empty($alert['acknowledged']);
+                        $isAlertSeverity = in_array($alert['severity'], ['warning', 'critical'], true);
+                        return $isHandled && $isAlertSeverity;
+                    })
                     ->values()
             );
 
@@ -578,15 +593,19 @@ class AlertManagementController extends Controller
     public function exportAlerts(Request $request)
     {
         try {
-            $query = AnalysisResult::with('machine')
+            $query = AnalysisResult::query()
+                ->select('analysis_results.*')
+                ->leftJoin('machines', 'machines.id', '=', 'analysis_results.machine_id')
+                ->with('machine')
                 ->whereIn('condition_status', ['ANOMALY', 'WARNING', 'CRITICAL', 'DANGER'])
-                ->orderBy('created_at', 'desc');
+                ->whereRaw('analysis_results.rms >= COALESCE(machines.threshold_warning, 25.0)')
+                ->orderBy('analysis_results.created_at', 'desc');
 
             if ($request->filled('date_from')) {
-                $query->whereDate('created_at', '>=', $request->date_from);
+                $query->whereDate('analysis_results.created_at', '>=', $request->date_from);
             }
             if ($request->filled('date_to')) {
-                $query->whereDate('created_at', '<=', $request->date_to);
+                $query->whereDate('analysis_results.created_at', '<=', $request->date_to);
             }
             if ($request->filled('machine_id')) {
                 $query->where('machine_id', $request->machine_id);
@@ -601,6 +620,12 @@ class AlertManagementController extends Controller
                 $thresholds = $alert->machine
                     ? $this->getMachineThreshold($alert->machine)
                     : $this->getDefaultThreshold();
+                $severityLevel = $this->getSeverityLevel($alert->rms, $thresholds);
+
+                // Skip rows that are now normal based on current machine thresholds.
+                if ($severityLevel === 'normal') {
+                    continue;
+                }
 
                 $ack = Cache::get("alert_ack_{$alert->id}", false) ? 'Yes' : 'No';
                 $ackBy = Cache::get("alert_ack_by_{$alert->id}", '-');
@@ -609,7 +634,7 @@ class AlertManagementController extends Controller
                 $csvData .= implode(',', [
                     $alert->id,
                     '"' . ($alert->machine->name ?? 'Unknown') . '"',
-                    '"' . ($alert->machine->location ?? 'Unknown') . '"',
+                    '"' . ($alert->machine->location ?? 'Factory') . '"',
                     round($alert->rms, 4),
                     $this->getSeverityLabel($alert->rms, $thresholds),
                     $alert->condition_status,
@@ -659,6 +684,3 @@ class AlertManagementController extends Controller
         return 'Normal';
     }
 }
-
-
-

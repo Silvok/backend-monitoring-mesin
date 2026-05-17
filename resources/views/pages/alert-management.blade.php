@@ -964,7 +964,7 @@
                     <td class="px-4 py-3">
                         <div class="text-sm font-medium text-gray-900">${alert.machine_name}</div>
                     </td>
-                    <td class="px-4 py-3 text-sm text-gray-500">${alert.location}</td>
+                    <td class="px-4 py-3 text-sm text-gray-500">${alert.location || 'Factory'}</td>
                     <td class="px-4 py-3 text-sm font-mono font-medium text-gray-900">${alert.rms}</td>
                     <td class="px-4 py-3">
                         <span class="px-2 py-1 text-xs font-medium rounded-full ${getSeverityClass(alert.severity)}">
@@ -1063,7 +1063,7 @@
                 <tr class="hover:bg-gray-50">
                     <td class="px-4 py-3 text-sm text-gray-900">#${item.id}</td>
                     <td class="px-4 py-3 text-sm font-medium text-gray-900">${item.machine_name}</td>
-                    <td class="px-4 py-3 text-sm text-gray-500">${item.location}</td>
+                    <td class="px-4 py-3 text-sm text-gray-500">${item.location || 'Factory'}</td>
                     <td class="px-4 py-3 text-sm font-mono font-medium text-gray-900">${item.rms}</td>
                     <td class="px-4 py-3">
                         <span class="px-2 py-1 text-xs font-medium rounded-full ${getSeverityClass(item.severity)}">
@@ -1127,7 +1127,7 @@
                         </div>
                         <div class="p-4 bg-gray-50 rounded-lg">
                             <p class="text-xs text-gray-500 mb-1">Lokasi</p>
-                            <p class="text-sm font-medium text-gray-900">${alert.location}</p>
+                            <p class="text-sm font-medium text-gray-900">${alert.location || 'Factory'}</p>
                         </div>
                         <div class="p-4 bg-gray-50 rounded-lg">
                             <p class="text-xs text-gray-500 mb-1">RMS Velocity</p>
@@ -1342,7 +1342,7 @@
                     <td class="py-3 px-4">
                         <div class="font-medium text-gray-900">${machine.name}</div>
                     </td>
-                    <td class="py-3 px-4 text-gray-600">${machine.location || '-'}</td>
+                    <td class="py-3 px-4 text-gray-600">${machine.location || 'Factory'}</td>
                     <td class="py-3 px-4 text-center">
                         ${machine.motor_power_hp ? machine.motor_power_hp + ' HP' : '-'}
                     </td>
@@ -1610,6 +1610,5 @@
     </script>
     @endpush
 </x-app-layout>
-
 
 

@@ -28,7 +28,7 @@ class AlertController extends Controller
                             'id' => $analysis->id,
                             'machine_id' => $analysis->machine_id,
                             'machine_name' => $analysis->machine->name ?? 'Unknown',
-                            'location' => $analysis->machine->location ?? 'Unknown',
+                            'location' => $analysis->machine->location ?? 'Factory',
                             'status' => 'anomaly',
                             'severity' => $this->calculateSeverity($analysis),
                             'rms' => $analysis->rms,

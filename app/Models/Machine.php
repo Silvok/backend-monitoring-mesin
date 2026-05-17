@@ -86,6 +86,14 @@ class Machine extends Model
     {
         return $this->hasOne(AnalysisResult::class)->latestOfMany();
     }
+
+    /**
+     * Get latest raw sample
+     */
+    public function latestRawSample()
+    {
+        return $this->hasOne(RawSample::class)->latestOfMany();
+    }
 }
 
 

@@ -32,10 +32,11 @@ class DashboardController extends Controller
             // Select only required columns to reduce hydration overhead.
             $machineStatus = Machine::query()
                 ->select(['id', 'name', 'location', 'is_active', 'threshold_warning', 'threshold_critical'])
-                ->with('latestAnalysis')
+                ->with(['latestAnalysis', 'latestRawSample'])
                 ->get()
                 ->map(function($machine) {
                     $latest = $machine->latestAnalysis;
+                    $latestRaw = $machine->latestRawSample;
                     $rmsValue = $latest ? $latest->rms : 0;
 
                     // Use per-machine threshold from database
@@ -54,6 +55,14 @@ class DashboardController extends Controller
                         }
                     }
 
+                    $latestActivityAt = null;
+                    if ($latest && $latest->created_at) {
+                        $latestActivityAt = $latest->created_at->copy();
+                    }
+                    if ($latestRaw && $latestRaw->created_at && (!$latestActivityAt || $latestRaw->created_at->gt($latestActivityAt))) {
+                        $latestActivityAt = $latestRaw->created_at->copy();
+                    }
+
                     return [
                         'id' => $machine->id,
                         'name' => $machine->name,
@@ -63,8 +72,8 @@ class DashboardController extends Controller
                         'rms' => $rmsValue,
                         'peak_amp' => $latest ? $latest->peak_amp : 0,
                         'dominant_freq' => $latest ? $latest->dominant_freq_hz : 0,
-                        'last_check' => $latest ? $latest->created_at->diffForHumans() : 'Never',
-                        'last_check_time' => $latest ? $latest->created_at->format('l, d-m-Y H:i') : null,
+                        'last_check' => $latestActivityAt ? $latestActivityAt->diffForHumans() : 'Never',
+                        'last_check_time' => $latestActivityAt ? $latestActivityAt->format('l, d-m-Y H:i') : null,
                         'threshold_warning' => $warningThreshold,
                         'threshold_critical' => $criticalThreshold,
                     ];
@@ -516,6 +525,3 @@ class DashboardController extends Controller
         }
     }
 }
-
-
-

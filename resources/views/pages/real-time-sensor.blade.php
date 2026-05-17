@@ -32,7 +32,7 @@
                                 @endphp
                                 <option value="{{ $machine->id }}"
                                     data-status="{{ $machine->latestAnalysis?->condition_status ?? 'TIDAK DIKETAHUI' }}"
-                                    data-location="{{ $machine->location }}"
+                                    data-location="{{ $machine->location ?? 'Factory' }}"
                                     data-has-data="{{ $hasData ? '1' : '0' }}">
                                     {{ $machine->name }}{{ $hasData ? '' : ' (belum ada data)' }}
                                 </option>
@@ -64,7 +64,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <p id="machineLocation" class="text-sm text-gray-600 mt-2 break-words">Lokasi: -</p>
+                            <p id="machineLocation" class="text-sm text-gray-600 mt-2 break-words">Lokasi: Factory</p>
                         </div>
 
                         <!-- Metrics Grid -->
@@ -854,7 +854,7 @@
                 // Get selected option data for instant display
                 const selectedOption = this.options[this.selectedIndex];
                 const machineName = selectedOption.text.split(' (')[0];
-                const machineLocation = selectedOption.dataset.location || '-';
+                const machineLocation = selectedOption.dataset.location || 'Factory';
                 const machineStatus = selectedOption.dataset.status || 'LOADING';
 
                 // Reset statistics
@@ -982,7 +982,8 @@
 
             // Update basic info
             document.getElementById('machineName').textContent = machine.name;
-            document.getElementById('machineLocation').textContent = `Location: ${machine.location}`;
+            const machineLocation = machine.location || 'Factory';
+            document.getElementById('machineLocation').textContent = `Lokasi: ${machineLocation}`;
             document.getElementById('rmsValue').textContent = rmsValue.toFixed(4);
             document.getElementById('peakValue').textContent = peakValue.toFixed(4);
             document.getElementById('freqValue').textContent = `${freqValue.toFixed(0)} Hz`;
@@ -1257,7 +1258,7 @@
                 if (!payload) return;
                 const machine = {
                     name: payload.machine_name,
-                    location: payload.location,
+                    location: payload.location || 'Factory',
                     status: payload.status,
                     rms: parseFloat(payload.rms ?? 0),
                     peak_amp: parseFloat(payload.peak_amp ?? 0),
