@@ -96,6 +96,12 @@
             const highlightStatuses = ['ANOMALY', 'FAULT', 'CRITICAL', 'WARNING'];
             const values = chartData.values || [];
             const points = buildTimeSeriesPoints();
+            let xMin = points.length ? points[0].x : undefined;
+            let xMax = points.length ? points[points.length - 1].x : undefined;
+            if (xMin !== undefined && xMax !== undefined && xMin === xMax) {
+                // Keep scale renderable when only one point is available.
+                xMax = xMin + 60000;
+            }
             let yMin = 0;
             let yMax = 0;
             if (values.length) {
@@ -198,6 +204,10 @@
                         },
                         x: {
                             type: type === 'bar' ? 'category' : 'linear',
+                            bounds: type === 'bar' ? 'ticks' : 'data',
+                            min: type === 'bar' ? undefined : xMin,
+                            max: type === 'bar' ? undefined : xMax,
+                            offset: false,
                             grid: {
                                 color: '#e5e7eb'
                             },
