@@ -333,7 +333,6 @@
                                     <input type="date"
                                         id="chartDatePicker"
                                         class="px-4 py-2 rounded-full border border-slate-200 bg-white shadow-sm text-sm font-semibold text-slate-700 focus:ring-2 focus:ring-purple-400 focus:border-purple-300"
-                                        value="{{ now()->format('Y-m-d') }}"
                                         max="{{ now()->format('Y-m-d') }}">
                                 </div>
 
@@ -654,6 +653,10 @@
             lastAnomaly: null
         };
 
+        function getSelectedHistoricalDate() {
+            return document.getElementById('chartDatePicker')?.value || '';
+        }
+
         // Thresholds
         const THRESHOLDS = {
             acceleration: {
@@ -734,38 +737,30 @@
                 document.getElementById('timeRangeSelector').classList.remove('hidden');
                 document.getElementById('historicalIndicator').classList.remove('hidden');
 
-                // Auto-set date picker to latest sample date if available
-                if (latestSampleTimestamp) {
-                    const d = new Date(latestSampleTimestamp);
-                    if (!Number.isNaN(d.getTime())) {
-                        const isoDate = d.toISOString().slice(0, 10);
-                        document.getElementById('chartDatePicker').value = isoDate;
-                    }
-                }
-
-                // Stop live updates and load historical data
+                // Stop live updates; historical data loads only after user picks date.
                 stopChartUpdate();
                 syncFeedSections();
-                if (selectedMachineId) {
-                    loadHistoricalData();
-                    loadSensorHistory(1);
-                }
+                clearChartData();
             }
         }
 
         // Date Picker Change
         document.getElementById('chartDatePicker').addEventListener('change', function() {
             if (chartMode === 'historical' && selectedMachineId) {
-                loadHistoricalData();
-                loadSensorHistory(1);
+                if (getSelectedHistoricalDate()) {
+                    loadHistoricalData();
+                    loadSensorHistory(1);
+                }
             }
         });
 
         // Historical Time Range Change
         document.getElementById('historicalTimeRange').addEventListener('change', function() {
             if (chartMode === 'historical' && selectedMachineId) {
-                loadHistoricalData();
-                loadSensorHistory(1);
+                if (getSelectedHistoricalDate()) {
+                    loadHistoricalData();
+                    loadSensorHistory(1);
+                }
             }
         });
 
@@ -833,6 +828,7 @@
             if (!selectedMachineId || chartMode !== 'historical') return;
 
             const selectedDate = document.getElementById('chartDatePicker').value;
+            if (!selectedDate) return;
             const timeRange = document.getElementById('historicalTimeRange').value;
             const params = new URLSearchParams({
                 date: selectedDate,
@@ -888,7 +884,7 @@
                 startAutoUpdate();
                 connectWebSocket(selectedMachineId);
                 startChartUpdate();
-                if (chartMode === 'historical') {
+                if (chartMode === 'historical' && getSelectedHistoricalDate()) {
                     loadHistoricalData();
                     loadSensorHistory(1);
                 }
@@ -1133,6 +1129,9 @@
             if (!selectedMachineId || chartMode !== 'historical') return;
 
             const selectedDate = document.getElementById('chartDatePicker').value;
+            if (!selectedDate) {
+                return;
+            }
             const timeRange = document.getElementById('historicalTimeRange').value;
             const rangeLabel = document.getElementById('historyDateRangeLabel');
 
@@ -1752,6 +1751,13 @@
             if (!selectedMachineId) return;
 
             const selectedDate = document.getElementById('chartDatePicker').value;
+            if (!selectedDate) {
+                clearChartData();
+                if (multiAxisChart) {
+                    updateYAxisScale();
+                }
+                return;
+            }
             const timeRange = document.getElementById('historicalTimeRange').value;
 
             // Show loading indicator immediately

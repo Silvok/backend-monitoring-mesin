@@ -225,8 +225,10 @@
 								<td class="px-6 py-4 whitespace-nowrap capitalize">
 									@php
 										$roleLabel = match ($user->role ?? null) {
-											'operator' => 'Teknisi',
+											'super_admin', 'superadmin' => 'Super Admin',
 											'admin' => 'Admin',
+											'koordinator' => 'Koordinator',
+											'operator' => 'Operator',
 											default => $user->role ?? '-',
 										};
 									@endphp
@@ -341,8 +343,10 @@
 							<div class="mt-3 grid grid-cols-2 gap-2 text-xs">
 								@php
 									$roleLabel = match ($user->role ?? null) {
-										'operator' => 'Teknisi',
+										'super_admin', 'superadmin' => 'Super Admin',
 										'admin' => 'Admin',
+										'koordinator' => 'Koordinator',
+										'operator' => 'Operator',
 										default => $user->role ?? '-',
 									};
 								@endphp
@@ -393,8 +397,9 @@
 					<div class="mb-3">
 						<label class="block text-sm font-medium mb-1">Role</label>
 						<select id="userRole" name="role" class="w-full border rounded px-3 py-2">
+							<option value="super_admin">Super Admin</option>
 							<option value="admin">Admin</option>
-							<option value="teknisi">Teknisi</option>
+							<option value="koordinator">Koordinator</option>
 						</select>
 					</div>
 					<div class="mb-3">
@@ -522,9 +527,18 @@
 				edit: @json(__('messages.users.title')),
 			};
 
+			function normalizeRoleForSelect(role) {
+				if (role === 'superadmin') return 'super_admin';
+				return role;
+			}
+
 			function openUserModal(isEdit = false, user = null) {
 			document.getElementById('userModal').classList.remove('hidden');
 			document.getElementById('userForm').reset();
+			const roleSelect = document.getElementById('userRole');
+			Array.from(roleSelect.options)
+				.filter(option => option.dataset.legacy === '1')
+				.forEach(option => option.remove());
 			document.getElementById('userId').value = '';
 			document.getElementById('passwordField').classList.remove('hidden');
 			document.getElementById('userModalTitle').textContent = userModalLabels.add;
@@ -534,7 +548,16 @@
 				document.getElementById('userName').value = user.name;
 				document.getElementById('userEmail').value = user.email;
 				document.getElementById('userPhone').value = user.phone || '';
-				document.getElementById('userRole').value = user.role;
+				const normalizedRole = normalizeRoleForSelect(user.role);
+				const hasRoleOption = Array.from(roleSelect.options).some(option => option.value === normalizedRole);
+				if (!hasRoleOption && normalizedRole) {
+					const legacyOption = document.createElement('option');
+					legacyOption.value = normalizedRole;
+					legacyOption.textContent = `${normalizedRole} (legacy)`;
+					legacyOption.dataset.legacy = '1';
+					roleSelect.appendChild(legacyOption);
+				}
+				roleSelect.value = normalizedRole;
 				document.getElementById('userStatus').value = user.status ? '1' : '0';
 				document.getElementById('userWaNotification').value = user.wa_notification_enabled ? '1' : '0';
 				document.getElementById('passwordField').classList.add('hidden');
