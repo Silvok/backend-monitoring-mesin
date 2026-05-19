@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Machine extends Model
@@ -82,17 +83,17 @@ class Machine extends Model
     /**
      * Get latest analysis result
      */
-    public function latestAnalysis()
+    public function latestAnalysis(): HasOne
     {
-        return $this->hasOne(AnalysisResult::class)->latestOfMany();
+        return $this->hasOne(AnalysisResult::class)->latestOfMany('created_at');
     }
 
     /**
      * Get latest raw sample
      */
-    public function latestRawSample()
+    public function latestRawSample(): HasOne
     {
-        return $this->hasOne(RawSample::class)->latestOfMany();
+        return $this->hasOne(RawSample::class)->latestOfMany('created_at');
     }
 }
 

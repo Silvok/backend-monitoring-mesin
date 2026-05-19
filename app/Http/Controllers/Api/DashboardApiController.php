@@ -26,10 +26,9 @@ class DashboardApiController extends Controller
                 ->where('created_at', '>=', now()->subHours(24))
                 ->with('machine:id,name')
                 ->select('machine_id', 'rms', 'condition_status', 'created_at')
-                ->orderBy('created_at', 'desc')
+                ->orderBy('created_at', 'asc')
                 ->limit(100)
                 ->get()
-                ->sortBy('created_at')
                 ->values();
 
             $rmsData = $rmsRows->map(function ($item) {
@@ -39,13 +38,7 @@ class DashboardApiController extends Controller
                 ];
             })->values();
 
-            $rmsChartData = [
-                'labels' => $rmsRows->pluck('created_at')->map(fn ($ts) => $ts->format('H:i'))->values()->toArray(),
-                'values' => $rmsRows->pluck('rms')->map(fn ($rms) => round((float) $rms, 4))->values()->toArray(),
-                'full_times' => $rmsRows->pluck('created_at')->map(fn ($ts) => $ts->format('Y-m-d H:i:s'))->values()->toArray(),
-                'machines' => $rmsRows->pluck('machine.name')->map(fn ($name) => $name ?? '-')->values()->toArray(),
-                'statuses' => $rmsRows->pluck('condition_status')->map(fn ($status) => strtoupper((string) $status))->values()->toArray(),
-            ];
+            $rmsChartData = $this->buildRmsChartDataFromRows($rmsRows);
 
             $latestTemperatureByMachine = TemperatureReading::query()
                 ->select(['machine_id', 'temperature_c', 'recorded_at'])
@@ -96,6 +89,123 @@ class DashboardApiController extends Controller
         });
 
         return response()->json($payload);
+    }
+
+    /**
+     * Get RMS trend data for dashboard chart with optional date-range filter.
+     */
+    public function getDashboardRmsTrend(Request $request)
+    {
+        try {
+            $dateFrom = $request->query('date_from');
+            $dateTo = $request->query('date_to');
+            $machineId = $request->query('machine_id');
+
+            if (($dateFrom && !$dateTo) || (!$dateFrom && $dateTo)) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'date_from and date_to must be provided together.',
+                ], 422);
+            }
+
+            $query = AnalysisResult::query()
+                ->with('machine:id,name')
+                ->select('machine_id', 'rms', 'condition_status', 'created_at');
+
+            if ($machineId !== null && $machineId !== '' && strtolower((string) $machineId) !== 'all') {
+                if (!is_numeric($machineId)) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'machine_id must be numeric or "all".',
+                    ], 422);
+                }
+                $query->where('machine_id', (int) $machineId);
+            }
+
+            $range = [
+                'mode' => 'last_24h',
+                'date_from' => null,
+                'date_to' => null,
+            ];
+
+            if ($dateFrom && $dateTo) {
+                $startDate = \Carbon\Carbon::createFromFormat('Y-m-d', $dateFrom)->startOfDay();
+                $endDate = \Carbon\Carbon::createFromFormat('Y-m-d', $dateTo)->endOfDay();
+
+                if ($startDate->gt($endDate)) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Invalid date range.',
+                    ], 422);
+                }
+
+                if ($startDate->diffInDays($endDate) > 31) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Date range too wide. Maximum 31 days.',
+                    ], 422);
+                }
+
+                $query->whereBetween('created_at', [$startDate, $endDate]);
+                $range = [
+                    'mode' => 'custom',
+                    'date_from' => $startDate->format('Y-m-d'),
+                    'date_to' => $endDate->format('Y-m-d'),
+                ];
+            } else {
+                $query->where('created_at', '>=', now()->subHours(24));
+            }
+
+            $rows = $query->orderBy('created_at', 'asc')->get()->values();
+            $originalCount = $rows->count();
+            $sourceLast = $rows->last();
+
+            // Keep chart payload light for browser rendering.
+            $maxPoints = 1200;
+            if ($originalCount > $maxPoints) {
+                $step = (int) ceil($originalCount / $maxPoints);
+                $rows = $rows
+                    ->filter(function ($row, $index) use ($step) {
+                        return $index % $step === 0;
+                    })
+                    ->values();
+
+                $lastRow = $rows->last();
+                if ($sourceLast && (!$lastRow || $lastRow->created_at->ne($sourceLast->created_at))) {
+                    $rows->push($sourceLast);
+                }
+            }
+
+            return response()->json([
+                'success' => true,
+                'rmsChartData' => $this->buildRmsChartDataFromRows($rows),
+                'meta' => [
+                    'range' => $range,
+                    'points' => $rows->count(),
+                    'original_points' => $originalCount,
+                    'machine_id' => $machineId !== null && $machineId !== '' ? $machineId : 'all',
+                ],
+            ]);
+        } catch (\Throwable $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    /**
+     * Build RMS chart payload expected by frontend.
+     */
+    private function buildRmsChartDataFromRows($rows): array
+    {
+        return [
+            'labels' => $rows->pluck('created_at')->map(fn($ts) => $ts->format('H:i'))->values()->toArray(),
+            'values' => $rows->pluck('rms')->map(fn($rms) => round((float) $rms, 4))->values()->toArray(),
+            'full_times' => $rows->pluck('created_at')->map(fn($ts) => $ts->format('Y-m-d H:i:s'))->values()->toArray(),
+            'machines' => $rows->pluck('machine.name')->map(fn($name) => $name ?? '-')->values()->toArray(),
+            'statuses' => $rows->pluck('condition_status')->map(fn($status) => strtoupper((string) $status))->values()->toArray(),
+        ];
     }
 
     /**

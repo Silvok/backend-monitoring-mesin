@@ -109,6 +109,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/notifications/read-all', [NotificationController::class, 'markAllRead'])->middleware('permission:alerts.view');
 
     Route::get('/api/dashboard-data', [DashboardApiController::class, 'getDashboardData'])->middleware('permission:dashboard.view');
+    Route::get('/api/dashboard-rms-trend', [DashboardApiController::class, 'getDashboardRmsTrend'])->middleware('permission:dashboard.view');
     Route::get('/api/machine-status', [DashboardApiController::class, 'getMachineStatus'])->middleware('permission:dashboard.view');
     Route::get('/api/top-machines-by-risk', [DashboardApiController::class, 'getTopMachinesByRisk'])->middleware('permission:dashboard.view');
     Route::get('/api/machine/{id}/sensor-data', [DashboardApiController::class, 'getMachineSensorData'])->middleware('permission:realtime.view');

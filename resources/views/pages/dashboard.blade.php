@@ -82,6 +82,10 @@
                 window.addEventListener('monitoring:auto-refresh', () => {
                     refreshDashboard({ force: false });
                 });
+
+                window.forceDashboardSummaryRefresh = function () {
+                    return loadDashboardSummary();
+                };
             });
 
             function updateLiveIndicator(anomalyCount) {
@@ -149,7 +153,10 @@
                     .then(data => {
                         renderMetricsCards(data);
                         updateLiveIndicator(Number(data.anomalyCount || 0));
-                        if (window.updateDashboardRmsChart && data.rmsChartData) {
+                        const isHistoryMode = typeof window.isDashboardRmsHistoryMode === 'function'
+                            ? window.isDashboardRmsHistoryMode()
+                            : false;
+                        if (!isHistoryMode && window.updateDashboardRmsChart && data.rmsChartData) {
                             window.updateDashboardRmsChart(data.rmsChartData);
                         }
                         if (Array.isArray(data.latestSensorData)) {
