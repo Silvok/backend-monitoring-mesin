@@ -76,6 +76,10 @@
         <canvas id="rmsChart" data-chart="{{ json_encode($rmsChartData ?? []) }}"></canvas>
     </div>
     <div class="flex mt-4 justify-end">
+        <button id="resetZoomBtn" type="button"
+            class="mr-2 px-3 py-2 bg-white hover:bg-gray-50 text-gray-700 rounded-lg border border-gray-300 shadow text-xs font-semibold">
+            Reset Zoom
+        </button>
         <div class="relative">
             <button id="downloadBtn" type="button"
                 class="p-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg shadow text-xs" aria-label="{{ __('messages.dashboard.download') }}">
@@ -219,6 +223,20 @@
                             display: true,
                             position: 'top',
                         },
+                        zoom: {
+                            pan: {
+                                enabled: true,
+                                mode: 'x'
+                            },
+                            zoom: {
+                                wheel: { enabled: true },
+                                pinch: { enabled: true },
+                                mode: 'x'
+                            },
+                            limits: {
+                                x: { minRange: 60 * 1000 }
+                            }
+                        },
                         tooltip: {
                             callbacks: {
                                 title: function (context) {
@@ -303,12 +321,65 @@
             return true;
         }
 
+        async function ensureZoomPluginReady() {
+            if (window.__rmsZoomPluginReady) {
+                return true;
+            }
+
+            const tryRegister = () => {
+                const zoomPlugin = window.ChartZoom || window['chartjs-plugin-zoom'] || window.zoomPlugin;
+                if (window.Chart && zoomPlugin && !window.__rmsZoomPluginRegistered) {
+                    window.Chart.register(zoomPlugin);
+                    window.__rmsZoomPluginRegistered = true;
+                }
+                if (window.Chart && window.__rmsZoomPluginRegistered) {
+                    window.__rmsZoomPluginReady = true;
+                    return true;
+                }
+                return false;
+            };
+
+            if (tryRegister()) {
+                return true;
+            }
+
+            if (window.__rmsZoomPluginLoading) {
+                return new Promise((resolve) => {
+                    const check = () => {
+                        if (window.__rmsZoomPluginReady) return resolve(true);
+                        if (window.__rmsZoomPluginFailed) return resolve(false);
+                        setTimeout(check, 100);
+                    };
+                    check();
+                });
+            }
+
+            window.__rmsZoomPluginLoading = true;
+            const script = document.createElement('script');
+            script.src = 'https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@2.0.1/dist/chartjs-plugin-zoom.min.js';
+            script.async = true;
+
+            const loaded = await new Promise((resolve) => {
+                script.onload = () => resolve(true);
+                script.onerror = () => resolve(false);
+                document.head.appendChild(script);
+            });
+
+            if (!loaded) {
+                window.__rmsZoomPluginFailed = true;
+                return false;
+            }
+
+            return tryRegister();
+        }
+
         let initialized = false;
         async function initWhenVisible() {
             if (initialized) return;
             initialized = true;
             const ready = await ensureChartReady();
             if (!ready) return;
+            await ensureZoomPluginReady();
             renderChart(chartType);
         }
 
@@ -353,6 +424,7 @@
         const liveIndicator = document.getElementById('rmsLiveIndicator');
         const historicalIndicator = document.getElementById('rmsHistoricalIndicator');
         const historicalLoading = document.getElementById('rmsHistoricalLoading');
+        const resetZoomBtn = document.getElementById('resetZoomBtn');
         let historyMode = false;
 
         function setRangeInfo(message, isError = false) {
@@ -523,6 +595,13 @@
         if (historicalModeBtn) {
             historicalModeBtn.addEventListener('click', function () {
                 setMode('historical', { refresh: false });
+            });
+        }
+        if (resetZoomBtn) {
+            resetZoomBtn.addEventListener('click', function () {
+                if (chartInstance && typeof chartInstance.resetZoom === 'function') {
+                    chartInstance.resetZoom();
+                }
             });
         }
     });
